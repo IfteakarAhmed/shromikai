@@ -956,6 +956,8 @@ All errors use `application/problem+json` per RFC 9457 with the `Problem` schema
 | `forbidden` | 403 | Not allowed | অনুমতি নেই | Role or scope insufficient |
 | `demo-account-restricted` | 403 | Not available for demo accounts | ডেমো অ্যাকাউন্টে এটি করা যাবে না | Password change or deletion by a demo user |
 | `not-found` | 404 | Not found | পাওয়া যায়নি | Unknown or not owned resource; demo endpoint outside `demo` |
+| `method-not-allowed` | 405 | Method not allowed for this resource | এই পদ্ধতি অনুমোদিত নয় | HTTP method not supported by the route; `Allow` header set (added P1) |
+| `not-acceptable` | 406 | Response format not available | এই ফরম্যাটে উত্তর দেওয়া যায় না | `Accept` header matches no response type (added P1) |
 | `email-taken` | 409 | Email already registered | এই ইমেইল আগেই নিবন্ধিত | Admin user creation |
 | `idempotency-key-reused` | 409 | Idempotency key reused with a different request | একই কী ভিন্ন অনুরোধে ব্যবহৃত | E-12, E-18 |
 | `already-claimed` | 409 | Review item already claimed | অন্য কেউ পর্যালোচনা করছেন | E-25 |
@@ -1050,3 +1052,4 @@ and E-41 to E-44. It never receives or sends contract content.
 | --- | --- |
 | 2026-11-10 | v1 specification (`spec-v1`), aligned with playbook v1.1 |
 | 2026-11-10 | v1.1 (`spec-v1.1`): signed envelope holds the re-identified result; SSE Bearer authentication and no query-string tokens; `rewrittenQueries` removed from free-text search; E-43 moved to `/admin/laws/retrieval-smoke`; `Meta.models.judge`; `input.sample`; `CitationOrigin` adds `MAPPING` and `EXTERNAL`; MCP claim 20..600, Streamable HTTP, `suggested_clause` exemption; review-item and ticket expiry; `claimedCitation.claimReduced`. No implemented client is affected (nothing shipped before v1.1) |
+| 2026-11-10 | P1 (additive): problem codes `method-not-allowed` (405) and `not-acceptable` (406); `Problem.instance` is the route template plus `#` and the request ID, template braces percent-encoded (`/api/v1/analyses/%7Bid%7D#<requestId>`; `/unmatched#<requestId>` for unknown routes); OpenAPI document at `/v3/api-docs` (OpenAPI 3.0) from P1, every response property listed as required, nullable ones marked `nullable` |

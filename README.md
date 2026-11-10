@@ -1,5 +1,7 @@
 # ShromikAI
 
+[![CI](https://github.com/IfteakarAhmed/shromikai/actions/workflows/ci.yml/badge.svg)](https://github.com/IfteakarAhmed/shromikai/actions/workflows/ci.yml)
+
 **Verified employment contract intelligence for Bangladesh.**
 
 ShromikAI reads an employment contract (Bangla or English), finds hidden legal risks, and cites only sections of Bangladeshi law that it has verified against the official text. If it cannot verify a source, it says so and sends the risk to human review instead of inventing a citation.
@@ -19,41 +21,104 @@ Built by team **Cosmic Duo** for the International AI Builders Congress 2026 —
 
 | Part | Technology |
 | --- | --- |
-| Backend | Java 21, Spring Boot 3.5, Spring AI 1.x, Gradle (Groovy DSL), YAML configuration |
+| Backend | Java 21, Spring Boot 3.5.16, Spring AI 1.1.8 (Ollama), Anthropic Java SDK (Claude), Gradle 8.14 (Groovy DSL), YAML configuration |
 | Database | PostgreSQL 17 + pgvector, Flyway migrations |
 | Reasoning models | Claude Sonnet 5.5 and Claude Haiku 5.5 (Anthropic API) |
 | Independent verifier | Gemini Flash (optional key; falls back to a separate Claude prompt) |
 | Local models | Ollama: bge-m3 (embeddings), qwen2.5:7b-instruct (personal-data detection) |
 | OCR | Tesseract 5 (Bangla + English), runs locally |
-| Frontend | React 19, TypeScript, Vite, Tailwind CSS |
+| Frontend | React 19, TypeScript (strict), Vite, Tailwind CSS, TanStack Query, i18next (Bangla first) |
 | Deploy | Docker Compose; Gotenberg (memo PDF), n8n (automation) |
 
-## Run locally
+## Run locally (macOS)
 
-Prerequisites: Java 21, Node.js 20+, Docker Desktop, Git.
+Prerequisites:
+
+- **JDK 21** (for example `brew install --cask temurin@21`). Gradle 8.14 does not run on JDK 25,
+  so the Gradle JVM must be 21 even if a newer JDK is your default.
+- **Node.js 24** (`frontend/.nvmrc`; for example `brew install node@24` or `nvm use`).
+- **Docker Desktop**, running.
+- IntelliJ IDEA for the backend, VS Code for the frontend.
+
+### 1. Services and environment
 
 ```bash
-# 1. Secrets
-cp .env.example .env          # then put your ANTHROPIC_API_KEY in .env
-
-# 2. Database + local models
-docker compose up -d
-docker compose exec ollama ollama pull bge-m3
-docker compose exec ollama ollama pull qwen2.5:7b-instruct   # from P1: ./scripts/dev-up.sh does both
-
-# 3. Backend (new terminal)
-cd backend
-./gradlew bootRun             # Windows: gradlew.bat bootRun
-
-# 4. Frontend (new terminal)
-cd frontend
-npm install
-npm run dev                   # open http://localhost:5173
+cp .env.example .env
 ```
 
-Check: `http://localhost:8080/api/v1/meta` returns JSON, and the web page shows "চালু".
+```bash
+./scripts/dev-up.sh
+```
 
-The full list of commands, including tests and evaluation, is in [AGENTS.md §11](AGENTS.md#11-how-to-run-everything).
+`dev-up.sh` starts PostgreSQL (pgvector) and Ollama, waits for both health checks and pulls
+`bge-m3` and `qwen2.5:7b-instruct`. The first pull downloads several GB. Until both models are
+present, `/actuator/health` reports `ollama` as `DOWN`; the rest of the app still runs.
+
+No API key is needed in P1: cloud calls stay blocked until the privacy shield lands in P5.
+
+### 2. Backend in IntelliJ IDEA
+
+1. **File → Open** and choose the `backend/` folder, then trust the Gradle project.
+2. **Settings → Build, Execution, Deployment → Build Tools → Gradle → Gradle JVM**: pick JDK 21.
+   **File → Project Structure → Project SDK**: JDK 21 as well.
+3. **Run → Edit Configurations… → + → Gradle**. Name it `bootRun`, set *Tasks and arguments* to
+   `bootRun` and *Gradle project* to `shromikai-backend`.
+4. Environment variables go in the same dialog, in the **Environment variables** field (click the
+   list icon to edit them one per line). Copy the values from your `.env`, for example
+   `ANTHROPIC_API_KEY=…;GEMINI_API_KEY=…;JWT_SECRET=…`. IntelliJ does not read `.env` by itself.
+   Leave a value empty if you do not have it yet. Never commit the run configuration with secrets.
+5. Run `bootRun`. The backend listens on <http://localhost:8080>; check
+   <http://localhost:8080/api/v1/meta> and <http://localhost:8080/actuator/health>.
+
+From a terminal instead (make sure `JAVA_HOME` points to JDK 21):
+
+```bash
+cd backend && export JAVA_HOME=$(/usr/libexec/java_home -v 21) && ./gradlew bootRun
+```
+
+### 3. Frontend in VS Code
+
+1. **File → Open Folder…** and choose `frontend/`. Install the suggested *ESLint*, *Prettier* and
+   *Tailwind CSS IntelliSense* extensions.
+2. In the integrated terminal (**Terminal → New Terminal**):
+
+```bash
+npm install
+```
+
+```bash
+npm run dev
+```
+
+3. Open <http://localhost:5173>. Vite forwards `/api` to the backend. The page shows
+   **চালু (সংস্করণ 0.1.0)** when the backend is running, and a Bangla error message with a retry
+   button when it is not.
+
+### Quality gates (what CI runs)
+
+```bash
+cd backend && ./gradlew check
+```
+
+```bash
+cd frontend && npm run lint && npm run typecheck && npm test && npm run build
+```
+
+`./gradlew check` runs unit and integration tests (Testcontainers, so Docker must be running),
+ArchUnit module rules, the JUnit tag rules, the log-key allowlist, `promptLint`, the fixture
+scanner, Spotless and the JaCoCo coverage gates. After an API change, refresh the OpenAPI snapshot
+and the generated frontend types:
+
+```bash
+cd backend && ./gradlew integrationTest --tests '*OpenApiSnapshotIT' -PupdateOpenApi
+```
+
+```bash
+cd frontend && npm run gen:api
+```
+
+The full list of commands, including tests and evaluation, is in
+[AGENTS.md §11](AGENTS.md#11-how-to-run-everything).
 
 ## Repository layout
 

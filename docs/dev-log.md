@@ -71,3 +71,120 @@ Key prompts given to AI tools while building ShromikAI, and what they produced. 
 - **Prompt (to Claude Code):** Apply the 14 fixes from the independent Phase 0 review (Prompt R verdict PASS WITH FIXES) to the specification only, re-check every document, and tag `spec-v1.1`.
 - **Result:** Specification v1.1 and playbook v1.2. The signed envelope holds the re-identified result, and `MemoFromRealResponseIT` renders a memo from a real response. SSE uses a fetch-based client with a Bearer header, and tokens are never accepted in URLs. Free-text law search makes no cloud call, and MCP claims are redacted locally. The 8-token rule now also covers `claimed_claim`. Module-matrix violations are fixed without changing the matrix (`QuoteMatcher` in `shared.text`, the codec signs JSON trees, re-identification goes through `analysis`). The retrieval smoke check is a `retrieval` service. Latency and cost budgets are reconciled: parallel risk batches, counter-offers after verification, output caps, a stated output-speed assumption, NFR-01 split by input kind, and an estimate of about US$0.34 per analysis. Conflicts C13 to C17 are recorded. Metrics M-27 and M-28 are added, and the unassigned tests now have phases. The playbook disclaimer and wording are aligned with the spec, and the outdated PDF is deleted. Traceability gains team-bonus rows and a proof-test column. Three ADRs were added: ADR-0006 (data flow and retention), ADR-0007 (citation origins `MAPPING` and `EXTERNAL`) and ADR-0008 (latency and cost budget). Architecture §18.3 maps each fix to where it landed. No application code changed; `spec-v1` is kept and `spec-v1.1` added.
 - **Open for the team:** output-speed assumptions in architecture §5.3 must be measured in P6; Gemini pricing and the exact Spring AI 1.1.x patch are pinned at P6 and P1.
+
+## 2026-11-10 — P1: Foundation, quality gates and CI
+
+- **Prompt (to Claude Code):** The P1 prompt from the master prompt playbook: audit the Phase 1 foundation (commit `7209544`) against the spec and bring it up to standard (build, profiles, quality gates, AI ports and fakes, problem documents, request IDs, log redaction, meta and health, compose, CI, README), tests first, then the standard phase report.
+- **Result:** The plan (files, dependencies, test list and three decisions where the prompt and the spec disagreed) was approved as recommended: `promptLint` built in P1, a thin Gemini adapter in P1, and springdoc in P1 so the frontend types are generated. Report below.
+
+## Phase report - P1
+
+- **Summary:** The foundation now builds on Spring Boot 3.5.16 and Spring AI 1.1.8 with Claude through the Anthropic Java SDK, behind `ChatPort` and `EmbeddingPort` with deterministic fakes. `./gradlew check` enforces the module matrix, JUnit tags, the log-key allowlist, the prompt standard, the fixture rules, Spotless and JaCoCo. The React app is Bangla first with generated API types, and CI covers the backend, the frontend and fixtures. Phase 1 conflicts C2, C3, C6, C8, C10, C12, C15, C16 and C17 are fixed.
+- **Files created or changed:**
+  - **Backend build:** `build.gradle` (Boot 3.5.16, Spring AI BOM 1.1.8, Anthropic SDK 3.7.0; Spring AI Anthropic starter removed; test tasks `test` / `integrationTest` / `slowTest` / `liveTest` by tag; JaCoCo gates; `promptLint`, `checkFixtures`, `requirementsReport`), `settings.gradle` (foojay toolchain resolver), `gradle.properties`, `Dockerfile` (non-root, `-XX:-HeapDumpOnOutOfMemoryError`).
+  - **Configuration:** `application.yml` with profiles `default`, `dev`, `test`, `fake-models`, `demo`, `prod`, `mcp`. It sets `spring.ai.model.chat: ollama` (C2), has no Claude sampling options (C3), uses a multipart threshold of 11 MB (C12), never pulls models at startup, caps Spring AI retries at 2, and keeps `shromikai.models.*`, providers and fake-model settings.
+  - **Migration:** `V2__foundation.sql`. It adds `law_section.content_hash` and `parser_version`, plus `audit_event` with append-only triggers. Deletes are allowed only for rows older than 12 months, for the retention job.
+  - **`shared` module:**
+    - `SensitiveText`.
+    - `config/` (`ShromikaiProperties`, `StartupGuards`): startup fails if `store-contracts` is true or `prod` and `demo` are active together.
+    - `problem/` (`ProblemType` covering all api.md §7 codes in bn and en, `ProblemException`).
+    - `web/RequestIdFilter`.
+    - `logging/` (`LogKeys`, `LogRedactor`, `AllowlistJsonFormatter`).
+    - `json/JsonSchemas`.
+  - **`shared.ai` module:**
+    - Ports and types: `ChatPort`, `EmbeddingPort`, `EgressGuard`, request and response types, model exceptions.
+    - `internal/FailClosedEgressGuard`, which blocks every cloud call until P5, and `internal/Backoff`.
+    - Cloud adapters: `anthropic/AnthropicChatAdapter` and `gemini/GeminiChatAdapter`.
+    - Ollama: `ollama/` (chat and embedding adapters, health indicator `ollama`).
+    - Fakes: `fake/` (`FakeChatPort`, `FakeEmbeddingPort`, failure modes).
+    - Wiring: `AiConfiguration`.
+  - **Other modules:**
+    - `law`: `CorpusStatsService` and `law.internal.CorpusStatsRepository`.
+    - `api`: `MetaController` and `Meta`. `api.internal` holds `WebConfig` (moved from `bd.shromikai.config`, all methods allowed, C6 and C10), `GlobalProblemHandler`, `ProblemErrorController`, `ProblemFactory` and `OpenApiConfig`.
+    - `trace`: package placeholder.
+    - `prompts/LOCK`.
+  - **Backend tests and tooling (`src/test`):**
+    - Test classes: 14 unit and 8 integration.
+    - `testsupport/` (`@Requirement`, `@IntegrationTest`, the shared pgvector container, `BlockExternalHostsExtension`, tag samples).
+    - `tooling/` (`PromptLint`, `FixtureScanner`, `RequirementsReport`).
+    - Resources: test schemas, the `xx-echo` fixture, `fixtures/canaries.yml`.
+  - **Frontend:**
+    - Config: `package.json` (scripts `lint`, `typecheck`, `test`, `build`, `gen:api`, `check:bundle`), `eslint.config.js` (typescript-eslint strict), `.prettierrc.json`, `vite.config.ts` (Vitest with a 70 % statement gate), `tsconfig*.json`, `.nvmrc`, `.vscode/extensions.json`, `scripts/check-bundle-size.mjs`.
+    - App: `index.html` (no font CDN), `src/App.tsx`, `src/main.tsx`, `src/fonts.ts` (self-hosted Hind Siliguri), `src/i18n/{bn,en}.json`.
+    - API: `src/api/client.ts`, `src/api/openapi.json` (snapshot), `src/api/types.ts` (generated).
+    - Tests: `src/test/` (MSW, setup), `App.test.tsx`, `i18n.test.ts`, `client.test.ts`.
+    - Removed `src/api.ts`.
+  - **Infrastructure:** `docker-compose.yml` (pinned `pgvector/pgvector:0.8.7-pg17` and `ollama/ollama:0.40.16`, health checks, named volumes, configurable `DB_PORT`; C8), `scripts/dev-up.sh`, `scripts/check-fixtures`, `.env.example` (every §12 variable, `ANTHROPIC_MODEL` removed; C16), `.gitignore` (`data/raw/`; C15).
+  - **CI and docs:** `.github/workflows/ci.yml` (jobs `backend`, `frontend`, `fixtures`), README (CI badge, macOS quickstart for IntelliJ and VS Code), ADR-0001 (version log, springdoc moved to P1, Hind Siliguri row), api.md §7 and §11 (`method-not-allowed`, `not-acceptable`, `instance` format, OpenAPI from P1).
+- **Tests added and passing:** 107 backend unit tests in 14 classes, 35 integration tests in 8 classes, and 14 frontend tests in 3 files. All pass.
+  - **Named P1 tests (test-strategy §16):** `ApplicationContextIT` (5), `MetaControllerIT` (3), `ProblemDetailsIT` (8), `RequestIdFilterTest` (5), `LogRedactionTest` (17 including parameterised cases), `HealthIndicatorsIT` (3), `ArchitectureTest` (module matrix, cycles, rules 1 to 7), `TestTaggingRulesTest` (2, including negative samples), `LogAllowlistTest` (3, including a negative sample and a drift check against architecture §15), `FakeChatPortTest` (10), and frontend `App.test.tsx` (5).
+  - **Additional:**
+    - Adapter contract tests: `AnthropicChatAdapterIT` (7: no sampling parameters, `output_config`, effort, `x-api-key` and no Bearer token, refusal-fallback beta on `REASONING`, refusal, invalid JSON, 2 retries, guard blocks before sending), `GeminiChatAdapterIT` (4), `OllamaAdaptersIT` (4).
+    - API and tooling: `OpenApiSnapshotIT`, `PromptLintTest` (11), `FixtureScannerTest` (5), `RequirementsReportTest` (2).
+    - Shared types and infrastructure: `BackoffTest` (4), `StartupGuardsTest` (3), `SharedTypesTest` (5), `FakeEmbeddingPortTest` (2), `BlockExternalHostsExtensionTest` (3).
+    - Frontend: `i18n.test.ts` (4), `client.test.ts` (5).
+  - **Requirement report:** FR-01 to FR-04, NFR-04, NFR-05, NFR-06, NFR-09, NFR-15, NFR-18 and NFR-19 each have at least one test.
+- **Coverage of touched packages:**
+  - **Backend overall: 788/893 lines (88.2 %).** The ≥ 70 % gate passes. The ≥ 80 % package gates for `verify`, `rules`, `privacy`, `retrieval` and `shared.text` apply from the phase that adds code there; those packages are empty.
+
+  | Package | Lines | Coverage |
+  | --- | --- | --- |
+  | `bd.shromikai.api` | 25/25 | 100.0 % |
+  | `bd.shromikai.api.internal` | 133/173 | 76.9 % |
+  | `bd.shromikai.law`, `law.internal` | 16/16 | 100.0 % |
+  | `bd.shromikai.shared` | 10/10 | 100.0 % |
+  | `bd.shromikai.shared.ai` | 57/66 | 86.4 % |
+  | `bd.shromikai.shared.ai.anthropic` | 77/82 | 93.9 % |
+  | `bd.shromikai.shared.ai.fake` | 132/146 | 90.4 % |
+  | `bd.shromikai.shared.ai.gemini` | 64/73 | 87.7 % |
+  | `bd.shromikai.shared.ai.internal` | 20/23 | 87.0 % |
+  | `bd.shromikai.shared.ai.ollama` | 80/89 | 89.9 % |
+  | `bd.shromikai.shared.config` | 10/10 | 100.0 % |
+  | `bd.shromikai.shared.json` | 22/28 | 78.6 % |
+  | `bd.shromikai.shared.logging` | 56/58 | 96.6 % |
+  | `bd.shromikai.shared.problem` | 67/74 | 90.5 % |
+  | `bd.shromikai.shared.web` | 19/20 | 95.0 % |
+
+  - **Frontend:** statements 39/40 (97.5 %), branches 30/32 (93.75 %). The ≥ 70 % gate passes.
+- **Acceptance commands with output** (macOS, JDK 21.0.9, Node 24.15, Docker 29.9):
+  - `cd backend && ./gradlew clean check requirementsReport`: `checkFixtures: OK`, `promptLint: OK`, `test` 107/107, `integrationTest` 35/35 (Testcontainers `pgvector/pgvector:0.8.7-pg17`), `jacocoTestCoverageVerification` and `spotlessCheck` pass, `BUILD SUCCESSFUL in 21s`.
+  - `cd frontend && npm run lint && npm run typecheck && npm test && npm run build && npm run check:bundle`:
+    - lint: `All matched files use Prettier code style!`
+    - tests: `Tests 14 passed (14)`, `Statements: 97.5%`
+    - build: `✓ built`
+    - bundle: `initial JavaScript: 96.8 KB gzip (limit 200 KB)`
+  - **Live run:** `DB_PORT=5433 docker compose up -d db`, because port 5432 was already taken on this machine. The backend ran through Gradle `bootRun` (profile `dev`, `DB_URL` on port 5433) and the frontend through `npm run dev`.
+    - `GET /api/v1/meta` returned the configured model IDs and zero corpus counts.
+    - `GET /actuator/health`: `db` `UP`. `ollama` was `DOWN` with `missingModels: [bge-m3, qwen2.5:7b-instruct]`, because a local Ollama 0.40.15 answered without the models pulled.
+    - An unknown route with `Accept-Language: en` returned a `not-found` problem document.
+    - <http://localhost:5173> showed **চালু (সংস্করণ 0.1.0)** with no console errors.
+  - **Not yet run:** CI on GitHub (nothing pushed), and the IntelliJ run configuration (the backend ran through the same Gradle `bootRun` task from the terminal).
+- **Key decisions and ADRs:**
+  1. **`promptLint` exists from P1.** It checks AGENTS.md §5.3 rules 1, 2 and 4 to 7, the LOCK file and the mirror documents. It is tested on synthetic samples and passes on zero real prompts. Rule 3 (escaping) is tested on `PromptRenderer` in P5.
+  2. **Thin `GeminiChatAdapter` in P1.** It uses JSON mode, temperature 0 and the key in a header, with a WireMock test. `SupportCheckContractTest` stays in P6.
+  3. **springdoc moved from P7 to P1 (ADR-0001).** The frontend types are generated from a committed OpenAPI snapshot. `OpenApiSnapshotIT` and the CI type-drift step keep the snapshot, the API and the types in sync. Every property is required, and JSpecify `@Nullable` components are marked `nullable`.
+  4. **`FailClosedEgressGuard` blocks every cloud call until the privacy module provides the real guard (R-03).** Each cloud adapter requires a guard and calls it before sending. Ollama calls are local and fail closed with `local-model-unavailable`.
+  5. **Log lines carry only the architecture §15 keys, plus redaction.** Project loggers emit message templates, never formatted arguments. Throwables are reduced to `reasonCode` = the exception class name. Third-party messages and all values pass through `LogRedactor` (NID, mobile numbers in both digit forms, e-mail, text over 200 characters).
+  6. **`Problem.instance` is the route template plus `#` plus the request ID, never the raw path.** Raw paths can carry identifiers. Braces are percent-encoded. Two codes were added to api.md §7: `method-not-allowed` (405) and `not-acceptable` (406).
+  7. **`*Test` classes must carry the `unit` tag, and the `test` task includes only `unit`.** An untagged unit test therefore cannot be skipped silently. Test methods outside a `*Test` or `*IT` class fail `TestTaggingRulesTest`.
+  8. **Anthropic SDK 3.7 sends `apiKey` as a Bearer token.** The adapter sets `x-api-key` explicitly, and the contract test asserts that no `Authorization` header is sent.
+  9. **Version log in ADR-0001.** Spring AI 1.1.8, Boot 3.5.16, the SDK, test libraries, image tags and frontend toolchain versions are recorded there. TypeScript moved to 5.9 because MSW 3 needs it. No new ADR: every dependency is in ADR-0001's table.
+- **Known gaps:**
+  - **Test-first order was not strict.** In several places the production code and its tests were written in the same step, with the tests run before integration. DoD item 2 asks for tests before code.
+  - **`ModelGateway`, `PromptRegistry`, `PromptRenderer` and `LlmCallListener` are not built yet.** They arrive with the first prompt (P4/P5). Until then nothing validates and repairs model output in production code, apart from the fakes' fixture validation.
+  - **Cloud calls are impossible until P5 replaces `FailClosedEgressGuard`.** P4 (`query-rewrite`) runs in parallel with P5 and must wait for the guard or coordinate with it.
+  - **The Claude adapter sends the prompt's schema unchanged.** Reducing it to the subset the API accepts (ADR-0005) is left to P4/P6, when real schemas exist.
+  - **`OllamaEmbeddingAdapter` has no per-call timeout of its own.** It relies on the Spring AI HTTP client. Chat calls do enforce the prompt timeout.
+  - **JSpecify `@NullMarked` is not applied package-wide yet.**
+  - **The OpenAPI document keeps a cosmetic `"default": null` on the `Meta` and `MetaCorpus` component schemas.** It comes from springdoc.
+  - **`/api/v1/meta` returns `corpus.release` and `lastRefreshAt` as `null` until P3, and `audit` as `null` until P9.**
+  - **Not done in this session:** `scripts/dev-up.sh` was syntax-checked but not run end to end, because the models are several GB on a slow link. The GitHub Actions run is pending.
+  - **DoD items 10 and 11 are still open:** a human runs the acceptance check, then Prompt R reviews in a fresh session. The `phase-1` tag is created locally as the prompt asks and must be moved if a review fix changes the code.
+- **Open questions for the team:**
+  1. Who runs the P1 acceptance check on their own machine, including the IntelliJ run configuration and `./scripts/dev-up.sh` with the model pulls?
+  2. Shall we push `main` and the `phase-1` tag now so CI runs, before the Prompt R review?
+  3. Port 5432 is taken on the development Mac. Should the default `DB_PORT` stay 5432?
+- **Next phase prerequisites:**
+  - **P2:** `JWT_SECRET` and `DEMO_PASSWORD` in `.env` and the IntelliJ run configuration; React Router is added in P2.
+  - **P3:** a decision on automated fetching (P0 question 4).
+  - **P4/P5:** Ollama models pulled (`./scripts/dev-up.sh`), and the real `EgressGuard` (P5) before any cloud call.
