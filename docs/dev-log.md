@@ -18,3 +18,8 @@ Key prompts given to AI tools while building ShromikAI, and what they produced. 
 
 - **Prompt (to Claude):** Here are screenshots of every tab of the submission form; adjust the project so it scores well and write master prompts we can give one by one.
 - **Result:** Added login + judge test accounts, MCP server, local LLM (Qwen via Ollama) for PII, independent verifier model, rule engine, n8n automation and a live /docs page to the plan. Wrote AGENTS.md, docs/build-prompts.md (11 phase prompts) and docs/submission-map.md.
+
+## 2026-11-10 — Master prompt playbook v1
+
+- **Prompt (to Claude):** Re-read the full participants guide, the judging criteria and the submission-form screenshots; write world-class master prompts (with test cases in code) so we can build the whole project in fresh Claude sessions; deliver as a PDF.
+- **Result:** `docs/playbook/master-prompt-playbook.md` + PDF: usage guide (Bangla), timeline and cut line, judging and form traceability matrix, 13 phase prompts P0–P12 in XML-structured form with named tests and acceptance checks, an independent reviewer prompt (R) and a fix prompt (F).
