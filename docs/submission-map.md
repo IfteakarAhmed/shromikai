@@ -1,5 +1,7 @@
 # Submission form map
 
+> Superseded for planning by the playbook §4 and [`docs/spec/traceability.md`](spec/traceability.md), which map every form section to requirement IDs and evidence. Kept for history with two corrections (MCP tool count, agent-framework wording).
+
 Which part of the build answers each section of the submission form. Tick a box on the form only when the feature is actually built and in the repo — judges can check, and fabricated claims are against the event rules.
 
 ## AI-Native Build (110)
@@ -12,9 +14,9 @@ Which part of the build answers each section of the submission form. Tick a box 
 | How & why LLMs | 5 | Role of each model and why | 7 |
 | Retrieval & RAG | 12 | Vector DB (pgvector), Hybrid search, Knowledge graph, Corrective RAG, Query rewriting | 4, 6 |
 | RAG architecture | 5 | One section = one chunk, RRF fusion, graph expansion, current-version filter | 4 |
-| MCP Usage | 20 | ShromikAI MCP server (3 tools) + MCP servers used during development | 8 |
+| MCP Usage | 20 | ShromikAI MCP server (5 tools, resources, prompt template) + MCP servers used during development | 8 |
 | Open Source Tools | 8 | Spring AI, pgvector, Ollama, Jsoup, PDFBox, Tesseract, n8n, Recharts | all |
-| Agent Frameworks | 7 | Spring AI tool calling; risk agent + verifier with corrective retry | 6 |
+| Agent Frameworks | 7 | Spring AI (Ollama models, MCP server); code-orchestrated state machine with risk agent, counter-offer agent and verifier with corrective retry (agents have no tools) | 6 |
 | Fine-tuning | 5 | Not used (skip honestly) | — |
 | Evaluation & Quality | 7 | Baseline vs ShromikAI, lawyer-reviewed labels, LLM-as-judge, regression runner | 10 |
 | Guardrails & Privacy | 6 | Local PII redaction, no contract storage, schema validation, verifier, abstention | 5–6 |

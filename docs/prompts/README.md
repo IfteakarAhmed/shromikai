@@ -1,17 +1,41 @@
 # Prompt library
 
-All prompts used by ShromikAI at runtime live in this folder, versioned. Each file states its purpose, model, input, output schema and version.
+Every prompt ShromikAI uses at runtime is a versioned file, explained for humans in this folder.
+This page is the index for the team and for the submission form's "Prompt Library" section.
 
-| Prompt | File | Status |
-| --- | --- | --- |
-| Clause classification | `classify-clauses.md` | Phase 4 |
-| Risk analysis agent | `risk-analysis.md` | Phase 5 |
-| Citation support check | `verify-support.md` | Phase 5 |
-| Bangla memo | `memo-bn.md` | Phase 6 |
-| Baseline (comparison only) | `baseline.md` | Phase 8 |
+- **Runtime files:** `backend/src/main/resources/prompts/{id}/v{n}.md`
+- **Output schemas:** `backend/src/main/resources/schemas/llm/{id}.v{n}.schema.json`
+- **Explanations:** `docs/prompts/{id}.md` (one per prompt; required by `promptLint`)
+- **Standard:** [AGENTS.md §5](../../AGENTS.md#5-runtime-prompt-standard) (front matter, `<contract_clause>` isolation, abstention block, lint rules)
+- **Lock file:** `backend/src/main/resources/prompts/LOCK`; released versions never change, a change creates a new version
+- **Model routing:** [ADR-0005](../adr/0005-model-routing.md)
+- **Build prompts** (how the product itself was built): [master prompt playbook](../playbook/master-prompt-playbook.md)
 
-Rules for every prompt:
+## Catalogue
 
-- Output is JSON that matches a schema and is validated in code.
-- Temperature 0.
-- The risk agent may only cite sections from the retrieved list it is given.
+| Prompt | Model role | Model | Purpose | Eval set and metrics | Status |
+| --- | --- | --- | --- | --- | --- |
+| `query-rewrite` | FAST | Claude Haiku 5.5 | 1 to 3 short legal search queries in Bangla and English per clause or failed finding | `retrieval`: M-15 | Planned (P4) |
+| `pii-extract` | LOCAL_PII | qwen2.5:7b-instruct (local) | Persons, organisations, addresses and employee IDs in a text chunk | `pii`: M-25 | Planned (P5) |
+| `clause-segment` | FAST | Claude Haiku 5.5 | Fallback segmentation for unnumbered text | `contracts`: M-23 | Planned (P5) |
+| `clause-classify` | FAST | Claude Haiku 5.5 | Document-type gate; clause type with confidence | `contracts`: M-23 | Planned (P5) |
+| `clause-facts` | FAST | Claude Haiku 5.5 | Typed facts per clause, cross-checked by regex | `contracts`: M-22 | Planned (P6) |
+| `risk-analysis` | REASONING | Claude Sonnet 5.5 | Risk agent (opposing counsel for the user's side): findings with severity, non-obvious flag and citations restricted to retrieved sections | `contracts`: M-06 to M-10 | Planned (P6) |
+| `risk-citation-repair` | REASONING | Claude Sonnet 5.5 | One corrective attempt with new candidates for a citation that failed verification | `contracts`: M-11, M-12 | Planned (P6) |
+| `counter-offer` | REASONING | Claude Sonnet 5.5 | Revised clause that resolves the risk and stays reasonable for both sides | `contracts`: FR-41 checks | Planned (P6) |
+| `verify-support` | VERIFIER | Gemini Flash | Independent judgement: SUPPORTS, PARTIAL, CONTRADICTS or UNRELATED | `citations`: M-04, M-05 | Planned (P6) |
+| `verify-support-claude` | VERIFIER_FALLBACK | Claude Haiku 5.5 | Same judgement when Gemini is unavailable (flagged `SAME_FAMILY`) | `citations`: M-04, M-05 | Planned (P6) |
+| `obligations` | FAST | Claude Haiku 5.5 | Obligations checklist for employer and worker | `contracts`: FR-53 checks | Planned (P7) |
+| `memo-bn` | REASONING | Claude Sonnet 5.5 | Plain-Bangla memo (about grade-8 reading level) | `clarity`: M-21 | Planned (P7) |
+| `memo-en` | REASONING | Claude Sonnet 5.5 | English memo | `contracts` | Planned (P7) |
+| `baseline` | REASONING | Claude Sonnet 5.5 | Plain-LLM baseline for compare mode and evaluation (no retrieval, no verifier) | `contracts`: M-03 | Planned (P7) |
+| `explanation-judge` | JUDGE | Gemini Flash | Clarity rating; used only after calibration against human ratings | `clarity`: M-21, M-26 | Planned (P10) |
+
+## Rules every prompt follows
+
+1. Output is JSON that matches its schema and is validated in code; invalid output gets one repair attempt (R-04).
+2. Contract-derived text appears only inside `<contract_clause>` or `<contract_document>`, escaped, and the system prompt declares it untrusted (R-06).
+3. The model may cite only the statute sections it is given, and must abstain instead of guessing.
+4. Claude prompts set `effort` and never a temperature (the Claude API rejects sampling parameters); local and Gemini prompts use temperature 0.
+5. Few-shot examples, where used, are built from synthetic data only (at most 3).
+6. Every version names the eval set that measures it, and a new version ships with a dev-split eval report.

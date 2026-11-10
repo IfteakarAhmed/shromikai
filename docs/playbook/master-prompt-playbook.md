@@ -1,7 +1,9 @@
 # ShromikAI — Master Prompt Playbook
 
 **International AI Builders Congress 2026 · Team-Built Product · JusticeSphere AI → Legal Copilot · Team Cosmic Duo**
-Version 1.0 · 10 November 2026 · Repository: `github.com/IfteakarAhmed/shromikai`
+Version 1.1 · 10 November 2026 · Repository: `github.com/IfteakarAhmed/shromikai`
+
+> **v1.1:** aligned with the specification `spec-v1` (`AGENTS.md`, `docs/spec/`). Changes from v1.0 are listed in `docs/spec/architecture.md` §18.2: no WEAK status (PARTIAL → UNCERTAIN), Claude through the Anthropic Java SDK, Gemini through a RestClient adapter, server-side PDF through Gotenberg, guest access and `/demo-hr`, honest agent-framework wording. The PDF `ShromikAI-Master-Prompt-Playbook.pdf` is still v1.0; this Markdown file is authoritative.
 
 ---
 
@@ -101,7 +103,7 @@ Version 1.0 · 10 November 2026 · Repository: `github.com/IfteakarAhmed/shromik
 | RAG architecture | ৫ | এক ধারা = এক chunk, RRF fusion, graph expansion, বর্তমান সংস্করণ ফিল্টার | P4 |
 | **MCP Usage** | **২০** | নিজেদের MCP server (৫টা tool) + development-এ ব্যবহৃত MCP server | P8 |
 | Open Source Tools | ৮ | Spring AI, pgvector, Ollama, Jsoup, PDFBox, Tesseract, n8n, Recharts | সব |
-| Agent Frameworks | ৭ | Spring AI tool calling; risk agent, counter-offer agent আর verifier-এর state machine | P6 |
+| Agent Frameworks | ৭ | Spring AI (Ollama মডেল, MCP server); risk agent, counter-offer agent আর verifier-এর state machine (LLM-এর হাতে কোনো tool নেই, AGENTS.md R-06) | P6 |
 | Fine-tuning | ৫ | ব্যবহার করিনি, সৎভাবে খালি রাখব | — |
 | Evaluation | ৭ | Baseline বনাম ShromikAI, আইনজ্ঞের যাচাই করা label, calibrated LLM-as-judge, CI-তে regression | P10 |
 | Guardrails & Privacy | ৬ | লোকাল PII redaction, egress guard, prompt-injection পরীক্ষা, schema validation, verifier, abstention | P5, P6 |
@@ -121,7 +123,7 @@ Version 1.0 · 10 November 2026 · Repository: `github.com/IfteakarAhmed/shromik
 | Visualization ও insight | Recharts; LLM + RAG; rule engine (non-AI); statistical evaluation | P6, P9, P10 |
 | Outbound | REST API + OpenAPI, PDF/JSON export, MCP server | P7, P8 |
 | Governance | Corpus quality রিপোর্ট, lineage (উৎসের URL, hash), trace, প্রতি বিশ্লেষণের খরচ | P3, P6, P7 |
-| **Proof: test credentials** | তিনটা demo account আর one-click `/demo-user`, `/demo-admin` | P2, P9 |
+| **Proof: test credentials** | তিনটা demo account আর one-click `/demo-user`, `/demo-hr`, `/demo-admin` | P2, P9 |
 
 ---
 
@@ -247,7 +249,7 @@ Backend
 - Gradle wrapper, Spring Boot 3.5.x, Java toolchain 21, Spring AI BOM (latest 1.x GA that supports Boot 3.5). Config only in application.yml with profiles: default, dev, test, demo, prod.
 - Quality: Spotless (google-java-format), JaCoCo with per-package gates as defined in test-strategy.md, ArchUnit rules for the module map in AGENTS.md.
 - Flyway V1 schema: law_act, law_section (versioned, vector(1024) embedding, generated tsvector, content_hash, source_url, fetched_at, parser_version), section_edge, analysis_trace, review_item, audit_event. Verify or create.
-- Ports and adapters for AI: ChatPort, EmbeddingPort, with Spring AI adapters and deterministic fakes (FakeChatPort replays fixtures by prompt id; FakeEmbeddingPort returns stable vectors) used in tests. Model ids come from config (shromikai.models.*): claude-sonnet-5-5, claude-haiku-5-5, gemini verifier id, qwen2.5:7b-instruct, bge-m3.
+- Ports and adapters for AI: ChatPort, EmbeddingPort, with provider adapters (Anthropic Java SDK for Claude, a RestClient adapter for Gemini, Spring AI for Ollama; ADR-0005) and deterministic fakes (FakeChatPort replays fixtures by prompt id; FakeEmbeddingPort returns stable vectors) used in tests. Model ids come from config (shromikai.models.*): claude-sonnet-5-5, claude-haiku-5-5, gemini verifier id, qwen2.5:7b-instruct, bge-m3.
 - Cross-cutting: RFC 9457 problem+json error handler; X-Request-Id filter into MDC; JSON structured logging; a log redaction filter that masks NID, phone, email and long free text.
 - GET /api/v1/meta (corpus counts, model ids, build version); actuator health with database and Ollama indicators.
 Infrastructure
@@ -311,12 +313,13 @@ Secure authentication and role-based access, plus one-click demo access for judg
 - Spring Security, stateless JWT: 15-minute access token, rotating refresh token stored hashed, logout revokes it. BCrypt passwords. Package bd.shromikai.auth.
 - Roles WORKER, HR, ADMIN. Flyway migration for app_user and refresh_token.
 - Endpoints: POST /api/v1/auth/login, POST /api/v1/auth/refresh, POST /api/v1/auth/logout, GET /api/v1/auth/me.
+- Guest access for workers without an account: POST /api/v1/auth/guest with a device token issues a 2-hour WORKER token (claim guest: true, no refresh token, no personal data); guest quotas as in PRD FR-09.
 - Demo access, only when the demo profile is active: POST /api/v1/auth/demo/{role} issues tokens for seeded accounts worker@demo.shromikai.app, hr@demo.shromikai.app, admin@demo.shromikai.app. Passwords come from the DEMO_PASSWORD environment variable. Demo accounts cannot change passwords or delete data.
 - Account lockout after 5 failed logins for 15 minutes. Rate limiting with Bucket4j per IP and per user on auth endpoints.
 - audit_event rows for login success and failure, demo login, role-protected access denied, admin actions. Never store contract text.
 - Public: /api/v1/meta, /actuator/health, /api/v1/auth/**. Everything else requires authentication. /api/v1/admin/** and review endpoints require ADMIN. Playbook endpoints require HR or ADMIN.
 - Security headers (CSP, HSTS in prod, X-Content-Type-Options, frame-ancestors none); CORS limited to configured origins.
-- Frontend: Bangla login page with validation; routes /demo-user and /demo-admin perform one-click demo login and land on /app or /admin; protected routes; role-aware navigation; silent token refresh; logout.
+- Frontend: Bangla login page with validation; routes /demo-user, /demo-hr and /demo-admin perform one-click demo login and land on /app or /admin; protected routes; role-aware navigation; silent token refresh; logout.
 </requirements>
 
 <tests>
@@ -324,6 +327,7 @@ Secure authentication and role-based access, plus one-click demo access for judg
 - JwtServiceTest: expiry, tampered signature, wrong issuer.
 - RoleAccessIT (parameterised): WORKER gets 403 on /api/v1/admin/**; HR can reach playbook endpoints; ADMIN can reach everything.
 - DemoLoginIT: endpoint returns 404 without the demo profile; works with it; demo user cannot change password.
+- GuestTokenIT: a guest token reaches /api/v1/analyses but gets 403 on /api/v1/playbooks; the guest quota returns 429.
 - RateLimitIT: the 21st login attempt in a minute from one IP returns 429.
 - AuditEventIT: login success, failure and demo login each write exactly one audit_event without sensitive fields.
 - Frontend: LoginForm validation; /demo-user one-click flow with MSW; protected route redirects to login; logout clears state.
@@ -536,10 +540,10 @@ For each clause, produce risk findings whose citations are either verified again
 3. Counter-offer agent: proposes a revised clause that resolves the risk and stays commercially reasonable for both sides.
 4. Citation verifier (package verify):
    a. Existence: section id exists, belongs to the claimed act and is current.
-   b. Quote match: normalised quote matches the section text (exact substring, or similarity above a configured threshold such as 0.90 on normalised tokens; record the score).
-   c. Support: an independent model (Gemini Flash via Spring AI's Google GenAI support or Gemini's OpenAI-compatible endpoint; if no key, a separate Claude prompt with different instructions) answers SUPPORTS, PARTIAL, CONTRADICTS or UNRELATED with a one-line reason.
-   Decision table: a and b pass + SUPPORTS = VERIFIED; a and b pass + PARTIAL = WEAK; anything else = REJECTED.
-   Corrective loop: on REJECTED, rewrite the query, retrieve again and ask the agent once more. Still rejected: keep the risk as UNCERTAIN without any citation and create a review_item.
+   b. Quote match: normalised quote matches the section text (exact substring, or similarity ≥ 0.92 on normalised characters, configurable; record the score).
+   c. Support: an independent model (Gemini Flash via a RestClient adapter to the Gemini API (ADR-0005); if no key, a separate Claude prompt with different instructions) answers SUPPORTS, PARTIAL, CONTRADICTS or UNRELATED with a one-line reason.
+   Decision table: a and b pass + SUPPORTS (confidence ≥ 0.70) = VERIFIED; a and b pass + PARTIAL, low confidence or verifier unavailable = UNCERTAIN; anything else = REJECTED. There is no WEAK status (ADR-0002).
+   Corrective loop: for a citation that is not VERIFIED, rewrite the query, retrieve again and ask the agent once more. Still rejected: keep the risk as UNCERTAIN without any citation and create a review_item.
 5. Orchestrator: an explicit state machine INTAKE -> CLASSIFY -> RETRIEVE -> RULES -> RISK -> VERIFY -> CORRECT (optional) -> COMPOSE_READY. Each transition writes a trace event (section ids, statuses, model, tokens, latency, cost) and never contract text. Per-step timeouts and a token budget per analysis. Verification runs in parallel on virtual threads.
 6. Merge: deduplicate rule findings and LLM findings; agreement raises confidence; conflicts are flagged for review.
 7. Runtime prompts in backend/src/main/resources/prompts/ with the front matter from AGENTS.md, mirrored with explanations in docs/prompts/. Include two or three few-shot examples built from synthetic data, and an explicit instruction to abstain rather than guess.
@@ -555,7 +559,7 @@ For each clause, produce risk findings whose citations are either verified again
 - RuleEngineTest (table-driven) on extracted facts.
 - OrchestratorStateMachineTest: happy path, step timeout, budget exceeded, verifier unavailable (degrades to UNCERTAIN, never to VERIFIED).
 - GoldenAnalysisIT: the 3 synthetic contracts with recorded model responses produce the expected findings snapshot.
-- LiveSmokeIT (@Tag("live"), needs API keys): one synthetic contract with real models returns at least 3 risks, and every displayed citation is VERIFIED or WEAK.
+- LiveSmokeIT (@Tag("live"), needs API keys): one synthetic contract with real models returns at least 3 risks, and every displayed citation is VERIFIED.
 </tests>
 
 <acceptance>
@@ -590,7 +594,7 @@ Outputs
 - Redline: word-level diff between the original and revised clause (java-diff-utils), with insertions and deletions marked.
 - Obligations export as JSON (per party, per clause, with legal basis).
 - Placeholder names are restored only in the response to the requesting user. The server keeps only the redacted result in memory for at most 30 minutes for the trace view, then deletes it.
-- PDF: Bangla text shaping must be correct. Prefer browser print-to-PDF with a print stylesheet (done in P9); if you generate PDFs on the server, prove correct Bangla shaping with a visual test.
+- PDF: Bangla text shaping must be correct. Render the memo PDF on the server with Gotenberg (headless Chromium) from the signed result envelope (FR-55, ADR-0001) and prove correct Bangla shaping with a visual test; P9 adds a print stylesheet as a fallback.
 Personalisation
 - User profile: side, sector (for example ready-made garments), role, preferred language, reading level.
 - HR playbook: custom rules (for example "our standard probation is 3 months") stored per organisation; deviations are flagged as playbook findings, clearly separate from legal findings.
@@ -606,7 +610,7 @@ Cost and latency
 </requirements>
 
 <tests>
-- MemoComposerContractTest: output validates against the Memo schema; every citation chip refers to a VERIFIED or WEAK citation.
+- MemoComposerContractTest: output validates against the Memo schema; every citation chip refers to a VERIFIED citation.
 - RedlineDiffTest: insertions, deletions, Bangla text, punctuation.
 - PlaybookRuleTest: deviation flagged; playbook findings never presented as legal findings.
 - AnalysesApiIT: multipart and JSON input; synchronous and asynchronous paths; SSE events arrive in order; result expires after the TTL.
@@ -657,7 +661,7 @@ Expose ShromikAI's legal knowledge and verifier as an MCP server, document it, a
 
 <tests>
 - McpToolSchemaTest: every tool is registered with a valid input schema and description.
-- McpServerIT: the official MCP Java SDK client connects, lists 5 tools, calls verify_legal_citation with a real section (VERIFIED or WEAK) and a fake section (REJECTED).
+- McpServerIT: the official MCP Java SDK client connects, lists 5 tools, calls verify_legal_citation with a real section and a supporting claim (VERIFIED) and a fake section (REJECTED).
 - McpAuthIT: missing or wrong key returns 401; a revoked key stops working.
 - McpRateLimitIT: limit enforced per key.
 - McpPrivacyIT: analyze_employment_contract results contain placeholders, not original identifiers.
@@ -691,12 +695,12 @@ Routes
 - / landing (Bangla): problem, how it works, "নমুনা চুক্তি দিয়ে দেখুন" button, demo buttons.
 - /app: upload (file or camera), choose side, SSE progress, results, memo.
 - /app/compare: plain LLM vs ShromikAI side by side; rejected baseline citations highlighted in red with the verifier's reason.
-- /demo-user, /demo-admin: one-click demo login.
+- /demo-user, /demo-hr, /demo-admin: one-click demo login.
 - /admin: review queue (approve or reject, audited), playbooks, users, usage and cost dashboard (Recharts).
 - /docs hub: /docs/architecture (Mermaid diagrams), /docs/data (sources, lineage, corpus quality), /docs/security (privacy shield, auth, threat model), /docs/audit (one-click report generated from the live system: last corpus refresh, model ids, privacy checks, latest eval numbers, open review items), /docs/evaluation (charts from eval JSON), /docs/prompts (prompt library), /docs/pitch, /docs/team.
 Results UI
 - Risk cards: severity, non-obvious tag, plain-Bangla reason.
-- Verification badges with a legend: ✓ যাচাইকৃত (verified), ~ আংশিক (weak), ? অনিশ্চিত (uncertain, sent for review).
+- Verification badges with a legend: ✓ যাচাইকৃত (verified), ? অনিশ্চিত (uncertain, sent for review). There is no weak badge; in compare mode the baseline's rejected citations show ✗ বাতিল (rejected) with the verifier's reason.
 - Citation chip opens the exact section text with the quoted span highlighted and a link to the official source.
 - "কেন?" drawer shows the trace: retrieved sections, checks passed, models used.
 - Redline view, obligations checklist, print stylesheet for a clean Bangla PDF, copy and share.
@@ -705,7 +709,7 @@ Accessibility and reach
 </requirements>
 
 <tests>
-- Vitest + RTL: VerificationBadge (all states and legend), RiskCard, CitationChip highlighting, UploadForm validation (type, size), LowBandwidth toggle, language toggle.
+- Vitest + RTL: VerificationBadge (both states and legend), RiskCard, CitationChip highlighting, UploadForm validation (type, size), LowBandwidth toggle, language toggle.
 - MSW integration: results page renders a recorded analysis; SSE progress messages appear in order.
 - Playwright e2e (backend in the demo profile with fake model fixtures): /demo-user -> sample contract -> results -> memo print view; /app/compare highlights the fake baseline citation; /demo-admin approves a review item.
 - @axe-core/playwright: no serious or critical violations on /, /app, /app/compare, /admin, /docs.
