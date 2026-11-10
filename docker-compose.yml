@@ -1,0 +1,43 @@
+# Local development services: database and the local embedding model.
+# Run the backend (./gradlew bootRun) and frontend (npm run dev) on your machine.
+# Use `docker compose --profile full up` to also run the backend in Docker.
+
+services:
+  db:
+    image: pgvector/pgvector:pg17
+    environment:
+      POSTGRES_DB: shromikai
+      POSTGRES_USER: shromikai
+      POSTGRES_PASSWORD: shromikai
+    ports:
+      - "5432:5432"
+    volumes:
+      - db-data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U shromikai"]
+      interval: 5s
+      retries: 10
+
+  ollama:
+    image: ollama/ollama:latest
+    ports:
+      - "11434:11434"
+    volumes:
+      - ollama-data:/root/.ollama
+
+  backend:
+    profiles: ["full"]
+    build: ./backend
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      DB_URL: jdbc:postgresql://db:5432/shromikai
+      OLLAMA_URL: http://ollama:11434
+      ANTHROPIC_API_KEY: ${ANTHROPIC_API_KEY}
+    ports:
+      - "8080:8080"
+
+volumes:
+  db-data:
+  ollama-data:

@@ -1,0 +1,20 @@
+# Secrets
+.env
+
+# Java
+backend/build/
+backend/.gradle/
+*.class
+.idea/
+*.iml
+
+# Node
+frontend/node_modules/
+frontend/dist/
+
+# Never commit real contracts. Put local test files here.
+eval/private/
+*.contract.pdf
+
+.DS_Store
+*.tsbuildinfo
