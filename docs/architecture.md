@@ -29,14 +29,18 @@ Every legal citation must pass verification before it reaches the user. The rest
 
 ## Build phases
 
-| Phase | Deliverable | Done when |
+Full prompts and acceptance checks: [build-prompts.md](build-prompts.md). Form mapping: [submission-map.md](submission-map.md).
+
+| Phase | Deliverable | Priority |
 | --- | --- | --- |
-| 1 | Repo, schema, compose, frontend shell | App starts, `/api/v1/meta` works |
-| 2 | Law corpus | 5 random sections match the official site |
-| 3 | Retrieval | Correct section in top 5 for most of 20 test questions |
-| 4 | Contract ingest | 5 sample contracts split correctly, no PII sent to LLM |
-| 5 | Risk agent + verifier | ≥3 risks found; planted fake citation is caught |
-| 6 | Memo + API | One API call returns a full Bangla memo |
-| 7 | UI | Full demo flow works in the browser |
-| 8 | Evaluation | Baseline vs ShromikAI results table |
-| 9 | Deploy | Public URL works |
+| 1 | Repo, schema, compose, frontend shell ✅ | must |
+| 2 | Login, roles, judge test accounts | must |
+| 3 | Law corpus with versions and graph | must |
+| 4 | Hybrid retrieval, graph expansion, query rewriting | must |
+| 5 | Contract intake, OCR, local PII redaction | must |
+| 6 | Rule engine, risk agent, 3-check verifier, corrective retry | must |
+| 7 | Bangla memo, PDF, REST API, cost control | must |
+| 8 | MCP server | high points |
+| 9 | Web UI + live /docs page | must |
+| 10 | Evaluation: baseline vs ShromikAI | must |
+| 11 | n8n automation, deploy | must (n8n bonus) |
