@@ -1,0 +1,24 @@
+{
+  "app": {
+    "name": "ShromikAI",
+    "tagline": "Finds the risks in an employment contract and verifies every statute citation.",
+    "disclaimer": "This is not legal advice. Talk to a lawyer before an important decision."
+  },
+  "language": {
+    "switch": "বাংলা",
+    "switchLabel": "Switch the language to Bangla"
+  },
+  "status": {
+    "heading": "System status",
+    "loading": "Loading…",
+    "backend": "Backend",
+    "running": "Running (version {{version}})",
+    "acts": "Acts",
+    "sections": "Sections (current)",
+    "embedded": "Embedded",
+    "count": "{{count}}",
+    "down": "Cannot reach the backend. Check that it is running, then try again.",
+    "error": "The backend reported an error: {{title}}",
+    "retry": "Try again"
+  }
+}

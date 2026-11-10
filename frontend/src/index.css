@@ -1,9 +1,15 @@
-@import "tailwindcss";
+@import 'tailwindcss';
 
 @theme {
-  --font-sans: "Hind Siliguri", ui-sans-serif, system-ui, sans-serif;
+  /* Hind Siliguri is self-hosted (no third-party font request); Noto Sans Bengali is the
+     system fallback (NFR-09). */
+  --font-sans: 'Hind Siliguri', 'Noto Sans Bengali', ui-sans-serif, system-ui, sans-serif;
+}
+
+html {
+  font-size: 100%;
 }
 
 body {
-  @apply bg-stone-50 text-stone-900 antialiased;
+  @apply bg-stone-50 text-base text-stone-900 antialiased;
 }
