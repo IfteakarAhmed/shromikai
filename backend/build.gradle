@@ -1,7 +1,9 @@
 plugins {
     id 'java'
-    id 'org.springframework.boot' version '3.5.6'
+    id 'jacoco'
+    id 'org.springframework.boot' version '3.5.16'
     id 'io.spring.dependency-management' version '1.1.7'
+    id 'com.diffplug.spotless' version '8.11.0'
 }
 
 group = 'bd.shromikai'
@@ -19,7 +21,8 @@ repositories {
 }
 
 ext {
-    set('springAiVersion', '1.0.1')
+    // Latest Spring AI 1.1.x GA patch for Spring Boot 3.5 (ADR-0001 version log, conflict C17).
+    set('springAiVersion', '1.1.8')
 }
 
 dependencyManagement {
@@ -28,30 +31,210 @@ dependencyManagement {
     }
 }
 
+springBoot {
+    // build-info.properties feeds Meta.version (FR-01).
+    buildInfo {
+        properties {
+            // Keep the build reproducible: no build time in the artifact.
+            time = null
+        }
+    }
+}
+
 dependencies {
-    // Web API, validation, health
+    // Web API, validation, health, metrics
     implementation 'org.springframework.boot:spring-boot-starter-web'
     implementation 'org.springframework.boot:spring-boot-starter-validation'
     implementation 'org.springframework.boot:spring-boot-starter-actuator'
+    runtimeOnly 'io.micrometer:micrometer-registry-prometheus'
 
-    // Database: PostgreSQL + pgvector, schema via Flyway
+    // Database: PostgreSQL + pgvector through JdbcClient, schema through Flyway (no JPA)
     implementation 'org.springframework.boot:spring-boot-starter-jdbc'
     implementation 'org.flywaydb:flyway-core'
     implementation 'org.flywaydb:flyway-database-postgresql'
     runtimeOnly 'org.postgresql:postgresql'
 
-    // AI: Claude for reasoning, Ollama (bge-m3) for local multilingual embeddings
-    implementation 'org.springframework.ai:spring-ai-starter-model-anthropic'
+    // AI: Claude through the official Anthropic Java SDK; Ollama chat and embeddings through Spring AI
+    // (ADR-0001, ADR-0005). Gemini uses Spring's RestClient, no extra dependency.
+    implementation 'com.anthropic:anthropic-java:3.7.0'
     implementation 'org.springframework.ai:spring-ai-starter-model-ollama'
 
-    // Law scraping (phase 2) and PDF parsing (phase 4)
+    // JSON Schema 2020-12 validation of model output and API documents (R-04)
+    implementation 'com.networknt:json-schema-validator:1.5.9'
+
+    // OpenAPI document for generated frontend types (AGENTS.md §6)
+    implementation 'org.springdoc:springdoc-openapi-starter-webmvc-ui:2.8.17'
+
+    // Nullness annotations
+    implementation 'org.jspecify:jspecify:1.0.1'
+
+    // Statute ingestion (P3) and contract intake (P5); pinned in Phase 1
     implementation 'org.jsoup:jsoup:1.21.2'
     implementation 'org.apache.pdfbox:pdfbox:3.0.5'
 
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
-    testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+    testImplementation 'org.springframework.boot:spring-boot-testcontainers'
+    testImplementation 'org.testcontainers:junit-jupiter'
+    testImplementation 'org.testcontainers:postgresql'
+    testImplementation 'com.tngtech.archunit:archunit-junit5:1.4.1'
+    testImplementation 'org.wiremock:wiremock-standalone:3.13.2'
+    testImplementation 'org.junit.platform:junit-platform-launcher'
 }
 
-tasks.named('test') {
-    useJUnitPlatform()
+// ---------------------------------------------------------------------------------------------
+// Formatting
+// ---------------------------------------------------------------------------------------------
+spotless {
+    java {
+        target 'src/**/*.java'
+        googleJavaFormat('1.28.0')
+        removeUnusedImports()
+        trimTrailingWhitespace()
+        endWithNewline()
+    }
+}
+
+// ---------------------------------------------------------------------------------------------
+// Test tasks by JUnit tag (docs/spec/test-strategy.md §5). TestTaggingRulesTest keeps the tags honest.
+// ---------------------------------------------------------------------------------------------
+def configureTestTask = { Test task ->
+    task.testClassesDirs = sourceSets.test.output.classesDirs
+    task.classpath = sourceSets.test.runtimeClasspath
+    task.jvmArgs '-XX:+EnableDynamicAgentLoading', '-Dfile.encoding=UTF-8'
+    task.testLogging {
+        events 'failed', 'skipped'
+        exceptionFormat 'full'
+    }
+}
+
+tasks.named('test', Test) { Test t ->
+    configureTestTask(t)
+    useJUnitPlatform { includeTags 'unit' }
+    systemProperty 'shromikai.test.blockExternalHosts', 'true'
+}
+
+def taggedTask = { String name, String tag, boolean blockExternal ->
+    tasks.register(name, Test) { Test t ->
+        description = "Runs tests tagged '${tag}'."
+        group = 'verification'
+        configureTestTask(t)
+        useJUnitPlatform { includeTags tag }
+        systemProperty 'shromikai.test.blockExternalHosts', blockExternal.toString()
+        shouldRunAfter tasks.named('test')
+    }
+}
+
+taggedTask('integrationTest', 'it', true)
+tasks.named('integrationTest', Test) {
+    systemProperty 'shromikai.updateOpenApi', project.hasProperty('updateOpenApi').toString()
+}
+taggedTask('slowTest', 'slow', true)
+taggedTask('liveTest', 'live', false)
+
+// ---------------------------------------------------------------------------------------------
+// Coverage gates (test-strategy.md §15). A package gate applies once the package contains code.
+// ---------------------------------------------------------------------------------------------
+def coverageExcludes = [
+        'bd/shromikai/ShromikAiApplication*',
+        'bd/shromikai/**/*Properties.class',
+        'bd/shromikai/**/*Properties$*.class',
+]
+
+jacoco {
+    toolVersion = '0.8.13'
+}
+
+def jacocoClassDirs = files(sourceSets.main.output.classesDirs.collect {
+    fileTree(dir: it, excludes: coverageExcludes)
+})
+
+tasks.named('jacocoTestReport', JacocoReport) {
+    dependsOn tasks.named('test'), tasks.named('integrationTest')
+    executionData.from(fileTree(layout.buildDirectory.dir('jacoco')).include('test.exec', 'integrationTest.exec'))
+    classDirectories.setFrom(jacocoClassDirs)
+    reports {
+        xml.required = true
+        html.required = true
+    }
+}
+
+tasks.named('jacocoTestCoverageVerification', JacocoCoverageVerification) {
+    dependsOn tasks.named('test'), tasks.named('integrationTest')
+    executionData.from(fileTree(layout.buildDirectory.dir('jacoco')).include('test.exec', 'integrationTest.exec'))
+    classDirectories.setFrom(jacocoClassDirs)
+    violationRules {
+        rule {
+            element = 'BUNDLE'
+            limit {
+                counter = 'LINE'
+                minimum = 0.70
+            }
+        }
+        rule {
+            element = 'PACKAGE'
+            includes = [
+                    'bd.shromikai.verify', 'bd.shromikai.verify.*',
+                    'bd.shromikai.rules', 'bd.shromikai.rules.*',
+                    'bd.shromikai.privacy', 'bd.shromikai.privacy.*',
+                    'bd.shromikai.retrieval', 'bd.shromikai.retrieval.*',
+                    'bd.shromikai.shared.text', 'bd.shromikai.shared.text.*',
+            ]
+            limit {
+                counter = 'LINE'
+                minimum = 0.80
+            }
+        }
+    }
+}
+
+// ---------------------------------------------------------------------------------------------
+// Repository tooling that runs from the test classpath: prompt lint (AGENTS.md §5), fixture
+// scanner (R-02, test-strategy.md §13) and the requirement report (test-strategy.md §18).
+// ---------------------------------------------------------------------------------------------
+def repoRoot = rootProject.projectDir.parentFile
+
+def toolTask = { String name, String mainClassName, String taskDescription, List<String> toolArgs ->
+    tasks.register(name, JavaExec) {
+        description = taskDescription
+        group = 'verification'
+        dependsOn tasks.named('testClasses')
+        classpath = sourceSets.test.runtimeClasspath
+        mainClass = mainClassName
+        args toolArgs
+        javaLauncher = javaToolchains.launcherFor { languageVersion = JavaLanguageVersion.of(21) }
+    }
+}
+
+toolTask('promptLint', 'bd.shromikai.tooling.PromptLint',
+        'Checks runtime prompts, output schemas, mirror docs and the LOCK file (AGENTS.md §5).', [
+        file('src/main/resources').absolutePath,
+        new File(repoRoot, 'docs').absolutePath,
+])
+
+toolTask('checkFixtures', 'bd.shromikai.tooling.FixtureScanner',
+        'Checks test fixtures for provenance, schema validity and PII outside canaries.yml (R-02).', [
+        file('src/test/resources').absolutePath,
+        file('src/main/resources').absolutePath,
+])
+
+toolTask('requirementsReport', 'bd.shromikai.tooling.RequirementsReport',
+        'Writes build/reports/requirements.md (requirement -> tests).', [
+        file('src/test/java').absolutePath,
+        new File(repoRoot, 'frontend/src').absolutePath,
+        layout.buildDirectory.file('reports/requirements.md').get().asFile.absolutePath,
+])
+
+tasks.named('check') {
+    dependsOn tasks.named('integrationTest'),
+            tasks.named('jacocoTestCoverageVerification'),
+            tasks.named('promptLint'),
+            tasks.named('checkFixtures')
+}
+
+tasks.named('bootJar') {
+    archiveFileName = 'shromikai-backend.jar'
+}
+
+tasks.named('jar') {
+    enabled = false
 }

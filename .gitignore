@@ -1,5 +1,7 @@
 # Secrets
 .env
+.env.*
+!.env.example
 
 # Java
 backend/build/
@@ -7,14 +9,21 @@ backend/.gradle/
 *.class
 .idea/
 *.iml
+out/
 
 # Node
 frontend/node_modules/
 frontend/dist/
+frontend/coverage/
+frontend/playwright-report/
+frontend/test-results/
 
 # Never commit real contracts. Put local test files here.
 eval/private/
 *.contract.pdf
+
+# Scraped statute pages stay local (FR-12, test-strategy.md §13, conflict C15).
+data/raw/
 
 .DS_Store
 *.tsbuildinfo

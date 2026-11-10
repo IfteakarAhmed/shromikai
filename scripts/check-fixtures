@@ -1,0 +1,6 @@
+#!/usr/bin/env bash
+# Fixture scanner (R-02, test-strategy.md §13): provenance, recorded-response schemas and PII
+# outside fixtures/canaries.yml. Also runs as part of ./gradlew check.
+set -euo pipefail
+cd "$(dirname "$0")/../backend"
+exec ./gradlew --quiet checkFixtures

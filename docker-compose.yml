@@ -1,29 +1,44 @@
-# Local development services: database and the local embedding model.
-# Run the backend (./gradlew bootRun) and frontend (npm run dev) on your machine.
-# Use `docker compose --profile full up` to also run the backend in Docker.
+# Local development services (architecture §16.1). Run the backend (IntelliJ or ./gradlew bootRun)
+# and the frontend (npm run dev) on your machine; `docker compose --profile full up` also runs the
+# backend in Docker. Image tags are pinned (ADR-0001: no floating tags).
+
+name: shromikai
 
 services:
   db:
-    image: pgvector/pgvector:pg17
+    image: pgvector/pgvector:0.8.7-pg17
     environment:
       POSTGRES_DB: shromikai
-      POSTGRES_USER: shromikai
-      POSTGRES_PASSWORD: shromikai
+      POSTGRES_USER: ${DB_USER:-shromikai}
+      POSTGRES_PASSWORD: ${DB_PASSWORD:-shromikai}
     ports:
-      - "5432:5432"
+      - "127.0.0.1:${DB_PORT:-5432}:5432"
     volumes:
       - db-data:/var/lib/postgresql/data
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U shromikai"]
+      test: ["CMD-SHELL", "pg_isready -U $${POSTGRES_USER} -d shromikai"]
       interval: 5s
-      retries: 10
+      timeout: 5s
+      retries: 20
+    restart: unless-stopped
 
   ollama:
-    image: ollama/ollama:latest
+    image: ollama/ollama:0.40.16
+    environment:
+      OLLAMA_NUM_PARALLEL: "4"
+      OLLAMA_KEEP_ALIVE: "30m"
     ports:
-      - "11434:11434"
+      - "127.0.0.1:11434:11434"
     volumes:
       - ollama-data:/root/.ollama
+    healthcheck:
+      # The image has no curl; `ollama list` talks to the local server.
+      test: ["CMD", "ollama", "list"]
+      interval: 10s
+      timeout: 5s
+      retries: 30
+      start_period: 10s
+    restart: unless-stopped
 
   backend:
     profiles: ["full"]
@@ -31,12 +46,19 @@ services:
     depends_on:
       db:
         condition: service_healthy
+      ollama:
+        condition: service_healthy
     environment:
       DB_URL: jdbc:postgresql://db:5432/shromikai
+      DB_USER: ${DB_USER:-shromikai}
+      DB_PASSWORD: ${DB_PASSWORD:-shromikai}
       OLLAMA_URL: http://ollama:11434
-      ANTHROPIC_API_KEY: ${ANTHROPIC_API_KEY}
+      ANTHROPIC_API_KEY: ${ANTHROPIC_API_KEY:-}
+      GEMINI_API_KEY: ${GEMINI_API_KEY:-}
+      GEMINI_MODEL: ${GEMINI_MODEL:-}
+      CORS_ORIGINS: ${CORS_ORIGINS:-http://localhost:5173}
     ports:
-      - "8080:8080"
+      - "127.0.0.1:8080:8080"
 
 volumes:
   db-data:

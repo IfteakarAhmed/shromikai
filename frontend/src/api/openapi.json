@@ -1,0 +1,123 @@
+{
+  "components" : {
+    "schemas" : {
+      "Meta" : {
+        "default" : null,
+        "properties" : {
+          "audit" : {
+            "nullable" : true,
+            "type" : "object"
+          },
+          "corpus" : {
+            "$ref" : "#/components/schemas/MetaCorpus"
+          },
+          "models" : {
+            "$ref" : "#/components/schemas/MetaModels"
+          },
+          "name" : {
+            "type" : "string"
+          },
+          "version" : {
+            "type" : "string"
+          }
+        },
+        "required" : [ "audit", "corpus", "models", "name", "version" ],
+        "type" : "object"
+      },
+      "MetaCorpus" : {
+        "default" : null,
+        "properties" : {
+          "acts" : {
+            "format" : "int64",
+            "type" : "integer"
+          },
+          "currentSections" : {
+            "format" : "int64",
+            "type" : "integer"
+          },
+          "embeddedSections" : {
+            "format" : "int64",
+            "type" : "integer"
+          },
+          "lastRefreshAt" : {
+            "format" : "date-time",
+            "nullable" : true,
+            "type" : "string"
+          },
+          "release" : {
+            "nullable" : true,
+            "type" : "string"
+          },
+          "sections" : {
+            "format" : "int64",
+            "type" : "integer"
+          }
+        },
+        "required" : [ "acts", "currentSections", "embeddedSections", "lastRefreshAt", "release", "sections" ],
+        "type" : "object"
+      },
+      "MetaModels" : {
+        "default" : null,
+        "properties" : {
+          "embedding" : {
+            "type" : "string"
+          },
+          "fast" : {
+            "type" : "string"
+          },
+          "judge" : {
+            "nullable" : true,
+            "type" : "string"
+          },
+          "localPii" : {
+            "type" : "string"
+          },
+          "reasoning" : {
+            "type" : "string"
+          },
+          "verifier" : {
+            "nullable" : true,
+            "type" : "string"
+          },
+          "verifierFallback" : {
+            "type" : "string"
+          }
+        },
+        "required" : [ "embedding", "fast", "judge", "localPii", "reasoning", "verifier", "verifierFallback" ],
+        "type" : "object"
+      }
+    }
+  },
+  "info" : {
+    "description" : "Verified employment-contract intelligence for Bangladesh. Not legal advice (এটা আইনি পরামর্শ নয়).",
+    "license" : {
+      "name" : "Proprietary"
+    },
+    "title" : "ShromikAI API",
+    "version" : "v1"
+  },
+  "openapi" : "3.0.1",
+  "paths" : {
+    "/api/v1/meta" : {
+      "get" : {
+        "operationId" : "meta",
+        "responses" : {
+          "200" : {
+            "content" : {
+              "*/*" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/Meta"
+                }
+              }
+            },
+            "description" : "OK"
+          }
+        },
+        "tags" : [ "meta-controller" ]
+      }
+    }
+  },
+  "servers" : [ {
+    "url" : "/"
+  } ]
+}

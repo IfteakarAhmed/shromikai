@@ -1,0 +1,70 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:shromikai:schema:meta:1",
+  "description": "Meta (docs/spec/api.md §3, E-01). audit is null until P9.",
+  "type": "object",
+  "required": ["name", "version", "models", "corpus", "audit"],
+  "additionalProperties": false,
+  "properties": {
+    "name": { "const": "ShromikAI" },
+    "version": { "type": "string", "minLength": 1 },
+    "models": {
+      "type": "object",
+      "required": ["reasoning", "fast", "verifier", "verifierFallback", "judge", "localPii", "embedding"],
+      "additionalProperties": false,
+      "properties": {
+        "reasoning": { "type": "string", "minLength": 1 },
+        "fast": { "type": "string", "minLength": 1 },
+        "verifier": { "type": ["string", "null"] },
+        "verifierFallback": { "type": "string", "minLength": 1 },
+        "judge": { "type": ["string", "null"] },
+        "localPii": { "type": "string", "minLength": 1 },
+        "embedding": { "type": "string", "minLength": 1 }
+      }
+    },
+    "corpus": {
+      "type": "object",
+      "required": ["release", "acts", "sections", "currentSections", "embeddedSections", "lastRefreshAt"],
+      "additionalProperties": false,
+      "properties": {
+        "release": { "type": ["string", "null"] },
+        "acts": { "type": "integer", "minimum": 0 },
+        "sections": { "type": "integer", "minimum": 0 },
+        "currentSections": { "type": "integer", "minimum": 0 },
+        "embeddedSections": { "type": "integer", "minimum": 0 },
+        "lastRefreshAt": { "type": ["string", "null"], "format": "date-time" }
+      }
+    },
+    "audit": {
+      "oneOf": [
+        { "type": "null" },
+        {
+          "type": "object",
+          "required": ["privacyBlocksLast7Days", "openReviewItems", "latestEval"],
+          "additionalProperties": false,
+          "properties": {
+            "privacyBlocksLast7Days": { "type": "integer", "minimum": 0 },
+            "openReviewItems": { "type": "integer", "minimum": 0 },
+            "latestEval": {
+              "oneOf": [
+                { "type": "null" },
+                {
+                  "type": "object",
+                  "required": ["reportDate", "cases", "citationPrecision", "fabricatedCitationsShown", "riskRecall"],
+                  "additionalProperties": false,
+                  "properties": {
+                    "reportDate": { "type": "string" },
+                    "cases": { "type": "integer" },
+                    "citationPrecision": { "type": "number" },
+                    "fabricatedCitationsShown": { "type": "integer" },
+                    "riskRecall": { "type": "number" }
+                  }
+                }
+              ]
+            }
+          }
+        }
+      ]
+    }
+  }
+}

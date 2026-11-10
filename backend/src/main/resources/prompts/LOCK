@@ -1,0 +1,2 @@
+# Released prompt versions: {id} v{n} {sha256 of prompts/{id}/v{n}.md}. promptLint fails if a
+# listed file changes; a change creates v{n+1} (AGENTS.md §5.1, R-05).

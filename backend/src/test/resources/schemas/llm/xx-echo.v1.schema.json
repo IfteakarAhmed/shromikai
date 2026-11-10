@@ -1,0 +1,11 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:shromikai:schema:llm:xx-echo:1",
+  "description": "Test-only prompt of the fictional pack xx: echoes its input.",
+  "type": "object",
+  "required": ["echo"],
+  "additionalProperties": false,
+  "properties": {
+    "echo": { "type": "string" }
+  }
+}

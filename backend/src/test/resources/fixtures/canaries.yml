@@ -1,0 +1,9 @@
+# Synthetic PII values that fixtures may contain (test-strategy.md §10, §13). Every value is
+# invented. The fixture scanner rejects any NID, phone or e-mail match in fixtures that is not
+# listed here. Contract fixtures (P5) repeat the marker in 3 clauses.
+marker_prefix: ZQXJ-CANARY-
+values:
+  persons: []
+  nids: []
+  phones: []
+  emails: []

@@ -1,9 +1,21 @@
+# ShromikAI configuration (architecture §12). Values come from environment variables only for
+# secrets and deployment addresses; everything else lives here. Profiles: default, dev, test,
+# demo, prod, mcp, fake-models (architecture §16.3).
+
 server:
   port: 8080
+  error:
+    include-stacktrace: never
+    include-message: never
+    whitelabel:
+      enabled: false
 
 spring:
   application:
     name: shromikai
+  threads:
+    virtual:
+      enabled: true
   datasource:
     url: ${DB_URL:jdbc:postgresql://localhost:5432/shromikai}
     username: ${DB_USER:shromikai}
@@ -14,39 +26,156 @@ spring:
     multipart:
       max-file-size: 10MB
       max-request-size: 10MB
+      file-size-threshold: 11MB           # keep uploads in memory, never in temp files (R-02, C12)
+  mvc:
+    problemdetails:
+      enabled: false                      # GlobalProblemHandler owns every error document
+  web:
+    resources:
+      add-mappings: false                 # unknown routes become not-found problems
+  jackson:
+    default-property-inclusion: always    # optional fields are present with null (api.md §1)
   ai:
-    anthropic:
-      api-key: ${ANTHROPIC_API_KEY:missing}
+    retry:                                # Spring AI Ollama calls: at most 2 retries from 500 ms (AGENTS.md §6)
+      max-attempts: 3
+      on-client-errors: false
+      backoff:
+        initial-interval: 500ms
+        multiplier: 2
+        max-interval: 2s
+    model:
+      chat: ollama                        # Spring AI chat is Ollama only; Claude uses the Anthropic SDK (C2)
+      embedding: ollama
+    ollama:
+      base-url: ${shromikai.ollama.base-url}
+      init:
+        pull-model-strategy: never        # scripts/dev-up.sh pulls models; startup never downloads
       chat:
         options:
-          model: ${ANTHROPIC_MODEL:claude-sonnet-5-5}
+          model: ${shromikai.models.local-pii}
           temperature: 0.0
-          max-tokens: 4096
-    ollama:
-      base-url: ${OLLAMA_URL:http://localhost:11434}
-      init:
-        pull-model-strategy: when_missing
       embedding:
         options:
-          model: bge-m3
-    # Only Claude is used for chat; Ollama (local, bge-m3) is used for embeddings only.
-    model:
-      chat: anthropic
-      embedding: ollama
+          model: ${shromikai.models.embedding}
+
+logging:
+  structured:
+    format:
+      console: bd.shromikai.shared.logging.AllowlistJsonFormatter
+  level:
+    root: INFO
 
 management:
   endpoints:
     web:
       exposure:
         include: health,info
+  endpoint:
+    health:
+      show-components: always
+      show-details: never
+
+springdoc:
+  api-docs:
+    path: /v3/api-docs
+    version: openapi_3_0
+  swagger-ui:
+    path: /swagger-ui
+  paths-to-match: /api/**
 
 shromikai:
+  models:
+    reasoning: claude-sonnet-5-5
+    fast: claude-haiku-5-5
+    verifier: ${GEMINI_MODEL:}            # empty: verifier-fallback is used
+    verifier-fallback: claude-haiku-5-5
+    judge: ${GEMINI_MODEL:}
+    local-pii: qwen2.5:7b-instruct
+    embedding: bge-m3
+  privacy:
+    store-contracts: false                # startup fails if true (R-02)
+    redact-money: false                   # ADR-0003
   cors:
     allowed-origins: ${CORS_ORIGINS:http://localhost:5173}
-  privacy:
-    # Contracts are processed in memory and never written to the database or logs.
-    store-contracts: false
+  ollama:
+    base-url: ${OLLAMA_URL:http://localhost:11434}
+    health-timeout: 2s
+  providers:
+    anthropic:
+      api-key: ${ANTHROPIC_API_KEY:}
+      base-url: https://api.anthropic.com
+    gemini:
+      api-key: ${GEMINI_API_KEY:}
+      base-url: https://generativelanguage.googleapis.com
+  fake-models:
+    fixtures: classpath:fixtures/llm
+    default-case: default
 
+---
+spring:
+  config:
+    activate:
+      on-profile: dev
 logging:
   level:
-    root: INFO
+    bd.shromikai: DEBUG
+management:
+  endpoint:
+    health:
+      show-details: always
+
+---
+# CI and integration tests: fakes only, no network egress (test-strategy.md §5).
+spring:
+  config:
+    activate:
+      on-profile: test
+  ai:
+    model:
+      chat: none
+      embedding: none
+springdoc:
+  paths-to-exclude: /api/v1/test-probe/**   # test-only controller stays out of the snapshot
+shromikai:
+  ollama:
+    health-timeout: 500ms
+
+---
+# Recorded fixtures only; results are labelled "recorded" (architecture §16.3).
+spring:
+  config:
+    activate:
+      on-profile: fake-models
+  ai:
+    model:
+      chat: none
+      embedding: none
+
+---
+# Judging deployment: real models, seeded demo accounts (P2).
+spring:
+  config:
+    activate:
+      on-profile: demo
+
+---
+# Real deployment. Refuses to start together with demo (StartupGuards).
+spring:
+  config:
+    activate:
+      on-profile: prod
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,prometheus
+springdoc:
+  swagger-ui:
+    enabled: true
+
+---
+# MCP server over Streamable HTTP at /mcp (P8, ADR-0001).
+spring:
+  config:
+    activate:
+      on-profile: mcp

@@ -1,0 +1,12 @@
+{
+  "fixtureVersion": 1,
+  "promptId": "xx-echo",
+  "promptVersion": 1,
+  "caseId": "default",
+  "modelId": "claude-haiku-5-5",
+  "requestSha256": "de5740ed4982cd3da3009c2280f84e3b080df4d5ebb9cee66b5022812210d590",
+  "provenance": "synthetic",
+  "recordedAt": "2026-11-10T09:30:00.000Z",
+  "usage": { "inputTokens": 12, "outputTokens": 5, "cacheReadTokens": 0 },
+  "response": { "echo": "hello" }
+}
