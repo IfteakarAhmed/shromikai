@@ -5,6 +5,7 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import bd.shromikai.shared.ai.ChatRequest;
 import bd.shromikai.shared.ai.ModelRole;
+import bd.shromikai.shared.ai.UpstreamUnavailableException;
 import bd.shromikai.shared.problem.ProblemException;
 import bd.shromikai.shared.problem.ProblemType;
 import bd.shromikai.testsupport.Requirement;
@@ -100,5 +101,15 @@ class SharedTypesTest {
         Duration.ofSeconds(5),
         null,
         null);
+  }
+
+  @Test
+  void shouldKeepReasonCodeOutOfClientDetail_whenModelCallFails() {
+    UpstreamUnavailableException e = new UpstreamUnavailableException("gemini-http-503", 503, 9);
+
+    assertThat(e.detail()).isNull();
+    assertThat(e.reasonCode()).isEqualTo("gemini-http-503");
+    assertThat(e.retryAfterSeconds()).isEqualTo(9);
+    assertThat(e.type()).isEqualTo(ProblemType.UPSTREAM_UNAVAILABLE);
   }
 }

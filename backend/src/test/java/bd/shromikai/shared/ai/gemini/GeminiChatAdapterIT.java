@@ -16,11 +16,13 @@ import bd.shromikai.shared.ai.ChatResponse;
 import bd.shromikai.shared.ai.EgressBlockedException;
 import bd.shromikai.shared.ai.ModelOutputInvalidException;
 import bd.shromikai.shared.ai.ModelRefusedException;
+import bd.shromikai.shared.ai.ModelRequestRejectedException;
 import bd.shromikai.shared.ai.ModelRole;
 import bd.shromikai.shared.ai.UpstreamUnavailableException;
 import bd.shromikai.shared.ai.internal.Backoff;
 import bd.shromikai.shared.ai.internal.FailClosedEgressGuard;
 import bd.shromikai.shared.config.ShromikaiProperties;
+import bd.shromikai.shared.problem.ProblemType;
 import bd.shromikai.testsupport.Requirement;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -60,7 +62,11 @@ class GeminiChatAdapterIT {
         "gemini-test",
         "You echo the input as JSON.",
         SensitiveText.of("hello"),
-        mapper.createObjectNode().put("type", "object"),
+        mapper
+            .createObjectNode()
+            .put("$schema", "https://json-schema.org/draft/2020-12/schema")
+            .put("$id", "urn:shromikai:schema:llm:xx-echo:1")
+            .put("type", "object"),
         64,
         Duration.ofSeconds(5),
         null,
@@ -92,6 +98,8 @@ class GeminiChatAdapterIT {
     assertThat(body.at("/generationConfig/responseMimeType").asText())
         .isEqualTo("application/json");
     assertThat(body.at("/generationConfig/responseJsonSchema/type").asText()).isEqualTo("object");
+    assertThat(body.at("/generationConfig/responseJsonSchema").has("$schema")).isFalse();
+    assertThat(body.at("/generationConfig/responseJsonSchema").has("$id")).isFalse();
     assertThat(body.at("/generationConfig/temperature").asDouble()).isZero();
     assertThat(body.at("/contents/0/parts/0/text").asText()).isEqualTo("hello");
     assertThat(adapter.provider()).isEqualTo("gemini");
@@ -106,6 +114,35 @@ class GeminiChatAdapterIT {
     gemini.verify(
         3,
         postRequestedFor(urlPathEqualTo(PATH)).withHeader("x-goog-api-key", equalTo("gemini-key")));
+  }
+
+  @Test
+  void shouldPassRetryAfterThrough_whenServiceIsUnavailable() {
+    gemini.stubFor(
+        post(urlPathEqualTo(PATH))
+            .willReturn(aResponse().withStatus(503).withHeader("Retry-After", "9")));
+
+    assertThatThrownBy(() -> adapter.call(request()))
+        .isInstanceOfSatisfying(
+            UpstreamUnavailableException.class,
+            e -> {
+              assertThat(e.retryAfterSeconds()).isEqualTo(9);
+              assertThat(e.detail()).isNull();
+            });
+  }
+
+  @Test
+  void shouldMapClientError_toInternalErrorWithoutRetry() {
+    gemini.stubFor(post(urlPathEqualTo(PATH)).willReturn(aResponse().withStatus(400)));
+
+    assertThatThrownBy(() -> adapter.call(request()))
+        .isInstanceOfSatisfying(
+            ModelRequestRejectedException.class,
+            e -> {
+              assertThat(e.type()).isEqualTo(ProblemType.INTERNAL_ERROR);
+              assertThat(e.httpStatus()).isEqualTo(400);
+            });
+    gemini.verify(1, postRequestedFor(urlPathEqualTo(PATH)));
   }
 
   @Test

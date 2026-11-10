@@ -3,6 +3,7 @@ package bd.shromikai.shared.web;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import bd.shromikai.testsupport.Requirement;
+import jakarta.servlet.DispatcherType;
 import jakarta.servlet.FilterChain;
 import java.util.UUID;
 import java.util.concurrent.atomic.AtomicReference;
@@ -72,5 +73,21 @@ class RequestIdFilterTest {
     String first = RequestIdFilter.currentOf(request);
 
     assertThat(RequestIdFilter.currentOf(request)).isEqualTo(first);
+  }
+
+  @Test
+  void shouldReuseRequestId_whenErrorDispatchFollowsTheRequest() throws Exception {
+    MockHttpServletRequest request = new MockHttpServletRequest("GET", "/api/v1/meta");
+    filter.doFilter(request, new MockHttpServletResponse(), (req, res) -> {});
+    String original = RequestIdFilter.currentOf(request);
+    request.setDispatcherType(DispatcherType.ERROR);
+    MockHttpServletResponse errorResponse = new MockHttpServletResponse();
+    AtomicReference<String> seen = new AtomicReference<>();
+
+    filter.doFilter(request, errorResponse, (req, res) -> seen.set(MDC.get("requestId")));
+
+    assertThat(errorResponse.getHeader("X-Request-Id")).isEqualTo(original);
+    assertThat(RequestIdFilter.currentOf(request)).isEqualTo(original);
+    assertThat(seen).hasValue(original);
   }
 }

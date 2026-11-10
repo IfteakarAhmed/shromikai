@@ -68,9 +68,7 @@ dependencies {
     // Nullness annotations
     implementation 'org.jspecify:jspecify:1.0.1'
 
-    // Statute ingestion (P3) and contract intake (P5); pinned in Phase 1
-    implementation 'org.jsoup:jsoup:1.21.2'
-    implementation 'org.apache.pdfbox:pdfbox:3.0.5'
+    // jsoup (statute ingestion) and PDFBox (contract intake) arrive with P3 and P5, which use them.
 
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
     testImplementation 'org.springframework.boot:spring-boot-testcontainers'

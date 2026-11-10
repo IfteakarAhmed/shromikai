@@ -53,11 +53,24 @@ public record ShromikaiProperties(
 
   public record Providers(@Valid @NotNull Provider anthropic, @Valid @NotNull Provider gemini) {}
 
-  /** A cloud provider endpoint. An empty API key leaves the adapter unconfigured. */
+  /**
+   * A cloud provider endpoint. An empty API key leaves the adapter unconfigured. {@link
+   * #toString()} masks the key, so printing the settings (or any record that holds them) never
+   * leaks it.
+   */
   public record Provider(@Nullable String apiKey, @NotBlank String baseUrl) {
 
     public boolean configured() {
       return apiKey != null && !apiKey.isBlank();
+    }
+
+    @Override
+    public String toString() {
+      return "Provider[apiKey="
+          + (configured() ? "[MASKED]" : "[UNSET]")
+          + ", baseUrl="
+          + baseUrl
+          + "]";
     }
   }
 

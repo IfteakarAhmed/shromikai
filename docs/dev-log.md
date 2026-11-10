@@ -188,3 +188,27 @@ Key prompts given to AI tools while building ShromikAI, and what they produced. 
   - **P2:** `JWT_SECRET` and `DEMO_PASSWORD` in `.env` and the IntelliJ run configuration; React Router is added in P2.
   - **P3:** a decision on automated fetching (P0 question 4).
   - **P4/P5:** Ollama models pulled (`./scripts/dev-up.sh`), and the real `EgressGuard` (P5) before any cloud call.
+
+## Fix report - P1 review (PASS WITH FIXES, 11 items)
+- **Root cause:** the P1 code was checked against the happy path. Nothing asserted the edge cases
+  the review found: separated phone digits, framework statuses without a specific code, the
+  ERROR dispatch, client-facing reason codes, `$ref` nullability. Each fix starts with a test for it.
+- **Fixes (test first; every new test failed before its fix):**
+  1. `LogRedactor` accepts a space or hyphen after `+880` and between digit groups. `LogRedactionTest` covers 5 formats in Latin and Bangla digits. `FixtureScannerTest` rejects `+880 1712-345678` (FR-03, R-02).
+  2. Rule 3 now covers only `com.anthropic..` and Spring AI `chat`, `embedding`, `model` and `ollama`. `shouldAllowMcp_toUseSpringAiMcpAndToolTypes` passes, using a test-only `org.springframework.ai.mcp` stand-in (NFR-15; unblocks P8).
+  3. `createResponseEntity` and `/error` keep the framework status. `ResponseStatusException(409)` now returns 409 with code `validation-failed`, where it used to return 400 (FR-02).
+  4. `ShromikaiProperties.Provider.toString()` masks the key. `ShromikaiPropertiesTest` covers `Provider`, `Providers` and `ShromikaiProperties`.
+  5. `RequestIdFilter` reuses the request attribute on ERROR dispatch. `ProblemDetailsIT.shouldKeepTheRequestId_whenAFilterThrows` checks that the header, `traceId` and the MDC ID seen by the failing filter are all equal (FR-03).
+  6. `ArchitectureTest` builds every rule per root package. Samples in `testsupport.archsamples` violate each rule, and each rule must report its sample.
+  7. Cloud adapters map provider 4xx (other than 408/429) to `ModelRequestRejectedException`, which is `internal-error` and never retried. They pass `Retry-After` through on 429/503 (`RetryAfter`, delay-seconds or HTTP-date). `ModelException` keeps the reason code out of `detail`; it goes to logs only (NFR-04).
+  8. jsoup and PDFBox are removed from `build.gradle` until P3 and P5. ADR-0001 version log updated.
+  9. OpenAPI has `Problem` and `ProblemError` as every operation's `default` response. `Meta.audit` and `latestEval` are typed, and nullable `$ref`s are emitted as `allOf` + `nullable`. `types.ts` is regenerated and the hand-written `Problem` interface is deleted.
+  10. ADR-0009 covers the trigger-only approach for `audit_event` and the P9 anonymisation path, which is a `SECURITY DEFINER` function with a transaction-local flag. Architecture §11.3 and T-15 were updated, and `ApplicationContextIT` now also asserts that `TRUNCATE` fails.
+  11. `OllamaHealthIndicator` is `@Profile("!fake-models")` (`FakeModelsHealthIT`). Gemini strips `$schema` and `$id`. `bn.json` has no English words, enforced by a new i18n test. The version is shown in Bangla digits (`formatVersion`).
+- **Acceptance commands:** JDK 21 (Gradle 8.14 does not run on the default JDK 25).
+  - `cd backend && ./gradlew clean check requirementsReport`: `test` 139/139, `integrationTest` 43/43, `checkFixtures: OK`, `promptLint: OK`, `BUILD SUCCESSFUL`.
+  - `cd frontend && npm run lint && npm run typecheck && npm test && npm run build && npm run check:bundle`: 17/17 tests, 96.9 KB gzip.
+- **Known gaps:**
+  - Unmapped 4xx framework statuses carry the code `validation-failed`, because api.md §7 has no generic conflict code.
+  - The ArchUnit `org.springframework.ai.mcp` stand-in is removed once P8 adds the MCP starter.
+  - DoD items 10 and 11 must be re-run: the human acceptance check, then Prompt R on the fixed commit.

@@ -11,7 +11,21 @@ import org.jspecify.annotations.Nullable;
  */
 @Schema(name = "Meta")
 public record Meta(
-    String name, String version, Models models, Corpus corpus, @Nullable Object audit) {
+    String name, String version, Models models, Corpus corpus, @Nullable Audit audit) {
+
+  /** Audit counters for the live docs hub (P9); {@code latestEval} is null until P10. */
+  @Schema(name = "MetaAudit")
+  public record Audit(
+      long privacyBlocksLast7Days, long openReviewItems, @Nullable LatestEval latestEval) {}
+
+  /** Headline numbers of the latest generated eval report (R-07, evaluation.md). */
+  @Schema(name = "MetaLatestEval")
+  public record LatestEval(
+      String reportDate,
+      long cases,
+      double citationPrecision,
+      long fabricatedCitationsShown,
+      double riskRecall) {}
 
   /**
    * Model ID per role; {@code verifier} and {@code judge} are null without {@code GEMINI_MODEL}.

@@ -5,8 +5,10 @@
         "default" : null,
         "properties" : {
           "audit" : {
-            "nullable" : true,
-            "type" : "object"
+            "allOf" : [ {
+              "$ref" : "#/components/schemas/MetaAudit"
+            } ],
+            "nullable" : true
           },
           "corpus" : {
             "$ref" : "#/components/schemas/MetaCorpus"
@@ -22,6 +24,27 @@
           }
         },
         "required" : [ "audit", "corpus", "models", "name", "version" ],
+        "type" : "object"
+      },
+      "MetaAudit" : {
+        "default" : null,
+        "properties" : {
+          "latestEval" : {
+            "allOf" : [ {
+              "$ref" : "#/components/schemas/MetaLatestEval"
+            } ],
+            "nullable" : true
+          },
+          "openReviewItems" : {
+            "format" : "int64",
+            "type" : "integer"
+          },
+          "privacyBlocksLast7Days" : {
+            "format" : "int64",
+            "type" : "integer"
+          }
+        },
+        "required" : [ "latestEval", "openReviewItems", "privacyBlocksLast7Days" ],
         "type" : "object"
       },
       "MetaCorpus" : {
@@ -56,6 +79,32 @@
         "required" : [ "acts", "currentSections", "embeddedSections", "lastRefreshAt", "release", "sections" ],
         "type" : "object"
       },
+      "MetaLatestEval" : {
+        "default" : null,
+        "properties" : {
+          "cases" : {
+            "format" : "int64",
+            "type" : "integer"
+          },
+          "citationPrecision" : {
+            "format" : "double",
+            "type" : "number"
+          },
+          "fabricatedCitationsShown" : {
+            "format" : "int64",
+            "type" : "integer"
+          },
+          "reportDate" : {
+            "type" : "string"
+          },
+          "riskRecall" : {
+            "format" : "double",
+            "type" : "number"
+          }
+        },
+        "required" : [ "cases", "citationPrecision", "fabricatedCitationsShown", "reportDate", "riskRecall" ],
+        "type" : "object"
+      },
       "MetaModels" : {
         "default" : null,
         "properties" : {
@@ -85,6 +134,75 @@
         },
         "required" : [ "embedding", "fast", "judge", "localPii", "reasoning", "verifier", "verifierFallback" ],
         "type" : "object"
+      },
+      "Problem" : {
+        "description" : "RFC 9457 problem document (api.md §5.14)",
+        "properties" : {
+          "code" : {
+            "description" : "Stable machine code; equals the last segment of type",
+            "type" : "string"
+          },
+          "detail" : {
+            "nullable" : true,
+            "type" : "string"
+          },
+          "errors" : {
+            "items" : {
+              "$ref" : "#/components/schemas/ProblemError"
+            },
+            "type" : "array"
+          },
+          "instance" : {
+            "description" : "Request path template plus request ID",
+            "type" : "string"
+          },
+          "pages" : {
+            "description" : "unreadable-document only",
+            "items" : {
+              "format" : "int32",
+              "minimum" : 1,
+              "type" : "integer"
+            },
+            "type" : "array"
+          },
+          "retryAfterSeconds" : {
+            "format" : "int32",
+            "minimum" : 0,
+            "nullable" : true,
+            "type" : "integer"
+          },
+          "status" : {
+            "format" : "int32",
+            "maximum" : 599,
+            "minimum" : 400,
+            "type" : "integer"
+          },
+          "title" : {
+            "description" : "Localised by Accept-Language",
+            "type" : "string"
+          },
+          "traceId" : {
+            "type" : "string"
+          },
+          "type" : {
+            "pattern" : "^urn:shromikai:problem:[a-z0-9-]+$",
+            "type" : "string"
+          }
+        },
+        "required" : [ "code", "instance", "status", "title", "traceId", "type" ],
+        "type" : "object"
+      },
+      "ProblemError" : {
+        "properties" : {
+          "message" : {
+            "type" : "string"
+          },
+          "pointer" : {
+            "type" : "string"
+          }
+        },
+        "required" : [ "message", "pointer" ],
+        "type" : "object"
       }
     }
   },
@@ -111,6 +229,16 @@
               }
             },
             "description" : "OK"
+          },
+          "default" : {
+            "content" : {
+              "application/problem+json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/Problem"
+                }
+              }
+            },
+            "description" : "Problem document"
           }
         },
         "tags" : [ "meta-controller" ]

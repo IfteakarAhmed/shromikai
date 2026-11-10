@@ -18,10 +18,12 @@ import bd.shromikai.shared.ai.EgressBlockedException;
 import bd.shromikai.shared.ai.EgressGuard;
 import bd.shromikai.shared.ai.ModelOutputInvalidException;
 import bd.shromikai.shared.ai.ModelRefusedException;
+import bd.shromikai.shared.ai.ModelRequestRejectedException;
 import bd.shromikai.shared.ai.ModelRole;
 import bd.shromikai.shared.ai.UpstreamUnavailableException;
 import bd.shromikai.shared.ai.internal.FailClosedEgressGuard;
 import bd.shromikai.shared.config.ShromikaiProperties;
+import bd.shromikai.shared.problem.ProblemType;
 import bd.shromikai.testsupport.Requirement;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -153,6 +155,49 @@ class AnthropicChatAdapterIT {
         .isInstanceOfSatisfying(
             UpstreamUnavailableException.class, e -> assertThat(e.httpStatus()).isEqualTo(529));
     anthropic.verify(3, postRequestedFor(urlEqualTo("/v1/messages")));
+  }
+
+  @Test
+  void shouldMapClientError_toInternalErrorWithoutRetry() {
+    anthropic.stubFor(
+        post("/v1/messages")
+            .willReturn(
+                aResponse()
+                    .withStatus(400)
+                    .withBody(
+                        "{\"type\":\"error\",\"error\":{\"type\":\"invalid_request_error\",\"message\":\"x\"}}")));
+
+    assertThatThrownBy(() -> adapter(recordingGuard).call(request(ModelRole.FAST, null)))
+        .isInstanceOfSatisfying(
+            ModelRequestRejectedException.class,
+            e -> {
+              assertThat(e.type()).isEqualTo(ProblemType.INTERNAL_ERROR);
+              assertThat(e.httpStatus()).isEqualTo(400);
+              assertThat(e.detail()).isNull();
+            });
+    anthropic.verify(1, postRequestedFor(urlEqualTo("/v1/messages")));
+  }
+
+  @Test
+  void shouldPassRetryAfterThrough_whenRateLimited() {
+    anthropic.stubFor(
+        post("/v1/messages")
+            .willReturn(
+                aResponse()
+                    .withStatus(429)
+                    .withHeader("retry-after", "7")
+                    .withHeader("retry-after-ms", "10")
+                    .withBody(
+                        "{\"type\":\"error\",\"error\":{\"type\":\"rate_limit_error\",\"message\":\"x\"}}")));
+
+    assertThatThrownBy(() -> adapter(recordingGuard).call(request(ModelRole.FAST, null)))
+        .isInstanceOfSatisfying(
+            UpstreamUnavailableException.class,
+            e -> {
+              assertThat(e.httpStatus()).isEqualTo(429);
+              assertThat(e.retryAfterSeconds()).isEqualTo(7);
+              assertThat(e.detail()).isNull();
+            });
   }
 
   @Test

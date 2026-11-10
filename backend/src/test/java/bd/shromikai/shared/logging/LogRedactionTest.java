@@ -11,9 +11,11 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Stream;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.MethodSource;
 import org.junit.jupiter.params.provider.ValueSource;
 import org.slf4j.event.KeyValuePair;
 
@@ -56,6 +58,33 @@ class LogRedactionTest {
   @ValueSource(strings = {"+8801712345678", "8801812345678", "01912-345678", "+৮৮০১৭১২৩৪৫৬৭৮"})
   void shouldMaskMobile_whenPrefixedOrSeparated(String mobile) {
     assertThat(LogRedactor.redact("call " + mobile + " now")).isEqualTo("call [PHONE] now");
+  }
+
+  /** Separators between digit groups and after +880, in Latin and Bangla digits (R-02). */
+  static Stream<String> separatedMobiles() {
+    List<String> latin =
+        List.of(
+            "+880 1712-345678",
+            "+880-1712-345678",
+            "+880 1712 345678",
+            "0171-234-5678",
+            "01712 345 678");
+    return Stream.concat(latin.stream(), latin.stream().map(LogRedactionTest::banglaDigits));
+  }
+
+  static String banglaDigits(String latin) {
+    StringBuilder out = new StringBuilder();
+    latin
+        .chars()
+        .forEach(c -> out.append(Character.isDigit(c) ? (char) ('০' + (c - '0')) : (char) c));
+    return out.toString();
+  }
+
+  @ParameterizedTest
+  @MethodSource("separatedMobiles")
+  void shouldMaskMobile_whenDigitGroupsAreSeparated(String mobile) {
+    assertThat(LogRedactor.redact("call " + mobile + " now")).isEqualTo("call [PHONE] now");
+    assertThat(LogRedactor.piiMatches("call " + mobile + " now")).containsExactly(mobile);
   }
 
   @ParameterizedTest

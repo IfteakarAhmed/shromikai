@@ -41,6 +41,22 @@ class OpenApiSnapshotIT {
 
     assertThat(live.at("/paths/~1api~1v1~1meta/get").isMissingNode()).isFalse();
     assertThat(live.at("/paths").toString()).doesNotContain("test-probe");
+    JsonNode problem = live.at("/components/schemas/Problem");
+    assertThat(problem.isMissingNode()).as("Problem schema (api.md §5.14)").isFalse();
+    assertThat(problem.get("required"))
+        .extracting(JsonNode::asText)
+        .containsExactlyInAnyOrder("type", "title", "status", "instance", "code", "traceId");
+    assertThat(problem.at("/properties/detail/nullable").asBoolean()).isTrue();
+    assertThat(problem.at("/properties/errors/items/$ref").asText())
+        .isEqualTo("#/components/schemas/ProblemError");
+    // OpenAPI 3.0 ignores siblings of $ref, so a nullable object is allOf [$ref] + nullable.
+    JsonNode audit = live.at("/components/schemas/Meta/properties/audit");
+    assertThat(audit.at("/allOf/0/$ref").asText()).isEqualTo("#/components/schemas/MetaAudit");
+    assertThat(audit.get("nullable").asBoolean()).isTrue();
+    JsonNode latestEval = live.at("/components/schemas/MetaAudit/properties/latestEval");
+    assertThat(latestEval.at("/allOf/0/$ref").asText())
+        .isEqualTo("#/components/schemas/MetaLatestEval");
+    assertThat(latestEval.get("nullable").asBoolean()).isTrue();
     assertThat(Files.exists(SNAPSHOT))
         .as("run with -PupdateOpenApi to create the snapshot")
         .isTrue();

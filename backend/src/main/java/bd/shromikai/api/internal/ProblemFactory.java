@@ -28,8 +28,18 @@ final class ProblemFactory {
 
   static ProblemDetail build(
       ProblemType type, @Nullable String detail, HttpServletRequest request) {
+    return build(type, detail, request, type.status());
+  }
+
+  /**
+   * As {@link #build(ProblemType, String, HttpServletRequest)}, but keeps an HTTP status the
+   * framework or container already chose when {@code type} is only the fallback for it.
+   */
+  static ProblemDetail build(
+      ProblemType type, @Nullable String detail, HttpServletRequest request, int status) {
     String requestId = RequestIdFilter.currentOf(request);
-    ProblemDetail problem = ProblemDetail.forStatus(type.status());
+    ProblemDetail problem =
+        ProblemDetail.forStatus(status >= 400 && status <= 599 ? status : type.status());
     problem.setType(URI.create(type.typeUri()));
     problem.setTitle(type.title(language(request.getHeader(HttpHeaders.ACCEPT_LANGUAGE))));
     problem.setDetail(detail);

@@ -17,7 +17,8 @@ import org.springframework.web.filter.OncePerRequestFilter;
 
 /**
  * Echoes a well-formed incoming {@code X-Request-Id} or generates one, puts it in the MDC and the
- * response, and exposes it as a request attribute for problem documents (FR-03).
+ * response, and exposes it as a request attribute for problem documents (FR-03). An error dispatch
+ * keeps the request's original ID.
  */
 @Component
 @Order(Ordered.HIGHEST_PRECEDENCE)
@@ -33,7 +34,12 @@ public final class RequestIdFilter extends OncePerRequestFilter {
   protected void doFilterInternal(
       HttpServletRequest request, HttpServletResponse response, FilterChain chain)
       throws ServletException, IOException {
-    String requestId = resolve(request.getHeader(HEADER));
+    // An ERROR dispatch reuses the ID of the request that failed, so logs and the problem
+    // document carry the same traceId.
+    String requestId =
+        request.getAttribute(ATTRIBUTE) instanceof String existing
+            ? existing
+            : resolve(request.getHeader(HEADER));
     request.setAttribute(ATTRIBUTE, requestId);
     response.setHeader(HEADER, requestId);
     MDC.put(LogKeys.REQUEST_ID, requestId);

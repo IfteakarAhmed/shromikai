@@ -2,16 +2,8 @@ import type { components } from './types'
 
 export type Meta = components['schemas']['Meta']
 
-/** RFC 9457 problem document (api.md §5.14). */
-export interface Problem {
-  type: string
-  title: string
-  status: number
-  detail?: string | null
-  instance: string
-  code: string
-  traceId: string
-}
+/** RFC 9457 problem document (api.md §5.14), generated from the OpenAPI document. */
+export type Problem = components['schemas']['Problem']
 
 /** The backend answered with a problem document or an unexpected status. */
 export class ApiError extends Error {

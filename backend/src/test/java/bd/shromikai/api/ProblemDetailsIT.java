@@ -106,6 +106,37 @@ class ProblemDetailsIT {
     assertThat(response.getBody()).doesNotContain("secret").doesNotContain("Exception");
   }
 
+  @Test
+  void shouldKeepFrameworkStatus_whenStatusHasNoSpecificCode() throws Exception {
+    ResponseEntity<String> response =
+        exchange(HttpMethod.GET, "/api/v1/test-probe/conflict", null, null);
+
+    assertProblem(response, 409, "validation-failed");
+  }
+
+  @Test
+  void shouldHideReasonCode_andPassRetryAfter_whenModelCallFails() throws Exception {
+    ResponseEntity<String> response =
+        exchange(HttpMethod.GET, "/api/v1/test-probe/model-failure", null, null);
+
+    JsonNode problem = assertProblem(response, 503, "upstream-unavailable");
+    assertThat(problem.path("detail").asText("")).isEmpty();
+    assertThat(response.getBody()).doesNotContain("gemini").doesNotContain("http-503");
+    assertThat(response.getHeaders().getFirst(HttpHeaders.RETRY_AFTER)).isEqualTo("12");
+  }
+
+  @Test
+  void shouldKeepTheRequestId_whenAFilterThrows() throws Exception {
+    ResponseEntity<String> response =
+        exchange(HttpMethod.GET, ThrowingProbeFilter.PATH, null, null);
+
+    JsonNode problem = assertProblem(response, 500, "internal-error");
+    String header = response.getHeaders().getFirst("X-Request-Id");
+    assertThat(header).isEqualTo(problem.get("traceId").asText());
+    assertThat(ThrowingProbeFilter.lastRequestId()).isEqualTo(header);
+    assertThat(problem.get("instance").asText()).endsWith("#" + header);
+  }
+
   private ResponseEntity<String> exchange(
       HttpMethod method, String path, String body, HttpHeaders extra) {
     HttpHeaders headers = new HttpHeaders();

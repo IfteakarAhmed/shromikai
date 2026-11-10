@@ -9,6 +9,7 @@ import java.util.List;
 import java.util.Set;
 import org.springframework.boot.actuate.health.Health;
 import org.springframework.boot.actuate.health.HealthIndicator;
+import org.springframework.context.annotation.Profile;
 import org.springframework.http.client.JdkClientHttpRequestFactory;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestClient;
@@ -16,9 +17,11 @@ import org.springframework.web.client.RestClientException;
 
 /**
  * Health component {@code ollama} (FR-04): {@code UP} when Ollama answers and both local models
- * (embedding and local PII) are pulled; {@code DOWN} otherwise.
+ * (embedding and local PII) are pulled; {@code DOWN} otherwise. Absent under {@code fake-models},
+ * where nothing calls Ollama (architecture §16.3).
  */
 @Component("ollama")
+@Profile("!fake-models")
 public final class OllamaHealthIndicator implements HealthIndicator {
 
   private final RestClient client;

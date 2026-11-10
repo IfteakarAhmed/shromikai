@@ -67,6 +67,8 @@ class ApplicationContextIT {
         .hasMessageContaining("append-only");
     assertThatThrownBy(() -> jdbc.sql("delete from audit_event").update())
         .hasMessageContaining("younger than 12 months");
+    assertThatThrownBy(() -> jdbc.sql("truncate audit_event").update())
+        .hasMessageContaining("cannot be truncated");
   }
 
   @Test

@@ -758,7 +758,7 @@ Every table: **contract text = No**.
 
 | Table | Columns |
 | --- | --- |
-| `audit_event` (V2) | `id`, `actor_id` uuid null, `actor_kind` (`USER`, `GUEST`, `API_KEY`, `SYSTEM`), `action` (`LOGIN_SUCCESS`, `LOGIN_FAILURE`, `DEMO_LOGIN`, `ACCESS_DENIED`, `PRIVACY_BLOCK`, `REVIEW_DECISION`, `ADMIN_ACTION`, `API_KEY_CREATED`, `API_KEY_REVOKED`), `target_type`, `target_id`, `occurred_at`, `detail jsonb` (schema-validated, ≤ 2 KB). App role has `INSERT` and `SELECT` only |
+| `audit_event` (V2) | `id`, `actor_id` uuid null, `actor_kind` (`USER`, `GUEST`, `API_KEY`, `SYSTEM`), `action` (`LOGIN_SUCCESS`, `LOGIN_FAILURE`, `DEMO_LOGIN`, `ACCESS_DENIED`, `PRIVACY_BLOCK`, `REVIEW_DECISION`, `ADMIN_ACTION`, `API_KEY_CREATED`, `API_KEY_REVOKED`), `target_type`, `target_id`, `occurred_at`, `detail jsonb` (schema-validated, ≤ 2 KB). Append-only through triggers: `UPDATE` and `TRUNCATE` always fail, `DELETE` only for rows older than 12 months (ADR-0009) |
 | `organisation` (V3) | `id` uuid, `name`, `kind` (`SME`, `HR`, `NGO`, `LAW_FIRM`, `JOB_PORTAL`, `PLATFORM`), `plan` (`FREE`, `TEAM`, `API`, `LEGAL_AID`), `created_at`, `deleted_at` |
 | `app_user` (V3) | `id` uuid, `org_id` null, `email citext unique`, `password_hash` (BCrypt), `role` (`WORKER`, `HR`, `ADMIN`), `profile jsonb` (side, sector, job role, language, reading level), `is_demo boolean`, `failed_logins int`, `locked_until`, `created_at`, `disabled_at` |
 | `refresh_token` (V3) | `id` uuid, `user_id`, `family_id` uuid, `token_sha256 char(64) unique`, `expires_at`, `revoked_at`, `replaced_by` uuid null |
@@ -940,7 +940,7 @@ prompt-injection boundary).
 | T-12 | Spoofing | B5 | Stolen API key used for MCP or analyses | Keys stored as SHA-256; shown once; scopes; revocation; per-key rate limit; audit | `McpAuthIT`, `McpRateLimitIT` |
 | T-13 | Elevation of privilege | B1 | A `WORKER` or guest reaches admin or playbook endpoints | Method-level authorisation; parameterised role tests | `RoleAccessIT` |
 | T-14 | Elevation of privilege | B1 | Demo mode enabled in production | App refuses to start with `demo` and `prod`; demo endpoints return `404` outside `demo`; demo users cannot change passwords or delete data | `DemoLoginIT` |
-| T-15 | Repudiation | B1 | An admin disputes a review decision | Append-only `audit_event` (no `UPDATE`/`DELETE` grant) | `AuditEventIT`, `ReviewDecisionIT` |
+| T-15 | Repudiation | B1 | An admin disputes a review decision | Append-only `audit_event` (row and statement triggers, ADR-0009) | `AuditEventIT`, `ReviewDecisionIT` |
 | T-16 | Denial of service | B1 | Decompression bombs, huge PDFs, many pages, disguised executables | Magic-byte checks; limits in FR-24 and NFR-20; PDF parse timeout | `MagicBytesTest`, `AbuseLimitsIT` |
 | T-17 | Denial of service (wallet) | B1, B2 | Abuse drives model costs up | Guest quotas; per-analysis and daily cost caps; concurrency limits | `GuestTokenIT`, `BudgetIT` |
 | T-18 | Information disclosure | B3 | Gotenberg fetches remote URLs embedded in memo HTML | Template escapes all content; fonts embedded; no outbound network | `MemoTemplateTest` |

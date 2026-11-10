@@ -26,11 +26,19 @@ export interface components {
   schemas: {
     /** @default null */
     Meta: {
-      audit: Record<string, never> | null
+      audit: components['schemas']['MetaAudit'] | null
       corpus: components['schemas']['MetaCorpus']
       models: components['schemas']['MetaModels']
       name: string
       version: string
+    }
+    /** @default null */
+    MetaAudit: {
+      latestEval: components['schemas']['MetaLatestEval'] | null
+      /** Format: int64 */
+      openReviewItems: number
+      /** Format: int64 */
+      privacyBlocksLast7Days: number
     }
     /** @default null */
     MetaCorpus: {
@@ -47,6 +55,18 @@ export interface components {
       sections: number
     }
     /** @default null */
+    MetaLatestEval: {
+      /** Format: int64 */
+      cases: number
+      /** Format: double */
+      citationPrecision: number
+      /** Format: int64 */
+      fabricatedCitationsShown: number
+      reportDate: string
+      /** Format: double */
+      riskRecall: number
+    }
+    /** @default null */
     MetaModels: {
       embedding: string
       fast: string
@@ -55,6 +75,29 @@ export interface components {
       reasoning: string
       verifier: string | null
       verifierFallback: string
+    }
+    /** @description RFC 9457 problem document (api.md §5.14) */
+    Problem: {
+      /** @description Stable machine code; equals the last segment of type */
+      code: string
+      detail?: string | null
+      errors?: components['schemas']['ProblemError'][]
+      /** @description Request path template plus request ID */
+      instance: string
+      /** @description unreadable-document only */
+      pages?: number[]
+      /** Format: int32 */
+      retryAfterSeconds?: number | null
+      /** Format: int32 */
+      status: number
+      /** @description Localised by Accept-Language */
+      title: string
+      traceId: string
+      type: string
+    }
+    ProblemError: {
+      message: string
+      pointer: string
     }
   }
   responses: never
@@ -81,6 +124,15 @@ export interface operations {
         }
         content: {
           '*/*': components['schemas']['Meta']
+        }
+      }
+      /** @description Problem document */
+      default: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/problem+json': components['schemas']['Problem']
         }
       }
     }

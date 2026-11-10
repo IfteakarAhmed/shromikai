@@ -2,7 +2,7 @@ import { useQuery } from '@tanstack/react-query'
 import { useTranslation } from 'react-i18next'
 import { ApiError, getMeta } from './api/client'
 import { rememberLanguage, type Language } from './i18n'
-import { formatNumber } from './lib/format'
+import { formatNumber, formatVersion } from './lib/format'
 
 // P1 shell: shows that the frontend reaches the backend and the database. The worker journey
 // (upload, risk cards, memo) arrives in P9.
@@ -75,7 +75,7 @@ export default function App() {
           <dl className="mt-3 grid grid-cols-2 gap-y-2 text-base">
             <dt className="text-stone-600">{t('status.backend')}</dt>
             <dd data-testid="backend-status">
-              {t('status.running', { version: meta.data.version })}
+              {t('status.running', { version: formatVersion(meta.data.version, language) })}
             </dd>
             <dt className="text-stone-600">{t('status.acts')}</dt>
             <dd>{t('status.count', { count: formatNumber(meta.data.corpus.acts, language) })}</dd>

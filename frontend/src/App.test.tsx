@@ -11,7 +11,7 @@ describe('App', () => {
     renderWithClient(<App />)
 
     expect(screen.getByRole('status')).toHaveTextContent('লোড হচ্ছে')
-    expect(await screen.findByTestId('backend-status')).toHaveTextContent('চালু (সংস্করণ 0.1.0)')
+    expect(await screen.findByTestId('backend-status')).toHaveTextContent('চালু (সংস্করণ ০.১.০)')
     expect(screen.getAllByText('১১২টি')).toHaveLength(2)
     expect(screen.getByText('৩টি')).toBeInTheDocument()
     expect(screen.getByText(/এটা আইনি পরামর্শ নয়/)).toBeInTheDocument()
@@ -22,7 +22,7 @@ describe('App', () => {
 
     renderWithClient(<App />)
 
-    expect(await screen.findByRole('alert')).toHaveTextContent('Backend-এর সাথে যোগাযোগ হচ্ছে না')
+    expect(await screen.findByRole('alert')).toHaveTextContent('ব্যাকএন্ডের সাথে যোগাযোগ হচ্ছে না')
   })
 
   it('FR-02 shows the localised problem title when the backend reports an error', async () => {

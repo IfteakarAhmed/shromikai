@@ -16,14 +16,24 @@ public final class LogRedactor {
   private static final Pattern EMAIL =
       Pattern.compile("[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}");
 
-  /** 01[3-9]XXXXXXXX with an optional +88 / 0088 prefix, separators allowed after the operator. */
+  /** One optional space or hyphen between digit groups. */
+  private static final String SEP = "[\\s-]?";
+
+  /**
+   * 01[3-9]XXXXXXXX with an optional +88 / 0088 prefix. A space or hyphen may follow the prefix
+   * (also after +880) and may separate any later digit groups: {@code +880 1712-345678}, {@code
+   * 0171-234-5678}, {@code 01712 345 678}.
+   */
   private static final Pattern MOBILE =
       Pattern.compile(
-          "(?<![0-9০-৯])(?:(?:\\+|00|০০)?(?:88|৮৮)[\\s-]?)?[0০][1১][3-9৩-৯]"
+          "(?<![0-9০-৯])(?:(?:\\+|00|০০)?(?:88|৮৮)"
+              + SEP
+              + ")?[0০]"
+              + SEP
+              + "[1১][3-9৩-৯](?:"
+              + SEP
               + DIGIT
-              + "{2}[\\s-]?"
-              + DIGIT
-              + "{6}(?![0-9০-৯])");
+              + "){8}(?![0-9০-৯])");
 
   /** NID numbers have 10, 13 or 17 digits. */
   private static final Pattern NID =

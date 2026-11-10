@@ -31,6 +31,6 @@ public class ProblemErrorController implements ErrorController {
           .log("Error outside the MVC handler");
     }
     return ProblemFactory.response(
-        ProblemFactory.build(ProblemType.forStatus(status), null, request), null);
+        ProblemFactory.build(ProblemType.forStatus(status), null, request, status), null);
   }
 }

@@ -6,10 +6,12 @@ import bd.shromikai.shared.ai.ChatResponse;
 import bd.shromikai.shared.ai.EgressGuard;
 import bd.shromikai.shared.ai.ModelOutputInvalidException;
 import bd.shromikai.shared.ai.ModelRefusedException;
+import bd.shromikai.shared.ai.ModelRequestRejectedException;
 import bd.shromikai.shared.ai.ModelTimeoutException;
 import bd.shromikai.shared.ai.TokenUsage;
 import bd.shromikai.shared.ai.UpstreamUnavailableException;
 import bd.shromikai.shared.ai.internal.Backoff;
+import bd.shromikai.shared.ai.internal.RetryAfter;
 import bd.shromikai.shared.config.ShromikaiProperties;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
@@ -19,8 +21,10 @@ import java.net.SocketTimeoutException;
 import java.net.http.HttpClient;
 import java.net.http.HttpTimeoutException;
 import java.time.Duration;
+import java.time.Instant;
 import java.util.Objects;
 import java.util.Set;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.client.JdkClientHttpRequestFactory;
 import org.springframework.web.client.ResourceAccessException;
@@ -79,10 +83,21 @@ public final class GeminiChatAdapter implements ChatPort {
     content.putArray("parts").addObject().put("text", request.user().reveal());
     ObjectNode config = body.putObject("generationConfig");
     config.put("responseMimeType", "application/json");
-    config.set("responseJsonSchema", request.outputSchema());
+    config.set("responseJsonSchema", schemaForGemini(request.outputSchema()));
     config.put("temperature", request.temperature() == null ? 0.0 : request.temperature());
     config.put("maxOutputTokens", request.maxOutputTokens());
     return body;
+  }
+
+  /** Gemini's response schema rejects the {@code $schema} and {@code $id} keywords. */
+  private static JsonNode schemaForGemini(JsonNode schema) {
+    if (!(schema instanceof ObjectNode object)) {
+      return schema;
+    }
+    ObjectNode copy = object.deepCopy();
+    copy.remove("$schema");
+    copy.remove("$id");
+    return copy;
   }
 
   private JsonNode post(ChatRequest request, ObjectNode body) {
@@ -101,7 +116,13 @@ public final class GeminiChatAdapter implements ChatPort {
           .body(JsonNode.class);
     } catch (RestClientResponseException e) {
       int status = e.getStatusCode().value();
-      throw new UpstreamUnavailableException("gemini-http-" + status, status, null);
+      if (ModelRequestRejectedException.applies(status)) {
+        throw new ModelRequestRejectedException("gemini-http-" + status, status);
+      }
+      HttpHeaders headers = e.getResponseHeaders();
+      String retryAfter = headers == null ? null : headers.getFirst(HttpHeaders.RETRY_AFTER);
+      throw new UpstreamUnavailableException(
+          "gemini-http-" + status, status, RetryAfter.forStatus(status, retryAfter, Instant.now()));
     } catch (ResourceAccessException e) {
       if (e.getCause() instanceof HttpTimeoutException
           || e.getCause() instanceof SocketTimeoutException) {

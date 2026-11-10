@@ -6,10 +6,12 @@ import bd.shromikai.shared.ai.ChatResponse;
 import bd.shromikai.shared.ai.EgressGuard;
 import bd.shromikai.shared.ai.ModelOutputInvalidException;
 import bd.shromikai.shared.ai.ModelRefusedException;
+import bd.shromikai.shared.ai.ModelRequestRejectedException;
 import bd.shromikai.shared.ai.ModelRole;
 import bd.shromikai.shared.ai.ModelTimeoutException;
 import bd.shromikai.shared.ai.TokenUsage;
 import bd.shromikai.shared.ai.UpstreamUnavailableException;
+import bd.shromikai.shared.ai.internal.RetryAfter;
 import bd.shromikai.shared.config.ShromikaiProperties;
 import com.anthropic.client.AnthropicClient;
 import com.anthropic.client.okhttp.AnthropicOkHttpClient;
@@ -28,6 +30,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.io.InterruptedIOException;
+import java.time.Instant;
 import java.util.Map;
 import java.util.Objects;
 import java.util.stream.Collectors;
@@ -73,8 +76,15 @@ public final class AnthropicChatAdapter implements ChatPort {
               .messages()
               .create(params, RequestOptions.builder().timeout(request.timeout()).build());
     } catch (AnthropicServiceException e) {
+      int status = e.statusCode();
+      if (ModelRequestRejectedException.applies(status)) {
+        throw new ModelRequestRejectedException("anthropic-http-" + status, status);
+      }
+      String retryAfter = e.headers().values("retry-after").stream().findFirst().orElse(null);
       throw new UpstreamUnavailableException(
-          "anthropic-http-" + e.statusCode(), e.statusCode(), null);
+          "anthropic-http-" + status,
+          status,
+          RetryAfter.forStatus(status, retryAfter, Instant.now()));
     } catch (AnthropicIoException e) {
       if (e.getCause() instanceof InterruptedIOException) {
         throw new ModelTimeoutException("anthropic-timeout");

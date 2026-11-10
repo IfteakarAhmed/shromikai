@@ -3,9 +3,18 @@ package bd.shromikai.api.internal;
 import io.swagger.v3.oas.models.OpenAPI;
 import io.swagger.v3.oas.models.info.Info;
 import io.swagger.v3.oas.models.info.License;
+import io.swagger.v3.oas.models.media.ArraySchema;
+import io.swagger.v3.oas.models.media.ComposedSchema;
+import io.swagger.v3.oas.models.media.Content;
+import io.swagger.v3.oas.models.media.IntegerSchema;
+import io.swagger.v3.oas.models.media.MediaType;
+import io.swagger.v3.oas.models.media.ObjectSchema;
 import io.swagger.v3.oas.models.media.Schema;
+import io.swagger.v3.oas.models.media.StringSchema;
+import io.swagger.v3.oas.models.responses.ApiResponse;
 import io.swagger.v3.oas.models.servers.Server;
 import java.lang.reflect.RecordComponent;
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -71,13 +80,92 @@ public class OpenApiConfig {
                   properties.forEach(
                       property -> {
                         Schema<?> target = schema.getProperties().get(property);
-                        if (target != null) {
+                        if (target != null && target.get$ref() != null) {
+                          // OpenAPI 3.0 ignores siblings of $ref: wrap it to carry nullable.
+                          ComposedSchema wrapped = new ComposedSchema();
+                          wrapped.addAllOfItem(new Schema<>().$ref(target.get$ref()));
+                          wrapped.setNullable(true);
+                          schema.getProperties().put(property, wrapped);
+                        } else if (target != null) {
                           target.setNullable(true);
                         }
                       });
                 }
               });
+      addProblem(openApi);
     };
+  }
+
+  static final String PROBLEM_JSON = "application/problem+json";
+
+  /**
+   * The {@code Problem} schema of api.md §5.14, built by hand because responses carry Spring's
+   * {@code ProblemDetail}. It keeps its own required list (optional members are absent, not null),
+   * and every operation documents it as the {@code default} response (FR-02).
+   */
+  static void addProblem(OpenAPI openApi) {
+    Schema<?> error =
+        new ObjectSchema()
+            .addProperty("pointer", new StringSchema())
+            .addProperty("message", new StringSchema());
+    error.setRequired(List.of("message", "pointer"));
+    Schema<?> problem =
+        new ObjectSchema()
+            .description("RFC 9457 problem document (api.md §5.14)")
+            .addProperty("type", new StringSchema().pattern("^urn:shromikai:problem:[a-z0-9-]+$"))
+            .addProperty("title", new StringSchema().description("Localised by Accept-Language"))
+            .addProperty(
+                "status",
+                new IntegerSchema()
+                    .minimum(BigDecimal.valueOf(400))
+                    .maximum(BigDecimal.valueOf(599)))
+            .addProperty("detail", new StringSchema().nullable(true))
+            .addProperty(
+                "instance", new StringSchema().description("Request path template plus request ID"))
+            .addProperty(
+                "code",
+                new StringSchema()
+                    .description("Stable machine code; equals the last segment of type"))
+            .addProperty("traceId", new StringSchema())
+            .addProperty(
+                "errors",
+                new ArraySchema().items(new Schema<>().$ref("#/components/schemas/ProblemError")))
+            .addProperty(
+                "retryAfterSeconds", new IntegerSchema().minimum(BigDecimal.ZERO).nullable(true))
+            .addProperty(
+                "pages",
+                new ArraySchema()
+                    .items(new IntegerSchema().minimum(BigDecimal.ONE))
+                    .description("unreadable-document only"));
+    problem.setRequired(List.of("code", "instance", "status", "title", "traceId", "type"));
+    openApi.getComponents().addSchemas("ProblemError", error);
+    openApi.getComponents().addSchemas("Problem", problem);
+    if (openApi.getPaths() == null) {
+      return;
+    }
+    openApi
+        .getPaths()
+        .values()
+        .forEach(
+            item ->
+                item.readOperations()
+                    .forEach(
+                        operation ->
+                            operation
+                                .getResponses()
+                                .addApiResponse(
+                                    "default",
+                                    new ApiResponse()
+                                        .description("Problem document")
+                                        .content(
+                                            new Content()
+                                                .addMediaType(
+                                                    PROBLEM_JSON,
+                                                    new MediaType()
+                                                        .schema(
+                                                            new Schema<>()
+                                                                .$ref(
+                                                                    "#/components/schemas/Problem")))))));
   }
 
   /**

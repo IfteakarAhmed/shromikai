@@ -1,5 +1,6 @@
 package bd.shromikai.api.internal;
 
+import bd.shromikai.shared.ai.ModelException;
 import bd.shromikai.shared.logging.LogKeys;
 import bd.shromikai.shared.problem.ProblemException;
 import bd.shromikai.shared.problem.ProblemType;
@@ -39,7 +40,9 @@ public class GlobalProblemHandler extends ResponseEntityExceptionHandler {
     if (e.type().status() >= 500) {
       log.atWarn()
           .addKeyValue(LogKeys.ERROR_CODE, e.type().code())
-          .addKeyValue(LogKeys.REASON_CODE, e.getClass().getSimpleName())
+          .addKeyValue(
+              LogKeys.REASON_CODE,
+              e instanceof ModelException model ? model.reasonCode() : e.getClass().getSimpleName())
           .log("Request failed");
     }
     return ProblemFactory.response(
@@ -128,12 +131,17 @@ public class GlobalProblemHandler extends ResponseEntityExceptionHandler {
     return ProblemFactory.response(problem, null);
   }
 
-  /** Every other framework exception keeps its status and gets the matching problem code. */
+  /**
+   * Every other framework exception keeps its own status (for example a {@code
+   * ResponseStatusException(409)}) and gets the matching problem code; a status without a specific
+   * code gets {@code validation-failed} (4xx) or {@code internal-error} (5xx).
+   */
   @Override
   protected ResponseEntity<Object> createResponseEntity(
       @Nullable Object body, HttpHeaders headers, HttpStatusCode status, WebRequest request) {
-    ProblemType type = ProblemType.forStatus(status.value());
-    ProblemDetail problem = ProblemFactory.build(type, null, servletRequest(request));
+    ProblemDetail problem =
+        ProblemFactory.build(
+            ProblemType.forStatus(status.value()), null, servletRequest(request), status.value());
     HttpHeaders filtered = new HttpHeaders();
     if (headers.getAllow() != null && !headers.getAllow().isEmpty()) {
       filtered.setAllow(headers.getAllow());

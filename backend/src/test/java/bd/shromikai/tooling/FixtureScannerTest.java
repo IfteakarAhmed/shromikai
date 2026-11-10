@@ -54,6 +54,15 @@ class FixtureScannerTest {
   }
 
   @Test
+  void shouldRejectUnlistedPii_whenMobileDigitGroupsAreSeparated() throws IOException {
+    Files.createDirectories(fixtures.resolve("notes"));
+    Files.writeString(fixtures.resolve("notes/spaced.txt"), "call +880 1712-345678 today");
+
+    assertThat(scanner().scan())
+        .containsExactly("notes/spaced.txt: PII-like value not listed in canaries.yml");
+  }
+
+  @Test
   void shouldRequireProvenanceSidecar_forDocuments() throws IOException {
     Path documents = Files.createDirectories(fixtures.resolve("documents"));
     Files.writeString(documents.resolve("a.txt"), "Synthetic contract.");

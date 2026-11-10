@@ -40,6 +40,15 @@ describe('i18n', () => {
     expect(Object.keys(window.localStorage)).toEqual(['shromikai.locale'])
   })
 
+  it('R-11 bn strings use no English words except the brand and the English switch', () => {
+    // app.name is the brand শ্রমিকAI; language.switch names the target language in English.
+    const allowed = new Set(['app.name', 'language.switch'])
+    for (const key of keys(bn).filter((k) => !allowed.has(k))) {
+      const text = leaf(bn, key).replace(/\{\{\w+\}\}/g, '')
+      expect(text, key).not.toMatch(/[A-Za-z]/)
+    }
+  })
+
   it('R-12 states that this is not legal advice in both languages', () => {
     expect(bn.app.disclaimer).toContain('এটা আইনি পরামর্শ নয়')
     expect(en.app.disclaimer).toContain('not legal advice')
