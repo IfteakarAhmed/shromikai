@@ -5,7 +5,7 @@
 | Status | Accepted |
 | Date | 2026-11-10 |
 | Deciders | Team Leader (TODO: name), Backend/Data Engineer (TODO: name) |
-| Related | ADR-0003 (privacy), ADR-0004 (database), ADR-0005 (model routing); playbook P1 to P11 |
+| Related | ADR-0003 (privacy), ADR-0004 (database), ADR-0005 (model routing), ADR-0006 (SSE client, envelope); playbook P1 to P11; architecture §18.1 C17 |
 
 ## Context
 
@@ -22,6 +22,17 @@ java-diff-utils, springdoc, Recharts, Caddy, Cloudflare Tunnel).
 Keep the fixed stack and add the components below. Every version is pinned exactly in the phase
 that introduces it (`build.gradle`, `package-lock.json`, compose files); floating tags such as
 `latest` are not allowed.
+
+**Spring AI version (amended in spec v1.1, conflict C17).** P1 replaces the Phase 1 pin 1.0.1 with
+the latest **Spring AI 1.1.x** GA patch release whose BOM supports Spring Boot 3.5, and records the
+exact patch version in this ADR's version log below and in `build.gradle`. The 1.1 line is
+required because it adds the Streamable HTTP MCP server transport; the 1.0 line has only SSE.
+Spring AI 2.x is not used because it targets Spring Boot 4, outside the fixed stack.
+
+**MCP transport.** Streamable HTTP only: `spring-ai-starter-mcp-server-webmvc` with
+`spring.ai.mcp.server.protocol=STREAMABLE` at `/mcp`, profile `mcp`. The deprecated SSE transport
+is not offered, so there is exactly one transport to test (`McpServerIT`) and document
+(`docs/mcp.md`).
 
 | Concern | Choice | Phase | Reason |
 | --- | --- | --- | --- |
@@ -41,7 +52,9 @@ that introduces it (`build.gradle`, `package-lock.json`, compose files); floatin
 | Memo PDF | Gotenberg (headless Chromium) container; print stylesheet fallback in the web app | P7, P9 | Chromium shapes Bangla conjuncts like the browser; visual test required by the playbook |
 | Canonical JSON for signing | RFC 8785 JCS implementation checked against the RFC test vectors | P7 | Signed result envelope |
 | OpenAPI | springdoc-openapi (`/swagger-ui`, `/v3/api-docs`) | P7 | Playbook P7; generated frontend types |
-| MCP server | Spring AI MCP server starter (WebMVC); official MCP Java SDK client in tests | P8 | Playbook P8 |
+| MCP server | Spring AI 1.1.x MCP server starter for WebMVC, Streamable HTTP transport; official MCP Java SDK client (Streamable HTTP) in tests | P8 | Playbook P8; one testable transport |
+| SSE client (frontend) | Written in the project on `fetch` + `ReadableStream` (`src/api/sse.ts`); no library | P9 | `EventSource` cannot send an `Authorization` header; tokens never go into URLs (ADR-0006) |
+| Canonical JSON | `shared.CanonicalJson` (RFC 8785) | P7 | Signing independent of the `analysis` types (ADR-0006) |
 | Metrics | Micrometer with the Prometheus registry | P1, P10 | NFR-18 |
 | Formatting and lint | Spotless with google-java-format; ESLint and Prettier | P1 | Playbook P1 |
 | Frontend runtime | React Router, TanStack Query, i18next, Recharts | P1, P9 | Routing, server state without persistence, Bangla-first i18n, charts |
@@ -53,6 +66,13 @@ that introduces it (`build.gradle`, `package-lock.json`, compose files); floatin
 | Frontend tests | Vitest, React Testing Library, MSW, Playwright, `@axe-core/playwright` | P1 (unit), P9 (e2e) | `test-strategy.md` |
 | Load test | k6 | P11 | FR-87 |
 | CI | GitHub Actions, Dependabot, secret scanning | P1, P11 | Repository is on GitHub |
+
+## Version log
+
+| Date | Component | Version | Note |
+| --- | --- | --- | --- |
+| 2026-11-10 | Spring Boot | 3.5.6 | Phase 1 pin |
+| 2026-11-10 | Spring AI | 1.0.1 → latest 1.1.x GA (exact patch recorded at P1) | Streamable HTTP MCP server transport (C17) |
 
 ## Consequences
 
@@ -84,3 +104,4 @@ Negative:
 - `ArchitectureTest` (SDK confinement) passes.
 - CI check: no unpinned image tags in compose files (from P1).
 - `MemoPdfIT` passes on 20 Bangla conjunct strings (FR-55).
+- `McpServerIT` connects over Streamable HTTP with the official MCP Java SDK client (FR-64).

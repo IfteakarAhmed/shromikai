@@ -5,7 +5,7 @@
 | Status | Accepted |
 | Date | 2026-11-10 |
 | Deciders | Team Leader (TODO: name), Backend/Data Engineer (TODO: name), Business Analyst/Data Scientist (TODO: name) |
-| Related | Rule R-01; PRD FR-35 to FR-50; architecture §7 to §9; playbook P6 |
+| Related | Rule R-01; PRD FR-35 to FR-50; architecture §7 to §9; playbook P6; ADR-0007 (adds citation origins `MAPPING` and `EXTERNAL`) |
 
 ## Context
 

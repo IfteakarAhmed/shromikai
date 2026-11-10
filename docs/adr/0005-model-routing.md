@@ -44,7 +44,7 @@ cannot express these features.
 
 Positive:
 
-- The expensive model runs on six prompts only; estimated US$0.41 per 10-page analysis (PRD §9.1), to be confirmed by M-20.
+- The expensive model runs on six prompts only; estimated US$0.34 per 10-page analysis after the v1.1 budget changes (PRD §9.1, ADR-0008), to be confirmed by M-20.
 - Independent verification without making Gemini a hard dependency.
 - Model changes are visible, reviewed and measured.
 
@@ -69,6 +69,7 @@ Negative:
 | Date | Change | Eval report |
 | --- | --- | --- |
 | 2026-11-10 | Initial routing | n/a (specification) |
+| 2026-11-10 | No role change. Spec v1.1 (ADR-0008): `risk-analysis` in up to 4 parallel batches; `counter-offer` after verification; `memo-*` write summary and next steps only; `obligations` runs in `RISK`; output caps per prompt; pricing adds cache and long-context tiers | n/a (specification) |
 
 ## Verification
 

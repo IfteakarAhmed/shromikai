@@ -12,7 +12,7 @@ Built by team **Cosmic Duo** for the International AI Builders Congress 2026 —
 
 - **[AGENTS.md](AGENTS.md)**: engineering constitution for people and AI coding agents. Read it first.
 - **[Specification](docs/spec/)**: [PRD](docs/spec/PRD.md), [architecture](docs/spec/architecture.md), [API](docs/spec/api.md), [test strategy](docs/spec/test-strategy.md), [evaluation](docs/spec/evaluation.md), [traceability](docs/spec/traceability.md).
-- **[Architecture decisions](docs/adr/)**: ADR-0001 to ADR-0005.
+- **[Architecture decisions](docs/adr/)**: ADR-0001 to ADR-0008.
 - **[Master prompt playbook](docs/playbook/master-prompt-playbook.md)**: phase prompts P1 to P12, reviewer prompt R and fix prompt F.
 
 ## Stack

@@ -13,7 +13,7 @@ parties and a downloadable memo.
 
 Build work follows the phase prompts in
 [`docs/playbook/master-prompt-playbook.md`](docs/playbook/master-prompt-playbook.md). The
-playbook and this specification set are aligned as of tag `spec-v1`. If a phase prompt and the
+playbook (v1.2) and this specification set are aligned as of tag `spec-v1.1`. If a phase prompt and the
 specification disagree, stop and ask; do not pick one silently.
 
 ## 1. Sources of truth (read in this order)
@@ -72,7 +72,7 @@ mechanism that enforces it; a rule without passing enforcement is a phase-blocki
 | **R-05** | **Runtime prompts are versioned files** at `backend/src/main/resources/prompts/{id}/v{n}.md` following section 5, each mirrored by an explanation in `docs/prompts/{id}.md`. Released versions are immutable; a change creates `v{n+1}`. No prompt text in Java or TypeScript source. | `./gradlew promptLint` (front matter, variables, untrusted-element placement, abstention block, mirror file, checksum lock file `prompts/LOCK`); `ArchitectureTest` rule that only `PromptRegistry` reads `prompts/`. |
 | **R-06** | **Untrusted input stays isolated.** Contract-derived text enters prompts only inside `<contract_clause>` or `<contract_document>` elements, XML-escaped, in the user turn; the system prompt declares those elements untrusted data. An instruction-like-text detector flags suspicious clauses, which are still analysed as data. LLM agents have no tools. | `promptLint`; `PromptRendererTest`; `PromptInjectionTest`; injection eval set (M-18). |
 | **R-07** | **Evaluation numbers come only from running the eval code** (`./gradlew evaluate`, the retrieval runner and the corpus quality report). Any number in the README, pitch, submission form or `/docs` must come from a generated file under `eval/reports/`. Percentages always appear with the count beside them. Targets are labelled "target". | `eval/reports/*` generated with git SHA, corpus release, prompt versions and model IDs; `ReportGeneratorTest`; P12 fact-check table. |
-| **R-08** | **Every change ships with tests** at the layer defined in `docs/spec/test-strategy.md`. Bug fixes start with a failing test. Never weaken or delete a test to make it pass. | CI; JaCoCo gates (80 % line coverage for `verify`, `rules`, `privacy`, `retrieval`); Prompt R review. |
+| **R-08** | **Every change ships with tests** at the layer defined in `docs/spec/test-strategy.md`. Bug fixes start with a failing test. Never weaken or delete a test to make it pass. | CI; JaCoCo gates (80 % line coverage for `verify`, `rules`, `privacy`, `retrieval`, `shared.text`); `TestTaggingRulesTest`; Prompt R review. |
 | **R-09** | **Every significant decision gets an ADR** (criteria in section 9) before or with the change. | Prompt R checklist item 6. |
 | **R-10** | **No legal content from memory.** Statute text, section numbers, numeric limits and ILO alignments come only from the ingested corpus with a source URL. Specs, prompts, code, comments, tests and docs never hardcode a legal rule; unit and integration tests use the fictional pack `xx`. ILO mapping rows start `reviewed: false` and are never shown as verified until a human sets `reviewed: true`. | `RuleLoaderFailFastTest`; `IloMappingLoaderTest`; two-person review fields in rule YAML; Prompt R checklist item 3. |
 | **R-11** | **Bangla first.** Every user-facing string exists in `bn` and `en`; `bn` is the default locale. LLM-generated explanations default to Bangla. | i18n key-parity check in CI; Playwright runs in both locales. |
@@ -86,17 +86,17 @@ is the set of public types in the module's root package; everything under
 
 | Module | Package | Responsibility |
 | --- | --- | --- |
-| `shared` | `bd.shromikai.shared` | Configuration properties, RFC 9457 problem types, IDs, clock, request-ID filter, log redaction filter, `SensitiveText`, `BanglaNormalizer`, JSON and JSON-Schema validation. Sub-package `ai`: provider ports `ChatPort` and `EmbeddingPort`; adapters (Claude through the Anthropic Java SDK, Gemini through a `RestClient`, Ollama chat and embeddings through Spring AI); `ModelGateway` (prompt rendering, egress guard call, structured output, validation, repair, cost ledger); `PromptRegistry`; ports `EgressGuard` and `LlmCallListener`. |
+| `shared` | `bd.shromikai.shared` | Configuration properties, RFC 9457 problem types, IDs, clock, request-ID filter, log redaction filter, `SensitiveText`, JSON and JSON-Schema validation, RFC 8785 `CanonicalJson`. Sub-package `text`: `BanglaNormalizer` and `QuoteMatcher` (the quote-match algorithm shared by `verify`, `rules` and `law`). Sub-package `ai`: provider ports `ChatPort` and `EmbeddingPort`; adapters (Claude through the Anthropic Java SDK, Gemini through a `RestClient`, Ollama chat and embeddings through Spring AI); `ModelGateway` (prompt rendering, egress guard call, structured output, validation, repair, cost ledger); `PromptRegistry`; ports `EgressGuard` and `LlmCallListener`. |
 | `trace` | `bd.shromikai.trace` | Analysis trace events and audit events (content-free, schema-validated), Micrometer metric names, retention of trace and audit rows. Implements `LlmCallListener`. |
 | `auth` | `bd.shromikai.auth` | Users, organisations, roles, JWT access and refresh tokens, guest tokens, demo access, lockout, rate limits, API keys, quotas, usage metering, account deletion. |
 | `law` | `bd.shromikai.law` | Statute corpus model and statute ingestion (P3): acts, sections, versions, edges, ILO mapping, corpus releases, quality report; read services. |
-| `retrieval` | `bd.shromikai.retrieval` | Section embeddings (bge-m3), hybrid search, reciprocal-rank fusion, graph expansion, topic-map additions, query rewriting, retrieval cache, per-clause candidate sets. |
+| `retrieval` | `bd.shromikai.retrieval` | Section embeddings (bge-m3), hybrid search, reciprocal-rank fusion, graph expansion, topic-map additions, query rewriting (redacted clauses only), retrieval cache, per-clause candidate sets, retrieval metrics and the retrieval smoke service. |
 | `ingest` | `bd.shromikai.ingest` | Contract intake (P5): upload validation by magic bytes, PDF text extraction, rasterisation, local OCR, legacy-font (Bijoy) conversion, header and footer removal, hyphenation repair, paragraphing, language detection. |
 | `privacy` | `bd.shromikai.privacy` | Deterministic PII detectors, local-model entity extraction, placeholder map, re-identification, `EgressGuard` implementation, instruction-like-text detector. |
 | `rules` | `bd.shromikai.rules` | Rule YAML loading with fail-fast quote checks, deterministic evaluation of `ClauseFact`s, playbooks and playbook evaluation, re-check of counter-offer facts. |
-| `verify` | `bd.shromikai.verify` | Existence and currency, quote-match and support checks; decision table; `VerifiedCitation`; review queue; signed result envelope codec. |
+| `verify` | `bd.shromikai.verify` | Existence and currency, quote-match (applying `shared.text.QuoteMatcher`) and support checks; decision table; `VerifiedCitation`; review queue; signed result envelope codec on canonical JSON trees. |
 | `memo` | `bd.shromikai.memo` | Memo composition, redline diff, obligations checklist and export, HTML template, PDF rendering through Gotenberg. |
-| `analysis` | `bd.shromikai.analysis` | Orchestrator state machine, in-memory job store, clause segmentation and classification, fact extraction, risk agent, counter-offer agent, corrective loop, finding merge, compare mode, personalisation, re-identification of final output. |
+| `analysis` | `bd.shromikai.analysis` | Orchestrator state machine, in-memory job store, clause segmentation and classification, fact extraction, risk agent, counter-offer agent, corrective loop, finding merge, compare mode, personalisation, re-identification and signing of final output (`AnalysisService.resultFor`), local redaction of free-text claims for MCP (`ClaimRedactionService`). |
 | `api` | `bd.shromikai.api` | REST controllers, SSE, DTO mapping, Spring Security configuration, problem handler, OpenAPI. |
 | `mcp` | `bd.shromikai.mcp` | MCP server: five tools, resources and a prompt template (`docs/spec/api.md` §9). |
 | `eval` | `bd.shromikai.eval` | Evaluation harness in the Gradle source set `src/eval/java`; not packaged into the boot jar. |
@@ -160,7 +160,7 @@ temperature: provider-default     # a number for Ollama and Gemini roles; the li
                                   # provider-default for Claude roles (the Claude API rejects
                                   # sampling parameters; ADR-0005)
 effort: medium                    # Claude roles only: low | medium | high; omit otherwise
-max_output_tokens: 16000
+max_output_tokens: 1400          # per clause batch (architecture §5.3)
 timeout_seconds: 40
 input_variables:
   - name: clauses
@@ -245,14 +245,14 @@ Rules checked by `promptLint`:
 | `clause-segment` | FAST | Fallback segmentation for unnumbered text: group paragraph IDs into clauses | P5 |
 | `clause-classify` | FAST | Document-type gate; assign `ClauseType` and confidence per clause | P5 |
 | `clause-facts` | FAST | Extract typed `ClauseFact`s per clause (cross-checked by regex) | P6 |
-| `risk-analysis` | REASONING | Risk agent, opposing counsel for the user's side: findings with severity, non-obvious flag and claimed citations restricted to candidate section keys | P6 |
+| `risk-analysis` | REASONING | Risk agent, opposing counsel for the user's side, on up to 4 clause batches in parallel: findings with severity, non-obvious flag and claimed citations restricted to candidate section keys | P6 |
 | `risk-citation-repair` | REASONING | One corrective attempt for a finding whose citation failed verification, with new candidates | P6 |
-| `counter-offer` | REASONING | Revised clause that resolves the risk and stays commercially reasonable for both sides | P6 |
+| `counter-offer` | REASONING | Revised clause that resolves the risk and stays commercially reasonable for both sides; runs after verification, one call per `VERIFIED` finding | P6 |
 | `verify-support` | VERIFIER | Independent support judgement (Gemini Flash) | P6 |
 | `verify-support-claude` | VERIFIER_FALLBACK | Same judgement on a separate Claude prompt when Gemini is unavailable | P6 |
-| `obligations` | FAST | Obligations checklist for both parties | P7 |
-| `memo-bn` | REASONING | Plain-Bangla memo narrative (about grade-8 reading level) | P7 |
-| `memo-en` | REASONING | English memo narrative | P7 |
+| `obligations` | FAST | Obligations checklist for both parties; runs in `RISK`, citations restricted to candidates | P7 |
+| `memo-bn` | REASONING | Plain-Bangla summary and next-steps narrative of the memo (about grade-8 reading level); other sections are assembled without a model | P7 |
+| `memo-en` | REASONING | English summary and next-steps narrative of the memo | P7 |
 | `baseline` | REASONING | Plain-LLM baseline (no retrieval, no verifier) for compare mode and evaluation | P7 |
 | `explanation-judge` | JUDGE | Rates explanation clarity; used only after calibration against human ratings | P10 |
 
@@ -337,7 +337,7 @@ Dates follow the playbook timeline (§3 of the playbook). Submission is on 19 No
 
 | Phase | Dates | Deliverable | FRs (PRD §14) | Tag |
 | --- | --- | --- | --- | --- |
-| P0 | 10 Nov | Specification (this document set) | none | `spec-v1` |
+| P0 | 10 Nov | Specification (this document set); v1.1 applies the Phase 0 review fixes (architecture §18.3) | none | `spec-v1`, `spec-v1.1` |
 | P1 | 10–11 Nov | Foundation, quality gates and CI (audits and upgrades Phase 1 commit `7209544`) | FR-01 to FR-04 | `phase-1` |
 | P2 | 10–11 Nov | Identity, roles, guest and one-click demo access, audit trail | FR-05 to FR-11 | `phase-2` |
 | P3 | 12–13 Nov | Statute corpus, versions, knowledge graph, quality report | FR-12 to FR-17 | `phase-3` |

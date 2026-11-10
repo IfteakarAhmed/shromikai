@@ -22,6 +22,17 @@ legal-reviewer role.
 | NRB advisor | TODO: name | Knowledge of migrant-worker and diaspora employment contracts (Gulf corridor); partner and NGO introductions; review of the expansion plan and pricing hypotheses; access to NRB users for interviews | Contributions log below | Expansion plan (PRD §11) |
 | Legal reviewer (lawyer or law student) | TODO: name | Realism review of synthetic contracts; review of eval labels (`reviewed_by`); review of legal rules and ILO mappings (`reviewed_by` in `data/`); review-queue decisions in demos | Reviewed label files; reviewed rows in `data/rules/` and `data/mappings/` | Labels, legal rules, ILO mappings (as reviewer) |
 
+## Bonus facts (participants guide §13.3)
+
+Fill in only with each member's consent; the submission claims a bonus only when this table shows
+it (traceability §2.1, R-12).
+
+| Bonus | Member (name) | Evidence the member agreed to share | Recorded on |
+| --- | --- | --- | --- |
+| At least one female member | TODO | | |
+| Polytechnic or madrasah background | TODO | Institution type | |
+| NRB advisor contribution | TODO | Contributions log below | |
+
 ## Working agreements
 
 1. Every phase follows the review loop in `AGENTS.md` §10: plan approval, test-first build, the human acceptance check on a team member's machine, and an independent Prompt R review before the phase tag.

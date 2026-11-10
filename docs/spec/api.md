@@ -2,7 +2,7 @@
 
 | Field | Value |
 | --- | --- |
-| Spec version | v1 (tag `spec-v1`), aligned with the master prompt playbook v1.1 |
+| Spec version | v1.1 (tag `spec-v1.1`), aligned with the master prompt playbook v1.2 |
 | API version | `v1`, base path `/api/v1`; OpenAPI at `/v3/api-docs`, UI at `/swagger-ui` |
 | MCP endpoint | `/mcp` (profile `mcp`) |
 | Schema dialect | JSON Schema 2020-12 |
@@ -35,7 +35,14 @@ Example values that look like statute references use the fictional pack `xx`; th
 | User (`WORKER`, `HR`, `ADMIN`) | `Authorization: Bearer <access JWT>` (15 minutes, HS256, issuer `shromikai`, claims `sub`, `role`, `org`, `demo`). Refresh token in cookie `shromik_refresh` (`HttpOnly; Secure; SameSite=Strict; Path=/api/v1/auth`), 7 days, rotated on each refresh |
 | Guest | `Authorization: Bearer <guest JWT>` from `POST /auth/guest` (2 hours, role `WORKER`, claim `guest: true`, claim `dev` = SHA-256 of the device token); no refresh token |
 | Demo user | Same as a user, claim `demo: true`; only in the `demo` profile |
-| API key | `Authorization: Bearer shk_<40 base62>`; scopes `analyses`, `laws`, `mcp`, `automation`; belongs to an organisation |
+| API key | `Authorization: Bearer shk_<40 base62>`; scopes `analyses`, `laws`, `mcp`, `automation`; belongs to an organisation. The n8n key holds `automation` and `laws` (§10) |
+
+Tokens and keys are accepted **only** in the `Authorization` header, on every endpoint including
+SSE (§4.2). A request that carries `access_token`, `token` or `api_key` as a query parameter is
+rejected with `400` `validation-failed` before authentication, so credentials never appear in
+URLs, access logs or browser history (architecture T-23). A guest whose token expires during an
+SSE stream requests a new guest token with the same device token; the subject (the device-token
+hash) is unchanged, so the stream can resume.
 
 Access matrix (✔ allowed; "own" = the caller's own resources or organisation):
 
@@ -50,7 +57,7 @@ Access matrix (✔ allowed; "own" = the caller's own resources or organisation):
 | `GET /review-tickets/{id}` (with ticket token) | | ✔ | ✔ | ✔ | ✔ | `analyses` |
 | `/playbooks/**` | | | | ✔ own org | ✔ | |
 | `/review-items/**` | | | | | ✔ | |
-| `/admin/**` | | | | | ✔ | `automation` for `/admin/laws/**`, `/admin/eval/**` and `POST /admin/review-items` only |
+| `/admin/**` | | | | | ✔ | `automation` for `/admin/laws/**` (including `POST /admin/laws/retrieval-smoke`) and `POST /admin/review-items` only |
 | `/dev/**` (profile `dev` only) | | | | | ✔ | |
 | `/mcp` | | | | | | `mcp` |
 
@@ -74,7 +81,7 @@ Demo accounts receive `403` `demo-account-restricted` on password change and del
 | E-11 | `DELETE /api/v1/auth/me` | none | `204` | `403` `demo-account-restricted` | FR-78 |
 | E-12 | `POST /api/v1/analyses` | multipart (§4.1) or JSON `AnalysisTextRequest` | `200` `AnalysisResult` (JSON text ≤ 8,000 characters finished within 60 s) or `202` `AnalysisAccepted` | `400`, `401`, `409`, `413`, `415`, `422`, `429`, `503` | FR-24, FR-58 |
 | E-13 | `GET /api/v1/analyses/{id}` | none | `200` `AnalysisResult` (`SUCCEEDED`); `202` `AnalysisStatusView` (`QUEUED`, `RUNNING`); `200` `AnalysisStatusView` with `problem` (`FAILED`) | `404`, `410` `analysis-expired` | FR-54, FR-58 |
-| E-14 | `GET /api/v1/analyses/{id}/events` | `Accept: text/event-stream`, optional `Last-Event-ID` | SSE (§4.2) | `404`, `410` | FR-58 |
+| E-14 | `GET /api/v1/analyses/{id}/events` | `Authorization: Bearer`, `Accept: text/event-stream`, optional `Last-Event-ID` | SSE (§4.2) | `404`, `410` | FR-58 |
 | E-15 | `GET /api/v1/analyses/{id}/trace` | none | `200` `AnalysisTrace` (30 days) | `404` | FR-48, FR-58 |
 | E-16 | `GET /api/v1/analyses/{id}/obligations` | none | `200` `ObligationsExport` | `404`, `410` | FR-53 |
 | E-17 | `DELETE /api/v1/analyses/{id}` | none | `204` | `404` | FR-54 |
@@ -82,7 +89,7 @@ Demo accounts receive `403` `demo-account-restricted` on password change and del
 | E-19 | `GET /api/v1/compare/{id}` | none | `200` `CompareResult`; `202` while running | `404`, `410` | FR-59 |
 | E-20 | `GET /api/v1/compare/{id}/events` | SSE | SSE (§4.2) | `404`, `410` | FR-59 |
 | E-21 | `POST /api/v1/memos/render` | `MemoRenderRequest` | `200` `application/pdf` or `text/html; charset=utf-8`; writes a `MEMO_RENDER` usage event | `400` `signature-invalid`, `410` `envelope-expired`, `503` `renderer-unavailable` | FR-55 |
-| E-22 | `GET /api/v1/review-tickets/{ticketId}` | header `X-Ticket-Token` | `200` `ReviewTicketStatus` | `404`, `410` `ticket-expired` | FR-61 |
+| E-22 | `GET /api/v1/review-tickets/{ticketId}` | header `X-Ticket-Token` | `200` `ReviewTicketStatus` | `404`, `410` `ticket-expired` (after the last of its items expires) | FR-61 |
 | E-23 | `GET /api/v1/review-items` | query `status`, `kind`, `clauseType`, `severity`, `page`, `size` | `200` page of `ReviewItem` | `401`, `403` | FR-60 |
 | E-24 | `GET /api/v1/review-items/{id}` | none | `200` `ReviewItem` | `403`, `404` | FR-60 |
 | E-25 | `PATCH /api/v1/review-items/{id}` | `ReviewItemPatch` | `200` `ReviewItem` (audited) | `409` `already-claimed` / `already-decided`, `422` `citation-not-verifiable` / `invalid-transition` | FR-60 |
@@ -92,7 +99,7 @@ Demo accounts receive `403` `demo-account-restricted` on password change and del
 | E-29 | `PUT /api/v1/playbooks/{id}` | `PlaybookInput` | `200` `Playbook` (`version` + 1) | `400`, `404` | FR-57 |
 | E-30 | `DELETE /api/v1/playbooks/{id}` | none | `204` (archives) | `404` | FR-57 |
 | E-31 | `GET /api/v1/laws` | query `jurisdiction` | `200` `ActSummary[]` | `401` | FR-22 |
-| E-32 | `GET /api/v1/laws/search` | `q` (1..500), `lang` (`bn`, `en`, `any`), `k` (1..20, default 8), `jurisdiction` | `200` `SearchResults` | `400`, `401`, `429` | FR-22 |
+| E-32 | `GET /api/v1/laws/search` | `q` (1..500), `lang` (`bn`, `en`, `any`), `k` (1..20, default 8), `jurisdiction` | `200` `SearchResults`; local retrieval only, no cloud call and no query rewriting (architecture §8.2, §10.7) | `400`, `401`, `429` | FR-22 |
 | E-33 | `GET /api/v1/laws/{act}` | none | `200` `Act` | `404` | FR-22 |
 | E-34 | `GET /api/v1/laws/{act}/{section}` | `version` (optional; default current) | `200` `Section` | `404` | FR-22 |
 | E-35 | `GET /api/v1/admin/users`, `POST /api/v1/admin/users` | page / `UserInput` | `200` page of `User` / `201` `User` | `400`, `409` `email-taken` | FR-73 |
@@ -103,7 +110,7 @@ Demo accounts receive `403` `demo-account-restricted` on password change and del
 | E-40 | `GET /api/v1/admin/traces/{analysisId}` | none | `200` `AnalysisTrace` | `404` | FR-73, FR-82 |
 | E-41 | `POST /api/v1/admin/laws/ingest` | `{ acts?: string[] }` | `202` `{ ingestRunId }`; result in the quality report | `409` `ingest-running` | FR-15, FR-84 |
 | E-42 | `POST /api/v1/admin/laws/check-hashes` | `{ pages: [{ url, sha256 }] }` | `200` `{ changed: [{ url, storedSha256, newSha256 }], unchanged: int }` | `400` | FR-84 |
-| E-43 | `POST /api/v1/admin/eval/retrieval-smoke` | none | `200` `{ hitAt5, mrrAt10, recallAt8, questions, reportPath }` | `503` | FR-84 |
+| E-43 | `POST /api/v1/admin/laws/retrieval-smoke` | none | `200` `{ hitAt5, mrrAt10, recallAt8, questions, corpusRelease }` from `RetrievalSmokeService` (architecture §8.6); smoke numbers only, never written to `eval/reports/` | `503` (`smoke-questions` resource missing or empty) | FR-84 |
 | E-44 | `POST /api/v1/admin/review-items` | `{ kind: CORPUS_CHANGE, sourceUrl, storedSha256, newSha256, ingestRunId }` | `201` `ReviewItem` | `400` | FR-84 |
 | E-45 | `GET /api/v1/dev/analyses/{id}/redacted` (profile `dev` only) | none | `200` `{ clauses: [{ id, type, confidence, redactedText, flags }] }` | `404` outside `dev` | FR-33 |
 
@@ -111,7 +118,7 @@ Request and response objects without a full schema in §5:
 
 | Object | Fields |
 | --- | --- |
-| `Meta` | `name`, `version` (build), `models` `{ reasoning, fast, verifier, verifierFallback, localPii, embedding }`, `corpus` `{ release, acts, sections, currentSections, embeddedSections, lastRefreshAt }`, `audit` `{ privacyBlocksLast7Days, openReviewItems, latestEval: { reportDate, cases, citationPrecision, fabricatedCitationsShown, riskRecall } \| null }` |
+| `Meta` | `name`, `version` (build), `models` `{ reasoning, fast, verifier, verifierFallback, judge, localPii, embedding }` (`verifier` and `judge` are `null` when `GEMINI_MODEL` is unset), `corpus` `{ release, acts, sections, currentSections, embeddedSections, lastRefreshAt }`, `audit` `{ privacyBlocksLast7Days, openReviewItems, latestEval: { reportDate, cases, citationPrecision, fabricatedCitationsShown, riskRecall } \| null }` |
 | `TokenResponse` | `accessToken`, `expiresIn` (seconds), `tokenType` (`Bearer`), `guest` (boolean), `user` (`Me` \| `null` for guests) |
 | `Me` | `userId`, `email`, `role` (`Role`), `org` `{ id, name, kind, plan }` \| `null`, `locale`, `profile` (`Profile`), `demo` (boolean) |
 | `Profile` | `side` (`Side`), `sector` (`Sector`), `jobRole` (string ≤ 60 \| `null`), `preferredLanguage` (`bn` \| `en`), `readingLevel` (`BASIC` \| `STANDARD`) |
@@ -123,8 +130,8 @@ Request and response objects without a full schema in §5:
 | `CompareAccepted` | `compareId`, `eventsUrl`, `resultUrl` |
 | `CompareResult` | `compareId`, `baseline` `{ modelId, findings[] { title, severity, explanation, citations[] { claimed: ClaimedCitation, verification: VerificationResult } } }`, `shromikai` (`AnalysisResult`), `summary` `{ baselineCitations, baselineRejected, baselineUncertain, baselineVerified, shromikaiShownCitations }`, `disclaimer` |
 | `MemoRenderRequest` | `envelope` (`SignedEnvelope`), `format` (`PDF` \| `HTML`) |
-| `SignedEnvelope` | `payload` (`AnalysisResult` without `envelope`), `keyId`, `algorithm` (`HMAC-SHA256`), `expiresAt`, `signature` (base64url). Clients build it from an `AnalysisResult`: `payload` is the result without its `envelope`; the other fields are copied from `envelope` |
-| `ReviewTicketStatus` | `ticketId`, `expiresAt`, `items[]` `{ findingId, title, status (ReviewStatus), decision (ReviewDecision \| null), citation (VerifiedCitation \| null), note (≤ 1000 \| null), decidedAt \| null }` |
+| `SignedEnvelope` | `payload` (the `AnalysisResult` **as returned to the owning subject**, that is re-identified, without its `envelope` field), `keyId`, `algorithm` (`HMAC-SHA256`), `expiresAt`, `signature` (base64url). Clients build it from the `AnalysisResult` they received: `payload` is that result with the `envelope` property removed and nothing else changed; the other four fields are copied from `envelope`. The server signs the RFC 8785 canonical form, so property order and whitespace do not matter (architecture §7.7) |
+| `ReviewTicketStatus` | `ticketId`, `expiresAt` (the latest `expiresAt` of its items), `items[]` `{ findingId, title, status (ReviewStatus), decision (ReviewDecision \| null), citation (VerifiedCitation \| null), note (≤ 1000 \| null), decidedAt \| null }` |
 | `ReviewItemPatch` | one of: `{ status: IN_REVIEW }` (claim), `{ status: OPEN }` (release), `{ decision: APPROVED_WITH_CITATION, sectionKey, quote (20..300), claim (20..600), note? }`, `{ decision: APPROVED_WITHOUT_CITATION, note }`, `{ decision: REJECTED, note }` |
 | `PlaybookInput` | `name` (2..80), `side`, `rules[]` (1..50) `{ clauseType, fact (FactParameter), comparator, value (number \| null; null only for REQUIRED, PROHIBITED), unit (allowed for the fact, §6.4), severity, messageBn (1..300), messageEn (1..300), statuteSectionKey (\| null) }` |
 | `Playbook` | `PlaybookInput` plus `id`, `orgId`, `version`, `createdAt`, `archivedAt` |
@@ -132,18 +139,19 @@ Request and response objects without a full schema in §5:
 | `User` | `id`, `email`, `role`, `orgId`, `locale`, `demo`, `createdAt`, `disabledAt`, `lockedUntil` |
 | `ApiKey` | `id`, `orgId`, `name`, `prefix`, `scopes[]`, `createdAt`, `lastUsedAt`, `revokedAt` |
 | `ApiKeyCreated` | `ApiKey` plus `key` (returned only here) |
-| `UsageReport` | `from`, `to`, `orgId` (\| `null`), `days[]` `{ date, analyses, compares, memoRenders, apiCalls, mcpCalls, costUsd, costByModel: { modelId: number } }`, `totals` |
+| `UsageReport` | `from`, `to`, `orgId` (\| `null`), `days[]` `{ date, analyses, compares, memoRenders, apiCalls, mcpCalls, costUsd, costByModel: { modelId: number } }`, `totals`, `kpis` `{ windowDays: 7, completionRate: { value, count, n }, memoDownloadRate: { value, count, n }, reviewTurnaroundHoursMedian: { value, n } }` (KPI-12 to KPI-14, PRD §10; computed over the 7 days ending at `to` from `analysis_run`, `usage_event` and `review_item`; `null` values when `n = 0`) |
 | `ActSummary` | `actCode`, `titleBn`, `titleEn`, `year`, `jurisdiction`, `authoritativeLang`, `status`, `ratificationStatus` (ILO only), `sourceUrl`, `sectionCount` |
 | `Act` | `ActSummary` plus `sections[]` `{ sectionKey, sectionNo, sectionNoOriginal, headingBn, headingEn }` |
 | `Section` | `sectionKey`, `actCode`, `actTitleBn`, `actTitleEn`, `sectionNo`, `sectionNoOriginal`, `headingBn`, `headingEn`, `authoritativeLang`, `authoritativeText`, `translation` `{ lang, text, official }` \| `null`, `versionLabel`, `effectiveFrom`, `isCurrent`, `sourceUrl`, `fetchedAt`, `contentHash`, `related[]` `{ sectionKey, kind, reviewed }`, `corpusRelease` |
-| `SearchResults` | `query`, `rewrittenQueries[]`, `corpusRelease`, `results[]` `RetrievalResult` |
+| `SearchResults` | `query`, `corpusRelease`, `results[]` `RetrievalResult` (free-text search does not rewrite queries) |
 | `RetrievalResult` | `sectionKey`, `actCode`, `sectionNo`, `headingBn`, `headingEn`, `snippet` (≤ 300), `sourceUrl`, `vectorRank` (\| `null`), `textRank` (\| `null`), `fusedScore`, `origin` (`SEARCH`, `GRAPH`, `TOPIC_MAP`) |
 
 ## 4. Analysis lifecycle
 
 ### 4.1 `POST /api/v1/analyses` multipart request
 
-Exactly one content part plus `options`:
+Exactly one content part plus `options`, or `options` alone with `"sample": true` (no content
+part; any content part sent with `sample: true` is rejected with `400`):
 
 | Part | Type | Constraint |
 | --- | --- | --- |
@@ -175,7 +183,7 @@ Exactly one content part plus `options`:
     "playbookId": { "type": ["string", "null"], "format": "uuid" },
     "workerCategory": { "type": ["string", "null"], "maxLength": 40 },
     "clientKind": { "enum": ["MOBILE_WEB", "DESKTOP_WEB", null] },
-    "sample": { "type": "boolean", "default": false, "description": "Run the bundled synthetic sample contract instead of an upload (no content part needed)" }
+    "sample": { "type": "boolean", "default": false, "description": "Run the bundled synthetic sample contract instead of an upload; the request then has no content part, and the result sets input.sample = true and names the sample as synthetic" }
   },
   "$defs": {
     "sector": { "enum": ["READY_MADE_GARMENTS", "TEXTILES", "CONSTRUCTION", "IT_SOFTWARE", "RETAIL", "DOMESTIC_WORK", "SECURITY_SERVICES", "NGO", "BANKING_FINANCE", "OTHER"] }
@@ -187,6 +195,7 @@ Exactly one content part plus `options`:
 
 ### 4.2 Server-sent events
 
+- **Authentication:** the same `Authorization: Bearer` header as every other endpoint (user, guest or API key token); no query-string tokens (§2). Browsers use the project's fetch-based SSE client (architecture §17), not `EventSource`. A missing or invalid token returns `401` before the stream opens; another subject's job returns `404`. When the token expires during an open stream, the stream continues until it closes; the next reconnect must carry a fresh token.
 - Each event has an integer `id`, increasing by 1 per job, starting at 1. Reconnecting with `Last-Event-ID: n` replays events `n+1` onward from the in-memory job.
 - A comment line `: keep-alive` is sent every 15 seconds; the stream closes after `completed` or `failed`.
 
@@ -315,7 +324,7 @@ citation in ShromikAI's own results.
     "quote": { "type": "string", "minLength": 20, "maxLength": 300, "description": "Copied from the section's authoritative text" },
     "claim": { "type": "string", "minLength": 20, "maxLength": 600, "description": "Proposition the section is cited for; placeholders instead of PII" },
     "claimLanguage": { "enum": ["bn", "en"] },
-    "origin": { "enum": ["LLM", "RULE", "REVIEWER", "BASELINE"] },
+    "origin": { "enum": ["LLM", "RULE", "MAPPING", "REVIEWER", "EXTERNAL", "BASELINE"], "description": "architecture §7.1" },
     "ruleId": { "type": ["string", "null"], "maxLength": 64 }
   },
   "$defs": {
@@ -651,13 +660,14 @@ A `citationChip` may reference only a `VerifiedCitation` present in the result
     "profile": { "type": ["object", "null"] },
     "input": {
       "type": "object", "additionalProperties": false,
-      "required": ["kind", "pageCount", "detectedLanguage", "ocrMeanConfidence", "legacyFontConverted"],
+      "required": ["kind", "pageCount", "detectedLanguage", "ocrMeanConfidence", "legacyFontConverted", "sample"],
       "properties": {
         "kind": { "enum": ["PDF_TEXT", "PDF_SCAN", "IMAGE", "TEXT"] },
         "pageCount": { "type": "integer", "minimum": 1, "maximum": 15 },
         "detectedLanguage": { "enum": ["bn", "en", "mixed"] },
         "ocrMeanConfidence": { "type": ["number", "null"], "minimum": 0, "maximum": 100 },
-        "legacyFontConverted": { "type": "boolean" }
+        "legacyFontConverted": { "type": "boolean" },
+        "sample": { "type": "boolean", "description": "true when the bundled synthetic sample contract was analysed; the UI then labels the result 'synthetic sample'" }
       }
     },
     "documentType": { "const": "EMPLOYMENT_CONTRACT" },
@@ -759,11 +769,12 @@ Admin view. Contains no contract text (R-02).
     "riskSummary": { "type": ["string", "null"], "maxLength": 400, "description": "Redacted paraphrase; shares no 8-token sequence with the source document" },
     "facts": { "type": "array", "items": { "$ref": "urn:shromikai:schema:clause-fact:1" } },
     "claimedCitation": {
-      "type": ["object", "null"], "additionalProperties": false, "required": ["sectionKey", "quote", "claim"],
+      "type": ["object", "null"], "additionalProperties": false, "required": ["sectionKey", "quote", "claim", "claimReduced"],
       "properties": {
         "sectionKey": { "type": "string" },
         "quote": { "type": "string", "maxLength": 300 },
-        "claim": { "type": "string", "maxLength": 600 }
+        "claim": { "type": "string", "maxLength": 600, "description": "Redacted claim; shares no 8-token sequence with the source document" },
+        "claimReduced": { "type": "boolean", "description": "true when the agent's claim overlapped the contract and was replaced by the facts-only form" }
       }
     },
     "verification": { "oneOf": [{ "$ref": "urn:shromikai:schema:verification-result:1" }, { "type": "null" }] },
@@ -794,8 +805,16 @@ Admin view. Contains no contract text (R-02).
 ```
 
 Transitions: `OPEN → IN_REVIEW` (claim), `IN_REVIEW → OPEN` (release), `IN_REVIEW → APPROVED`
-(decision `APPROVED_*`), `IN_REVIEW → REJECTED`, `OPEN | IN_REVIEW → EXPIRED` (retention job after
-90 days). Anything else returns `422` `invalid-transition`.
+(decision `APPROVED_*`), `IN_REVIEW → REJECTED`, `OPEN | IN_REVIEW → EXPIRED` (retention job when
+`expiresAt` passes: 30 days after creation for undecided `FINDING` items; `CORPUS_CHANGE` items do
+not expire while undecided). A decision sets `expiresAt` to `decidedAt` + 30 days for `FINDING`
+items and + 12 months for `CORPUS_CHANGE` items (architecture §14). Anything else returns `422`
+`invalid-transition`.
+
+`claimedCitation.claim` is written by `ReviewItemFactory`: if the agent's claim shares an 8-token
+sequence with the source document (`OverlapChecker`), it is replaced by the facts-only form
+`"{clauseType}: {parameter} = {value} {unit} → {sectionKey}"` (one line per fact, ≤ 600 characters)
+and `claimReduced` is `true`.
 
 ### 5.14 `Problem`
 
@@ -847,7 +866,7 @@ Transitions: `OPEN → IN_REVIEW` (claim), `IN_REVIEW → OPEN` (release), `IN_R
 | `VerificationStatus` | `VERIFIED`, `UNCERTAIN`, `REJECTED` |
 | `SupportLabel` | `SUPPORTS`, `PARTIAL`, `CONTRADICTS`, `UNRELATED` |
 | `VerifierIndependence` | `DIFFERENT_FAMILY`, `SAME_FAMILY`, `RULE_PROVENANCE`, `HUMAN` |
-| `CitationOrigin` | `LLM`, `RULE`, `REVIEWER`, `BASELINE` |
+| `CitationOrigin` | `LLM`, `RULE`, `MAPPING`, `REVIEWER`, `EXTERNAL`, `BASELINE` (architecture §7.1) |
 | `RetrievalOrigin` | `SEARCH`, `GRAPH`, `TOPIC_MAP` |
 | `EdgeKind` | `REFERS_TO`, `USES_DEFINITION`, `AMENDED_BY`, `ALIGNS_WITH` |
 | `Comparator` | `MIN`, `MAX`, `EQ`, `REQUIRED`, `PROHIBITED` |
@@ -944,7 +963,7 @@ All errors use `application/problem+json` per RFC 9457 with the `Problem` schema
 | `ingest-running` | 409 | Ingestion already running | আইন সংগ্রহ চলছে | E-41 |
 | `analysis-expired` | 410 | Result has expired | ফলাফলের মেয়াদ শেষ | After 30 minutes or `DELETE` |
 | `envelope-expired` | 410 | Memo link has expired | মেমোর মেয়াদ শেষ | Envelope older than 24 hours |
-| `ticket-expired` | 410 | Review ticket has expired | পর্যালোচনা টিকিটের মেয়াদ শেষ | After 30 days |
+| `ticket-expired` | 410 | Review ticket has expired | পর্যালোচনা টিকিটের মেয়াদ শেষ | After the last of its review items expires |
 | `payload-too-large` | 413 | File is too large | ফাইলটি অনেক বড় | Over 10 MB |
 | `unsupported-media-type` | 415 | File type not supported | এই ধরনের ফাইল গ্রহণযোগ্য নয় | Not PDF, JPEG, PNG or text by magic bytes |
 | `too-many-pages` | 422 | Too many pages | পৃষ্ঠা সংখ্যা বেশি | Over 15 pages or images |
@@ -985,17 +1004,17 @@ instance plus `usage_counter` for daily quotas.
 
 ## 9. MCP tool contracts
 
-- `/mcp` with the Spring AI MCP server starter (WebMVC), profile `mcp`. Transport: Streamable HTTP if the pinned Spring AI version supports it, otherwise SSE; `docs/mcp.md` states which.
+- `/mcp` with the Spring AI MCP server starter for WebMVC (`spring-ai-starter-mcp-server-webmvc`, Spring AI 1.1.x pinned in ADR-0001), profile `mcp`. Transport: **Streamable HTTP** (`spring.ai.mcp.server.protocol=STREAMABLE`); the deprecated SSE transport is not offered. `docs/mcp.md` states the transport and the pinned version.
 - Authentication: `Authorization: Bearer shk_...` with scope `mcp`; per-key limit 60 calls per minute; every call writes a `usage_event` (`MCP_CALL`) and denied calls write an audit event.
 - Results: `structuredContent` matching the tool's output schema, plus one `text` item with the same JSON. Errors: `isError: true` with a `Problem` as `structuredContent`.
 - Every result includes `disclaimer` and `corpus_release`. Arguments and results use `snake_case`.
 
 | Tool | Description given to clients | Input | Output |
 | --- | --- | --- | --- |
-| `search_bd_law` | Search Bangladeshi labour law and the ingested ILO conventions in Bangla or English with hybrid retrieval. Returns section keys and official source URLs. | `query` string 1..500 (required); `top_k` int 1..20 (default 8); `language` `bn` \| `en` \| `any` (default `any`) | `{ results: [{ section_key, act_code, section_no, heading_bn, heading_en, snippet, source_url, fused_score, origin }], rewritten_queries, corpus_release, disclaimer }` |
+| `search_bd_law` | Search Bangladeshi labour law and the ingested ILO conventions in Bangla or English with hybrid retrieval on ShromikAI's own servers (no cloud model sees the query). Returns section keys and official source URLs. | `query` string 1..500 (required); `top_k` int 1..20 (default 8); `language` `bn` \| `en` \| `any` (default `any`) | `{ results: [{ section_key, act_code, section_no, heading_bn, heading_en, snippet, source_url, fused_score, origin }], corpus_release, disclaimer }` |
 | `get_law_section` | Get the current official text of one statute section in Bangla and English, with version and source. | `act_code` string (required); `section_no` string, Latin or Bangla digits (required) | `{ section_key, act_code, act_title_bn, act_title_en, section_no, section_no_original, heading_bn, heading_en, authoritative_lang, text_bn, text_en, translation_official, version_label, effective_from, is_current, source_url, fetched_at, related: [{ section_key, kind, reviewed }], corpus_release, disclaimer }` |
-| `verify_legal_citation` | Run ShromikAI's 3-check verifier (existence, quote match, independent support) on a citation before showing it to anyone. | `act_code`, `section_no`, `quoted_text` (20..300), `claim` (20..1000) — all required | `{ status: VERIFIED \| UNCERTAIN \| REJECTED, checks: { existence, quote_match: { outcome, similarity }, support: { outcome, label, confidence, independence, reason } }, reason_codes, verified_citation \| null, corpus_release, disclaimer }` |
-| `analyze_employment_contract` | Analyse one employment contract with the full ShromikAI pipeline. Personal data is removed on the server before any cloud model sees it; the contract is neither stored nor echoed. | `text` string 200..60,000 (required); `side` `WORKER` \| `EMPLOYER` (required); `output_language` `bn` \| `en` (default `bn`) | `{ analysis_id, findings: [{ id, title, kind, severity, non_obvious, explanation, verification_status, citations: [VerifiedCitation in snake_case], suggested_clause \| null }], summary, review_ticket \| null, provenance, disclaimer }`; texts contain placeholders, never input identifiers or 8-token spans of the input |
+| `verify_legal_citation` | Run ShromikAI's 3-check verifier (existence, quote match, independent support) on a citation before showing it to anyone. Personal data in the claim is removed on the server before the support model sees it. | `act_code`, `section_no`, `quoted_text` (20..300), `claim` (20..600) — all required; verified as origin `EXTERNAL` (no candidate-set check), claim redacted locally first (architecture §10.7) | `{ status: VERIFIED \| UNCERTAIN \| REJECTED, checks: { existence, quote_match: { outcome, similarity }, support: { outcome, label, confidence, independence, reason } }, reason_codes, verified_citation \| null, corpus_release, disclaimer }` |
+| `analyze_employment_contract` | Analyse one employment contract with the full ShromikAI pipeline. Personal data is removed on the server before any cloud model sees it; the contract is neither stored nor echoed. | `text` string 200..60,000 (required); `side` `WORKER` \| `EMPLOYER` (required); `output_language` `bn` \| `en` (default `bn`) | `{ analysis_id, findings: [{ id, title, kind, severity, non_obvious, explanation, verification_status, citations: [VerifiedCitation in snake_case], suggested_clause \| null }], summary, review_ticket \| null, provenance, disclaimer }`; all texts keep placeholders and never contain input identifiers. Every field except `suggested_clause` contains no 8-token span of the input; `suggested_clause` (the revised clause from the counter-offer agent, only for `VERIFIED` findings) is exempt from the 8-token rule because a revision naturally repeats parts of the clause it revises, but it still uses placeholders. Nothing is stored |
 | `list_jurisdiction_packs` | List available jurisdiction packs and their coverage. | none | `{ packs: [{ code, name, acts: [{ act_code, title_en, title_bn, section_count, authoritative_lang }], ilo_conventions: [{ code, ratification_status }], active_rules, reviewed_ilo_mappings, corpus_release }], disclaimer }` |
 
 | MCP feature | Contract |
@@ -1007,8 +1026,8 @@ instance plus `usage_counter` for daily quotas.
 
 ## 10. Automation endpoints used by n8n
 
-n8n holds an API key with scope `automation` and calls only E-41 to E-44. It never receives or
-sends contract content.
+n8n holds an API key with scopes `automation` and `laws` and calls only E-31 (to read source URLs)
+and E-41 to E-44. It never receives or sends contract content.
 
 | Step of `legislative-watch` | Call |
 | --- | --- |
@@ -1016,7 +1035,7 @@ sends contract content.
 | Fetch watched pages | n8n HTTP GET on the source URLs from `GET /api/v1/laws` (`sourceUrl`) |
 | Compare hashes | `POST /api/v1/admin/laws/check-hashes` |
 | On change, re-ingest | `POST /api/v1/admin/laws/ingest` with the changed acts |
-| Retrieval smoke | `POST /api/v1/admin/eval/retrieval-smoke` |
+| Retrieval smoke | `POST /api/v1/admin/laws/retrieval-smoke` |
 | Notify | Email or Telegram node with act codes, URLs, hashes and smoke metrics only |
 | Review task | `POST /api/v1/admin/review-items` with `kind: CORPUS_CHANGE` |
 
@@ -1030,3 +1049,4 @@ sends contract content.
 | Date | Change |
 | --- | --- |
 | 2026-11-10 | v1 specification (`spec-v1`), aligned with playbook v1.1 |
+| 2026-11-10 | v1.1 (`spec-v1.1`): signed envelope holds the re-identified result; SSE Bearer authentication and no query-string tokens; `rewrittenQueries` removed from free-text search; E-43 moved to `/admin/laws/retrieval-smoke`; `Meta.models.judge`; `input.sample`; `CitationOrigin` adds `MAPPING` and `EXTERNAL`; MCP claim 20..600, Streamable HTTP, `suggested_clause` exemption; review-item and ticket expiry; `claimedCitation.claimReduced`. No implemented client is affected (nothing shipped before v1.1) |

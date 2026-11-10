@@ -2,11 +2,11 @@
 
 | Field | Value |
 | --- | --- |
-| Spec version | v1 (tag `spec-v1`), aligned with the master prompt playbook v1.1 |
+| Spec version | v1.1 (tag `spec-v1.1`), aligned with the master prompt playbook v1.2 |
 | Binding rules | [`AGENTS.md`](../../AGENTS.md) (rules R-01 to R-12, module map) |
 | Requirements | [`PRD.md`](PRD.md) (FR, NFR, KPI IDs) |
 | Interfaces | [`api.md`](api.md) |
-| Decisions | [`docs/adr/0001`](../adr/0001-stack.md) to [`0005`](../adr/0005-model-routing.md) |
+| Decisions | [`docs/adr/0001`](../adr/0001-stack.md) to [`0008`](../adr/0008-latency-and-cost-budget.md) |
 
 No statute text, section number or numeric legal limit appears in this document. Wherever the
 architecture depends on one, the value is "derived from the ingested statute in P3" and lives in
@@ -150,15 +150,18 @@ Key interfaces (binding from P1 onwards):
 | `EgressGuard` | shared.ai (port), privacy (impl) | `void check(String outboundPayload, CallContext ctx) throws EgressBlockedException` | Startup fails if no bean implements it |
 | `PromptRegistry` | shared.ai | `PromptTemplate get(String id, int version)` | Loads and lint-checks `prompts/` at startup |
 | `BanglaNormalizer` | shared | `String forMatching(String text)` | §7.2; display text is never changed |
+| `QuoteMatcher` | shared (`shared.text`) | `QuoteMatch match(String quote, String authoritativeText)` | §7.3 check (b) algorithm; used by `verify` (citations, review decisions), `rules` (`RuleLoader`) and `law` (ILO mapping loader, §7.8); 80 % coverage gate |
+| `CanonicalJson` | shared | `byte[] canonicalise(JsonNode value)` | RFC 8785 (JCS); checked against the RFC test vectors |
 | `DocumentReader` | ingest | `ExtractedDocument read(Upload upload, CancellationToken token)` | Paragraphs, languages, page map, OCR confidences |
 | `Redactor` | privacy | `RedactionResult redact(ExtractedDocument doc)` | Redacted paragraphs and an in-memory `PlaceholderMap` |
 | `CandidateRetriever` | retrieval | `CandidateSet retrieve(List<RedactedClause> clauses, JurisdictionPack pack)` | §8 |
 | `RuleEngine` | rules | `List<RuleViolation> evaluate(List<ClauseFacts> facts, RuleContext ctx)` | §9 |
 | `CitationVerifier` | verify | `VerificationOutcome verify(ClaimedCitation c, VerificationContext ctx)` | §7; the only producer of `VerifiedCitation` |
 | `ReviewQueue` | verify | `ReviewTicket open(List<ReviewCandidate> items, AnalysisId id)` | Creates `review_item` rows |
-| `SignedResultCodec` | verify | `SignedEnvelope sign(AnalysisResult r)`, `AnalysisResult open(SignedEnvelope e)` | §7.7 |
-| `MemoRenderer` | memo | `byte[] renderPdf(Memo memo)`, `String renderHtml(Memo memo)` | Gotenberg client |
-| `AnalysisService` | analysis | `AnalysisHandle submit(AnalysisRequest req, Subject subject)` | Starts the state machine |
+| `SignedResultCodec` | verify | `EnvelopeSignature sign(JsonNode payload, Instant expiresAt)`, `VerifiedPayload open(SignedEnvelope e)` | §7.7; works on JSON trees canonicalised by `CanonicalJson`, so `verify` never depends on the `analysis` type `AnalysisResult`; `VerifiedPayload` exposes the JSON tree and the `VerifiedCitation`s that only `verify` may deserialise |
+| `MemoRenderer` | memo | `byte[] renderPdf(MemoDocument doc)`, `String renderHtml(MemoDocument doc)` | Gotenberg client; `MemoDocument` is a `memo` record built from a `VerifiedPayload` |
+| `AnalysisService` | analysis | `AnalysisHandle submit(AnalysisRequest req, Subject subject)`; `ResultView resultFor(AnalysisId id, Subject subject)` | Starts the state machine; `resultFor` re-identifies the redacted result through `privacy.Reidentifier` and signs it (§7.7), so `api` never calls `privacy` |
+| `ClaimRedactionService` | analysis | `RedactedClaim redact(String claim, CallContext ctx)` | Local detectors + `pii-extract` for free-text claims from MCP `verify_legal_citation` (§10.7); fails closed like intake |
 | `JobStore` | analysis | `Optional<JobState> get(AnalysisId id, Subject subject)` | In-memory, 30-minute TTL, owner-bound |
 | `TraceRecorder` | trace | `void record(TraceEvent e)` | Validates against `trace-event.schema.json` |
 
@@ -184,13 +187,35 @@ stateDiagram-v2
     COMPOSE --> COMPLETE
     COMPLETE --> [*]
     INTAKE --> FAILED
-    REDACT --> FAILED: local model unavailable or egress blocked
-    CLASSIFY --> FAILED: not an employment contract
-    RISK --> FAILED: budget or timeout
+    OCR --> FAILED
+    REDACT --> FAILED
+    CLASSIFY --> FAILED
+    RETRIEVE --> FAILED
+    RULES --> FAILED
+    RISK --> FAILED
+    VERIFY --> FAILED
+    CORRECT --> FAILED
+    COMPOSE --> FAILED
+    FAILED --> [*]
 ```
 
-The playbook's `COMPOSE_READY` is the point between `CORRECT` (or `VERIFY`) and `COMPOSE`.
-`RETRIEVE` and `RULES` run in parallel. Each transition writes one trace event.
+`RETRIEVE` and `RULES` run in parallel. Each transition, including every transition to `FAILED`,
+writes one trace event. `FAILED` is reachable from every non-terminal state; the problem codes
+each state can produce are:
+
+| State | Problem codes on failure (§5.4) |
+| --- | --- |
+| any state | `analysis-timeout` (step timeout or 120 s wall time), `budget-exceeded`, `instance-lost`, `internal-error` |
+| `INTAKE` | `payload-too-large`, `unsupported-media-type`, `too-many-pages` (normally caught by the API before the job starts) |
+| `OCR` | `unreadable-document` |
+| `REDACT` | `local-model-unavailable`, `privacy-guard-blocked` |
+| `CLASSIFY` | `not-an-employment-contract`, `model-output-invalid`, `model-refused`, `upstream-unavailable`, `privacy-guard-blocked` |
+| `RETRIEVE` | none of its own (`query-rewrite` failures fall back to the raw clause; embedding failure degrades to full-text with warning `retrieval-keyword-only`) |
+| `RULES` | `model-output-invalid`, `model-refused`, `upstream-unavailable`, `privacy-guard-blocked` (`clause-facts`) |
+| `RISK` | `model-output-invalid`, `upstream-unavailable`, `privacy-guard-blocked` |
+| `VERIFY` | none of its own (an unavailable verifier yields `UNCERTAIN`) |
+| `CORRECT` | none of its own (a failed repair leaves the finding `UNCERTAIN`) |
+| `COMPOSE` | `model-output-invalid`, `model-refused`, `upstream-unavailable`, `privacy-guard-blocked` (`memo-*`, `obligations`); `counter-offer` failures drop the redline with warning `counter-offer-dropped` |
 
 | # | State (`Stage`) | Module | Runs where | Output | Model and prompt |
 | --- | --- | --- | --- | --- | --- |
@@ -200,11 +225,17 @@ The playbook's `COMPOSE_READY` is the point between `CORRECT` (or `VERIFY`) and 
 | 4 | `CLASSIFY` | analysis | Local + cloud | Clauses (rule-based splitter, `clause-segment` fallback), `ClauseType`, document type | `clause-classify`, `clause-segment` (Haiku 5.5) |
 | 5 | `RETRIEVE` | retrieval | Local + cloud | Candidate sections per clause | `query-rewrite` (Haiku 5.5), bge-m3, SQL |
 | 6 | `RULES` | analysis, rules | Cloud then local | `ClauseFact`s, rule violations, playbook deviations | `clause-facts` (Haiku 5.5) + regex; rule engine |
-| 7 | `RISK` | analysis | Cloud | Findings with claimed citations; counter-offers | `risk-analysis`, `counter-offer` (Sonnet 5.5) |
+| 7 | `RISK` | analysis | Cloud | Findings with claimed citations, from up to 4 parallel clause batches (§5.3); in parallel, the obligations checklist with claimed citations restricted to the candidates | `risk-analysis` (Sonnet 5.5), `obligations` (Haiku 5.5) |
 | 8 | `VERIFY` | verify | Local + cloud | `VerificationResult` per citation | `verify-support` (Gemini Flash) or `verify-support-claude` (Haiku 5.5) |
 | 9 | `CORRECT` | analysis, retrieval, verify | Cloud | Repaired citations or `UNCERTAIN` findings and review items | `query-rewrite`, `risk-citation-repair` (Sonnet 5.5) |
-| 10 | `COMPOSE` | memo | Cloud then local | Memo, redlines, obligations, signed envelope | `memo-bn`/`memo-en` (Sonnet 5.5), `obligations` (Haiku 5.5) |
-| 11 | `COMPLETE` | analysis | Local | Result available; re-identified per response | none |
+| 10 | `COMPOSE` | analysis, memo, rules | Cloud then local | Counter-offers and redlines for `VERIFIED` findings (re-checked by the rule engine) and the memo, in parallel; memo sections other than the summary and next steps are assembled from findings, redlines and obligations without a model call | `counter-offer` (Sonnet 5.5, one call per finding), `memo-bn`/`memo-en` (Sonnet 5.5, summary and next-steps narrative only) |
+| 11 | `COMPLETE` | analysis | Local | Redacted result in the `JobStore`; re-identified and signed per response (§7.7) | none |
+
+Counter-offers are generated after `VERIFY` and `CORRECT`, so a redline is written only for a
+finding whose final status is `VERIFIED` and whose kind is `CONFLICT`, `AMBIGUITY` or `OMISSION`
+(FR-41). `UNCERTAIN` findings get no redline. Redline IDs (`r1`…) are assigned before `COMPOSE`
+starts so the memo can reference them; a dropped redline is removed from the memo by the
+composer.
 
 ### 5.2 Sequence of one analysis
 
@@ -232,7 +263,7 @@ sequenceDiagram
     API->>AN: submit(request, subject)
     AN->>DB: insert analysis_run (metadata only)
     API-->>B: 202 {analysisId, eventsUrl}
-    B->>API: GET /api/v1/analyses/{id}/events (SSE)
+    B->>API: GET /api/v1/analyses/{id}/events (SSE over fetch, Authorization: Bearer)
     AN->>IN: INTAKE (+ OCR when needed)
     IN-->>AN: paragraphs
     AN->>PV: REDACT
@@ -252,9 +283,13 @@ sequenceDiagram
         AN->>RU: evaluate(facts, rules, playbook)
         RU-->>AN: violations with rule citations
     end
-    AN->>CL: risk-analysis (Sonnet), sectionKey enum = candidates
-    CL-->>AN: findings + claimed citations
-    AN->>CL: counter-offer (Sonnet)
+    par RISK: up to 4 clause batches in parallel
+        AN->>CL: risk-analysis (Sonnet), sectionKey enum = batch candidates
+        CL-->>AN: findings + claimed citations
+    and obligations
+        AN->>CL: obligations (Haiku), sectionKey enum = candidates
+        CL-->>AN: obligation items + claimed citations
+    end
     loop each claimed citation (parallel, virtual threads)
         AN->>VF: verify
         VF->>DB: existence, currency, candidate set, authoritative text
@@ -270,35 +305,52 @@ sequenceDiagram
         AN->>VF: open review items for UNCERTAIN findings
     end
     par COMPOSE
-        AN->>ME: memo-bn (Sonnet) + redline diff
+        AN->>CL: counter-offer (Sonnet), one call per VERIFIED finding
+        AN->>RU: re-check proposed facts (clause-facts + rules)
+        AN->>ME: redline diff
     and
-        AN->>ME: obligations (Haiku)
+        AN->>ME: memo-bn (Sonnet): summary + next steps narrative
     end
-    AN->>VF: sign envelope (HMAC-SHA256)
     AN->>DB: update analysis_run (counts, cost, duration)
     AN-->>B: SSE completed
     B->>API: GET /api/v1/analyses/{id}
-    API->>PV: re-identify in memory
+    API->>AN: resultFor(id, subject)
+    AN->>PV: re-identify in memory (owning subject only)
+    AN->>VF: sign re-identified result (JCS + HMAC-SHA256)
+    AN-->>API: AnalysisResult + envelope
     API-->>B: 200 AnalysisResult (+ envelope)
     B->>API: POST /api/v1/memos/render {envelope, format: PDF}
-    API->>ME: verify envelope, HTML, Gotenberg to PDF
+    API->>VF: open envelope (constant-time HMAC, expiry)
+    API->>ME: MemoDocument from the verified payload, HTML, Gotenberg to PDF
     API-->>B: application/pdf
 ```
 
-### 5.3 Latency budget (NFR-01, 10 pages, reference deployment)
+### 5.3 Latency and token budget (NFR-01, 10 pages, reference deployment)
 
-| State | p95 budget | How the budget is met |
-| --- | --- | --- |
-| `INTAKE` | 1 s | PDFBox with a memory-only stream cache; ≤ 10 MB |
-| `OCR` | 8 s | 4 parallel Tesseract workers; ≤ 1600 px images from the client; zero for text input |
-| `REDACT` | 6 s | Detectors first (< 200 ms); `pii-extract` on chunks of ≤ 1,500 characters, 4 in parallel (`OLLAMA_NUM_PARALLEL=4`) |
-| `CLASSIFY` | 4 s | Rule-based splitter; Haiku 5.5 effort `low` for classification |
-| `RETRIEVE` ∥ `RULES` | 6 s | One batched `query-rewrite` call; one batched embedding call; facts on Haiku 5.5 effort `low`; rule engine < 50 ms |
-| `RISK` | 18 s | Sonnet 5.5 effort `medium`, streamed; `counter-offer` starts per finding as findings arrive |
-| `VERIFY` | 6 s | Existence and quote checks < 50 ms each; support checks 8 in parallel |
-| `CORRECT` | 5 s (only when needed) | Rewrites and repairs in parallel |
-| `COMPOSE` | 6 s | Memo and obligations in parallel |
-| **Total** | **≤ 60 s** | Hard timeout 120 s → `analysis-timeout` |
+A model step's time is time to first token (TTFT) plus output tokens (thinking included) divided
+by output speed. The provider documentation gives no output-speed figures, so the budgets use a
+**planning assumption, not a measurement**: TTFT ≤ 2 s; Sonnet 5.5 ≥ 80 output tokens per second
+per stream; Haiku 5.5 and Gemini Flash ≥ 150. P6 measures TTFT, output speed and duration per
+stage on the `dev` split (M-19 per stage). If a stage misses its budget, the fix (smaller batches,
+lower caps, a different effort) or a revised NFR-01 goes through an ADR; budgets are never
+changed silently. `max_output_tokens` below is the cap in each prompt's front matter; a call that
+stops at the cap counts as schema-invalid output, and its one repair splits the batch in half.
+
+| State | p95 budget | Model calls on the critical path | Output cap per call | How the budget adds up |
+| --- | --- | --- | --- | --- |
+| `INTAKE` | 1 s | none | n/a | PDFBox with a memory-only stream cache; ≤ 10 MB |
+| `OCR` | 8 s | none (Tesseract) | n/a | 4 parallel workers; ≤ 1600 px images from the client; 0 s for text input and text-layer PDFs |
+| `REDACT` | 6 s | `pii-extract` (local) | 400 | Detectors first (< 200 ms); chunks of ≤ 1,500 characters, 4 in parallel (`OLLAMA_NUM_PARALLEL=4`) |
+| `CLASSIFY` | 5 s | `clause-classify`, 2 batches in parallel | 450 | 2 s + 450 ÷ 150 = 5 s |
+| `RETRIEVE` ∥ `RULES` | 6 s | `query-rewrite` (2 batches) ∥ `clause-facts` (3 batches) | 600 | 2 s + 600 ÷ 150 = 6 s; one batched embedding call; rule engine < 50 ms |
+| `RISK` | 20 s | `risk-analysis`, up to 4 clause batches in parallel (effort `medium`); `obligations` in parallel | 1,400 (`risk-analysis`), 1,500 (`obligations`) | 2 s + 1,400 ÷ 80 = 19.5 s; obligations 2 s + 1,500 ÷ 150 = 12 s, off the critical path |
+| `VERIFY` | 4 s | `verify-support`, 8 in parallel, about 12 citations | 150 | 2 waves × (1 s + 150 ÷ 150) = 4 s; existence and quote checks < 50 ms each |
+| `CORRECT` | 5 s (only when needed) | `query-rewrite` then `risk-citation-repair`, repairs in parallel | 200 / 300 | 2 s + 200 ÷ 150 ≈ 3.5 s, then re-verification ≈ 1.5 s; the repair call overlaps re-retrieval of other findings |
+| `COMPOSE` | 12 s | `memo-bn` ∥ `counter-offer` (one call per `VERIFIED` finding, up to 8 in parallel) | 800 (memo), 500 (counter-offer) | memo 2 s + 800 ÷ 80 = 12 s; counter-offers 2 s + 500 ÷ 80 ≈ 8.5 s plus a re-check ≤ 3 s; counter-offers for findings verified at attempt 1 start during `CORRECT` |
+| **Total** | **≤ 59 s** text input and text-layer PDFs; **≤ 67 s** scanned PDFs and photos | | | Sum of the stage budgets with `CORRECT`; hard timeout 120 s → `analysis-timeout` |
+
+NFR-01 sets its p95 targets from this table: 60 s for text input and text-layer PDFs, 70 s for
+scanned PDFs and photos.
 
 ### 5.4 Failure handling
 
@@ -307,12 +359,14 @@ sequenceDiagram
 | Ollama unreachable or `pii-extract` fails twice | Stop before any cloud call | `local-model-unavailable` (503) |
 | Egress guard hit | Stop; `PRIVACY_BLOCK` audit event; metric | `privacy-guard-blocked` (500) |
 | Anthropic 429/5xx after 2 retries | Stop | `upstream-unavailable` (503, `Retry-After`) |
-| Schema-invalid output after one repair (`clause-classify`, `clause-facts`, `risk-analysis`) | Stop | `model-output-invalid` (502) |
+| Schema-invalid output after one repair (`clause-classify`, `clause-facts`, `risk-analysis`, `obligations`, `memo-bn`, `memo-en`) | Stop | `model-output-invalid` (502) |
+| Schema-invalid output after one repair (`counter-offer`), or a proposal that violates a rule twice | Drop that redline; warning `counter-offer-dropped` | none |
+| Schema-invalid output after one repair (`risk-citation-repair`) | Treated as `ABSTAIN`: the finding stays `UNCERTAIN` with a review item | none |
 | Schema-invalid output after one repair (`query-rewrite`) | Fall back to the raw clause | none |
 | Schema-invalid output after one repair (support check) | Label `UNRELATED` → `REJECTED` → corrective loop | none |
 | Verifier unavailable after the fallback | Citation `UNCERTAIN` (`VERIFIER_UNAVAILABLE`), never `VERIFIED` | none |
 | Refusal on Sonnet 5.5 | Server-side fallback (`fallbacks: "default"`); fallback model recorded | none |
-| Refusal on Haiku 5.5 | Classification or facts stop with `model-refused`; support fallback yields `UNCERTAIN` | `model-refused` (502) |
+| Refusal on Haiku 5.5 | Classification, facts or obligations stop with `model-refused`; support fallback yields `UNCERTAIN`; `query-rewrite` falls back to the raw clause | `model-refused` (502) |
 | Per-analysis cost above US$1.00 or token budget exhausted | Stop | `budget-exceeded` (503) |
 | Daily cost cap reached | Reject new analyses | `capacity-exhausted` (503) |
 | Step timeout or 120 s wall time | Cancel all calls | `analysis-timeout` (504) |
@@ -335,18 +389,31 @@ Adapter rules (ADR-0005):
 
 1. Claude calls use structured outputs (`output_config.format` with the prompt's JSON Schema, reduced to the subset the API accepts) and `output_config.effort`; they never send `temperature`, `top_p` or `top_k`. Full validation runs locally afterwards (R-04).
 2. Every call has `max_output_tokens` and `timeout_seconds` from the prompt front matter; long outputs stream.
-3. The stable prefix (system prompt, statute sections) is marked cacheable for Anthropic prompt caching; volatile parts come after it; cache-read tokens are recorded.
-4. Usage (input, output and cache-read tokens; the model actually used) goes to `LlmCallListener` for the cost ledger (FR-62) and the trace.
-5. Prices per million tokens live in configuration (`shromikai.pricing.*`), never in code.
+3. The stable prefix (system prompt, statute sections) is marked cacheable for Anthropic prompt caching with the 5-minute TTL; volatile parts come after it; cache-write and cache-read tokens are recorded. Calls that start together (parallel batches of one analysis) do not share a cache entry; caching pays off across analyses that start less than 5 minutes apart and for sequential calls.
+4. Usage (input, output, cache-write and cache-read tokens; the model actually used) goes to `LlmCallListener` for the cost ledger (FR-62) and the trace.
+5. Prices per million tokens live in configuration (`shromikai.pricing.*`), never in code: input, output, cache write (5 minutes and 1 hour), cache read, and a long-context tier where the model has one (Haiku 5.5: prompts above 100,000 input tokens are billed at the higher tier). The cost ledger picks the tier per call from the call's input tokens.
 
 ## 7. Verification algorithm
 
 ### 7.1 Inputs
 
 A `ClaimedCitation` has `sectionKey`, `actCode`, `quote` (copied from the authoritative text,
-20 to 300 characters), `claim` (the legal proposition, in Bangla or English, with placeholders
-instead of PII) and `origin` (`LLM`, `RULE`, `REVIEWER`). The `VerificationContext` carries the
-analysis date, jurisdiction pack, corpus release, candidate set and attempt number.
+20 to 300 characters), `claim` (the legal proposition, in Bangla or English, 20 to 600
+characters, with placeholders instead of PII) and `origin`:
+
+| Origin | Produced by | Candidate-set requirement in check (a) | Check (c) |
+| --- | --- | --- | --- |
+| `LLM` | Risk agent, repair agent, obligations agent | Key must be in the analysis's candidate set (`NOT_IN_CANDIDATES`) | Support model |
+| `RULE` | Rule engine (`legal_basis` of an active, two-person-reviewed rule) | none | `RULE_PROVENANCE` |
+| `MAPPING` | A reviewed `ALIGNS_WITH` row of `data/mappings/bd-ilo.yaml` (ILO reference, §7.8) | none | `RULE_PROVENANCE` |
+| `REVIEWER` | Admin decision in the review queue | none | `HUMAN` |
+| `EXTERNAL` | MCP `verify_legal_citation` caller; claim redacted locally first (§10.7) | none (there is no candidate set) | Support model |
+| `BASELINE` | Plain-LLM baseline in compare mode and evaluation | none | Support model |
+
+The `VerificationContext` carries the analysis date (the call date for `EXTERNAL`), jurisdiction
+pack, corpus release, candidate set (empty for non-`LLM` origins) and attempt number. The quote
+match of check (b) is `shared.text.QuoteMatcher`, so `rules` (rule loading) and `law` (ILO mapping
+loading) apply the same algorithm without depending on `verify`.
 
 ### 7.2 `BanglaNormalizer` (matching form; applied to quotes and section text)
 
@@ -379,7 +446,7 @@ Checks run in order and short-circuit: a failed check marks later checks `SKIPPE
 | FAIL | SKIPPED | SKIPPED | `REJECTED` |
 | PASS | FAIL | SKIPPED | `REJECTED` |
 | PASS | PASS | `SUPPORTS`, confidence ≥ 0.70 (`DIFFERENT_FAMILY` or `SAME_FAMILY`) | `VERIFIED` |
-| PASS | PASS | rule origin, rule active and two-person reviewed (`RULE_PROVENANCE`) | `VERIFIED` |
+| PASS | PASS | `RULE` or `MAPPING` origin, source row active and two-person reviewed (`RULE_PROVENANCE`) | `VERIFIED` |
 | PASS | PASS | reviewer origin (`HUMAN`) | `VERIFIED` |
 | PASS | PASS | `PARTIAL`, or `SUPPORTS` with confidence < 0.70 | `UNCERTAIN` |
 | PASS | PASS | verifier unavailable after fallback | `UNCERTAIN` |
@@ -407,7 +474,7 @@ becomes `UNCERTAIN` and gets a review item (FR-46, FR-50).
 | --- | --- | --- |
 | `DIFFERENT_FAMILY` | Support judged by Gemini Flash | "স্বতন্ত্র মডেল যাচাই করেছে" (checked by an independent model) |
 | `SAME_FAMILY` | Support judged by `verify-support-claude` on Haiku 5.5 | "একই পরিবারের মডেল যাচাই করেছে" (checked by a model of the same family) |
-| `RULE_PROVENANCE` | Citation from a legal rule whose quote two people reviewed | "পর্যালোচিত নিয়ম" (reviewed rule) |
+| `RULE_PROVENANCE` | Citation from a legal rule or ILO mapping row whose quote two people reviewed | "পর্যালোচিত নিয়ম" (reviewed rule) |
 | `HUMAN` | Citation chosen by an admin in the review queue | "মানব পর্যালোচক" (human reviewer) |
 
 ### 7.7 Thresholds, envelope and governance
@@ -420,12 +487,23 @@ becomes `UNCERTAIN` and gets a review item (FR-46, FR-50).
 | `shromikai.verify.corrective-attempts` | 1 | ADR |
 | `shromikai.verify.parallelism` | 8 | Performance change, no ADR |
 
-Signed result envelope (FR-55): canonicalise the `AnalysisResult` without its `envelope` field
-with RFC 8785 (JCS); `signature = base64url(HMAC-SHA256(key[kid], canonical || "." || expiresAt))`
-with `expiresAt = completedAt + 24 h`; keys from `SHROMIKAI_ENVELOPE_KEYS`
-(`kid1:base64,kid2:base64`; the first signs, all verify; the previous key stays 24 hours after
-rotation). `POST /api/v1/memos/render` compares in constant time, checks expiry, and
-deserialises `VerifiedCitation`s only inside `bd.shromikai.verify`.
+Signed result envelope (FR-55, ADR-0006):
+
+1. **What is signed.** The **re-identified** `AnalysisResult` exactly as it is returned to the owning subject (names and identifiers restored), without its `envelope` field. The redacted form is never signed or exposed, so a memo shows the user's real names and the client can build the envelope from the response it received without any transformation.
+2. **Where.** `AnalysisService.resultFor` (module `analysis`) re-identifies the redacted result held in the `JobStore`, serialises it to a JSON tree and calls `SignedResultCodec.sign` (module `verify`) on it. Signing happens per response; because the canonical form and `expiresAt` are fixed, every `GET` of the same result yields the same signature.
+3. **How.** Canonicalise the JSON tree with RFC 8785 (JCS, `shared.CanonicalJson`); `signature = base64url(HMAC-SHA256(key[kid], canonical || "." || expiresAt))` with `expiresAt = completedAt + 24 h`; keys from `SHROMIKAI_ENVELOPE_KEYS` (`kid1:base64,kid2:base64`; the first signs, all verify; the previous key stays 24 hours after rotation).
+4. **Render.** `POST /api/v1/memos/render` receives `{ envelope: { payload, keyId, algorithm, expiresAt, signature }, format }`; `SignedResultCodec.open` re-canonicalises `payload`, compares in constant time and checks expiry, and only `bd.shromikai.verify` deserialises the `VerifiedCitation`s inside it. `memo` builds a `MemoDocument` from the verified payload and renders it.
+5. **Privacy.** The payload contains re-identified contract text (clause text, original clauses in redlines). It exists only in the request's memory and in Gotenberg's `tmpfs` for the duration of the render; the request body is never logged (R-02, §10.1). The server stores nothing about the envelope.
+6. **Test.** `MemoFromRealResponseIT` (P7): `GET /api/v1/analyses/{id}`, build `SignedEnvelope` exactly as api.md §3 tells clients to, `POST /api/v1/memos/render` with `PDF` and `HTML`, and receive `200`; changing one byte of the payload returns `400` `signature-invalid`.
+
+### 7.8 ILO references
+
+`RiskFinding.iloReferences` are `VerifiedCitation`s produced through the same verifier:
+
+1. For each `VERIFIED` Bangladeshi citation of a finding, the composer looks up `ALIGNS_WITH` rows in `data/mappings/bd-ilo.yaml` whose `bd_section_key` equals it and that are `reviewed: true` with `reviewed_by` different from `authored_by`. Unreviewed rows are never used (FR-16).
+2. Each row becomes a `ClaimedCitation` with origin `MAPPING`, the ILO article's section key, the row's verbatim `ilo_quote` and the row's `claim`.
+3. Check (a): the ILO section exists, is current and its act (`jurisdiction = ILO`) is in the pack's `ilo_conventions`. Check (b): the quote matches the ILO article's authoritative text. Check (c): `RULE_PROVENANCE`. `IloMappingLoaderTest` also checks every reviewed row's quote at startup and refuses to start on a miss, like `RuleLoader`.
+4. At most 2 ILO references per finding. An ILO reference never changes a finding's severity or status; a deviation from an ILO convention without a statutory conflict is at most `LOW` (FR-39).
 
 ## 8. Retrieval algorithm
 
@@ -447,6 +525,11 @@ deserialises `VerifiedCitation`s only inside `bd.shromikai.verify`.
 
 Each result records section key, act, section number, heading, vector rank, text rank, fused
 score and origin (FR-22).
+
+Query rewriting (step 1) runs only on redacted clauses inside an analysis and in the corrective
+loop. **Free-text law search** (`GET /api/v1/laws/search`, MCP `search_bd_law`) runs steps 2 to 5
+on the caller's query as written, with no cloud call (ADR-0006): a query may contain personal data,
+and running it through local redaction would not fit the NFR-02 search budget (p95 ≤ 500 ms).
 
 ```sql
 -- Graph expansion (step 5); :seeds = fused top-8 section ids
@@ -476,6 +559,25 @@ For the worker category stated in the contract (or in the profile), every `Claus
 topic-map rows list that category in `expected_for`, and for which the contract has no clause, is
 passed to the risk agent as `expected_topics_missing`, with its mapped sections as candidates.
 
+### 8.5 Risk batches
+
+For `RISK`, clauses are grouped into at most 4 batches of contiguous clauses with similar
+`ClauseType`s (`shromikai.analysis.risk-batches: 4`), each with the union of its clauses'
+candidates (still restricted to the analysis-level set of §8.3) and its share of
+`expected_topics_missing`. Every batch receives a short outline of the whole contract (clause IDs,
+types and facts, no text) so `INTERACTION` findings across batches remain possible; findings are
+merged and deduplicated by (clause IDs, kind, section key) before `VERIFY`.
+
+### 8.6 Retrieval smoke check
+
+`RetrievalSmokeService` (module `retrieval`) runs hybrid + graph retrieval (no query rewriting,
+no cloud call) over the retrieval questions with `status: checked`, which the build copies from
+`eval/retrieval/questions.jsonl` into the boot-jar resource `retrieval/smoke-questions.jsonl`. It
+returns hit@5, MRR@10 and recall@8 computed by `retrieval.RetrievalMetrics`, the same class the
+P4 eval runner uses. It backs `POST /api/v1/admin/laws/retrieval-smoke` (FR-84); its numbers go
+only into the n8n notification and the response, never into `eval/reports/` or any public claim
+(R-07).
+
 ## 9. Rule engine
 
 ### 9.1 Rule files and loading
@@ -503,7 +605,8 @@ passed to the risk agent as `expected_topics_missing`, with its mapped sections 
 ```
 
 At startup `RuleLoader` validates every file against `rules.schema.json`, and for each `active`
-rule checks that the section exists and is current, that the quote passes the §7.3 quote match,
+rule checks that the section exists and is current, that the quote passes the §7.3 quote match
+(`shared.text.QuoteMatcher`),
 and that `reviewed_by` is present and differs from `authored_by`. Any failure stops the
 application (`RuleLoaderFailFastTest`). `draft` rules are never evaluated.
 
@@ -534,9 +637,10 @@ opened (FR-49).
 
 ### 9.4 Counter-offer re-check
 
-`clause-facts` runs on each proposed clause; the rule engine evaluates the new facts. Any
-violation triggers one regeneration; a second violation drops the proposal and adds warning
-`counter-offer-dropped` (FR-41).
+Counter-offers are generated in `COMPOSE`, only for `VERIFIED` findings (§5.1). `clause-facts`
+runs on each proposed clause; the rule engine evaluates the new facts. Any violation triggers one
+regeneration; a second violation drops the proposal and adds warning `counter-offer-dropped`
+(FR-41).
 
 ## 10. Privacy pipeline
 
@@ -583,7 +687,8 @@ characters before the match. Bilingual keyword lists live in `privacy/internal/k
 
 - Each distinct value gets `[TYPE_n]` (for example `[PERSON_1]`, `[ORG_2]`, `[NID_1]`), `n` counted per type in order of first occurrence.
 - The `PlaceholderMap` is a field of the in-memory job; it is never serialised, logged or persisted.
-- Re-identification happens per response for the owning subject only; stored traces and review items keep placeholders.
+- Re-identification happens per response for the owning subject only, inside `AnalysisService.resultFor` (module `analysis`, which calls `privacy.Reidentifier`); `api` and `mcp` never touch the `PlaceholderMap`. Stored traces and review items keep placeholders.
+- MCP `analyze_employment_contract` results are **not** re-identified: they keep placeholders (FR-66).
 
 ### 10.5 Egress guard and injection detector
 
@@ -594,10 +699,22 @@ characters before the match. Bilingual keyword lists live in `privacy/internal/k
 
 | Service | Receives | Never receives |
 | --- | --- | --- |
-| Anthropic | Redacted clauses, facts, statute sections, redacted findings | Original PII, images, file bytes, user identity |
-| Gemini | Claim (redacted), statute text, quote; memo explanations for judging (eval only, synthetic contracts) | Contract clauses, PII, user identity |
+| Anthropic | Redacted clauses, facts, statute sections, redacted findings; redacted MCP claims when Gemini is unavailable (`verify-support-claude`) | Original PII, images, file bytes, user identity, free-text law-search queries |
+| Gemini | Claim (redacted; for MCP `verify_legal_citation` redacted locally first, §10.7), statute text, quote; memo explanations for judging (eval only, synthetic contracts) | Contract clauses, PII, user identity, free-text law-search queries |
 | bdlaws, NORMLEX | HTTP GET requests (ingestion, legislative watch) | Anything about users |
 | n8n (internal) | URLs, hashes, counts, IDs | Text of any kind |
+
+### 10.7 Free-text inputs outside an analysis
+
+Two paths take free text that did not come through contract intake (ADR-0006):
+
+| Path | Text | Handling | Proven by |
+| --- | --- | --- | --- |
+| `GET /api/v1/laws/search`, MCP `search_bd_law` | `q` / `query` (≤ 500 characters) | No cloud call at all: local embedding (bge-m3) and full-text search only; no query rewriting; the query is never logged (log allowlist) and lives only in the in-memory retrieval cache | `NoPiiLeavesTheBoxIT` (search with PII canaries makes zero cloud requests) |
+| MCP `verify_legal_citation` | `claim` (20 to 600 characters) | `analysis.ClaimRedactionService` runs the deterministic detectors and `pii-extract` locally, replaces values with placeholders, and passes the redacted claim to check (c); the egress guard checks the outgoing payload against that call's placeholder map; Ollama down → `local-model-unavailable`, no cloud call | `NoPiiLeavesTheBoxIT` (claim with PII canaries; captured Gemini and Claude bodies contain none), `FailClosedIT` |
+
+`quoted_text` is statute text by definition and is matched locally; it is sent to the support
+model only after check (b) has matched it against the corpus.
 
 ## 11. Data model
 
@@ -632,7 +749,7 @@ Every table: **contract text = No**.
 | Table | Columns |
 | --- | --- |
 | `law_act` (V1 + V4) | V1: `id`, `code` unique, `title_en`, `title_bn`, `year`, `jurisdiction`, `source_url`, `fetched_at`. V4: `authoritative_lang` (`bn`, `en`), `status` (`IN_FORCE`, `REPEALED`), `source_sha256`, `ratification_status` (ILO acts: text as published by NORMLEX, else null) |
-| `law_section` (V1 + V2 + V4) | V1: `id`, `act_id`, `section_no`, headings and texts in both languages, `version_label`, `effective_from`, `is_current`, `source_url`, `embedding vector(1024)`, `search_tsv`. V2 (P1): `content_hash char(64)`, `parser_version text`. V4 (P3): `section_no_original` (Bangla form), `chapter`, `parent_section_id`, `fetched_at not null`, `normalised_text` with a GIN `tsvector` index, generated `section_key` unique |
+| `law_section` (V1 + V2 + V4) | V1: `id`, `act_id`, `section_no`, headings and texts in both languages, `version_label`, `effective_from`, `is_current`, `source_url`, `embedding vector(1024)`, `search_tsv`. V2 (P1): `content_hash char(64)`, `parser_version text`. V4 (P3): `section_no_original` (Bangla form), `chapter`, `parent_section_id`, `fetched_at not null`, `normalised_text` with a GIN `tsvector` index, `section_key text not null unique` (a stored column written by the ingestor from the act code, Latin section number and version label, with a `CHECK` on the api.md §5.4 pattern; a generated column cannot read `law_act.code`) |
 | `section_edge` (V1 + V4) | V1: `from_section_id`, `to_section_id`, `kind`. V4: kind adds `ALIGNS_WITH`; `reviewed boolean default false`; `reviewed_by text`; `source` (`PARSER`, `MAPPING`) |
 | `law_term` (V4) | `id`, `section_id`, `kind` (`DEFINED_TERM`, `WORKER_CATEGORY`), `code`, `term_bn`, `term_en`; unique (`kind`, `code`) |
 | `corpus_release` (V4) | `id`, `label` unique (`YYYY.MM.DD-n`), `sha256`, `act_count`, `section_count`, `created_at` |
@@ -655,8 +772,8 @@ Every table: **contract text = No**.
 | --- | --- |
 | `instance_registry` (V5) | `instance_id` PK, `internal_url`, `heartbeat_at` |
 | `analysis_run` (V5) | `id` uuid, `instance_id`, `subject_kind` (`GUEST`, `USER`, `API_KEY`), `subject_hash`, `org_id`, `client_kind` (`MOBILE_WEB`, `DESKTOP_WEB`, `API`, `MCP`), `side`, `output_language`, `input_kind` (`PDF_TEXT`, `PDF_SCAN`, `IMAGE`, `TEXT`), `page_count`, `detected_language`, `status` (`QUEUED`, `RUNNING`, `SUCCEEDED`, `FAILED`, `EXPIRED`), `error_code`, `finding_count`, `verified_citation_count`, `uncertain_finding_count`, `corpus_release_id`, `pipeline_version`, `prompt_versions jsonb`, `model_ids jsonb`, `cost_usd_micros`, `tokens_in`, `tokens_out`, `cache_read_tokens`, `duration_ms`, `created_at`, `completed_at` |
-| `analysis_trace` (V1 + V5) | V1: `id`, `analysis_id`, `step`, `detail`, `created_at`. V5: FK to `analysis_run`; `step` checked against `Stage`; `prompt_id`, `prompt_version`, `model_id`, `duration_ms`, `tokens_in`, `tokens_out`, `cost_usd_micros`, `outcome`; check `pg_column_size(detail) <= 8192`; `detail` holds only section keys, scores, statuses, reason codes, flags and counts |
-| `review_item` (V1 + V5) | V1: `id`, `analysis_id`, `clause_type`, `risk_summary`, `reason`, `status`, `created_at`. V5: `kind` (`FINDING`, `CORPUS_CHANGE`), `finding_id`, `finding_kind`, `severity`, `side`, check `char_length(risk_summary) <= 400`, `facts jsonb`, `claimed_section_key`, `claimed_quote` (statute text), `claimed_claim` (redacted, ≤ 600), `reason_codes text[]`, `candidate_section_keys text[]`, `ticket_id`, `ticket_token_sha256`, `assignee_id`, `decision` (`APPROVED_WITH_CITATION`, `APPROVED_WITHOUT_CITATION`, `REJECTED`), `decision_section_key`, `decision_quote`, `decision_note` (≤ 1000), `decided_by`, `decided_at`, `expires_at`; status values `OPEN`, `IN_REVIEW`, `APPROVED`, `REJECTED`, `EXPIRED` |
+| `analysis_trace` (V1 + V5) | V1: `id bigserial` (kept; never exposed), `analysis_id`, `step`, `detail`, `created_at`. V5: FK to `analysis_run`; V5 asserts the table is empty, then adds a `CHECK` that `step` is an upper-case `Stage` value (V1's comment listed lower-case steps and `memo`, which is not a stage; a failure is recorded on the failing stage with `outcome = FAILED`); `prompt_id`, `prompt_version`, `model_id`, `duration_ms`, `tokens_in`, `tokens_out`, `cost_usd_micros`, `outcome`; check `pg_column_size(detail) <= 8192`; `detail` holds only section keys, scores, statuses, reason codes, flags and counts |
+| `review_item` (V5, replaces V1) | V1's table conflicts with this model (`id bigserial` vs the API's UUID; status `CHECK (OPEN, CONFIRMED, REJECTED)`; `clause_type`, `risk_summary` and `reason` `NOT NULL`, which `CORPUS_CHANGE` items cannot satisfy). V5 asserts the V1 table is empty, drops it and creates: `id uuid` PK, `kind` (`FINDING`, `CORPUS_CHANGE`) not null, `analysis_id uuid null`, `finding_id null`, `clause_type null`, `finding_kind null`, `severity null`, `side null`, `risk_summary null` with check `char_length(risk_summary) <= 400`, `facts jsonb`, `claimed_section_key`, `claimed_quote` (statute text, ≤ 300), `claimed_claim` (redacted, ≤ 600, passed the 8-token overlap check or replaced by the facts-only form), `claim_reduced boolean not null default false`, `reason_codes text[] not null`, `candidate_section_keys text[]`, `corpus_change jsonb null`, `ticket_id uuid null`, `ticket_token_sha256 char(64) null`, `assignee_id`, `status not null` with check (`OPEN`, `IN_REVIEW`, `APPROVED`, `REJECTED`, `EXPIRED`), `decision` (`APPROVED_WITH_CITATION`, `APPROVED_WITHOUT_CITATION`, `REJECTED`), `decision_section_key`, `decision_quote`, `decision_note` (≤ 1000), `decided_by`, `decided_at`, `created_at`, `expires_at` (§14); check: `FINDING` rows have `analysis_id`, `finding_id` and `clause_type`; `CORPUS_CHANGE` rows have `corpus_change` |
 | `playbook` (V6) | `id` uuid, `org_id`, `name`, `side`, `version`, `created_by`, `created_at`, `archived_at` |
 | `playbook_rule` (V6) | `id` uuid, `playbook_id`, `clause_type`, `fact`, `comparator`, `value`, `unit`, `severity`, `message_bn` (≤ 300), `message_en` (≤ 300), `statute_section_key` null |
 
@@ -668,7 +785,7 @@ Every table: **contract text = No**.
 | `V2__foundation.sql` | P1 | `law_section.content_hash`, `parser_version`; `audit_event` |
 | `V3__identity.sql` | P2 | `organisation`, `app_user`, `refresh_token`; `CREATE EXTENSION citext`; demo seed only through the `demo` profile at runtime, never in a migration |
 | `V4__corpus.sql` | P3 | `law_act`, `law_section` and `section_edge` changes; `law_term`, `corpus_release` |
-| `V5__analysis.sql` | P6 | `instance_registry`, `analysis_run`, `analysis_trace` and `review_item` changes |
+| `V5__analysis.sql` | P6 | `instance_registry`, `analysis_run`; `analysis_trace` changes (empty-table assertion, FK, `Stage` check, new columns); `review_item` replaced (empty-table assertion, drop, create; conflicts C13 and C14 in §18.1) |
 | `V6__playbooks_usage.sql` | P7 | `playbook`, `playbook_rule`, `usage_counter`, `usage_event` |
 | `V7__api_keys.sql` | P8 | `api_key` |
 
@@ -676,9 +793,12 @@ Every table: **contract text = No**.
 
 ```
 data/packs/bd.yaml            # code, names, locale, timezone, act list with source URLs and
-                              # authoritative language, rule files, mapping files, worker categories
+                              # authoritative language, ilo_conventions (code, NORMLEX URL,
+                              # proposed_by, reviewed_by; unreviewed entries are not ingested),
+                              # rule files, mapping files, worker categories
 data/rules/bd-labour.yaml     # legal rules (§9.1)
-data/mappings/bd-ilo.yaml     # ALIGNS_WITH rows: bd section key, ILO article, reviewed, reviewed_by
+data/mappings/bd-ilo.yaml     # ALIGNS_WITH rows: bd_section_key, ilo_section_key, ilo_quote (verbatim),
+                              # claim, authored_by, reviewed, reviewed_by (≠ authored_by)
 data/mappings/bd-topics.yaml  # ClauseType → section keys, expected_for, authored_by, reviewed_by
 data/raw/                     # scraped HTML cache, git-ignored
 ```
@@ -712,9 +832,27 @@ shromikai:
     judge: ${GEMINI_MODEL:}
     local-pii: qwen2.5:7b-instruct
     embedding: bge-m3
-  pricing:                               # US$ per million tokens
-    claude-sonnet-5-5: { input: 2.00, output: 10.00 }
-    claude-haiku-5-5:  { input: 0.10, output: 0.50 }
+  pricing:                               # US$ per million tokens; Anthropic list prices in the
+                                         # team's model reference dated 2026-11-03
+    claude-sonnet-5-5:
+      input: 2.00
+      output: 10.00
+      cache-write-5m: 2.50               # 1.25 × input
+      cache-write-1h: 4.00               # 2 × input
+      cache-read: 0.10
+    claude-haiku-5-5:
+      input: 0.10                        # prompts up to 100,000 input tokens
+      output: 0.50
+      cache-write-5m: 0.125
+      cache-write-1h: 0.20
+      cache-read: 0.01
+      long-context:                      # prompts above 100,000 input tokens
+        above-input-tokens: 100000
+        input: 0.50
+        output: 2.50
+        cache-write-5m: 0.625
+        cache-write-1h: 1.00
+        cache-read: 0.05
     gemini:            { input: ${GEMINI_PRICE_IN:}, output: ${GEMINI_PRICE_OUT:} }  # required when GEMINI_MODEL is set
   privacy:
     store-contracts: false               # startup fails if true (R-02)
@@ -730,6 +868,7 @@ shromikai:
     hard-timeout: 120s
     sync-text-max-chars: 8000
     max-pages: 15
+    risk-batches: 4                      # §8.5
     concurrency: { guest: 1, organisation: 5, instance: 20 }
   quotas:
     guest-per-device-per-day: 3
@@ -751,6 +890,8 @@ shromikai:
     topic-map-max: 4
     analysis-max-sections: 40
     cache: { max-entries: 10000, ttl: 1h }
+    free-text-query-rewrite: false       # free-text law search never calls a cloud model (ADR-0006)
+    smoke-questions: classpath:retrieval/smoke-questions.jsonl   # §8.6
   budget:
     per-analysis-usd: 1.00
     daily-usd: 50
@@ -791,7 +932,7 @@ prompt-injection boundary).
 | T-04 | Tampering | B6 | Injection targets the support verifier | The verifier never sees contract text | `VerifierInputTest` |
 | T-05 | Information disclosure | B2 | PII reaches a cloud provider | Two-stage local redaction; egress guard; fail closed | M-16, `NoPiiLeavesTheBoxIT`, `EgressGuardTest` |
 | T-06 | Information disclosure | B1, B3 | Contract text persists in DB, logs, temp files or dumps | §10.1 controls | M-17, `NoContractPersistenceIT` |
-| T-07 | Information disclosure | B1 | Another subject fetches an analysis result (IDOR) | Results bound to the creating subject; UUID v4 IDs; non-owner gets `404` | `AnalysisAccessIT` |
+| T-07 | Information disclosure | B1 | Another subject fetches an analysis result, its events, trace, obligations or compare result (IDOR) | Results bound to the creating subject; UUID v4 IDs; non-owner gets `404` | `AnalysisAccessIT` (P7) |
 | T-08 | Tampering | B1 | Forged memo showing fake verified citations | HMAC-signed envelope with expiry; constant-time comparison | `MemoEnvelopeTest` |
 | T-09 | Tampering | B4 | Corpus poisoning through a changed or spoofed source page | HTTPS only; source hashes; legislative watch creates a review item; two-person review of rules and mappings | FR-15, FR-16, FR-84 |
 | T-10 | Spoofing | B1 | Stolen or replayed tokens | 15-minute access tokens in memory; refresh tokens `HttpOnly; Secure; SameSite=Strict`, rotated, family revoked on reuse; logout revokes | `AuthControllerIT`, `JwtServiceTest` |
@@ -803,10 +944,14 @@ prompt-injection boundary).
 | T-16 | Denial of service | B1 | Decompression bombs, huge PDFs, many pages, disguised executables | Magic-byte checks; limits in FR-24 and NFR-20; PDF parse timeout | `MagicBytesTest`, `AbuseLimitsIT` |
 | T-17 | Denial of service (wallet) | B1, B2 | Abuse drives model costs up | Guest quotas; per-analysis and daily cost caps; concurrency limits | `GuestTokenIT`, `BudgetIT` |
 | T-18 | Information disclosure | B3 | Gotenberg fetches remote URLs embedded in memo HTML | Template escapes all content; fonts embedded; no outbound network | `MemoTemplateTest` |
-| T-19 | Spoofing | B3 | Forged calls from or to n8n | n8n on the internal network with basic auth; backend calls need an API key with scope `automation` | `N8nWorkflowContractTest` |
+| T-19 | Spoofing | B3 | Forged calls from or to n8n | n8n on the internal network with basic auth; backend calls need an API key with scopes `automation` and `laws` | `N8nWorkflowContractTest` |
 | T-20 | Tampering | B1 | Stored XSS through playbook messages, reviewer notes or model output | React escaping; no `dangerouslySetInnerHTML`; CSP without inline scripts; memo template auto-escapes | ESLint rule, `SecurityHeadersIT` |
 | T-21 | Information disclosure | B1 | Results left on a shared phone | No browser persistence; delete button; 30-minute server TTL | FR-54, `StorageGuard.test.ts` |
 | T-22 | Information disclosure | B5 | Exposing the dev server through Cloudflare Tunnel leaks data | API key required; dev-only; synthetic contracts only in demos | FR-67 |
+| T-23 | Information disclosure | B1 | An access token in a URL (for example an SSE query parameter) leaks through logs, proxies or browser history | Tokens only in the `Authorization` header; the SSE client is fetch-based (§17); the backend rejects `access_token` and `token` query parameters with `400` | `AnalysesApiIT`, `sse.test.ts` |
+| T-24 | Information disclosure | B2, B5 | Personal data typed into a law search or an MCP `verify_legal_citation` claim reaches a cloud model | Free-text search makes no cloud call; claims are redacted locally and pass the egress guard (§10.7) | `NoPiiLeavesTheBoxIT` |
+| T-25 | Information disclosure | B3 | A reviewer-visible field (`claimed_claim`, `risk_summary`) stores an 8-token span of the contract | `OverlapChecker` on both fields before insert; facts-only fallback; persistence scan for 8-token windows | `ReviewItemFactoryTest`, `NoContractPersistenceIT` |
+| T-26 | Tampering | B1 | Data leaks across organisations (playbooks, API keys, usage, review items) | Every organisation-scoped query filters by `org_id`; non-members get `404` | `CrossOrganisationIsolationIT` (P7, extended in P8) |
 
 ## 14. Data lifecycle
 
@@ -830,7 +975,7 @@ flowchart LR
     subgraph Derived["Derived, content-free data"]
         D1["analysis_run"] --> D2["90 days, then<br/>daily aggregates"]
         D3["analysis_trace"] --> D4["30 days"]
-        D5["review_item (redacted)"] --> D6["30 days after decision;<br/>max 90 days"]
+        D5["review_item (redacted)"] --> D6["undecided: 30 days;<br/>decided: 30 days after decision"]
     end
     C3 --> D1
     C4 --> D3
@@ -842,10 +987,12 @@ flowchart LR
 | Uploaded file, extracted text, images | Backend JVM memory | Until redaction finishes or the analysis fails | Released by the state machine; arrays zero-filled |
 | Redacted result and placeholder map | Backend JVM memory | 30 minutes after completion, or `DELETE` | `JobStore` eviction |
 | Re-identified `AnalysisResult` | Response and the user's browser memory | Browser tab lifetime | Not stored by the server |
-| Signed envelope | Held by the client | Renderable 24 hours | Signature expiry |
+| Signed envelope (re-identified result) | Held by the client; sent back to `POST /api/v1/memos/render`, where it stays in request memory and Gotenberg's `tmpfs` only for the render | Renderable 24 hours | Signature expiry; request memory released after the response |
 | `analysis_run` | PostgreSQL | 90 days; then aggregated to daily counts without subject hash | Daily `RetentionJob` (`analysis`) |
 | `analysis_trace` | PostgreSQL | 30 days | Daily `RetentionJob` (`trace`) |
-| `review_item` | PostgreSQL | 30 days after decision; undecided expire after 90 days | Daily `RetentionJob` (`verify`) |
+| `review_item` (`FINDING`) | PostgreSQL | `expires_at` = `created_at` + 30 days while undecided (then `EXPIRED` and deleted); set to `decided_at` + 30 days on decision | Daily `RetentionJob` (`verify`) |
+| `review_item` (`CORPUS_CHANGE`) | PostgreSQL | No expiry while undecided; 12 months after decision | Daily `RetentionJob` (`verify`) |
+| Review ticket | Ticket ID and token hash on the ticket's `review_item` rows | Valid until the last of its items expires (`expiresAt` = max of the items' `expires_at`); `GET` then returns `410` `ticket-expired` | Deleted with its items |
 | `refresh_token` | PostgreSQL | 7 days after expiry or revocation | Daily `RetentionJob` (`auth`) |
 | `usage_event` | PostgreSQL | 13 months | Daily `RetentionJob` (`auth`) |
 | `audit_event` | PostgreSQL | 12 months | Daily `RetentionJob` (`trace`) |
@@ -908,7 +1055,7 @@ separately (NFR-01 CPU-only target).
 - Backend instances are stateless except for the in-memory `JobStore`; each registers in `instance_registry` with a heartbeat every 10 seconds.
 - `analysis_run.instance_id` records the owner of a job. A request for the result, events or deletion of an analysis that lands on another instance is proxied internally to the owner's `internal_url`. If the owner's heartbeat is older than 30 seconds the job is `FAILED` with `instance-lost` and the client may resubmit. The trace endpoint reads PostgreSQL and needs no forwarding.
 - One instance handles 20 concurrent analyses (virtual threads; I/O-bound work). Ollama is the shared bottleneck and scales by adding GPU nodes listed in `shromikai.ollama.urls` (round robin).
-- Multi-tenant isolation: every organisation-scoped query filters by `org_id`; tests assert cross-organisation access returns `404`.
+- Multi-tenant isolation: every organisation-scoped query filters by `org_id`; `CrossOrganisationIsolationIT` (P7 for playbooks and analyses, extended in P8 for API keys, usage events and MCP calls) asserts that cross-organisation access returns `404`.
 
 ### 16.3 Spring profiles
 
@@ -928,7 +1075,7 @@ separately (NFR-01 CPU-only target).
 | Routes | `/`, `/app`, `/app/compare`, `/app/tickets/:ticketId`, `/app/playbooks` (HR), `/login`, `/demo-user`, `/demo-hr`, `/demo-admin`, `/admin` (`/admin/review`, `/admin/playbooks`, `/admin/users`, `/admin/api-keys`, `/admin/usage`, `/admin/traces/:analysisId`), `/docs` (`/docs/architecture`, `/docs/data`, `/docs/security`, `/docs/audit`, `/docs/evaluation`, `/docs/prompts`, `/docs/pitch`, `/docs/team`) |
 | Auth | Access token in memory; silent refresh via the `HttpOnly` refresh cookie; guest token requested on first use of `/app` without a session |
 | Server state | TanStack Query; result data only in the in-memory query cache (`gcTime` ≤ 30 minutes, no persister) |
-| SSE | `EventSource` with `Last-Event-ID` resume; fallback polling every 3 s after two SSE failures |
+| SSE | Fetch-based SSE client written in the project (`src/api/sse.ts`, no extra dependency): `fetch` with `Accept: text/event-stream`, `Authorization: Bearer <access token>` and `Last-Event-ID` on reconnect; parses the stream with `ReadableStream` and `TextDecoder`; on `401` refreshes the token once (guests request a new guest token) and reconnects; fallback polling of `GET /api/v1/analyses/{id}` every 3 s after two SSE failures. `EventSource` is not used because it cannot send an `Authorization` header, and tokens never go into URLs (T-23) |
 | i18n | i18next; `src/i18n/bn.json` and `en.json`; key-parity check; Bangla numerals via `Intl.NumberFormat('bn-BD')` |
 | Images | Canvas compression in a Web Worker (≤ 1600 px, ≤ 1 MB) |
 | Charts | Recharts (admin usage and cost, `/docs/evaluation`) |
@@ -958,6 +1105,11 @@ separately (NFR-01 CPU-only target).
 | C10 | CORS allows only `GET` and `POST` | API needs `PATCH`, `PUT`, `DELETE` | Allow `GET`, `POST`, `PATCH`, `PUT`, `DELETE`, `OPTIONS` | P1 |
 | C11 | README and tooling disclosure listed only Claude and bge-m3 | Event requires documented AI usage | Updated in P0 | P0 |
 | C12 | `spring.servlet.multipart.file-size-threshold` unset (0 bytes) | Uploads would be written to temp files | Threshold 11 MB (§10.1) | P1 |
+| C13 | V1 `review_item`: `id bigserial`; status `CHECK (OPEN, CONFIRMED, REJECTED)`; `clause_type`, `risk_summary`, `reason` `NOT NULL` | The API uses UUIDs and five statuses (`OPEN`, `IN_REVIEW`, `APPROVED`, `REJECTED`, `EXPIRED`); `CORPUS_CHANGE` items have no clause type or summary; `reason` is replaced by `reason_codes` | `V5__analysis.sql` asserts the table is empty, drops it and creates the V5 table (§11.2); V1 stays unedited | P6 |
+| C14 | V1 `analysis_trace.step` documented as lower-case (`classify`, `retrieve`, `risk`, `verify`, `memo`) without a check; no FK | Steps must equal the upper-case `Stage` enum; `memo` is not a stage | V5 asserts the table is empty, adds the FK to `analysis_run` and a `CHECK` on `Stage` values | P6 |
+| C15 | `.gitignore` lacks `data/raw/` | Scraped HTML must stay out of git (FR-12, test-strategy §13) | Add `data/raw/` to `.gitignore` | P1 |
+| C16 | `.env.example` lists only `ANTHROPIC_API_KEY`, `ANTHROPIC_MODEL`, DB, Ollama and CORS variables | Model IDs belong in `shromikai.models.*`, and §12 needs more secrets | Remove `ANTHROPIC_MODEL`; add `GEMINI_API_KEY`, `GEMINI_MODEL`, `GEMINI_PRICE_IN`, `GEMINI_PRICE_OUT`, `JWT_SECRET`, `SHROMIKAI_ENVELOPE_KEYS`, `DEMO_PASSWORD`, `N8N_BASIC_AUTH_PASSWORD`, `SCRAPER_CONTACT`, each with an empty value and a comment | P1 |
+| C17 | Spring AI pinned at 1.0.1; FR-64 left the MCP transport open ("Streamable HTTP if supported, otherwise SSE") | An open transport choice is not testable; the 1.0 line has no Streamable HTTP server transport | Pin the latest Spring AI 1.1.x GA patch that supports Spring Boot 3.5 (exact patch recorded in ADR-0001 and `build.gradle` at P1); MCP server through `spring-ai-starter-mcp-server-webmvc` with `spring.ai.mcp.server.protocol=STREAMABLE`; SSE is not offered (ADR-0001) | P1, P8 |
 
 ### 18.2 Master prompt playbook v1.0 → v1.1
 
@@ -975,3 +1127,24 @@ approved design decision, the playbook text was edited:
 
 Everything else in the playbook (phases, dates, auth design, intake limits, retrieval parameters,
 API paths, eval layout, test names) is adopted by this specification as written.
+
+### 18.3 Specification v1 → v1.1 (independent Phase 0 review)
+
+The Prompt R review of `spec-v1` returned PASS WITH FIXES. Each fix and where it landed:
+
+| # | Fix | Resolution | ADR |
+| --- | --- | --- | --- |
+| 1 | The envelope did not say whether the redacted or the restored result is signed | The re-identified result is signed per response by `analysis` (§7.7); `MemoFromRealResponseIT` renders a memo from a real response | ADR-0006 |
+| 2 | SSE authentication was undefined (`EventSource` cannot send headers) | Fetch-based SSE client with a Bearer header; tokens never in URLs (§17, T-23; api.md §2, §4.2) | ADR-0006 |
+| 3 | `review_item.claimed_claim` escaped the 8-token rule | `OverlapChecker` on the claim, facts-only fallback, `claim_reduced`; `NoContractPersistenceIT` scans 8-token windows (§11.2, T-25) | none |
+| 4 | Free-text law search and MCP claims could reach cloud models unredacted | Search is local only; MCP claims are redacted locally (§8.2, §10.7, T-24); PRD H-3 corrected | ADR-0006 |
+| 5 | Module-matrix violations (`QuoteMatcher`, `SignedResultCodec` input type, re-identification from `api`) | `QuoteMatcher` in `shared.text`; codec signs JSON trees; `AnalysisService.resultFor` re-identifies (§4); matrix unchanged | none (matrix unchanged) |
+| 6 | `/admin/eval/retrieval-smoke` depended on the unpackaged `eval` module | `RetrievalSmokeService` in `retrieval` and `POST /admin/laws/retrieval-smoke` (§8.6) | none |
+| 7 | Token budgets could not meet the latency budgets | Parallel risk batches, counter-offers after `VERIFY`, memo narrative scope, output caps, throughput assumption; NFR-01 split by input kind (§5.3, §8.5) | ADR-0008 |
+| 8 | Missing Phase 1 conflicts | C13 to C17 above; migration plan §11.3 | ADR-0001 updated (C17) |
+| 9 | No metrics for redlines and obligations | M-27 and M-28 (evaluation.md) | none |
+| 10 | Tests without a phase | `AnalysisAccessIT`, `MemoTemplateTest`, `LogAllowlistTest`, `TestTaggingRulesTest`, `CrossOrganisationIsolationIT` assigned (test-strategy §16, playbook) | none |
+| 11 | MCP `suggested_clause` contradicted the no-echo rule | Exempted, placeholders kept (FR-66, api.md §9) | none |
+| 12 | Playbook disclaimer and wording out of line with the spec; outdated PDF | Playbook v1.2 aligned; PDF deleted | none |
+| 13 | Minor fixes | NFR-03 vs PRD §9.1; cache and long-context pricing (§12); NFR-01 phase; KPI-12 to KPI-14 sources; FR-48; failure transitions (§5.1); counter-offers after `VERIFY`; MCP claim length and `EXTERNAL` origin (§7.1); n8n key scopes; `Meta.models.judge`; stored `section_key`; sample wording; ILO-reference path (§7.8); ticket and review-item retention (§14); M-04 gate; ILO convention list in `data/packs/bd.yaml` | ADR-0006 (retention), ADR-0007 (origins) |
+| 14 | Traceability gaps | Team-bonus rows, development MCP servers row, "Proof test" column (traceability.md) | none |
