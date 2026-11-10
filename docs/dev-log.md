@@ -212,3 +212,37 @@ Key prompts given to AI tools while building ShromikAI, and what they produced. 
   - Unmapped 4xx framework statuses carry the code `validation-failed`, because api.md §7 has no generic conflict code.
   - The ArchUnit `org.springframework.ai.mcp` stand-in is removed once P8 adds the MCP starter.
   - DoD items 10 and 11 must be re-run: the human acceptance check, then Prompt R on the fixed commit.
+
+## Phase report - P2
+- **Summary:** Stateless JWT login with rotating refresh tokens, roles WORKER, HR and ADMIN, guest and one-click demo access, account lockout, rate limits, an append-only audit trail, security headers and CORS, and the Bangla login, protected-route and demo-route frontend (FR-05 to FR-11).
+- **Files created or changed:**
+  - Backend `auth` (`JwtService`, `AuthService`, `AuthRateLimiter`, `GuestQuotaService`, repositories, `DemoAccountSeeder`), `trace` (`AuditService`, `AuditEvent`, closed JSON Schema for the detail), `shared.Hashing`.
+  - Backend `api`: `AuthController`, `DemoAuthController`, DTOs, and in `api.internal` the `SecurityConfig` with its filters and problem handlers.
+  - `V3__identity.sql`. `application.yml` (`shromikai.auth.*`, `shromikai.quotas.*`), `StartupGuards` (JWT secret length).
+  - Frontend `api/auth.ts`, `auth/*`, `pages/*`, new routes, `bn` and `en` strings, regenerated OpenAPI types.
+  - Docs: `api.md` §2.1 and the object table, `architecture.md` (`app_user.locale`, guest concurrency, T-23), ADR-0010, README.
+- **Tests added and passing:**
+  - Backend: unit 160/160, integration 127/127, `./gradlew check requirementsReport` BUILD SUCCESSFUL, `promptLint: OK`, `checkFixtures: OK`.
+  - New classes (about 80 tests): `JwtServiceTest` (13), `GuestQuotaServiceTest` (5), `DemoProfileGuardTest` (3), `AuthControllerIT` (19), `RoleAccessIT` (23 matrix cases plus 4), `GuestTokenIT` (7), `RateLimitIT`, `RateLimitPerUserIT`, `DemoLoginIT` (10), `DemoLoginDisabledIT` (2), `AuditEventIT` (7), `SecurityHeadersIT` (7), `SecurityHeadersProdIT`.
+  - Updated: `ApplicationContextIT` (V3 applied, identity tables, `citext`), `ProblemDetailsIT` (now calls as a signed-in worker, because unknown routes need a session).
+  - Frontend: 39/39 (`LoginForm` 7, session and logout 11, demo login 4, existing 17 moved or kept). Lint, typecheck and build pass; initial JavaScript is 113.7 KB gzip (limit 200); `npm audit --omit=dev`: 0 vulnerabilities.
+- **Coverage of touched packages (JaCoCo line):** `auth` 97 % (289/299), `auth.internal` 97 %, `trace` 92 %, `api` 93 %, `api.internal` 91 %, whole backend 93 % (1541/1665).
+- **Acceptance commands with output:**
+  - `cd backend && ./gradlew check requirementsReport`: `BUILD SUCCESSFUL`.
+  - `cd frontend && npm run lint && npm run typecheck && npm test && npm run build && npm run check:bundle`: all pass, `initial JavaScript: 113.7 KB gzip`.
+  - Browser, backend with `SPRING_PROFILES_ACTIVE=demo,dev` on port 8081 (port 8080 was held by another running instance) and Vite on 5174: `/demo-user` landed on `/app`; a reload of `/admin` kept the session through the refresh cookie and showed the Bangla 403 page for the worker; `/demo-admin` landed on `/admin` with the admin link; `/demo-hr` landed on `/app`; sign out sent a reload of `/app` to the login page and left `localStorage`, `sessionStorage` and `document.cookie` empty; the empty login form showed both Bangla validation messages and a wrong password showed `ইমেইল বা পাসওয়ার্ড ভুল।`. Response headers carried CSP, `nosniff`, `X-Frame-Options: DENY`, `Referrer-Policy: no-referrer` and `no-store`; the backend log held no JWT and no cookie name; four audit rows had only reason codes and roles.
+  - Not run in a browser: a normal (non-demo) successful login, because the demo password was random and not shown. `AuthControllerIT` and the frontend tests cover it.
+- **Key decisions and ADRs:** ADR-0010 (Spring Security, Nimbus, Bucket4j, React Router; no CSRF token because only the SameSite=Strict refresh cookie authenticates by cookie; URL-pattern authorisation with a default of authenticated; in-memory rate limits and guest quotas for P2). `app_user.locale` was added to V3 because `Me` and `UserInput` carry it.
+- **Known gaps:**
+  - Guest quota counters are in memory until `usage_counter` (V6, P7). The analyses endpoint does not exist yet; `GuestTokenIT` uses a test-only probe controller on the real path, and the real controller replaces it in P6.
+  - The same holds for admin, playbook, review-item and law paths (probe controllers, `@Hidden`, test profile only).
+  - Rate-limit buckets are per instance. The client IP is the connection's remote address, so behind a proxy all users would share one bucket until P11 trusts the proxy's forwarded header.
+  - `PATCH /auth/me` (FR-56, P7), `DELETE /auth/me` (FR-78, P9) and API keys (P8) are not implemented. Only the password change (E-10) is.
+  - The access token of a disabled user stays valid up to 15 minutes. Disabled users cannot log in or refresh.
+  - `DemoAuthController` reuses `AuthController` for its cookie logic by composition; a small shared helper would be cleaner.
+  - AGENTS.md §7 items 10 and 11 are open: the human acceptance check and Prompt R in a fresh session. The tag `phase-2` is therefore **not** created yet.
+- **Open questions for the team:**
+  1. Run the acceptance check and Prompt R, then tag `phase-2` on the commit that passes.
+  2. Should the HR demo land on `/app` until the playbook page exists in P9 (current behaviour)?
+  3. A process (probably the IDE run configuration) holds port 8080 with the old code; restart it so it picks up V3 and the new `JWT_SECRET` requirement.
+- **Next phase prerequisites:** `JWT_SECRET` (and `DEMO_PASSWORD` for demo) in `.env` and the IntelliJ run configuration. P3 needs the decision on automated fetching (P0 question 4).

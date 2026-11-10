@@ -37,11 +37,24 @@ function isProblem(value: unknown): value is Problem {
   )
 }
 
-export async function apiGet<T>(path: string, language: string): Promise<T> {
+interface RequestOptions {
+  method?: string
+  body?: string
+  headers?: Record<string, string>
+}
+
+async function request<T>(path: string, init: RequestOptions, language: string): Promise<T> {
   let response: Response
   try {
     response = await fetch(`${BASE}${path}`, {
-      headers: { Accept: 'application/json', 'Accept-Language': language },
+      ...init,
+      credentials: 'same-origin',
+      headers: {
+        Accept: 'application/json',
+        'Accept-Language': language,
+        ...(init.body === undefined ? {} : { 'Content-Type': 'application/json' }),
+        ...init.headers,
+      },
     })
   } catch {
     throw new NetworkError()
@@ -56,7 +69,36 @@ export async function apiGet<T>(path: string, language: string): Promise<T> {
     }
     throw new ApiError(response.status, problem)
   }
+  if (response.status === 204) {
+    return undefined as T
+  }
   return (await response.json()) as T
+}
+
+export function apiGet<T>(path: string, language: string, accessToken?: string): Promise<T> {
+  return request<T>(path, bearer(accessToken), language)
+}
+
+/** POST with an optional JSON body. The access token goes in the header, never in the URL. */
+export function apiPost<T>(
+  path: string,
+  language: string,
+  body?: unknown,
+  accessToken?: string,
+): Promise<T> {
+  return request<T>(
+    path,
+    {
+      method: 'POST',
+      body: body === undefined ? undefined : JSON.stringify(body),
+      ...bearer(accessToken),
+    },
+    language,
+  )
+}
+
+function bearer(accessToken: string | undefined): RequestOptions {
+  return accessToken === undefined ? {} : { headers: { Authorization: `Bearer ${accessToken}` } }
 }
 
 export function getMeta(language: string): Promise<Meta> {

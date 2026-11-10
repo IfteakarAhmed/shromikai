@@ -1,6 +1,94 @@
 {
   "components" : {
     "schemas" : {
+      "GuestRequest" : {
+        "default" : null,
+        "properties" : {
+          "deviceToken" : {
+            "maxLength" : 64,
+            "minLength" : 0,
+            "type" : "string"
+          }
+        },
+        "required" : [ "deviceToken" ],
+        "type" : "object"
+      },
+      "LoginRequest" : {
+        "default" : null,
+        "properties" : {
+          "email" : {
+            "format" : "email",
+            "maxLength" : 254,
+            "minLength" : 0,
+            "type" : "string"
+          },
+          "password" : {
+            "maxLength" : 128,
+            "minLength" : 0,
+            "type" : "string"
+          }
+        },
+        "required" : [ "email", "password" ],
+        "type" : "object"
+      },
+      "Me" : {
+        "default" : null,
+        "properties" : {
+          "demo" : {
+            "type" : "boolean"
+          },
+          "email" : {
+            "nullable" : true,
+            "type" : "string"
+          },
+          "locale" : {
+            "type" : "string"
+          },
+          "org" : {
+            "allOf" : [ {
+              "$ref" : "#/components/schemas/MeOrg"
+            } ],
+            "nullable" : true
+          },
+          "profile" : {
+            "additionalProperties" : {
+              "type" : "object"
+            },
+            "nullable" : true,
+            "type" : "object"
+          },
+          "role" : {
+            "type" : "string"
+          },
+          "userId" : {
+            "format" : "uuid",
+            "nullable" : true,
+            "type" : "string"
+          }
+        },
+        "required" : [ "demo", "email", "locale", "org", "profile", "role", "userId" ],
+        "type" : "object"
+      },
+      "MeOrg" : {
+        "default" : null,
+        "properties" : {
+          "id" : {
+            "format" : "uuid",
+            "type" : "string"
+          },
+          "kind" : {
+            "type" : "string"
+          },
+          "name" : {
+            "type" : "string"
+          },
+          "plan" : {
+            "type" : "string"
+          }
+        },
+        "required" : [ "id", "kind", "name", "plan" ],
+        "type" : "object"
+      },
       "Meta" : {
         "default" : null,
         "properties" : {
@@ -135,6 +223,23 @@
         "required" : [ "embedding", "fast", "judge", "localPii", "reasoning", "verifier", "verifierFallback" ],
         "type" : "object"
       },
+      "PasswordChangeRequest" : {
+        "default" : null,
+        "properties" : {
+          "currentPassword" : {
+            "maxLength" : 128,
+            "minLength" : 0,
+            "type" : "string"
+          },
+          "newPassword" : {
+            "maxLength" : 128,
+            "minLength" : 12,
+            "type" : "string"
+          }
+        },
+        "required" : [ "currentPassword", "newPassword" ],
+        "type" : "object"
+      },
       "Problem" : {
         "description" : "RFC 9457 problem document (api.md §5.14)",
         "properties" : {
@@ -203,6 +308,32 @@
         },
         "required" : [ "message", "pointer" ],
         "type" : "object"
+      },
+      "TokenResponse" : {
+        "default" : null,
+        "properties" : {
+          "accessToken" : {
+            "type" : "string"
+          },
+          "expiresIn" : {
+            "format" : "int64",
+            "type" : "integer"
+          },
+          "guest" : {
+            "type" : "boolean"
+          },
+          "tokenType" : {
+            "type" : "string"
+          },
+          "user" : {
+            "allOf" : [ {
+              "$ref" : "#/components/schemas/Me"
+            } ],
+            "nullable" : true
+          }
+        },
+        "required" : [ "accessToken", "expiresIn", "guest", "tokenType", "user" ],
+        "type" : "object"
       }
     }
   },
@@ -216,6 +347,206 @@
   },
   "openapi" : "3.0.1",
   "paths" : {
+    "/api/v1/auth/guest" : {
+      "post" : {
+        "operationId" : "guest",
+        "requestBody" : {
+          "content" : {
+            "application/json" : {
+              "schema" : {
+                "$ref" : "#/components/schemas/GuestRequest"
+              }
+            }
+          },
+          "required" : true
+        },
+        "responses" : {
+          "200" : {
+            "content" : {
+              "*/*" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/TokenResponse"
+                }
+              }
+            },
+            "description" : "OK"
+          },
+          "default" : {
+            "content" : {
+              "application/problem+json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/Problem"
+                }
+              }
+            },
+            "description" : "Problem document"
+          }
+        },
+        "tags" : [ "auth-controller" ]
+      }
+    },
+    "/api/v1/auth/login" : {
+      "post" : {
+        "operationId" : "login",
+        "requestBody" : {
+          "content" : {
+            "application/json" : {
+              "schema" : {
+                "$ref" : "#/components/schemas/LoginRequest"
+              }
+            }
+          },
+          "required" : true
+        },
+        "responses" : {
+          "200" : {
+            "content" : {
+              "*/*" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/TokenResponse"
+                }
+              }
+            },
+            "description" : "OK"
+          },
+          "default" : {
+            "content" : {
+              "application/problem+json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/Problem"
+                }
+              }
+            },
+            "description" : "Problem document"
+          }
+        },
+        "tags" : [ "auth-controller" ]
+      }
+    },
+    "/api/v1/auth/logout" : {
+      "post" : {
+        "operationId" : "logout",
+        "parameters" : [ {
+          "in" : "cookie",
+          "name" : "shromik_refresh",
+          "required" : false,
+          "schema" : {
+            "type" : "string"
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "OK"
+          },
+          "default" : {
+            "content" : {
+              "application/problem+json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/Problem"
+                }
+              }
+            },
+            "description" : "Problem document"
+          }
+        },
+        "tags" : [ "auth-controller" ]
+      }
+    },
+    "/api/v1/auth/me" : {
+      "get" : {
+        "operationId" : "me",
+        "responses" : {
+          "200" : {
+            "content" : {
+              "*/*" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/Me"
+                }
+              }
+            },
+            "description" : "OK"
+          },
+          "default" : {
+            "content" : {
+              "application/problem+json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/Problem"
+                }
+              }
+            },
+            "description" : "Problem document"
+          }
+        },
+        "tags" : [ "auth-controller" ]
+      }
+    },
+    "/api/v1/auth/me/password" : {
+      "post" : {
+        "operationId" : "changePassword",
+        "requestBody" : {
+          "content" : {
+            "application/json" : {
+              "schema" : {
+                "$ref" : "#/components/schemas/PasswordChangeRequest"
+              }
+            }
+          },
+          "required" : true
+        },
+        "responses" : {
+          "200" : {
+            "description" : "OK"
+          },
+          "default" : {
+            "content" : {
+              "application/problem+json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/Problem"
+                }
+              }
+            },
+            "description" : "Problem document"
+          }
+        },
+        "tags" : [ "auth-controller" ]
+      }
+    },
+    "/api/v1/auth/refresh" : {
+      "post" : {
+        "operationId" : "refresh",
+        "parameters" : [ {
+          "in" : "cookie",
+          "name" : "shromik_refresh",
+          "required" : false,
+          "schema" : {
+            "type" : "string"
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "content" : {
+              "*/*" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/TokenResponse"
+                }
+              }
+            },
+            "description" : "OK"
+          },
+          "default" : {
+            "content" : {
+              "application/problem+json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/Problem"
+                }
+              }
+            },
+            "description" : "Problem document"
+          }
+        },
+        "tags" : [ "auth-controller" ]
+      }
+    },
     "/api/v1/meta" : {
       "get" : {
         "operationId" : "meta",

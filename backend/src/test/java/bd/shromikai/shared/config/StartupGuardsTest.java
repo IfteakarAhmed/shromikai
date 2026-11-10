@@ -48,6 +48,8 @@ class StartupGuardsTest {
         new ShromikaiProperties.Providers(
             new ShromikaiProperties.Provider("", "http://a"),
             new ShromikaiProperties.Provider(null, "http://g")),
-        new ShromikaiProperties.FakeModels("fixtures/llm", "default"));
+        new ShromikaiProperties.FakeModels("fixtures/llm", "default"),
+        ShromikaiPropertiesTestData.auth("0123456789-0123456789-0123456789-ab"),
+        ShromikaiPropertiesTestData.quotas());
   }
 }

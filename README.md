@@ -66,7 +66,10 @@ No API key is needed in P1: cloud calls stay blocked until the privacy shield la
 4. Environment variables go in the same dialog, in the **Environment variables** field (click the
    list icon to edit them one per line). Copy the values from your `.env`, for example
    `ANTHROPIC_API_KEY=…;GEMINI_API_KEY=…;JWT_SECRET=…`. IntelliJ does not read `.env` by itself.
-   Leave a value empty if you do not have it yet. Never commit the run configuration with secrets.
+   Leave a model key empty if you do not have it yet, but **`JWT_SECRET` is required from P2**
+   (at least 32 bytes; `openssl rand -base64 48`), or the backend refuses to start. To use the
+   one-click judge accounts locally, also set `SPRING_PROFILES_ACTIVE=demo,dev` and
+   `DEMO_PASSWORD` (12 or more characters). Never commit the run configuration with secrets.
 5. Run `bootRun`. The backend listens on <http://localhost:8080>; check
    <http://localhost:8080/api/v1/meta> and <http://localhost:8080/actuator/health>.
 

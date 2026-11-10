@@ -1,10 +1,13 @@
 package bd.shromikai.shared.config;
 
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.Max;
+import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 import java.time.Duration;
+import java.time.ZoneId;
 import java.util.List;
 import org.jspecify.annotations.Nullable;
 import org.springframework.boot.context.properties.ConfigurationProperties;
@@ -19,7 +22,9 @@ public record ShromikaiProperties(
     @Valid @NotNull Cors cors,
     @Valid @NotNull Ollama ollama,
     @Valid @NotNull Providers providers,
-    @Valid @NotNull FakeModels fakeModels) {
+    @Valid @NotNull FakeModels fakeModels,
+    @Valid @NotNull Auth auth,
+    @Valid @NotNull Quotas quotas) {
 
   /** Model ID per model role (ADR-0005). Verifier and judge are empty without a Gemini model. */
   public record Models(
@@ -76,4 +81,62 @@ public record ShromikaiProperties(
 
   /** Recorded-response replay for the {@code test} and {@code fake-models} profiles. */
   public record FakeModels(@NotBlank String fixtures, @NotBlank String defaultCase) {}
+
+  /**
+   * Identity settings (FR-05 to FR-11, ADR-0010). {@link #toString()} masks both secrets, so
+   * printing the settings never leaks them.
+   */
+  public record Auth(
+      @NotBlank String jwtSecret,
+      @NotBlank String issuer,
+      @NotNull Duration accessTokenTtl,
+      @NotNull Duration refreshTokenTtl,
+      @NotNull Duration guestTokenTtl,
+      @Valid @NotNull Lockout lockout,
+      @Valid @NotNull RateLimit rateLimit,
+      @Min(4) @Max(16) int bcryptStrength,
+      boolean cookieSecure,
+      boolean hsts,
+      @Nullable String demoPassword) {
+
+    public boolean demoPasswordConfigured() {
+      return demoPassword != null && demoPassword.length() >= 12;
+    }
+
+    @Override
+    public String toString() {
+      return "Auth[jwtSecret=[MASKED], issuer="
+          + issuer
+          + ", accessTokenTtl="
+          + accessTokenTtl
+          + ", refreshTokenTtl="
+          + refreshTokenTtl
+          + ", guestTokenTtl="
+          + guestTokenTtl
+          + ", lockout="
+          + lockout
+          + ", rateLimit="
+          + rateLimit
+          + ", bcryptStrength="
+          + bcryptStrength
+          + ", cookieSecure="
+          + cookieSecure
+          + ", hsts="
+          + hsts
+          + ", demoPassword=[MASKED]]";
+    }
+  }
+
+  /** Account lockout after {@code maxFailures} consecutive failed logins. */
+  public record Lockout(@Min(1) int maxFailures, @NotNull Duration duration) {}
+
+  /** Bucket4j limits on auth endpoints, per minute. */
+  public record RateLimit(@Min(1) int perIpPerMinute, @Min(1) int perUserPerMinute) {}
+
+  /** Guest quotas (FR-09); days are counted in {@code timezone}. */
+  public record Quotas(
+      @Min(1) int guestPerDevicePerDay,
+      @Min(1) int guestPerIpPerDay,
+      @Min(1) int guestConcurrency,
+      @NotNull ZoneId timezone) {}
 }

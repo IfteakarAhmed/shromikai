@@ -17,6 +17,10 @@ public final class StartupGuards {
       throw new IllegalStateException(
           "shromikai.privacy.store-contracts must be false: contract text is never stored (R-02)");
     }
+    if (properties.auth().jwtSecret().getBytes(java.nio.charset.StandardCharsets.UTF_8).length
+        < 32) {
+      throw new IllegalStateException("JWT_SECRET must be at least 32 bytes");
+    }
     List<String> active = Arrays.asList(environment.getActiveProfiles());
     if (active.contains("prod") && active.contains("demo")) {
       throw new IllegalStateException("The prod profile refuses to start together with demo");

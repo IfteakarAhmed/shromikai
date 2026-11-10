@@ -2,13 +2,13 @@ import { describe, expect, it } from 'vitest'
 import { screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { http, HttpResponse } from 'msw'
-import App from './App'
-import { server } from './test/msw/server'
-import { renderWithClient } from './test/render'
+import App from '../App'
+import { server } from '../test/msw/server'
+import { renderApp } from '../test/render'
 
-describe('App', () => {
+describe('StatusPage', () => {
   it('FR-01 shows the backend status from the meta endpoint', async () => {
-    renderWithClient(<App />)
+    renderApp(<App />)
 
     expect(screen.getByRole('status')).toHaveTextContent('লোড হচ্ছে')
     expect(await screen.findByTestId('backend-status')).toHaveTextContent('চালু (সংস্করণ ০.১.০)')
@@ -20,7 +20,7 @@ describe('App', () => {
   it('FR-02 shows a Bangla error message when the backend is down', async () => {
     server.use(http.get('/api/v1/meta', () => HttpResponse.error()))
 
-    renderWithClient(<App />)
+    renderApp(<App />)
 
     expect(await screen.findByRole('alert')).toHaveTextContent('ব্যাকএন্ডের সাথে যোগাযোগ হচ্ছে না')
   })
@@ -42,14 +42,14 @@ describe('App', () => {
       ),
     )
 
-    renderWithClient(<App />)
+    renderApp(<App />)
 
     expect(await screen.findByRole('alert')).toHaveTextContent('অপ্রত্যাশিত ত্রুটি')
   })
 
   it('FR-02 retries after a failure', async () => {
     server.use(http.get('/api/v1/meta', () => HttpResponse.error(), { once: true }))
-    renderWithClient(<App />)
+    renderApp(<App />)
     await screen.findByRole('alert')
 
     await userEvent.click(screen.getByRole('button', { name: 'আবার চেষ্টা করুন' }))
@@ -58,7 +58,7 @@ describe('App', () => {
   })
 
   it('NFR-09 switches to English and remembers the choice', async () => {
-    renderWithClient(<App />)
+    renderApp(<App />)
     await screen.findByTestId('backend-status')
 
     await userEvent.click(screen.getByRole('button', { name: 'ভাষা পরিবর্তন করে ইংরেজি করুন' }))

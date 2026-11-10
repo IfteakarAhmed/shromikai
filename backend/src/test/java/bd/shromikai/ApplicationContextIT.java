@@ -30,7 +30,31 @@ class ApplicationContextIT {
             .query(String.class)
             .list();
 
-    assertThat(versions).containsExactly("1", "2");
+    assertThat(versions).containsExactly("1", "2", "3");
+  }
+
+  @Test
+  @Requirement("FR-05")
+  void shouldCreateIdentityTables_whenV3Applied() {
+    List<String> tables =
+        jdbc.sql(
+                """
+                select table_name from information_schema.tables
+                 where table_schema = 'public'
+                   and table_name in ('organisation', 'app_user', 'refresh_token')
+                 order by table_name
+                """)
+            .query(String.class)
+            .list();
+    String emailType =
+        jdbc.sql(
+                "select udt_name from information_schema.columns"
+                    + " where table_name = 'app_user' and column_name = 'email'")
+            .query(String.class)
+            .single();
+
+    assertThat(tables).containsExactly("app_user", "organisation", "refresh_token");
+    assertThat(emailType).isEqualTo("citext");
   }
 
   @Test

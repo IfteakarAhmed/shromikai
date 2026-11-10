@@ -13,6 +13,8 @@ import org.junit.jupiter.api.Test;
 @Requirement("FR-03")
 class ShromikaiPropertiesTest {
 
+  static final String JWT_SECRET = "fictional-jwt-secret-for-tests-0123456789";
+  static final String DEMO_PASSWORD = "fictional-demo-password-1";
   private static final String ANTHROPIC_KEY = "sk-ant-fictional-0001";
   private static final String GEMINI_KEY = "gemini-fictional-0002";
 
@@ -48,12 +50,16 @@ class ShromikaiPropertiesTest {
             new ShromikaiProperties.Cors(List.of("http://localhost:5173")),
             new ShromikaiProperties.Ollama("http://localhost:11434", Duration.ofSeconds(1)),
             providers,
-            new ShromikaiProperties.FakeModels("fixtures/llm", "default"));
+            new ShromikaiProperties.FakeModels("fixtures/llm", "default"),
+            ShromikaiPropertiesTestData.auth(JWT_SECRET),
+            ShromikaiPropertiesTestData.quotas());
 
     assertThat(providers.toString()).doesNotContain(ANTHROPIC_KEY).doesNotContain(GEMINI_KEY);
     assertThat(properties.toString())
         .doesNotContain(ANTHROPIC_KEY)
         .doesNotContain(GEMINI_KEY)
+        .doesNotContain(JWT_SECRET)
+        .doesNotContain(DEMO_PASSWORD)
         .contains("apiKey=[MASKED]");
   }
 }

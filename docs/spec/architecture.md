@@ -760,7 +760,7 @@ Every table: **contract text = No**.
 | --- | --- |
 | `audit_event` (V2) | `id`, `actor_id` uuid null, `actor_kind` (`USER`, `GUEST`, `API_KEY`, `SYSTEM`), `action` (`LOGIN_SUCCESS`, `LOGIN_FAILURE`, `DEMO_LOGIN`, `ACCESS_DENIED`, `PRIVACY_BLOCK`, `REVIEW_DECISION`, `ADMIN_ACTION`, `API_KEY_CREATED`, `API_KEY_REVOKED`), `target_type`, `target_id`, `occurred_at`, `detail jsonb` (schema-validated, ≤ 2 KB). Append-only through triggers: `UPDATE` and `TRUNCATE` always fail, `DELETE` only for rows older than 12 months (ADR-0009) |
 | `organisation` (V3) | `id` uuid, `name`, `kind` (`SME`, `HR`, `NGO`, `LAW_FIRM`, `JOB_PORTAL`, `PLATFORM`), `plan` (`FREE`, `TEAM`, `API`, `LEGAL_AID`), `created_at`, `deleted_at` |
-| `app_user` (V3) | `id` uuid, `org_id` null, `email citext unique`, `password_hash` (BCrypt), `role` (`WORKER`, `HR`, `ADMIN`), `profile jsonb` (side, sector, job role, language, reading level), `is_demo boolean`, `failed_logins int`, `locked_until`, `created_at`, `disabled_at` |
+| `app_user` (V3) | `id` uuid, `org_id` null, `email citext unique`, `password_hash` (BCrypt), `role` (`WORKER`, `HR`, `ADMIN`), `locale` (`bn`, `en`; default `bn`), `profile jsonb` (side, sector, job role, language, reading level), `is_demo boolean`, `failed_logins int`, `locked_until`, `created_at`, `disabled_at` |
 | `refresh_token` (V3) | `id` uuid, `user_id`, `family_id` uuid, `token_sha256 char(64) unique`, `expires_at`, `revoked_at`, `replaced_by` uuid null |
 | `api_key` (V7) | `id` uuid, `org_id`, `prefix char(8) unique`, `key_sha256 char(64) unique`, `name`, `scopes text[]`, `created_by`, `created_at`, `last_used_at`, `revoked_at` |
 | `usage_counter` (V6) | `subject_hash char(64)`, `day date`, `analyses int`; PK (`subject_hash`, `day`) |
@@ -873,6 +873,7 @@ shromikai:
   quotas:
     guest-per-device-per-day: 3
     guest-per-ip-per-day: 10
+    guest-concurrency: 1                 # P2; the analysis.concurrency.guest setting moved here
     timezone: Asia/Dhaka
   verify:
     quote-min-chars: 20
@@ -948,7 +949,7 @@ prompt-injection boundary).
 | T-20 | Tampering | B1 | Stored XSS through playbook messages, reviewer notes or model output | React escaping; no `dangerouslySetInnerHTML`; CSP without inline scripts; memo template auto-escapes | ESLint rule, `SecurityHeadersIT` |
 | T-21 | Information disclosure | B1 | Results left on a shared phone | No browser persistence; delete button; 30-minute server TTL | FR-54, `StorageGuard.test.ts` |
 | T-22 | Information disclosure | B5 | Exposing the dev server through Cloudflare Tunnel leaks data | API key required; dev-only; synthetic contracts only in demos | FR-67 |
-| T-23 | Information disclosure | B1 | An access token in a URL (for example an SSE query parameter) leaks through logs, proxies or browser history | Tokens only in the `Authorization` header; the SSE client is fetch-based (§17); the backend rejects `access_token` and `token` query parameters with `400` | `AnalysesApiIT`, `sse.test.ts` |
+| T-23 | Information disclosure | B1 | An access token in a URL (for example an SSE query parameter) leaks through logs, proxies or browser history | Tokens only in the `Authorization` header; the SSE client is fetch-based (§17); the backend rejects `access_token`, `token` and `api_key` query parameters with `400` | `AnalysesApiIT`, `sse.test.ts` |
 | T-24 | Information disclosure | B2, B5 | Personal data typed into a law search or an MCP `verify_legal_citation` claim reaches a cloud model | Free-text search makes no cloud call; claims are redacted locally and pass the egress guard (§10.7) | `NoPiiLeavesTheBoxIT` |
 | T-25 | Information disclosure | B3 | A reviewer-visible field (`claimed_claim`, `risk_summary`) stores an 8-token span of the contract | `OverlapChecker` on both fields before insert; facts-only fallback; persistence scan for 8-token windows | `ReviewItemFactoryTest`, `NoContractPersistenceIT` |
 | T-26 | Tampering | B1 | Data leaks across organisations (playbooks, API keys, usage, review items) | Every organisation-scoped query filters by `org_id`; non-members get `404` | `CrossOrganisationIsolationIT` (P7, extended in P8) |

@@ -21,7 +21,8 @@
     "i18next": "^27.1.1",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
-    "react-i18next": "^18.0.1"
+    "react-i18next": "^18.0.1",
+    "react-router-dom": "^7.18.5"
   },
   "devDependencies": {
     "@eslint/js": "^10.0.1",

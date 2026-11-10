@@ -4,6 +4,102 @@
  */
 
 export interface paths {
+  '/api/v1/auth/guest': {
+    parameters: {
+      query?: never
+      header?: never
+      path?: never
+      cookie?: never
+    }
+    get?: never
+    put?: never
+    post: operations['guest']
+    delete?: never
+    options?: never
+    head?: never
+    patch?: never
+    trace?: never
+  }
+  '/api/v1/auth/login': {
+    parameters: {
+      query?: never
+      header?: never
+      path?: never
+      cookie?: never
+    }
+    get?: never
+    put?: never
+    post: operations['login']
+    delete?: never
+    options?: never
+    head?: never
+    patch?: never
+    trace?: never
+  }
+  '/api/v1/auth/logout': {
+    parameters: {
+      query?: never
+      header?: never
+      path?: never
+      cookie?: never
+    }
+    get?: never
+    put?: never
+    post: operations['logout']
+    delete?: never
+    options?: never
+    head?: never
+    patch?: never
+    trace?: never
+  }
+  '/api/v1/auth/me': {
+    parameters: {
+      query?: never
+      header?: never
+      path?: never
+      cookie?: never
+    }
+    get: operations['me']
+    put?: never
+    post?: never
+    delete?: never
+    options?: never
+    head?: never
+    patch?: never
+    trace?: never
+  }
+  '/api/v1/auth/me/password': {
+    parameters: {
+      query?: never
+      header?: never
+      path?: never
+      cookie?: never
+    }
+    get?: never
+    put?: never
+    post: operations['changePassword']
+    delete?: never
+    options?: never
+    head?: never
+    patch?: never
+    trace?: never
+  }
+  '/api/v1/auth/refresh': {
+    parameters: {
+      query?: never
+      header?: never
+      path?: never
+      cookie?: never
+    }
+    get?: never
+    put?: never
+    post: operations['refresh']
+    delete?: never
+    options?: never
+    head?: never
+    patch?: never
+    trace?: never
+  }
   '/api/v1/meta': {
     parameters: {
       query?: never
@@ -24,6 +120,37 @@ export interface paths {
 export type webhooks = Record<string, never>
 export interface components {
   schemas: {
+    /** @default null */
+    GuestRequest: {
+      deviceToken: string
+    }
+    /** @default null */
+    LoginRequest: {
+      /** Format: email */
+      email: string
+      password: string
+    }
+    /** @default null */
+    Me: {
+      demo: boolean
+      email: string | null
+      locale: string
+      org: components['schemas']['MeOrg'] | null
+      profile: {
+        [key: string]: Record<string, never>
+      } | null
+      role: string
+      /** Format: uuid */
+      userId: string | null
+    }
+    /** @default null */
+    MeOrg: {
+      /** Format: uuid */
+      id: string
+      kind: string
+      name: string
+      plan: string
+    }
     /** @default null */
     Meta: {
       audit: components['schemas']['MetaAudit'] | null
@@ -76,6 +203,11 @@ export interface components {
       verifier: string | null
       verifierFallback: string
     }
+    /** @default null */
+    PasswordChangeRequest: {
+      currentPassword: string
+      newPassword: string
+    }
     /** @description RFC 9457 problem document (api.md §5.14) */
     Problem: {
       /** @description Stable machine code; equals the last segment of type */
@@ -99,6 +231,15 @@ export interface components {
       message: string
       pointer: string
     }
+    /** @default null */
+    TokenResponse: {
+      accessToken: string
+      /** Format: int64 */
+      expiresIn: number
+      guest: boolean
+      tokenType: string
+      user: components['schemas']['Me'] | null
+    }
   }
   responses: never
   parameters: never
@@ -108,6 +249,192 @@ export interface components {
 }
 export type $defs = Record<string, never>
 export interface operations {
+  guest: {
+    parameters: {
+      query?: never
+      header?: never
+      path?: never
+      cookie?: never
+    }
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['GuestRequest']
+      }
+    }
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          '*/*': components['schemas']['TokenResponse']
+        }
+      }
+      /** @description Problem document */
+      default: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/problem+json': components['schemas']['Problem']
+        }
+      }
+    }
+  }
+  login: {
+    parameters: {
+      query?: never
+      header?: never
+      path?: never
+      cookie?: never
+    }
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['LoginRequest']
+      }
+    }
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          '*/*': components['schemas']['TokenResponse']
+        }
+      }
+      /** @description Problem document */
+      default: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/problem+json': components['schemas']['Problem']
+        }
+      }
+    }
+  }
+  logout: {
+    parameters: {
+      query?: never
+      header?: never
+      path?: never
+      cookie?: {
+        shromik_refresh?: string
+      }
+    }
+    requestBody?: never
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown
+        }
+        content?: never
+      }
+      /** @description Problem document */
+      default: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/problem+json': components['schemas']['Problem']
+        }
+      }
+    }
+  }
+  me: {
+    parameters: {
+      query?: never
+      header?: never
+      path?: never
+      cookie?: never
+    }
+    requestBody?: never
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          '*/*': components['schemas']['Me']
+        }
+      }
+      /** @description Problem document */
+      default: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/problem+json': components['schemas']['Problem']
+        }
+      }
+    }
+  }
+  changePassword: {
+    parameters: {
+      query?: never
+      header?: never
+      path?: never
+      cookie?: never
+    }
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['PasswordChangeRequest']
+      }
+    }
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown
+        }
+        content?: never
+      }
+      /** @description Problem document */
+      default: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/problem+json': components['schemas']['Problem']
+        }
+      }
+    }
+  }
+  refresh: {
+    parameters: {
+      query?: never
+      header?: never
+      path?: never
+      cookie?: {
+        shromik_refresh?: string
+      }
+    }
+    requestBody?: never
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          '*/*': components['schemas']['TokenResponse']
+        }
+      }
+      /** @description Problem document */
+      default: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/problem+json': components['schemas']['Problem']
+        }
+      }
+    }
+  }
   meta: {
     parameters: {
       query?: never

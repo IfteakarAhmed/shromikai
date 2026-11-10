@@ -4,7 +4,9 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import './fonts'
 import './index.css'
 import i18n from './i18n'
+import { BrowserRouter } from 'react-router-dom'
 import App from './App'
+import { AuthProvider } from './auth/AuthProvider'
 
 document.documentElement.lang = i18n.language
 
@@ -21,7 +23,11 @@ if (!root) {
 createRoot(root).render(
   <StrictMode>
     <QueryClientProvider client={queryClient}>
-      <App />
+      <BrowserRouter>
+        <AuthProvider>
+          <App />
+        </AuthProvider>
+      </BrowserRouter>
     </QueryClientProvider>
   </StrictMode>,
 )

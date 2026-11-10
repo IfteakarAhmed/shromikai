@@ -20,5 +20,55 @@
     "down": "Cannot reach the backend. Check that it is running, then try again.",
     "error": "The backend reported an error: {{title}}",
     "retry": "Try again"
+  },
+  "common": {
+    "loading": "Loading…",
+    "home": "Home"
+  },
+  "login": {
+    "title": "Sign in",
+    "email": "Email",
+    "password": "Password",
+    "submit": "Sign in",
+    "submitting": "Please wait…",
+    "errors": {
+      "emailRequired": "Enter your email.",
+      "emailInvalid": "Enter a valid email.",
+      "passwordRequired": "Enter your password.",
+      "invalid": "Email or password is wrong.",
+      "locked": "Too many wrong attempts, so the account is locked for a while. Try again in {{minutes}} minutes.",
+      "rateLimited": "Too many attempts. Try again in a little while.",
+      "network": "Cannot reach the server. Try again in a little while.",
+      "generic": "Could not sign in. Try again."
+    }
+  },
+  "demo": {
+    "signingIn": "Signing in to the demo account…",
+    "failed": "Demo sign-in is not available right now.",
+    "toLogin": "Go to the normal sign-in"
+  },
+  "nav": {
+    "label": "Main menu",
+    "analyse": "Analyse",
+    "admin": "Admin",
+    "signOut": "Sign out",
+    "signIn": "Sign in",
+    "signedInAs": "Signed in as {{email}}",
+    "role": {
+      "WORKER": "Worker",
+      "HR": "HR",
+      "ADMIN": "Admin"
+    }
+  },
+  "forbidden": {
+    "title": "Not allowed",
+    "body": "You do not have permission to view this page. Contact an admin if you need access."
+  },
+  "notFound": {
+    "title": "Page not found"
+  },
+  "pages": {
+    "appSoon": "The analysis page is coming soon.",
+    "adminSoon": "The admin page is coming soon."
   }
 }

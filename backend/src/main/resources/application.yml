@@ -13,6 +13,10 @@ server:
 spring:
   application:
     name: shromikai
+  autoconfigure:
+    exclude:
+      # Auth is ours (auth module); never let Boot print a generated default password to the log.
+      - org.springframework.boot.autoconfigure.security.servlet.UserDetailsServiceAutoConfiguration
   threads:
     virtual:
       enabled: true
@@ -100,6 +104,23 @@ shromikai:
   ollama:
     base-url: ${OLLAMA_URL:http://localhost:11434}
     health-timeout: 2s
+  auth:
+    jwt-secret: ${JWT_SECRET:}            # at least 32 bytes (StartupGuards); never committed
+    issuer: shromikai
+    access-token-ttl: 15m
+    refresh-token-ttl: 7d
+    guest-token-ttl: 2h
+    lockout: { max-failures: 5, duration: 15m }
+    rate-limit: { per-ip-per-minute: 20, per-user-per-minute: 10 }
+    bcrypt-strength: 12
+    cookie-secure: true
+    hsts: false                           # on in prod
+    demo-password: ${DEMO_PASSWORD:}      # read only by the demo profile
+  quotas:
+    guest-per-device-per-day: 3
+    guest-per-ip-per-day: 10
+    guest-concurrency: 1
+    timezone: Asia/Dhaka
   providers:
     anthropic:
       api-key: ${ANTHROPIC_API_KEY:}
@@ -116,6 +137,9 @@ spring:
   config:
     activate:
       on-profile: dev
+shromikai:
+  auth:
+    cookie-secure: false                  # Safari rejects Secure cookies on http://localhost
 logging:
   level:
     bd.shromikai: DEBUG
@@ -134,11 +158,21 @@ spring:
     model:
       chat: none
       embedding: none
+  http:
+    client:
+      factory: jdk                        # TestRestTemplate must not retry 429 or wait on Retry-After
 springdoc:
   paths-to-exclude: /api/v1/test-probe/**   # test-only controller stays out of the snapshot
 shromikai:
   ollama:
     health-timeout: 500ms
+  auth:
+    jwt-secret: test-only-secret-never-use-outside-tests-0123456789   # fictional; tests only
+    bcrypt-strength: 4                    # speed; the default of 12 is asserted by AuthPropertiesTest
+    cookie-secure: false
+    rate-limit: { per-ip-per-minute: 100000, per-user-per-minute: 100000 }   # RateLimitIT lowers them
+  quotas:
+    guest-per-ip-per-day: 100000          # GuestQuotaServiceTest covers the per-IP limit
 
 ---
 # Recorded fixtures only; results are labelled "recorded" (architecture §16.3).
@@ -152,7 +186,7 @@ spring:
       embedding: none
 
 ---
-# Judging deployment: real models, seeded demo accounts (P2).
+# Judging deployment: real models, seeded demo accounts (P2). Needs DEMO_PASSWORD (12+ characters).
 spring:
   config:
     activate:
@@ -164,6 +198,9 @@ spring:
   config:
     activate:
       on-profile: prod
+shromikai:
+  auth:
+    hsts: true
 management:
   endpoints:
     web:

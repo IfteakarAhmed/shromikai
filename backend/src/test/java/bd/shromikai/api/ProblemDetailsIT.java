@@ -2,6 +2,8 @@ package bd.shromikai.api;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+import bd.shromikai.auth.JwtService;
+import bd.shromikai.auth.Role;
 import bd.shromikai.testsupport.IntegrationTest;
 import bd.shromikai.testsupport.Requirement;
 import com.fasterxml.jackson.databind.JsonNode;
@@ -22,6 +24,7 @@ class ProblemDetailsIT {
 
   @Autowired TestRestTemplate http;
   @Autowired ObjectMapper mapper;
+  @Autowired JwtService jwt;
 
   @Test
   void shouldReturnNotFoundProblem_whenRouteIsUnknown() throws Exception {
@@ -141,6 +144,10 @@ class ProblemDetailsIT {
       HttpMethod method, String path, String body, HttpHeaders extra) {
     HttpHeaders headers = new HttpHeaders();
     headers.setContentType(MediaType.APPLICATION_JSON);
+    // Everything outside the public list needs a signed-in caller (FR-06); the problem documents
+    // under test are those of a signed-in worker.
+    headers.setBearerAuth(
+        jwt.issueUser(java.util.UUID.randomUUID(), Role.WORKER, null, false).value());
     if (extra != null) {
       headers.addAll(extra);
     }
