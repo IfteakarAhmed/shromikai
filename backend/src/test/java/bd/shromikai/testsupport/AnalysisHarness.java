@@ -60,7 +60,9 @@ public final class AnalysisHarness {
                     Clock.systemUTC()),
                 TestGateways.MAPPER,
                 Clock.systemUTC(),
-                new org.springframework.mock.env.MockEnvironment()),
+                new org.springframework.mock.env.MockEnvironment(),
+                org.mockito.Mockito.mock(bd.shromikai.analysis.AnalysisRunStore.class),
+                org.mockito.Mockito.mock(bd.shromikai.trace.AnalysisTraceStore.class)),
             Clock.systemUTC());
   }
 

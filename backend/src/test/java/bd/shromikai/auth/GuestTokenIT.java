@@ -4,11 +4,17 @@ import static bd.shromikai.testsupport.IdentityFixtures.bearer;
 import static bd.shromikai.testsupport.IdentityFixtures.userToken;
 import static org.assertj.core.api.Assertions.assertThat;
 
+import bd.shromikai.shared.ai.fake.FakeChatPort;
+import bd.shromikai.testsupport.FictionalCorpus;
 import bd.shromikai.testsupport.IntegrationTest;
+import bd.shromikai.testsupport.P6Stubs;
 import bd.shromikai.testsupport.Requirement;
+import bd.shromikai.testsupport.SyntheticContracts;
 import com.fasterxml.jackson.databind.JsonNode;
 import java.util.Map;
 import java.util.UUID;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.web.client.TestRestTemplate;
@@ -18,14 +24,33 @@ import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.jdbc.core.simple.JdbcClient;
+import org.springframework.test.context.ActiveProfiles;
 
 @IntegrationTest
+@ActiveProfiles({"test"})
 @Requirement("FR-09")
 class GuestTokenIT {
 
   @Autowired TestRestTemplate http;
   @Autowired JwtService jwt;
   @Autowired bd.shromikai.shared.config.ShromikaiProperties properties;
+  @Autowired FakeChatPort fake;
+  @Autowired JdbcClient jdbc;
+
+  /** The real analyses endpoint runs the pipeline, so the stand-in models and corpus are needed. */
+  @BeforeEach
+  void installStandIns() {
+    FictionalCorpus.load(jdbc);
+    fake.reset();
+    P6Stubs.install(fake);
+  }
+
+  @AfterEach
+  void clean() {
+    jdbc.sql("delete from analysis_run").update();
+    FictionalCorpus.clean(jdbc);
+  }
 
   private ResponseEntity<JsonNode> issueGuest(String deviceToken) {
     HttpHeaders headers = new HttpHeaders();
@@ -37,8 +62,18 @@ class GuestTokenIT {
   }
 
   private ResponseEntity<JsonNode> analyse(String access) {
+    HttpHeaders headers = bearer(access);
+    headers.setContentType(MediaType.APPLICATION_JSON);
     return http.exchange(
-        "/api/v1/analyses", HttpMethod.POST, new HttpEntity<>(bearer(access)), JsonNode.class);
+        "/api/v1/analyses",
+        HttpMethod.POST,
+        new HttpEntity<>(
+            Map.of(
+                "text", SyntheticContracts.text("syn-en-01"),
+                "side", "WORKER",
+                "outputLanguage", "en"),
+            headers),
+        JsonNode.class);
   }
 
   @Test
@@ -84,7 +119,7 @@ class GuestTokenIT {
   void shouldReachAnalyses_butNotPlaybooks() {
     String access = issueGuest(UUID.randomUUID().toString()).getBody().get("accessToken").asText();
 
-    assertThat(analyse(access).getStatusCode()).isEqualTo(HttpStatus.OK);
+    assertThat(analyse(access).getStatusCode().is2xxSuccessful()).isTrue();
     ResponseEntity<JsonNode> playbooks =
         http.exchange(
             "/api/v1/playbooks", HttpMethod.GET, new HttpEntity<>(bearer(access)), JsonNode.class);
@@ -95,7 +130,9 @@ class GuestTokenIT {
   void shouldReturn429QuotaExceeded_onTheFourthAnalysisOfTheDay() {
     String access = issueGuest(UUID.randomUUID().toString()).getBody().get("accessToken").asText();
     for (int i = 0; i < 3; i++) {
-      assertThat(analyse(access).getStatusCode()).as("analysis %d", i + 1).isEqualTo(HttpStatus.OK);
+      assertThat(analyse(access).getStatusCode().is2xxSuccessful())
+          .as("analysis %d", i + 1)
+          .isTrue();
     }
 
     ResponseEntity<JsonNode> fourth = analyse(access);
@@ -122,7 +159,7 @@ class GuestTokenIT {
   void shouldNotApplyTheGuestQuota_toSignedInUsers() {
     String token = userToken(jwt, Role.WORKER);
     for (int i = 0; i < 5; i++) {
-      assertThat(analyse(token).getStatusCode()).isEqualTo(HttpStatus.OK);
+      assertThat(analyse(token).getStatusCode().is2xxSuccessful()).isTrue();
     }
   }
 }

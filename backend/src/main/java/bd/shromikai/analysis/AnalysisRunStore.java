@@ -117,4 +117,35 @@ public class AnalysisRunStore {
       throw new IllegalArgumentException(e);
     }
   }
+
+  /** What the trace endpoint needs about a run: its owner key, creation time and totals. */
+  public record RunInfo(
+      String ownerKey,
+      Instant createdAt,
+      long tokensIn,
+      long tokensOut,
+      long cacheReadTokens,
+      long cacheWriteTokens,
+      long costUsdMicros) {}
+
+  public java.util.Optional<RunInfo> info(java.util.UUID id) {
+    return jdbc.sql(
+            """
+            select subject_kind, subject_hash, created_at, tokens_in, tokens_out,
+                   cache_read_tokens, cache_write_tokens, cost_usd_micros
+              from analysis_run where id = :id
+            """)
+        .param("id", id)
+        .query(
+            (rs, n) ->
+                new RunInfo(
+                    rs.getString("subject_kind") + ":" + rs.getString("subject_hash"),
+                    rs.getTimestamp("created_at").toInstant(),
+                    rs.getLong("tokens_in"),
+                    rs.getLong("tokens_out"),
+                    rs.getLong("cache_read_tokens"),
+                    rs.getLong("cache_write_tokens"),
+                    rs.getLong("cost_usd_micros")))
+        .optional();
+  }
 }

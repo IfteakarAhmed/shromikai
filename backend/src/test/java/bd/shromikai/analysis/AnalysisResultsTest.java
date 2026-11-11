@@ -110,7 +110,9 @@ class AnalysisResultsTest {
             codec,
             MAPPER,
             clock,
-            new MockEnvironment());
+            new MockEnvironment(),
+            harness.runs,
+            harness.traces);
   }
 
   @Test

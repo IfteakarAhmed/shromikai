@@ -20,6 +20,86 @@ export interface paths {
     patch?: never
     trace?: never
   }
+  '/api/v1/analyses': {
+    parameters: {
+      query?: never
+      header?: never
+      path?: never
+      cookie?: never
+    }
+    get?: never
+    put?: never
+    post: operations['startMultipart']
+    delete?: never
+    options?: never
+    head?: never
+    patch?: never
+    trace?: never
+  }
+  '/api/v1/analyses/{id}': {
+    parameters: {
+      query?: never
+      header?: never
+      path?: never
+      cookie?: never
+    }
+    get: operations['get_1']
+    put?: never
+    post?: never
+    delete: operations['delete']
+    options?: never
+    head?: never
+    patch?: never
+    trace?: never
+  }
+  '/api/v1/analyses/{id}/events': {
+    parameters: {
+      query?: never
+      header?: never
+      path?: never
+      cookie?: never
+    }
+    get: operations['events']
+    put?: never
+    post?: never
+    delete?: never
+    options?: never
+    head?: never
+    patch?: never
+    trace?: never
+  }
+  '/api/v1/analyses/{id}/obligations': {
+    parameters: {
+      query?: never
+      header?: never
+      path?: never
+      cookie?: never
+    }
+    get: operations['obligations']
+    put?: never
+    post?: never
+    delete?: never
+    options?: never
+    head?: never
+    patch?: never
+    trace?: never
+  }
+  '/api/v1/analyses/{id}/trace': {
+    parameters: {
+      query?: never
+      header?: never
+      path?: never
+      cookie?: never
+    }
+    get: operations['trace']
+    put?: never
+    post?: never
+    delete?: never
+    options?: never
+    head?: never
+    patch?: never
+    trace?: never
+  }
   '/api/v1/auth/guest': {
     parameters: {
       query?: never
@@ -180,6 +260,22 @@ export interface paths {
     patch?: never
     trace?: never
   }
+  '/api/v1/memos/render': {
+    parameters: {
+      query?: never
+      header?: never
+      path?: never
+      cookie?: never
+    }
+    get?: never
+    put?: never
+    post: operations['render']
+    delete?: never
+    options?: never
+    head?: never
+    patch?: never
+    trace?: never
+  }
   '/api/v1/meta': {
     parameters: {
       query?: never
@@ -262,6 +358,35 @@ export interface components {
       year: number
     }
     /** @default null */
+    AnalysisOptions: {
+      clientKind: string | null
+      outputLanguage: string
+      /** Format: uuid */
+      playbookId: string | null
+      profile: components['schemas']['AnalysisProfile'] | null
+      /** @enum {string} */
+      side: 'WORKER' | 'EMPLOYER'
+      workerCategory: string | null
+    }
+    /** @default null */
+    AnalysisProfile: {
+      jobRole: string | null
+      preferredLanguage: string | null
+      readingLevel: string | null
+      sector: string | null
+    }
+    /** @default null */
+    AnalysisTextRequest: {
+      outputLanguage: string
+      /** Format: uuid */
+      playbookId: string | null
+      profile: components['schemas']['AnalysisProfile'] | null
+      /** @enum {string} */
+      side: 'WORKER' | 'EMPLOYER'
+      text: string
+      workerCategory: string | null
+    }
+    /** @default null */
     GuestRequest: {
       deviceToken: string
     }
@@ -274,6 +399,7 @@ export interface components {
     IngestRequest: {
       acts: string[] | null
     }
+    JsonNode: Record<string, never>
     /** @default null */
     LoginRequest: {
       /** Format: email */
@@ -300,6 +426,12 @@ export interface components {
       kind: string
       name: string
       plan: string
+    }
+    /** @default null */
+    MemoRenderRequest: {
+      envelope: components['schemas']['SignedEnvelope']
+      /** @enum {string} */
+      format: 'PDF' | 'HTML'
     }
     /** @default null */
     Meta: {
@@ -522,6 +654,19 @@ export interface components {
       sectionNoOriginal: string
     }
     /** @default null */
+    SignedEnvelope: {
+      algorithm: string
+      /** Format: date-time */
+      expiresAt: string
+      keyId: string
+      payload: components['schemas']['JsonNode']
+      signature: string
+    }
+    SseEmitter: {
+      /** Format: int64 */
+      timeout: number | null
+    }
+    /** @default null */
     TokenResponse: {
       accessToken: string
       /** Format: int64 */
@@ -564,6 +709,204 @@ export interface operations {
         }
         content: {
           '*/*': components['schemas']['IngestAccepted']
+        }
+      }
+      /** @description Problem document */
+      default: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/problem+json': components['schemas']['Problem']
+        }
+      }
+    }
+  }
+  startMultipart: {
+    parameters: {
+      query?: never
+      header?: {
+        'Idempotency-Key'?: string
+      }
+      path?: never
+      cookie?: never
+    }
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['AnalysisTextRequest']
+        'multipart/form-data': {
+          /** Format: binary */
+          file?: string
+          images?: string[]
+          options: components['schemas']['AnalysisOptions']
+          text?: string
+        }
+      }
+    }
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          '*/*': Record<string, never>
+        }
+      }
+      /** @description Problem document */
+      default: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/problem+json': components['schemas']['Problem']
+        }
+      }
+    }
+  }
+  get_1: {
+    parameters: {
+      query?: never
+      header?: never
+      path: {
+        id: string
+      }
+      cookie?: never
+    }
+    requestBody?: never
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          '*/*': Record<string, never>
+        }
+      }
+      /** @description Problem document */
+      default: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/problem+json': components['schemas']['Problem']
+        }
+      }
+    }
+  }
+  delete: {
+    parameters: {
+      query?: never
+      header?: never
+      path: {
+        id: string
+      }
+      cookie?: never
+    }
+    requestBody?: never
+    responses: {
+      /** @description No Content */
+      204: {
+        headers: {
+          [name: string]: unknown
+        }
+        content?: never
+      }
+      /** @description Problem document */
+      default: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/problem+json': components['schemas']['Problem']
+        }
+      }
+    }
+  }
+  events: {
+    parameters: {
+      query?: never
+      header?: {
+        'Last-Event-ID'?: string
+        'Accept-Language'?: string
+      }
+      path: {
+        id: string
+      }
+      cookie?: never
+    }
+    requestBody?: never
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'text/event-stream': components['schemas']['SseEmitter']
+        }
+      }
+      /** @description Problem document */
+      default: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/problem+json': components['schemas']['Problem']
+        }
+      }
+    }
+  }
+  obligations: {
+    parameters: {
+      query?: never
+      header?: never
+      path: {
+        id: string
+      }
+      cookie?: never
+    }
+    requestBody?: never
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          '*/*': Record<string, never>
+        }
+      }
+      /** @description Problem document */
+      default: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/problem+json': components['schemas']['Problem']
+        }
+      }
+    }
+  }
+  trace: {
+    parameters: {
+      query?: never
+      header?: never
+      path: {
+        id: string
+      }
+      cookie?: never
+    }
+    requestBody?: never
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          '*/*': Record<string, never>
         }
       }
       /** @description Problem document */
@@ -880,6 +1223,40 @@ export interface operations {
         }
         content: {
           '*/*': components['schemas']['Section']
+        }
+      }
+      /** @description Problem document */
+      default: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/problem+json': components['schemas']['Problem']
+        }
+      }
+    }
+  }
+  render: {
+    parameters: {
+      query?: never
+      header?: never
+      path?: never
+      cookie?: never
+    }
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['MemoRenderRequest']
+      }
+    }
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/pdf': string
+          'text/html': string
         }
       }
       /** @description Problem document */

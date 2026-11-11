@@ -62,7 +62,8 @@ class SecurityConfig {
             })
         .authorizeHttpRequests(
             a ->
-                a.dispatcherTypeMatchers(DispatcherType.ERROR, DispatcherType.FORWARD)
+                a.dispatcherTypeMatchers(
+                        DispatcherType.ERROR, DispatcherType.FORWARD, DispatcherType.ASYNC)
                     .permitAll()
                     .requestMatchers(HttpMethod.OPTIONS, "/**")
                     .permitAll()

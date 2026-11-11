@@ -79,3 +79,21 @@ no live call was made and no number below is a measurement of a live answer.
 13. **The daily cap answers `capacity-exhausted` (503), not `budget-exceeded`.** api.md §7 reserves
     `capacity-exhausted` for the daily cost cap and `budget-exceeded` for the per-analysis cap. The
     first draft of `DailyBudget` used the wrong code; fixed with its tests.
+14. **FR-58 window: wait 45 s, then `202`.** The stage budgets add up to 84 s (p95 target 85 s), so
+    a 60 s synchronous window could not hold for most analyses. `POST /api/v1/analyses` with JSON
+    text of at most 8,000 characters starts the analysis in the background and waits at most
+    `shromikai.analysis.sync-wait` (45 s). If the analysis ended it answers `200` with the result
+    (or the problem of a failure); otherwise `202` with the job ID and the SSE URL, and the work
+    continues. Multipart and longer text are always `202`. The 60 s of the PRD is therefore
+    shortened to 45 s; this is in `docs/spec/api.md` §3 with this change.
+15. **SSE derives its events from the in-memory trace.** Events are numbered by position in
+    `AnalysisEvents` (one `stage` event with state `COMPLETED` per finished step, then `warning`s,
+    then `completed` or `failed`), so a reconnect with `Last-Event-ID: n` replays n+1 onward with
+    the same IDs. **Not done:** `STARTED` and `SKIPPED` states (only `COMPLETED` is sent); the
+    stream polls the job every 100 ms rather than being pushed to.
+16. **Concurrency limits (NFR-20).** Guests: 1 per device (`GuestQuotaService`). Organisation
+    members: 5 per organisation. A signed-in user without an organisation: 2 (a choice of this
+    phase; the PRD names only guest and organisation). All answer `429 concurrency-limit`.
+17. **`Idempotency-Key`** is held in memory for 30 minutes (Caffeine, at most 10,000 entries) as
+    subject, key, a body hash and the analysis ID; it does not survive a restart and is not shared
+    between instances (single-instance deployment, architecture §16).

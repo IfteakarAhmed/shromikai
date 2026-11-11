@@ -83,6 +83,102 @@
         "required" : [ "actCode", "authoritativeLang", "jurisdiction", "ratificationStatus", "sectionCount", "sourceUrl", "status", "titleBn", "titleEn", "year" ],
         "type" : "object"
       },
+      "AnalysisOptions" : {
+        "default" : null,
+        "properties" : {
+          "clientKind" : {
+            "nullable" : true,
+            "type" : "string"
+          },
+          "outputLanguage" : {
+            "type" : "string"
+          },
+          "playbookId" : {
+            "format" : "uuid",
+            "nullable" : true,
+            "type" : "string"
+          },
+          "profile" : {
+            "allOf" : [ {
+              "$ref" : "#/components/schemas/AnalysisProfile"
+            } ],
+            "nullable" : true
+          },
+          "side" : {
+            "enum" : [ "WORKER", "EMPLOYER" ],
+            "type" : "string"
+          },
+          "workerCategory" : {
+            "maxLength" : 40,
+            "minLength" : 0,
+            "nullable" : true,
+            "type" : "string"
+          }
+        },
+        "required" : [ "clientKind", "outputLanguage", "playbookId", "profile", "side", "workerCategory" ],
+        "type" : "object"
+      },
+      "AnalysisProfile" : {
+        "default" : null,
+        "properties" : {
+          "jobRole" : {
+            "maxLength" : 60,
+            "minLength" : 0,
+            "nullable" : true,
+            "type" : "string"
+          },
+          "preferredLanguage" : {
+            "nullable" : true,
+            "type" : "string"
+          },
+          "readingLevel" : {
+            "nullable" : true,
+            "type" : "string"
+          },
+          "sector" : {
+            "nullable" : true,
+            "type" : "string"
+          }
+        },
+        "required" : [ "jobRole", "preferredLanguage", "readingLevel", "sector" ],
+        "type" : "object"
+      },
+      "AnalysisTextRequest" : {
+        "default" : null,
+        "properties" : {
+          "outputLanguage" : {
+            "type" : "string"
+          },
+          "playbookId" : {
+            "format" : "uuid",
+            "nullable" : true,
+            "type" : "string"
+          },
+          "profile" : {
+            "allOf" : [ {
+              "$ref" : "#/components/schemas/AnalysisProfile"
+            } ],
+            "nullable" : true
+          },
+          "side" : {
+            "enum" : [ "WORKER", "EMPLOYER" ],
+            "type" : "string"
+          },
+          "text" : {
+            "maxLength" : 60000,
+            "minLength" : 200,
+            "type" : "string"
+          },
+          "workerCategory" : {
+            "maxLength" : 40,
+            "minLength" : 0,
+            "nullable" : true,
+            "type" : "string"
+          }
+        },
+        "required" : [ "outputLanguage", "playbookId", "profile", "side", "text", "workerCategory" ],
+        "type" : "object"
+      },
       "GuestRequest" : {
         "default" : null,
         "properties" : {
@@ -121,6 +217,9 @@
           }
         },
         "required" : [ "acts" ],
+        "type" : "object"
+      },
+      "JsonNode" : {
         "type" : "object"
       },
       "LoginRequest" : {
@@ -197,6 +296,20 @@
           }
         },
         "required" : [ "id", "kind", "name", "plan" ],
+        "type" : "object"
+      },
+      "MemoRenderRequest" : {
+        "default" : null,
+        "properties" : {
+          "envelope" : {
+            "$ref" : "#/components/schemas/SignedEnvelope"
+          },
+          "format" : {
+            "enum" : [ "PDF", "HTML" ],
+            "type" : "string"
+          }
+        },
+        "required" : [ "envelope", "format" ],
         "type" : "object"
       },
       "Meta" : {
@@ -705,6 +818,40 @@
         "required" : [ "headingBn", "headingEn", "sectionKey", "sectionNo", "sectionNoOriginal" ],
         "type" : "object"
       },
+      "SignedEnvelope" : {
+        "default" : null,
+        "properties" : {
+          "algorithm" : {
+            "type" : "string"
+          },
+          "expiresAt" : {
+            "format" : "date-time",
+            "type" : "string"
+          },
+          "keyId" : {
+            "type" : "string"
+          },
+          "payload" : {
+            "$ref" : "#/components/schemas/JsonNode"
+          },
+          "signature" : {
+            "type" : "string"
+          }
+        },
+        "required" : [ "algorithm", "expiresAt", "keyId", "payload", "signature" ],
+        "type" : "object"
+      },
+      "SseEmitter" : {
+        "properties" : {
+          "timeout" : {
+            "format" : "int64",
+            "nullable" : true,
+            "type" : "integer"
+          }
+        },
+        "required" : [ "timeout" ],
+        "type" : "object"
+      },
       "TokenResponse" : {
         "default" : null,
         "properties" : {
@@ -793,6 +940,267 @@
           }
         },
         "tags" : [ "admin-law-controller" ]
+      }
+    },
+    "/api/v1/analyses" : {
+      "post" : {
+        "operationId" : "startMultipart",
+        "parameters" : [ {
+          "in" : "header",
+          "name" : "Idempotency-Key",
+          "required" : false,
+          "schema" : {
+            "type" : "string"
+          }
+        } ],
+        "requestBody" : {
+          "content" : {
+            "application/json" : {
+              "schema" : {
+                "$ref" : "#/components/schemas/AnalysisTextRequest"
+              }
+            },
+            "multipart/form-data" : {
+              "schema" : {
+                "properties" : {
+                  "file" : {
+                    "format" : "binary",
+                    "type" : "string"
+                  },
+                  "images" : {
+                    "items" : {
+                      "format" : "binary",
+                      "type" : "string"
+                    },
+                    "type" : "array"
+                  },
+                  "options" : {
+                    "$ref" : "#/components/schemas/AnalysisOptions"
+                  },
+                  "text" : {
+                    "type" : "string"
+                  }
+                },
+                "required" : [ "options" ],
+                "type" : "object"
+              }
+            }
+          },
+          "required" : true
+        },
+        "responses" : {
+          "200" : {
+            "content" : {
+              "*/*" : {
+                "schema" : {
+                  "type" : "object"
+                }
+              }
+            },
+            "description" : "OK"
+          },
+          "default" : {
+            "content" : {
+              "application/problem+json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/Problem"
+                }
+              }
+            },
+            "description" : "Problem document"
+          }
+        },
+        "tags" : [ "analyses-controller" ]
+      }
+    },
+    "/api/v1/analyses/{id}" : {
+      "delete" : {
+        "operationId" : "delete",
+        "parameters" : [ {
+          "in" : "path",
+          "name" : "id",
+          "required" : true,
+          "schema" : {
+            "format" : "uuid",
+            "type" : "string"
+          }
+        } ],
+        "responses" : {
+          "204" : {
+            "description" : "No Content"
+          },
+          "default" : {
+            "content" : {
+              "application/problem+json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/Problem"
+                }
+              }
+            },
+            "description" : "Problem document"
+          }
+        },
+        "tags" : [ "analyses-controller" ]
+      },
+      "get" : {
+        "operationId" : "get_1",
+        "parameters" : [ {
+          "in" : "path",
+          "name" : "id",
+          "required" : true,
+          "schema" : {
+            "format" : "uuid",
+            "type" : "string"
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "content" : {
+              "*/*" : {
+                "schema" : {
+                  "type" : "object"
+                }
+              }
+            },
+            "description" : "OK"
+          },
+          "default" : {
+            "content" : {
+              "application/problem+json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/Problem"
+                }
+              }
+            },
+            "description" : "Problem document"
+          }
+        },
+        "tags" : [ "analyses-controller" ]
+      }
+    },
+    "/api/v1/analyses/{id}/events" : {
+      "get" : {
+        "operationId" : "events",
+        "parameters" : [ {
+          "in" : "path",
+          "name" : "id",
+          "required" : true,
+          "schema" : {
+            "format" : "uuid",
+            "type" : "string"
+          }
+        }, {
+          "in" : "header",
+          "name" : "Last-Event-ID",
+          "required" : false,
+          "schema" : {
+            "type" : "string"
+          }
+        }, {
+          "in" : "header",
+          "name" : "Accept-Language",
+          "required" : false,
+          "schema" : {
+            "type" : "string"
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "content" : {
+              "text/event-stream" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/SseEmitter"
+                }
+              }
+            },
+            "description" : "OK"
+          },
+          "default" : {
+            "content" : {
+              "application/problem+json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/Problem"
+                }
+              }
+            },
+            "description" : "Problem document"
+          }
+        },
+        "tags" : [ "analyses-controller" ]
+      }
+    },
+    "/api/v1/analyses/{id}/obligations" : {
+      "get" : {
+        "operationId" : "obligations",
+        "parameters" : [ {
+          "in" : "path",
+          "name" : "id",
+          "required" : true,
+          "schema" : {
+            "format" : "uuid",
+            "type" : "string"
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "content" : {
+              "*/*" : {
+                "schema" : {
+                  "type" : "object"
+                }
+              }
+            },
+            "description" : "OK"
+          },
+          "default" : {
+            "content" : {
+              "application/problem+json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/Problem"
+                }
+              }
+            },
+            "description" : "Problem document"
+          }
+        },
+        "tags" : [ "analyses-controller" ]
+      }
+    },
+    "/api/v1/analyses/{id}/trace" : {
+      "get" : {
+        "operationId" : "trace",
+        "parameters" : [ {
+          "in" : "path",
+          "name" : "id",
+          "required" : true,
+          "schema" : {
+            "format" : "uuid",
+            "type" : "string"
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "content" : {
+              "*/*" : {
+                "schema" : {
+                  "type" : "object"
+                }
+              }
+            },
+            "description" : "OK"
+          },
+          "default" : {
+            "content" : {
+              "application/problem+json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/Problem"
+                }
+              }
+            },
+            "description" : "Problem document"
+          }
+        },
+        "tags" : [ "analyses-controller" ]
       }
     },
     "/api/v1/auth/guest" : {
@@ -1195,6 +1603,51 @@
           }
         },
         "tags" : [ "law-controller" ]
+      }
+    },
+    "/api/v1/memos/render" : {
+      "post" : {
+        "operationId" : "render",
+        "requestBody" : {
+          "content" : {
+            "application/json" : {
+              "schema" : {
+                "$ref" : "#/components/schemas/MemoRenderRequest"
+              }
+            }
+          },
+          "required" : true
+        },
+        "responses" : {
+          "200" : {
+            "content" : {
+              "application/pdf" : {
+                "schema" : {
+                  "format" : "byte",
+                  "type" : "string"
+                }
+              },
+              "text/html" : {
+                "schema" : {
+                  "format" : "byte",
+                  "type" : "string"
+                }
+              }
+            },
+            "description" : "OK"
+          },
+          "default" : {
+            "content" : {
+              "application/problem+json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/Problem"
+                }
+              }
+            },
+            "description" : "Problem document"
+          }
+        },
+        "tags" : [ "memo-controller" ]
       }
     },
     "/api/v1/meta" : {

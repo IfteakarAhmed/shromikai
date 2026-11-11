@@ -80,8 +80,30 @@ public class AnalysisService {
     return run(() -> intake.fromText(text));
   }
 
+  /** Creates a job for a subject; it is theirs alone (T-07). Throws when the store is full. */
+  public AnalysisJob open(AnalysisSubject subject, AnalysisRequest request) {
+    AnalysisJob job = jobs.create();
+    job.owner(subject, request);
+    return job;
+  }
+
+  /** Runs INTAKE to CLASSIFY on pasted text for an opened job. */
+  public void executeText(AnalysisJob job, String text) {
+    execute(job, () -> intake.fromText(text));
+  }
+
+  /** Runs INTAKE to CLASSIFY on uploaded files for an opened job. */
+  public void executeFiles(AnalysisJob job, List<byte[]> files) {
+    execute(job, () -> intake.fromFiles(files));
+  }
+
   private AnalysisJob run(Supplier<IntakeResult> intakeStep) {
     AnalysisJob job = jobs.create();
+    execute(job, intakeStep);
+    return job;
+  }
+
+  private void execute(AnalysisJob job, Supplier<IntakeResult> intakeStep) {
     try {
       IntakeResult read = timed(job, Stage.INTAKE, intakeStep::get, r -> intakeDetail(r));
       job.intake(read.kind().name(), read.pageCount(), read.language());
@@ -131,7 +153,6 @@ public class AnalysisService {
       LOG.error("analysis step failed unexpectedly: {}", unexpected.getClass().getSimpleName());
       failed(job, new ProblemException(ProblemType.INTERNAL_ERROR));
     }
-    return job;
   }
 
   private List<Para> paragraphs(IntakeResult read, List<RedactedParagraph> redaction) {

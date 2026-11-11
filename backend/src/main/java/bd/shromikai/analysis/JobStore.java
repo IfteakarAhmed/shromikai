@@ -91,6 +91,11 @@ public final class JobStore {
     }
   }
 
+  /** Jobs still running (neither analysed nor failed) that satisfy the filter. */
+  public long countRunning(java.util.function.Predicate<AnalysisJob> filter) {
+    return jobs.values().stream().filter(j -> j.completedAt() == null).filter(filter).count();
+  }
+
   public int size() {
     return jobs.size();
   }

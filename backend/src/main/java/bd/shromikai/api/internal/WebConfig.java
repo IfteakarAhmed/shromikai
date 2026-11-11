@@ -4,6 +4,7 @@ import bd.shromikai.shared.config.ShromikaiProperties;
 import bd.shromikai.shared.web.RequestIdFilter;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
+import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 /** CORS for the web app (conflict C10: all methods the API uses). */
@@ -14,6 +15,28 @@ public class WebConfig implements WebMvcConfigurer {
 
   public WebConfig(ShromikaiProperties properties) {
     this.properties = properties;
+  }
+
+  /** Results, tickets, memos and auth answers are never cached (api.md §1). */
+  @Override
+  public void addInterceptors(InterceptorRegistry registry) {
+    registry
+        .addInterceptor(
+            new org.springframework.web.servlet.HandlerInterceptor() {
+              @Override
+              public boolean preHandle(
+                  jakarta.servlet.http.HttpServletRequest request,
+                  jakarta.servlet.http.HttpServletResponse response,
+                  Object handler) {
+                response.setHeader("Cache-Control", "no-store");
+                return true;
+              }
+            })
+        .addPathPatterns(
+            "/api/v1/analyses/**",
+            "/api/v1/compare/**",
+            "/api/v1/memos/**",
+            "/api/v1/review-tickets/**");
   }
 
   @Override

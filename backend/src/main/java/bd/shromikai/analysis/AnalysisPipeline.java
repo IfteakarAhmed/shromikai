@@ -659,6 +659,12 @@ public class AnalysisPipeline {
   private void record(JobData d, Stage stage, long durationMs, Map<String, Object> detail) {
     ModelSession.StageUsage usage = d.session.usage(stage);
     boolean model = usage.calls() > 0;
+    if (model) {
+      detail = new LinkedHashMap<>(detail);
+      detail.put("calls", usage.calls());
+      detail.put("cacheReadTokens", usage.cacheReadTokens());
+      detail.put("cacheWriteTokens", usage.cacheWriteTokens());
+    }
     TraceEvent event =
         new TraceEvent(
             stage,

@@ -37,6 +37,8 @@ public class AnalysisResults {
   private final ObjectMapper mapper;
   private final Clock clock;
   private final boolean recorded;
+  private final AnalysisRunStore runs;
+  private final bd.shromikai.trace.AnalysisTraceStore traces;
 
   public AnalysisResults(
       JobStore jobs,
@@ -44,12 +46,16 @@ public class AnalysisResults {
       SignedResultCodec codec,
       ObjectMapper mapper,
       Clock clock,
-      Environment environment) {
+      Environment environment,
+      AnalysisRunStore runs,
+      bd.shromikai.trace.AnalysisTraceStore traces) {
     this.jobs = jobs;
     this.composer = composer;
     this.codec = codec;
     this.mapper = mapper;
     this.clock = clock;
+    this.runs = runs;
+    this.traces = traces;
     this.recorded =
         environment.acceptsProfiles(org.springframework.core.env.Profiles.of("fake-models"));
   }
@@ -71,6 +77,91 @@ public class AnalysisResults {
       throw new ProblemException(ProblemType.NOT_FOUND);
     }
     return job;
+  }
+
+  /** Removes the job now (FR-54); the owner may delete again or after expiry, others get 404. */
+  public void delete(UUID id, AnalysisSubject caller) {
+    AnalysisJob job = jobs.find(id).orElse(null);
+    if (job == null) {
+      if (jobs.wasOwnedBy(id, caller)) {
+        return;
+      }
+      throw new ProblemException(ProblemType.NOT_FOUND);
+    }
+    jobFor(id, caller);
+    jobs.delete(id);
+  }
+
+  /**
+   * The obligations checklist per party, re-identified, with its disclaimer (E-16, FR-53).
+   *
+   * @throws IllegalStateException when the analysis has not finished
+   */
+  public ObjectNode obligationsFor(UUID id, AnalysisSubject caller) {
+    AnalysisJob job = jobFor(id, caller);
+    AnalysisJob.Outcome outcome = job.outcome();
+    AnalysisRequest request = job.request();
+    if (job.status() != AnalysisJob.Status.ANALYSED || outcome == null || request == null) {
+      throw new IllegalStateException("The analysis has not finished");
+    }
+    UnaryOperator<String> restore = text -> job.placeholders().restore(text);
+    ObjectNode export = mapper.createObjectNode();
+    export.put("analysisId", id.toString());
+    ObjectNode parties = export.putObject("parties");
+    ArrayNode all = obligations(outcome, restore);
+    for (String party : List.of("EMPLOYER", "WORKER", "BOTH")) {
+      ArrayNode list = parties.putArray(party);
+      all.forEach(
+          o -> {
+            if (party.equals(o.path("party").asText())) {
+              list.add(o);
+            }
+          });
+    }
+    export.put(
+        "disclaimer",
+        "bn".equals(request.outputLanguage())
+            ? "এটা আইনি পরামর্শ নয়। এই তালিকা শুধু তথ্যের জন্য।"
+            : "This is not legal advice. This checklist is for information only.");
+    return export;
+  }
+
+  /**
+   * The content-free trace of an analysis, kept 30 days (E-15, FR-48). Readable after the result
+   * has expired; only the owner may read it (404 otherwise).
+   */
+  public ObjectNode traceFor(UUID id, AnalysisSubject caller) {
+    AnalysisRunStore.RunInfo info =
+        runs.info(id)
+            .filter(r -> r.ownerKey().equals(caller.key()))
+            .orElseThrow(() -> new ProblemException(ProblemType.NOT_FOUND));
+    ObjectNode trace = mapper.createObjectNode();
+    trace.put("analysisId", id.toString());
+    trace.put("createdAt", info.createdAt().toString());
+    ArrayNode events = trace.putArray("events");
+    for (var e : traces.list(id)) {
+      ObjectNode node = events.addObject();
+      node.put("stage", e.stage());
+      node.put("at", e.at().toString());
+      node.put("durationMs", e.durationMs());
+      node.set("promptId", mapper.valueToTree(e.promptId()));
+      node.set("promptVersion", mapper.valueToTree(e.promptVersion()));
+      node.set("modelId", mapper.valueToTree(e.modelId()));
+      node.set("tokensIn", mapper.valueToTree(e.tokensIn()));
+      node.set("tokensOut", mapper.valueToTree(e.tokensOut()));
+      node.set("cacheReadTokens", mapper.valueToTree(e.detail().get("cacheReadTokens")));
+      node.set("cacheWriteTokens", mapper.valueToTree(e.detail().get("cacheWriteTokens")));
+      node.set("costUsdMicros", mapper.valueToTree(e.costUsdMicros()));
+      node.put("outcome", e.outcome());
+      node.set("detail", mapper.valueToTree(e.detail()));
+    }
+    ObjectNode totals = trace.putObject("totals");
+    totals.put("tokensIn", info.tokensIn());
+    totals.put("tokensOut", info.tokensOut());
+    totals.put("cacheReadTokens", info.cacheReadTokens());
+    totals.put("cacheWriteTokens", info.cacheWriteTokens());
+    totals.put("costUsdMicros", info.costUsdMicros());
+    return trace;
   }
 
   /** The signed, re-identified result of a finished analysis for its owner. */

@@ -18,7 +18,22 @@ public record AnalysisProperties(Analysis analysis, Budget budget) {
    * @param jurisdictions the jurisdictions of the active pack that citations may come from
    */
   public record Analysis(
-      Duration hardTimeout, Map<String, Duration> stepTimeouts, Set<String> jurisdictions) {}
+      Duration hardTimeout,
+      Map<String, Duration> stepTimeouts,
+      Set<String> jurisdictions,
+      Duration syncWait) {
+
+    public Analysis(
+        Duration hardTimeout, Map<String, Duration> stepTimeouts, Set<String> jurisdictions) {
+      this(hardTimeout, stepTimeouts, jurisdictions, Duration.ofSeconds(45));
+    }
+
+    public Analysis {
+      if (syncWait == null) {
+        syncWait = Duration.ofSeconds(45);
+      }
+    }
+  }
 
   public record Budget(double perAnalysisUsd, long perAnalysisTokens, double dailyUsd) {
 
@@ -40,7 +55,9 @@ public record AnalysisProperties(Analysis analysis, Budget budget) {
       analysis = new Analysis(Duration.ofSeconds(150), Map.of(), Set.of("BD"));
     }
     if (analysis.jurisdictions() == null || analysis.jurisdictions().isEmpty()) {
-      analysis = new Analysis(analysis.hardTimeout(), analysis.stepTimeouts(), Set.of("BD"));
+      analysis =
+          new Analysis(
+              analysis.hardTimeout(), analysis.stepTimeouts(), Set.of("BD"), analysis.syncWait());
     }
     if (budget == null) {
       budget = new Budget(1.0, 400_000, 50.0);
