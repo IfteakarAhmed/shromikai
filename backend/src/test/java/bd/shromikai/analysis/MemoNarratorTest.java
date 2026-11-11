@@ -140,4 +140,61 @@ class MemoNarratorTest {
             () -> new MemoNarrator().narrate(session, request("en", Map.of()), List.of(finding())))
         .isInstanceOf(EgressBlockedException.class);
   }
+
+  /**
+   * R-01: the narrative is the one memo text no verifier sees, so a statute reference in it (§,
+   * "section N", "ধারা N", Latin or Bangla digits) is refused and the fixed narrative is used.
+   */
+  @org.junit.jupiter.params.ParameterizedTest(name = "{0}")
+  @org.junit.jupiter.params.provider.ValueSource(
+      strings = {
+        "Notice is required by section 9 of the Act.",
+        "Notice is required by Section ৯ of the Act.",
+        "See § 9 for the notice rule.",
+        "ধারা ৯ অনুযায়ী নোটিস লাগবে।",
+        "ধারা 9 অনুযায়ী নোটিস লাগবে।",
+        "ধারা৯ অনুযায়ী নোটিস লাগবে।"
+      })
+  void refusesAStatuteReferenceInTheSummaryAndFallsBack(String hostileText) {
+    for (String where : List.of("summary", "step")) {
+      List<ChatRequest> log = new java.util.concurrent.CopyOnWriteArrayList<>();
+      String summary = where.equals("summary") ? hostileText : "One risk found.";
+      String step = where.equals("step") ? hostileText : "Ask for a copy.";
+      var gateway =
+          AnalysisFixtures.gatewayOver(
+              answering(
+                  "{\"status\":\"OK\",\"reason\":\"NONE\",\"summary\":\""
+                      + summary
+                      + "\",\"next_steps\":[\""
+                      + step
+                      + "\"]}",
+                  log));
+      var session = AnalysisFixtures.session(gateway, EgressContext.NONE, 1.0);
+
+      var narrative =
+          new MemoNarrator().narrate(session, request("en", Map.of()), List.of(finding()));
+
+      assertThat(narrative.fromModel()).as(where).isFalse();
+      assertThat(narrative.summary().reveal()).as(where).doesNotContain(hostileText);
+      assertThat(narrative.nextSteps()).as(where).isNotEmpty();
+    }
+  }
+
+  @Test
+  void keepsAnAnswerThatOnlyUsesPlainNumbersAndWords() {
+    List<ChatRequest> log = new java.util.concurrent.CopyOnWriteArrayList<>();
+    var gateway =
+        AnalysisFixtures.gatewayOver(
+            answering(
+                "{\"status\":\"OK\",\"reason\":\"NONE\",\"summary\":\"2 risks found in"
+                    + " this section of the review.\",\"next_steps\":[\"Ask for a copy within 7"
+                    + " days.\"]}",
+                log));
+    var session = AnalysisFixtures.session(gateway, EgressContext.NONE, 1.0);
+
+    var narrative =
+        new MemoNarrator().narrate(session, request("en", Map.of()), List.of(finding()));
+
+    assertThat(narrative.fromModel()).isTrue();
+  }
 }

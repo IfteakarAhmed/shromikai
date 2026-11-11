@@ -49,7 +49,9 @@ public final class MemoNarrator {
       if ("OK".equals(out.path("status").asText()) && !out.path("summary").asText().isBlank()) {
         List<SensitiveText> steps = new ArrayList<>();
         out.path("next_steps").forEach(s -> steps.add(SensitiveText.of(s.asText())));
-        return new Narrative(SensitiveText.of(out.path("summary").asText()), steps, true);
+        if (!citesStatute(out.path("summary").asText(), steps)) {
+          return new Narrative(SensitiveText.of(out.path("summary").asText()), steps, true);
+        }
       }
     } catch (EgressBlockedException blocked) {
       throw blocked;
@@ -59,6 +61,23 @@ public final class MemoNarrator {
       }
     }
     return fallback(request.outputLanguage(), findings);
+  }
+
+  /** A section sign, "section N" or "ধারা N" with Latin or Bangla digits (ধারা is "section"). */
+  private static final java.util.regex.Pattern STATUTE_REFERENCE =
+      java.util.regex.Pattern.compile(
+          "§|\\bsections?\\b\\s*[\\d০-৯]|ধারা\\s*[\\d০-৯]",
+          java.util.regex.Pattern.CASE_INSENSITIVE | java.util.regex.Pattern.UNICODE_CASE);
+
+  /**
+   * The narrative is the one memo text that no citation verifier sees (R-01), so a statute
+   * reference in it is refused and the fixed narrative is used instead.
+   */
+  static boolean citesStatute(String summary, List<SensitiveText> steps) {
+    if (STATUTE_REFERENCE.matcher(summary).find()) {
+      return true;
+    }
+    return steps.stream().anyMatch(s -> STATUTE_REFERENCE.matcher(s.reveal()).find());
   }
 
   static String readingLevel(AnalysisRequest request) {
