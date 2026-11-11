@@ -43,15 +43,21 @@ import org.springframework.test.context.DynamicPropertyRegistry;
 import org.springframework.test.context.DynamicPropertySource;
 
 /**
- * FR-30, NFR-06, M-16 = 0: the full intake on all five synthetic contracts with WireMock standing
- * in for the cloud model, through the real Claude adapter and the real egress guard. No captured
- * request holds any original name, organisation, address, NID, phone number or e-mail address. A
- * law search whose query holds PII canaries makes zero cloud requests (architecture §10.7).
+ * FR-30, NFR-06: <strong>plumbing only</strong>. The full intake runs on all five synthetic
+ * contracts with WireMock standing in for the cloud model, through the real Claude adapter and the
+ * real egress guard, <em>with a local extractor that is handed the labelled entities</em>. It
+ * proves that redaction, the placeholder map, the guard and the adapter are wired so that nothing
+ * known to the job leaves the box, and that a law search with PII canaries makes zero cloud
+ * requests (architecture §10.7).
+ *
+ * <p>It does <strong>not</strong> show that the real local model finds every name: a name the
+ * extractor misses is not redacted (see {@link #shouldLeakANameTheLocalExtractorMissed}). That
+ * recall is measured by M-16 with real Ollama, which is a known gap (docs/dev-log.md).
  */
 @IntegrationTest
 @Requirement("FR-30")
 @Requirement("NFR-06")
-class NoPiiLeavesTheBoxIT {
+class EgressPlumbingIT {
 
   @org.junit.jupiter.api.extension.RegisterExtension
   static WireMockExtension cloud =
@@ -101,7 +107,7 @@ class NoPiiLeavesTheBoxIT {
 
   @ParameterizedTest(name = "{0}")
   @MethodSource("contracts")
-  void shouldSendNoOriginalIdentifierToTheCloudModel(String id) {
+  void shouldSendNoLabelledIdentifierToTheCloudModel(String id) {
     AnalysisHarness h = harnessWith(AnalysisHarness.entitiesOf(id));
 
     AnalysisJob job = h.service.analyseText(SyntheticContracts.text(id));
@@ -139,6 +145,33 @@ class NoPiiLeavesTheBoxIT {
       assertThat(BanglaNormalizer.toLatinDigits(all))
           .doesNotContain(BanglaNormalizer.toLatinDigits(value));
     }
+  }
+
+  /**
+   * Negative case: when the extractor misses a person, no detector or guard stage can know the
+   * name, so it reaches the cloud payload. This documents the limit of the plumbing; it is the
+   * reason the real-model recall must be measured and not assumed.
+   */
+  @Test
+  void shouldLeakANameTheLocalExtractorMissed() {
+    String id = SyntheticContracts.IDS.getFirst();
+    List<String> persons = SyntheticContracts.values(id, "PERSON");
+    String missed = persons.getFirst();
+    var found = AnalysisHarness.entitiesOf(id);
+    // The extractor finds the organisations, addresses and IDs but no person at all.
+    var withoutMissed =
+        new LocalEntities(List.of(), found.organisations(), found.addresses(), found.employeeIds());
+    AnalysisHarness h = harnessWith(withoutMissed);
+
+    h.service.analyseText(SyntheticContracts.text(id));
+
+    String all =
+        String.join(
+            "\n",
+            cloud.findAll(anyRequestedFor(anyUrl())).stream()
+                .map(LoggedRequest::getBodyAsString)
+                .toList());
+    assertThat(all.replace("\\\"", "\"")).contains(missed);
   }
 
   @Test

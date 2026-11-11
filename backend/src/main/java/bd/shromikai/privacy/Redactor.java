@@ -1,9 +1,16 @@
 package bd.shromikai.privacy;
 
+import java.text.Normalizer;
 import java.util.ArrayList;
 import java.util.Comparator;
+import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
+import java.util.Set;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import org.springframework.stereotype.Component;
 
 /**
@@ -16,7 +23,8 @@ import org.springframework.stereotype.Component;
 @Component
 public final class Redactor {
 
-  private static final int MIN_ENTITY_LENGTH = 2;
+  /** Shortest entity string or name part that is matched; shorter ones are too ambiguous. */
+  static final int MIN_ENTITY_LENGTH = 3;
 
   private final PiiDetector detector;
 
@@ -26,9 +34,10 @@ public final class Redactor {
 
   /** Redacted paragraphs, in the order given. */
   public List<String> redact(List<String> paragraphs, LocalEntities entities, PlaceholderMap map) {
+    List<Needle> needles = needles(entities);
     List<List<Span>> spans = new ArrayList<>();
     for (String paragraph : paragraphs) {
-      spans.add(spansOf(paragraph, entities));
+      spans.add(spansOf(paragraph, needles));
     }
     List<String> out = new ArrayList<>(paragraphs.size());
     for (int p = 0; p < paragraphs.size(); p++) {
@@ -51,31 +60,71 @@ public final class Redactor {
     return redact(List.of(text), entities, map).getFirst();
   }
 
-  private List<Span> spansOf(String text, LocalEntities entities) {
+  private record Needle(PiiType type, Pattern pattern) {}
+
+  /**
+   * Every entity string plus, for persons, each name part on its own (a surname alone is still
+   * PII). Matching is case-insensitive, on NFC text, and only at word boundaries, so "Ali" does not
+   * match inside "Alibaba".
+   */
+  private static List<Needle> needles(LocalEntities entities) {
+    Map<PiiType, List<String>> byType = new LinkedHashMap<>();
+    byType.put(PiiType.PERSON, entities.persons());
+    byType.put(PiiType.ORG, entities.organisations());
+    byType.put(PiiType.ADDRESS, entities.addresses());
+    byType.put(PiiType.EMPLOYEE_ID, entities.employeeIds());
+    Set<String> seen = new LinkedHashSet<>();
+    List<Needle> out = new ArrayList<>();
+    byType.forEach(
+        (type, values) -> {
+          for (String value : values) {
+            if (value == null) {
+              continue;
+            }
+            List<String> candidates = new ArrayList<>();
+            candidates.add(value);
+            if (type == PiiType.PERSON) {
+              for (String part : value.strip().split("\\s+")) {
+                candidates.add(part.replaceAll("^[\\p{P}]+|[\\p{P}]+$", ""));
+              }
+            }
+            for (String candidate : candidates) {
+              String needle = Normalizer.normalize(candidate.strip(), Normalizer.Form.NFC);
+              if (needle.codePointCount(0, needle.length()) < MIN_ENTITY_LENGTH
+                  || !seen.add(type + "|" + needle.toLowerCase(Locale.ROOT))) {
+                continue;
+              }
+              out.add(
+                  new Needle(
+                      type,
+                      Pattern.compile(
+                          "(?<![\\p{L}\\p{M}\\p{N}])"
+                              + Pattern.quote(needle)
+                              + "(?![\\p{L}\\p{M}\\p{N}])",
+                          Pattern.CASE_INSENSITIVE | Pattern.UNICODE_CASE)));
+            }
+          }
+        });
+    return out;
+  }
+
+  private List<Span> spansOf(String text, List<Needle> needles) {
     List<Span> all = new ArrayList<>();
     for (PiiMatch m : detector.detect(text)) {
       all.add(new Span(m.type(), m.start(), m.end(), true));
     }
-    Map<PiiType, List<String>> byType =
-        Map.of(
-            PiiType.PERSON, entities.persons(),
-            PiiType.ORG, entities.organisations(),
-            PiiType.ADDRESS, entities.addresses(),
-            PiiType.EMPLOYEE_ID, entities.employeeIds());
-    byType.forEach(
-        (type, values) -> {
-          for (String value : values) {
-            if (value == null || value.strip().length() < MIN_ENTITY_LENGTH) {
-              continue;
-            }
-            String needle = value.strip();
-            int from = 0;
-            while ((from = text.indexOf(needle, from)) >= 0) {
-              all.add(new Span(type, from, from + needle.length(), false));
-              from += needle.length();
-            }
-          }
-        });
+    NormalizedText normalized = NormalizedText.of(text);
+    for (Needle needle : needles) {
+      Matcher matcher = needle.pattern.matcher(normalized.text);
+      while (matcher.find()) {
+        all.add(
+            new Span(
+                needle.type,
+                normalized.originalStart(matcher.start()),
+                normalized.originalEnd(matcher.end() - 1),
+                false));
+      }
+    }
     all.sort(
         Comparator.comparingInt((Span s) -> s.start)
             .thenComparing(Comparator.comparingInt((Span s) -> s.end - s.start).reversed())
@@ -92,4 +141,67 @@ public final class Redactor {
   }
 
   private record Span(PiiType type, int start, int end, boolean rule) {}
+
+  /**
+   * The NFC form of a text with, for every normalized char, the original range of the cluster (a
+   * base character and its combining marks) it came from, so matches map back to the original.
+   */
+  private static final class NormalizedText {
+    final String text;
+    private final int[] starts;
+    private final int[] ends;
+
+    private NormalizedText(String text, int[] starts, int[] ends) {
+      this.text = text;
+      this.starts = starts;
+      this.ends = ends;
+    }
+
+    static NormalizedText of(String original) {
+      if (Normalizer.isNormalized(original, Normalizer.Form.NFC)) {
+        int[] identity = new int[original.length() + 1];
+        for (int i = 0; i < identity.length; i++) {
+          identity[i] = i;
+        }
+        int[] ends = new int[original.length()];
+        for (int i = 0; i < ends.length; i++) {
+          ends[i] = i + 1;
+        }
+        return new NormalizedText(original, identity, ends);
+      }
+      StringBuilder out = new StringBuilder(original.length());
+      int[] starts = new int[original.length() + 1];
+      int[] ends = new int[original.length() + 1];
+      int i = 0;
+      while (i < original.length()) {
+        int j = i + Character.charCount(original.codePointAt(i));
+        while (j < original.length() && isMark(original.codePointAt(j))) {
+          j += Character.charCount(original.codePointAt(j));
+        }
+        String cluster = Normalizer.normalize(original.substring(i, j), Normalizer.Form.NFC);
+        for (int k = 0; k < cluster.length(); k++) {
+          starts[out.length() + k] = i;
+          ends[out.length() + k] = j;
+        }
+        out.append(cluster);
+        i = j;
+      }
+      return new NormalizedText(out.toString(), starts, ends);
+    }
+
+    int originalStart(int normalizedIndex) {
+      return starts[normalizedIndex];
+    }
+
+    int originalEnd(int lastNormalizedIndex) {
+      return ends[lastNormalizedIndex];
+    }
+
+    private static boolean isMark(int codePoint) {
+      int type = Character.getType(codePoint);
+      return type == Character.NON_SPACING_MARK
+          || type == Character.COMBINING_SPACING_MARK
+          || type == Character.ENCLOSING_MARK;
+    }
+  }
 }
