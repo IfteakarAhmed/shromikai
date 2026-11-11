@@ -15,7 +15,6 @@ A running list of what is not done, not measured or not proven, so nothing is cl
 | MCP servers used during development are not recorded | FR-67, R-12 | The honest list in `docs/mcp.md` says "none recorded" for the P8 session; the team must add what it actually used. |
 | `search_bd_law` ignores `language` | FR-64 | The argument is validated and then not used for filtering: bge-m3 shares one space across Bangla and English (same as `GET /laws/search`). |
 | MCP analyses are not stored | FR-66 | The job is deleted when the result is built, so a client that loses the response cannot fetch it again; only the content-free run row and trace stay (30 days). The review ticket has no token, so it cannot be claimed through the REST ticket flow. |
-| Intermittent test: `OrchestratorStateMachineTest` | NFR-15 | `shouldWriteOneContentFreeTraceEventPerTransition` failed once in a full `./gradlew test` (it expected the `risk-analysis` trace event and got `obligations`) and passed in 3 of 3 reruns, also with the P8 changes stashed. The two stages run in parallel, so the order of their events is not fixed; the test assumes it is. Not changed in P8. |
 | `json-schema-validator` moved to 2.0.0 | build | The MCP SDK 0.18.3 needs the 2.x line (a 1.5.9 pin made the server fail at start with `NoClassDefFoundError`). Only `JsonSchemas` uses it; all schema tests pass, but message texts of validation errors are the library's. |
 
 ## P7 and later (found in the P6 review, not yet fixed)

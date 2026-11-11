@@ -158,7 +158,10 @@ class OrchestratorStateMachineTest {
       assertThat(detail).doesNotContain(PipelineHarness.CLAUSE_1).doesNotContain("seven days");
     }
     TraceEvent risk =
-        job.trace().stream().filter(e -> e.stage() == Stage.RISK).findFirst().orElseThrow();
+        job.trace().stream()
+            .filter(e -> "risk-analysis".equals(e.promptId()))
+            .findFirst()
+            .orElseThrow();
     assertThat(risk.promptId()).isEqualTo("risk-analysis");
     assertThat(risk.promptVersion()).as("risk-analysis v2 (ADR-0016)").isEqualTo(2);
     assertThat(risk.tokensIn()).isPositive();
