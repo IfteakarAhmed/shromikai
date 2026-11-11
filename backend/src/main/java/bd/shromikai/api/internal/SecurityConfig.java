@@ -1,5 +1,6 @@
 package bd.shromikai.api.internal;
 
+import bd.shromikai.auth.ApiKeyService;
 import bd.shromikai.auth.JwtService;
 import bd.shromikai.shared.config.ShromikaiProperties;
 import bd.shromikai.trace.AuditService;
@@ -32,6 +33,7 @@ class SecurityConfig {
   SecurityFilterChain apiSecurity(
       HttpSecurity http,
       JwtService jwt,
+      ApiKeyService apiKeys,
       AuditService audit,
       ProblemResponseWriter problemWriter,
       SecurityProblemHandlers problems,
@@ -99,6 +101,9 @@ class SecurityConfig {
                     .requestMatchers(
                         "/api/v1/admin/**", "/api/v1/review-items/**", "/api/v1/dev/**")
                     .hasRole("ADMIN")
+                    // MCP: an API key with scope mcp (FR-65); users' tokens never open it.
+                    .requestMatchers("/mcp", "/mcp/**")
+                    .hasAuthority("SCOPE_mcp")
                     .requestMatchers("/api/v1/playbooks/**")
                     .hasAnyRole("HR", "ADMIN")
                     .requestMatchers(
@@ -112,6 +117,9 @@ class SecurityConfig {
                     .authenticated())
         .addFilterBefore(
             new CredentialQueryParamFilter(problemWriter), SecurityContextHolderFilter.class)
+        .addFilterBefore(
+            new ApiKeyAuthenticationFilter(apiKeys, audit, problemWriter),
+            UsernamePasswordAuthenticationFilter.class)
         .addFilterBefore(
             new JwtAuthenticationFilter(jwt), UsernamePasswordAuthenticationFilter.class)
         .addFilterAfter(new AdminActionAuditFilter(audit), AuthorizationFilter.class);

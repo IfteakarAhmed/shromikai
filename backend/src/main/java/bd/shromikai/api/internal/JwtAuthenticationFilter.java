@@ -36,6 +36,10 @@ final class JwtAuthenticationFilter extends OncePerRequestFilter {
       HttpServletRequest request, HttpServletResponse response, FilterChain chain)
       throws ServletException, IOException {
     String header = request.getHeader(HttpHeaders.AUTHORIZATION);
+    if (SecurityContextHolder.getContext().getAuthentication() != null) {
+      chain.doFilter(request, response); // already authenticated, for example by API key
+      return;
+    }
     if (header != null && header.regionMatches(true, 0, PREFIX, 0, PREFIX.length())) {
       try {
         AuthenticatedSubject subject = jwt.parse(header.substring(PREFIX.length()).trim());

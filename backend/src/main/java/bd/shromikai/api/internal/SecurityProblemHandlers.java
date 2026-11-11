@@ -1,5 +1,6 @@
 package bd.shromikai.api.internal;
 
+import bd.shromikai.auth.ApiKeyPrincipal;
 import bd.shromikai.auth.AuthenticatedSubject;
 import bd.shromikai.shared.problem.ProblemType;
 import bd.shromikai.trace.ActorKind;
@@ -57,6 +58,12 @@ class SecurityProblemHandlers implements AuthenticationEntryPoint, AccessDeniedH
   }
 
   static AuditEvent accessDenied(HttpServletRequest request) {
+    ApiKeyPrincipal key = key();
+    if (key != null) {
+      Map<String, Object> detail = requestDetail(request);
+      detail.put("reason", "missing_scope");
+      return AuditEvent.of(key.keyId(), ActorKind.API_KEY, AuditAction.ACCESS_DENIED, detail);
+    }
     return AuditEvent.of(actorId(), actorKind(), AuditAction.ACCESS_DENIED, requestDetail(request));
   }
 
@@ -80,6 +87,13 @@ class SecurityProblemHandlers implements AuthenticationEntryPoint, AccessDeniedH
       detail.put("role", subject.role().name());
     }
     return detail;
+  }
+
+  private static ApiKeyPrincipal key() {
+    Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+    return authentication != null && authentication.getPrincipal() instanceof ApiKeyPrincipal k
+        ? k
+        : null;
   }
 
   private static AuthenticatedSubject subject() {
