@@ -175,4 +175,76 @@ class GeminiChatAdapterIT {
         .isInstanceOf(UpstreamUnavailableException.class);
     gemini.verify(0, postRequestedFor(urlPathEqualTo(PATH)));
   }
+
+  @Test
+  void shouldKeepGoogleErrorStatusInTheReasonCodeOfARejectedRequest() {
+    gemini.stubFor(
+        post(urlPathEqualTo(PATH))
+            .willReturn(
+                aResponse()
+                    .withStatus(403)
+                    .withBody(
+                        "{\"error\":{\"code\":403,\"status\":\"PERMISSION_DENIED\","
+                            + "\"message\":\"The caller does not have permission\"}}")));
+
+    assertThatThrownBy(() -> adapter.call(request()))
+        .isInstanceOfSatisfying(
+            ModelRequestRejectedException.class,
+            e -> {
+              assertThat(e.reasonCode())
+                  .startsWith("gemini-http-403 PERMISSION_DENIED")
+                  .contains("does not have permission");
+              assertThat(e.detail()).isNull();
+            });
+  }
+
+  @Test
+  void shouldTurnThinkingOffForGemini25AndCountThinkingTokensAsOutput() throws Exception {
+    gemini.stubFor(
+        post(urlPathEqualTo("/v1beta/models/gemini-2.5-flash:generateContent"))
+            .willReturn(
+                okJson(
+                    "{\"candidates\":[{\"content\":{\"parts\":[{\"text\":\"{}\"}]},"
+                        + "\"finishReason\":\"STOP\"}],\"usageMetadata\":{\"promptTokenCount\":10,"
+                        + "\"candidatesTokenCount\":5,\"thoughtsTokenCount\":40}}")));
+    ChatRequest base = request();
+    ChatRequest flash =
+        new ChatRequest(
+            base.promptId(),
+            base.promptVersion(),
+            base.role(),
+            "gemini-2.5-flash",
+            base.system(),
+            base.user(),
+            base.outputSchema(),
+            150,
+            base.timeout(),
+            null,
+            null);
+
+    ChatResponse response = adapter.call(flash);
+
+    assertThat(response.usage().outputTokens()).as("candidates plus thinking").isEqualTo(45);
+    LoggedRequest sent =
+        gemini
+            .findAll(
+                postRequestedFor(urlPathEqualTo("/v1beta/models/gemini-2.5-flash:generateContent")))
+            .get(0);
+    JsonNode body = mapper.readTree(sent.getBodyAsString());
+    assertThat(body.at("/generationConfig/thinkingConfig/thinkingBudget").asInt(-1)).isZero();
+    assertThat(body.at("/generationConfig/maxOutputTokens").asInt()).isEqualTo(150);
+  }
+
+  @Test
+  void shouldLeaveThinkingSettingsAloneForOtherModels() throws Exception {
+    gemini.stubFor(
+        post(urlPathEqualTo(PATH)).willReturn(okJson(answer("STOP", "{\"echo\":\"hello\"}"))));
+
+    adapter.call(request());
+
+    LoggedRequest sent = gemini.findAll(postRequestedFor(urlPathEqualTo(PATH))).get(0);
+    assertThat(
+            mapper.readTree(sent.getBodyAsString()).at("/generationConfig").has("thinkingConfig"))
+        .isFalse();
+  }
 }

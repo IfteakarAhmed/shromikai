@@ -17,6 +17,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
+import java.io.IOException;
 import java.net.SocketTimeoutException;
 import java.net.http.HttpClient;
 import java.net.http.HttpTimeoutException;
@@ -122,7 +123,7 @@ public final class GeminiChatAdapter implements ChatPort {
     } catch (RestClientResponseException e) {
       int status = e.getStatusCode().value();
       if (ModelRequestRejectedException.applies(status)) {
-        throw new ModelRequestRejectedException("gemini-http-" + status, status);
+        throw new ModelRequestRejectedException("gemini-http-" + status + reason(e), status);
       }
       HttpHeaders headers = e.getResponseHeaders();
       String retryAfter = headers == null ? null : headers.getFirst(HttpHeaders.RETRY_AFTER);
@@ -134,6 +135,23 @@ public final class GeminiChatAdapter implements ChatPort {
         throw new ModelTimeoutException("gemini-timeout");
       }
       throw new UpstreamUnavailableException("gemini-connection", 0, null);
+    }
+  }
+
+  /**
+   * Google's own error status and message (for example {@code PERMISSION_DENIED}), so a rejected
+   * key or model can be told apart from a bad request. It is for logs and traces only; it never
+   * becomes the client-facing detail (NFR-04), and Google's message never echoes the request.
+   */
+  private String reason(RestClientResponseException e) {
+    try {
+      JsonNode error = mapper.readTree(e.getResponseBodyAsString()).path("error");
+      String status = error.path("status").asText("");
+      String message = error.path("message").asText("").replaceAll("[\\p{Cntrl}]", " ");
+      String text = (status + " " + message).strip();
+      return text.isEmpty() ? "" : " " + text.substring(0, Math.min(text.length(), 160));
+    } catch (IOException | RuntimeException ignored) {
+      return "";
     }
   }
 
