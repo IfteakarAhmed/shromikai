@@ -190,4 +190,72 @@ class LiveSpendLedgerTest {
           .hasMessageContaining("No fixture for query-rewrite");
     }
   }
+
+  @Test
+  void shouldRefuseEveryLaterLiveCallAfterAnInvalidOrTruncatedAnswer() {
+    LiveSpendLedger ledger = new LiveSpendLedger(dir.resolve("t.json"), 1_000_000);
+    java.util.concurrent.atomic.AtomicBoolean tripwire =
+        new java.util.concurrent.atomic.AtomicBoolean();
+    ChatPort truncating =
+        new ChatPort() {
+          @Override
+          public String provider() {
+            return "anthropic";
+          }
+
+          @Override
+          public ChatResponse call(ChatRequest request) {
+            throw new bd.shromikai.shared.ai.ModelOutputInvalidException(
+                "anthropic-max-tokens", new TokenUsage(100, 50, 0, 0));
+          }
+        };
+    CappedChatPort first =
+        new CappedChatPort(
+            truncating, ledger, COST, "t", 10, Map.of(), "t", Long.MAX_VALUE, tripwire);
+    CappedChatPort other =
+        new CappedChatPort(
+            answering(TestGateways.json("{}"), 1, 1),
+            ledger,
+            COST,
+            "t",
+            10,
+            Map.of(),
+            "t",
+            Long.MAX_VALUE,
+            tripwire);
+
+    assertThatThrownBy(() -> first.call(request("a")))
+        .isInstanceOf(bd.shromikai.shared.ai.ModelOutputInvalidException.class);
+
+    assertThat(tripwire).isTrue();
+    assertThat(ledger.callsFor("t:a")).as("the truncated call's tokens are recorded").isEqualTo(1);
+    assertThatThrownBy(() -> other.call(request("b")))
+        .isInstanceOf(LiveSpendLedger.SpendCapException.class)
+        .hasMessageContaining("Stopped");
+  }
+
+  @Test
+  void shouldRefuseALiveCallOfAPromptWhoseLimitIsZeroAndEnforceTheContractCap() {
+    LiveSpendLedger ledger = new LiveSpendLedger(dir.resolve("z.json"), 1_000_000);
+    ledger.record("contract:x", "m", 1, 1, 900);
+    CappedChatPort zero =
+        new CappedChatPort(
+            answering(TestGateways.json("{}"), 1, 1),
+            ledger,
+            COST,
+            "t",
+            10,
+            Map.of("query-rewrite", 0),
+            "contract",
+            900,
+            new java.util.concurrent.atomic.AtomicBoolean());
+
+    assertThatThrownBy(() -> zero.call(request("query-rewrite")))
+        .isInstanceOf(LiveSpendLedger.SpendCapException.class)
+        .hasMessageContaining("allowed in this run");
+    assertThatThrownBy(() -> zero.call(request("other")))
+        .as("900 already spent leaves no room under a contract cap of 900")
+        .isInstanceOf(LiveSpendLedger.SpendCapException.class)
+        .hasMessageContaining("contract");
+  }
 }

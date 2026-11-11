@@ -8,6 +8,7 @@ import bd.shromikai.shared.ai.ModelOutputInvalidException;
 import bd.shromikai.shared.ai.TokenUsage;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 
 /**
@@ -29,6 +30,7 @@ public final class CappedChatPort implements ChatPort {
   private final Map<String, AtomicInteger> perPrompt = new ConcurrentHashMap<>();
   private final String contractPrefix;
   private final long contractCapMicros;
+  private final AtomicBoolean tripwire;
 
   public CappedChatPort(
       ChatPort delegate,
@@ -36,13 +38,24 @@ public final class CappedChatPort implements ChatPort {
       CostCalculator cost,
       String purpose,
       int maxCalls) {
-    this(delegate, ledger, cost, purpose, maxCalls, Map.of(), purpose, Long.MAX_VALUE);
+    this(
+        delegate,
+        ledger,
+        cost,
+        purpose,
+        maxCalls,
+        Map.of(),
+        purpose,
+        Long.MAX_VALUE,
+        new AtomicBoolean());
   }
 
   /**
    * @param perPromptLimits at most this many live calls of a prompt in one run, for example one
    *     call of {@code risk-analysis} (a gateway repair would be a second call and is refused)
    * @param contractPrefix the ledger purpose whose total is capped by {@code contractCapMicros}
+   * @param tripwire set when any call returns invalid or truncated output; from then on every live
+   *     call of any port sharing it is refused ("stop immediately")
    */
   public CappedChatPort(
       ChatPort delegate,
@@ -52,7 +65,8 @@ public final class CappedChatPort implements ChatPort {
       int maxCalls,
       Map<String, Integer> perPromptLimits,
       String contractPrefix,
-      long contractCapMicros) {
+      long contractCapMicros,
+      AtomicBoolean tripwire) {
     this.delegate = delegate;
     this.ledger = ledger;
     this.cost = cost;
@@ -61,6 +75,7 @@ public final class CappedChatPort implements ChatPort {
     this.perPromptLimits = perPromptLimits;
     this.contractPrefix = contractPrefix;
     this.contractCapMicros = contractCapMicros;
+    this.tripwire = tripwire;
   }
 
   @Override
@@ -74,6 +89,10 @@ public final class CappedChatPort implements ChatPort {
 
   @Override
   public ChatResponse call(ChatRequest request) {
+    if (tripwire.get()) {
+      throw new LiveSpendLedger.SpendCapException(
+          "Stopped: an earlier live call returned invalid or truncated output; no more live calls.");
+    }
     if (calls.incrementAndGet() > maxCalls) {
       throw new LiveSpendLedger.SpendCapException(
           "More than " + maxCalls + " live calls in one run for " + purpose + "; stopping.");
@@ -108,6 +127,7 @@ public final class CappedChatPort implements ChatPort {
           cost.usdMicros(response.modelId(), u));
       return response;
     } catch (ModelOutputInvalidException e) {
+      tripwire.set(true);
       TokenUsage u = e.usage();
       ledger.record(
           purpose + ":" + request.promptId(),

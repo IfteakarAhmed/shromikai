@@ -72,6 +72,12 @@ public abstract class LiveBase {
 
     public static volatile long contractCapMicros = Long.MAX_VALUE;
 
+    /**
+     * Set by any live call that returns invalid or truncated output; later live calls are refused.
+     */
+    public static final java.util.concurrent.atomic.AtomicBoolean TRIPWIRE =
+        new java.util.concurrent.atomic.AtomicBoolean();
+
     /** The synthetic contract whose ground-truth entities stand in for the local PII model. */
     public static volatile String localPiiStandInFor = null;
 
@@ -133,7 +139,8 @@ public abstract class LiveBase {
                 Run.maxCalls,
                 Run.perPromptLimits,
                 Run.contractPrefix,
-                Run.contractCapMicros);
+                Run.contractCapMicros,
+                Run.TRIPWIRE);
       }
       if (Run.record) {
         // Outside the cap: a call already recorded is replayed and costs nothing.

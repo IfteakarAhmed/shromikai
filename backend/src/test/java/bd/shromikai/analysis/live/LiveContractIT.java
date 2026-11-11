@@ -51,21 +51,27 @@ class LiveContractIT extends LiveBase {
     assumeTrue(LiveEnv.optedIn("record"), "live recording: run with -PliveOk=record");
     Run.purpose = "record:" + CONTRACT;
     Run.caseId = CONTRACT + "-worker";
-    Run.maxCalls = 70;
-    // Stop at once on trouble: three live risk calls (the first batch is replayed from its
-    // recording), so a repair or a split after truncated output is refused, not paid for.
+    Run.maxCalls = 40;
+    // Replay everything already recorded; go live only for CORRECT (repair, its verification) and
+    // the counter-offers. A call that a recording should have answered but did not (the prompt or
+    // the input changed) is a live call of a prompt with limit 0 and stops the run at once. The
+    // limits equal the number of calls expected, so a gateway repair would be one call too many.
     Run.perPromptLimits =
         java.util.Map.of(
-            "risk-analysis",
-            3,
-            "risk-citation-repair",
-            6,
-            "counter-offer",
-            10,
-            "clause-classify",
-            3);
+            "clause-classify", 0,
+            "clause-facts", 0,
+            "query-rewrite", 0,
+            "risk-analysis", 0,
+            "risk-citation-repair", 2,
+            "verify-support-claude", 4,
+            "counter-offer", 9);
     Run.contractPrefix = "record:" + CONTRACT;
-    Run.contractCapMicros = 1_200_000;
+    // An extra US$0.40 for this run, and never more than US$1.20 for the contract in total.
+    Run.contractCapMicros =
+        Math.min(
+            1_200_000,
+            new bd.shromikai.testsupport.live.LiveSpendLedger().spentOn("record:" + CONTRACT)
+                + 400_000);
     Run.record = true;
     Run.localPiiStandInFor = CONTRACT;
   }
@@ -89,6 +95,11 @@ class LiveContractIT extends LiveBase {
       assertThat(job.status()).isEqualTo(AnalysisJob.Status.ANALYSED);
       var findings = job.outcome().findings();
       assertThat(findings.size()).as("at least three risks").isGreaterThanOrEqualTo(3);
+      // The success criteria of a recording: nothing invalid or truncated, no redline dropped.
+      assertThat(Run.TRIPWIRE.get()).as("an invalid or truncated answer").isFalse();
+      assertThat(job.outcome().warnings())
+          .as("dropped counter-offers")
+          .noneMatch(w -> w.code().equals("counter-offer-dropped"));
       for (var finding : findings) {
         for (var citation : finding.citations()) {
           assertThat(citation.verification().status().name()).isEqualTo("VERIFIED");
