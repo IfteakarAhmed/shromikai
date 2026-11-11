@@ -14,6 +14,7 @@ import org.jspecify.annotations.Nullable;
  * @param graph add up to {@code graph-max} sections one hop away
  * @param rewrite rewrite the text into 1 to 3 queries first; only for redacted clauses (FR-21)
  * @param clauseType adds topic-map sections for this clause type when not {@code null}
+ * @param textTuning how the full-text query is built; {@code null} uses the configured default
  */
 public record SearchOptions(
     Set<String> jurisdictions,
@@ -22,9 +23,21 @@ public record SearchOptions(
     boolean text,
     boolean graph,
     boolean rewrite,
-    @Nullable String clauseType) {
+    @Nullable String clauseType,
+    @Nullable TextTuning textTuning) {
 
   public static final Set<String> BD = Set.of("BD");
+
+  public SearchOptions(
+      Set<String> jurisdictions,
+      int limit,
+      boolean vector,
+      boolean text,
+      boolean graph,
+      boolean rewrite,
+      @Nullable String clauseType) {
+    this(jurisdictions, limit, vector, text, graph, rewrite, clauseType, null);
+  }
 
   public SearchOptions {
     if (jurisdictions.isEmpty()) {
@@ -47,18 +60,26 @@ public record SearchOptions(
   }
 
   public SearchOptions withVector(boolean value) {
-    return new SearchOptions(jurisdictions, limit, value, text, graph, rewrite, clauseType);
+    return new SearchOptions(
+        jurisdictions, limit, value, text, graph, rewrite, clauseType, textTuning);
   }
 
   public SearchOptions withText(boolean value) {
-    return new SearchOptions(jurisdictions, limit, vector, value, graph, rewrite, clauseType);
+    return new SearchOptions(
+        jurisdictions, limit, vector, value, graph, rewrite, clauseType, textTuning);
   }
 
   public SearchOptions withGraph(boolean value) {
-    return new SearchOptions(jurisdictions, limit, vector, text, value, rewrite, clauseType);
+    return new SearchOptions(
+        jurisdictions, limit, vector, text, value, rewrite, clauseType, textTuning);
   }
 
   public SearchOptions withRewrite(boolean value) {
-    return new SearchOptions(jurisdictions, limit, vector, text, graph, value, clauseType);
+    return new SearchOptions(
+        jurisdictions, limit, vector, text, graph, value, clauseType, textTuning);
+  }
+
+  public SearchOptions withTextTuning(@Nullable TextTuning value) {
+    return new SearchOptions(jurisdictions, limit, vector, text, graph, rewrite, clauseType, value);
   }
 }

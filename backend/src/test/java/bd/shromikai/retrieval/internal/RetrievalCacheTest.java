@@ -52,6 +52,8 @@ class RetrievalCacheTest {
             16,
             new RetrievalProperties.Cache(100, Duration.ofHours(1)),
             "x",
+            false,
+            1.0,
             false),
         registry);
   }

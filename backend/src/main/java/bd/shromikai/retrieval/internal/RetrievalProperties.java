@@ -1,6 +1,8 @@
 package bd.shromikai.retrieval.internal;
 
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.DecimalMax;
+import jakarta.validation.constraints.DecimalMin;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -22,7 +24,9 @@ public record RetrievalProperties(
     @Min(1) int embedBatchSize,
     @Valid @NotNull Cache cache,
     @NotBlank String topicMapFile,
-    boolean cli) {
+    boolean cli,
+    @DecimalMin(value = "0.0", inclusive = false) @DecimalMax("1.0") double textMaxDocFreq,
+    boolean textLanguageFilter) {
 
   public record Cache(@Min(1) long maxEntries, @NotNull Duration ttl) {}
 }

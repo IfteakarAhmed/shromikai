@@ -60,39 +60,74 @@ public class SectionSearchRepository {
         });
   }
 
+  /** Lexemes PostgreSQL extracts from the (normalised) text, so query and index tokenise alike. */
+  public List<String> lexemes(String normalisedText) {
+    if (normalisedText.isBlank()) {
+      return List.of();
+    }
+    return jdbc.sql("select lexeme from unnest(to_tsvector('simple', :text)) order by lexeme")
+        .param("text", normalisedText)
+        .query(String.class)
+        .list();
+  }
+
   /**
-   * Current sections matching any word of the query in the normalised text, best {@code ts_rank_cd}
-   * first. The query is turned into an OR query from the lexemes PostgreSQL itself extracts, so
-   * Bangla and English words tokenise exactly as the stored text did.
+   * Current sections matching any of the lexemes in the normalised text, best {@code ts_rank_cd}
+   * first (an OR query; ADR-0012).
+   *
+   * @param lexemes the words of the query after any filtering; they contain no whitespace
+   * @param language when not {@code null}, only sections of acts whose authoritative language is
+   *     this one
    */
   public List<Long> textSearch(
-      String normalisedQuery, Collection<String> jurisdictions, int limit) {
-    if (jurisdictions.isEmpty() || normalisedQuery.isBlank()) {
+      List<String> lexemes, Collection<String> jurisdictions, int limit, String language) {
+    if (jurisdictions.isEmpty() || lexemes.isEmpty()) {
       return List.of();
     }
     return jdbc.sql(
             """
             with q as (
               select to_tsquery('simple',
-                       (select string_agg(quote_literal(lexeme), ' | ')
-                          from unnest(to_tsvector('simple', :query)))) as tsq)
+                       (select string_agg(quote_literal(l), ' | ')
+                          from unnest(string_to_array(:lexemes, ' ')) l)) as tsq)
             select s.id
               from law_section s
               join law_act a on a.id = s.act_id
               cross join q
              where s.is_current
                and a.jurisdiction in (:jurisdictions)
+               and (cast(:language as text) is null or a.authoritative_lang = cast(:language as text))
                and to_tsvector('simple', coalesce(s.normalised_text, '')) @@ q.tsq
              order by ts_rank_cd(to_tsvector('simple', coalesce(s.normalised_text, '')), q.tsq) desc,
                       s.id
              limit :limit
             """)
-        .param("query", normalisedQuery)
+        .param("lexemes", String.join(" ", lexemes))
         .param("jurisdictions", jurisdictions)
+        .param("language", language)
         .param("limit", limit)
         .query(Long.class)
         .list();
   }
+
+  /** Number of current sections each lexeme occurs in, and the number of current sections. */
+  public DocFreq docFreq() {
+    Map<String, Integer> counts = new java.util.HashMap<>();
+    jdbc.sql(
+            """
+            select word, ndoc from ts_stat($$
+              select to_tsvector('simple', coalesce(normalised_text, ''))
+                from law_section where is_current $$)
+            """)
+        .query((rs, row) -> counts.put(rs.getString("word"), rs.getInt("ndoc")))
+        .list();
+    long sections =
+        jdbc.sql("select count(*) from law_section where is_current").query(Long.class).single();
+    return new DocFreq(Map.copyOf(counts), sections);
+  }
+
+  /** Document frequencies of the current corpus. */
+  public record DocFreq(Map<String, Integer> counts, long sections) {}
 
   /** Display columns of the given sections, keyed by ID. */
   public Map<Long, SectionRow> load(Collection<Long> ids) {

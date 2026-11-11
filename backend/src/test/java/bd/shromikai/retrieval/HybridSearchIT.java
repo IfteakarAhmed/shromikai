@@ -176,4 +176,22 @@ class HybridSearchIT {
   private static List<String> keys(Retrieval retrieval) {
     return retrieval.results().stream().map(RetrievalResult::sectionKey).toList();
   }
+
+  @Test
+  void shouldMatchOnlySectionsInTheQueryLanguageWhenTheLanguageFilterIsOn() {
+    long bn = RetrievalFixtures.act(jdbc, "XR-BN", XB, "bn");
+    RetrievalFixtures.section(
+        jdbc, bn, "XR-BN", "1", "original", true, "Zorblax", "zorblax বাংলা পাঠ।");
+    SearchOptions textOnly =
+        new SearchOptions(Set.of(XB), 8, false, true, false, false, null)
+            .withTextTuning(new TextTuning(1.0, true));
+
+    assertThat(keys(retrieval.search("zorblax", textOnly)))
+        .contains("XR-LAB:1@original")
+        .doesNotContain("XR-BN:1@original");
+    assertThat(keys(retrieval.search("zorblax বাংলা", textOnly)))
+        .containsExactly("XR-BN:1@original");
+    assertThat(keys(retrieval.search("zorblax", textOnly.withTextTuning(TextTuning.OFF))))
+        .contains("XR-LAB:1@original", "XR-BN:1@original");
+  }
 }

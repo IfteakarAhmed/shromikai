@@ -7,9 +7,9 @@ import bd.shromikai.retrieval.internal.RetrievalCache;
 import bd.shromikai.retrieval.internal.RetrievalProperties;
 import bd.shromikai.retrieval.internal.SectionRow;
 import bd.shromikai.retrieval.internal.SectionSearchRepository;
+import bd.shromikai.retrieval.internal.TextQueryBuilder;
 import bd.shromikai.retrieval.internal.TopicMap;
 import bd.shromikai.shared.ai.LocalModelUnavailableException;
-import bd.shromikai.shared.text.BanglaNormalizer;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedHashSet;
@@ -30,6 +30,7 @@ public class RetrievalService {
 
   private final SectionSearchRepository repository;
   private final GraphExpander graphExpander;
+  private final TextQueryBuilder textQueries;
   private final TopicMap topicMap;
   private final RetrievalCache cache;
   private final RetrievalProperties properties;
@@ -38,12 +39,14 @@ public class RetrievalService {
   RetrievalService(
       SectionSearchRepository repository,
       GraphExpander graphExpander,
+      TextQueryBuilder textQueries,
       TopicMap topicMap,
       RetrievalCache cache,
       RetrievalProperties properties,
       ObjectProvider<QueryRewriter> rewriter) {
     this.repository = repository;
     this.graphExpander = graphExpander;
+    this.textQueries = textQueries;
     this.topicMap = topicMap;
     this.cache = cache;
     this.properties = properties;
@@ -82,9 +85,13 @@ public class RetrievalService {
         }
       }
       if (options.text()) {
+        TextQueryBuilder.Query textQuery = textQueries.build(q, options.textTuning());
         textLists.add(
             repository.textSearch(
-                BanglaNormalizer.matchingForm(q), options.jurisdictions(), properties.textTopK()));
+                textQuery.lexemes(),
+                options.jurisdictions(),
+                properties.textTopK(),
+                textQuery.language()));
       }
     }
 

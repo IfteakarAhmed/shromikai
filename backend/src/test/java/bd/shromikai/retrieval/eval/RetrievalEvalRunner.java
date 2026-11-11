@@ -7,6 +7,7 @@ import bd.shromikai.retrieval.RetrievalMetrics.Summary;
 import bd.shromikai.retrieval.RetrievalResult;
 import bd.shromikai.retrieval.RetrievalService;
 import bd.shromikai.retrieval.SearchOptions;
+import bd.shromikai.retrieval.TextTuning;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
@@ -46,7 +47,10 @@ public final class RetrievalEvalRunner {
     TEXT_ONLY("Text only"),
     HYBRID("Hybrid (RRF)"),
     HYBRID_GRAPH("Hybrid + graph"),
-    HYBRID_GRAPH_REWRITE("Hybrid + graph + rewrite");
+    HYBRID_GRAPH_REWRITE("Hybrid + graph + rewrite"),
+    /** Reference rows: the P4 first run's untuned text query (ADR-0013), measured again now. */
+    UNTUNED_TEXT_ONLY("Text only, untuned text query (reference)"),
+    UNTUNED_HYBRID_GRAPH("Hybrid + graph, untuned text query (reference)");
 
     final String label;
 
@@ -62,6 +66,8 @@ public final class RetrievalEvalRunner {
         case HYBRID -> base;
         case HYBRID_GRAPH -> base.withGraph(true);
         case HYBRID_GRAPH_REWRITE -> base.withGraph(true).withRewrite(true);
+        case UNTUNED_TEXT_ONLY -> base.withVector(false).withTextTuning(TextTuning.OFF);
+        case UNTUNED_HYBRID_GRAPH -> base.withGraph(true).withTextTuning(TextTuning.OFF);
       };
     }
   }
@@ -165,6 +171,28 @@ public final class RetrievalEvalRunner {
               questions.isEmpty() ? 0 : nanos / 1e6 / questions.size()));
     }
     return rows;
+  }
+
+  /** Runs each named option set over the questions, for tuning on the dev set. */
+  public Map<String, List<Outcome>> runVariants(
+      List<Question> questions, Map<String, SearchOptions> variants) {
+    Map<String, List<Outcome>> out = new LinkedHashMap<>();
+    variants.forEach(
+        (name, options) -> {
+          List<Outcome> outcomes = new ArrayList<>();
+          for (Question q : questions) {
+            Retrieval result = retrieval.search(q.question(), options);
+            if (result.keywordOnly()) {
+              throw new IllegalStateException("the embedding model was unavailable for " + q.id());
+            }
+            outcomes.add(
+                new Outcome(
+                    result.results().stream().map(RetrievalResult::sectionKey).toList(),
+                    Set.copyOf(q.expected())));
+          }
+          out.put(name, outcomes);
+        });
+    return out;
   }
 
   private static Row skipped(Strategy strategy, String reason) {

@@ -93,7 +93,7 @@ class RetrievalEvalRunnerIT {
             skipped);
     runner.write(root.resolve("eval/reports"), context, questions, rows);
 
-    assertThat(rows).hasSize(5);
+    assertThat(rows).hasSize(7);
     assertThat(rows.get(2).all().questions()).isEqualTo(questions.size());
     assertThat(root.resolve("eval/reports/retrieval.md")).exists();
   }

@@ -18,15 +18,20 @@ final class RetrievalFixtures {
   }
 
   static long act(JdbcClient jdbc, String code, String jurisdiction) {
+    return act(jdbc, code, jurisdiction, "en");
+  }
+
+  static long act(JdbcClient jdbc, String code, String jurisdiction, String lang) {
     return jdbc.sql(
             """
             insert into law_act (code, title_en, jurisdiction, source_url, authoritative_lang)
-            values (:code, :title, :jurisdiction, 'https://example.test/xr', 'en')
+            values (:code, :title, :jurisdiction, 'https://example.test/xr', :lang)
             returning id
             """)
         .param("code", code)
         .param("title", "Fictional act " + code)
         .param("jurisdiction", jurisdiction)
+        .param("lang", lang)
         .query(Long.class)
         .single();
   }

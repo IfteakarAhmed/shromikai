@@ -145,6 +145,8 @@ shromikai:
     cache: { max-entries: 10000, ttl: 1h }
     topic-map-file: ${user.dir}/../data/mappings/bd-topics.yaml
     cli: false                            # ./gradlew embedLaws sets this
+    text-max-doc-freq: 0.10               # full-text query: drop words in more than this share of sections (ADR-0013)
+    text-language-filter: false           # full-text query: match only sections in the query's language (ADR-0013)
   scraper:                                # statute ingestion (FR-12, architecture §12)
     user-agent: "ShromikAI-ingest/1.0 (+${SCRAPER_CONTACT:})"
     contact: ${SCRAPER_CONTACT:}          # required for a real run; never committed
