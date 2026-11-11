@@ -1,0 +1,63 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:shromikai:schema:rules:1",
+  "title": "Legal rules file (architecture §9.1)",
+  "type": "array",
+  "items": {
+    "type": "object",
+    "additionalProperties": false,
+    "required": [
+      "id", "clause_type", "fact", "comparator", "value", "unit", "legal_basis", "severity",
+      "explanation_bn", "explanation_en", "authored_by", "status"
+    ],
+    "properties": {
+      "id": { "type": "string", "pattern": "^[a-z][a-z0-9]*(-[a-z0-9]+)*$", "maxLength": 64 },
+      "clause_type": {
+        "enum": [
+          "APPOINTMENT_AND_ROLE", "PROBATION", "WAGES", "WAGE_PAYMENT_AND_DEDUCTIONS",
+          "WORKING_HOURS", "OVERTIME", "REST_AND_HOLIDAYS", "LEAVE", "MATERNITY_BENEFIT",
+          "NOTICE_AND_RESIGNATION", "TERMINATION", "DISCIPLINE_AND_MISCONDUCT", "SERVICE_BENEFITS",
+          "TRANSFER_AND_DEPLOYMENT", "CONFIDENTIALITY", "NON_COMPETE", "INTELLECTUAL_PROPERTY",
+          "HEALTH_AND_SAFETY", "DISPUTE_RESOLUTION", "GOVERNING_LAW", "GENERAL_PROVISIONS", "OTHER"
+        ]
+      },
+      "fact": {
+        "enum": [
+          "PROBATION_LENGTH", "PROBATION_EXTENSION", "CONTRACT_DURATION", "NOTICE_BY_EMPLOYER",
+          "NOTICE_BY_WORKER", "PAY_IN_LIEU_OF_NOTICE_ALLOWED", "DAILY_WORKING_HOURS",
+          "WEEKLY_WORKING_HOURS", "OVERTIME_RATE", "OVERTIME_DAILY_HOURS", "OVERTIME_COMPULSORY",
+          "WEEKLY_REST_DAYS", "ANNUAL_LEAVE", "CASUAL_LEAVE", "SICK_LEAVE", "FESTIVAL_HOLIDAYS",
+          "MATERNITY_LEAVE", "WAGE_PERIOD", "WAGE_PAYMENT_DEADLINE", "DEDUCTION_LIMIT", "BASIC_WAGE",
+          "GROSS_WAGE", "TERMINATION_WITHOUT_NOTICE_ALLOWED", "TERMINATION_BENEFIT_STATED",
+          "NON_COMPETE_DURATION", "DISPUTE_FORUM_STATED"
+        ]
+      },
+      "comparator": { "enum": ["MIN", "MAX", "EQ", "REQUIRED", "PROHIBITED"] },
+      "value": { "type": ["number", "null"] },
+      "unit": {
+        "enum": [
+          "DAYS", "WEEKS", "MONTHS", "HOURS_PER_DAY", "HOURS_PER_WEEK", "MULTIPLIER", "PERCENT",
+          "BDT_PER_MONTH", "COUNT", "BOOLEAN", null
+        ]
+      },
+      "applies_to_category": { "type": ["string", "null"], "maxLength": 64 },
+      "legal_basis": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["act", "section", "quote"],
+        "properties": {
+          "act": { "type": "string", "minLength": 1, "maxLength": 32 },
+          "section": { "type": "string", "minLength": 1, "maxLength": 32 },
+          "quote": { "type": "string", "minLength": 20, "maxLength": 300 }
+        }
+      },
+      "severity": { "enum": ["CRITICAL", "HIGH", "MEDIUM", "LOW"] },
+      "explanation_bn": { "type": "string", "minLength": 10, "maxLength": 600 },
+      "explanation_en": { "type": "string", "minLength": 10, "maxLength": 600 },
+      "authored_by": { "type": "string", "minLength": 1 },
+      "reviewed_by": { "type": ["string", "null"] },
+      "review_note": { "type": ["string", "null"], "maxLength": 200 },
+      "status": { "enum": ["draft", "active"] }
+    }
+  }
+}

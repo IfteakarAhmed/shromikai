@@ -125,6 +125,9 @@ shromikai:
     gemini:                               # prices the configured GEMINI_MODEL; set the real list
       input: ${GEMINI_PRICE_IN:1.00}      # price in .env. The defaults are deliberately high so the
       output: ${GEMINI_PRICE_OUT:5.00}    # budget guard over-counts rather than under-counts.
+  rules:                                  # legal rules of the active pack (architecture §9.1)
+    files:
+      - ${user.dir}/../data/rules/bd-labour.yaml
   verify:                                 # architecture §7.7; a change needs an ADR and an eval report
     quote-min-chars: 20
     quote-max-chars: 300

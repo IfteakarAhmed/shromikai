@@ -1,0 +1,164 @@
+# Legal rules of the Bangladesh pack (architecture §9.1, FR-36).
+#
+# STATUS: every rule below is a DRAFT drafted by Claude (phase P6) from the corpus release
+# 2026.11.11-1. A draft is never evaluated. Each quote was copied verbatim from the stored
+# authoritative text and each number was read from that quote; nothing comes from memory (R-10).
+# A rule becomes `active` only when a person other than the author has checked it against the
+# official portal page and set reviewed_by (docs/rules-review-checklist.md). The drafter never
+# sets reviewed_by.
+#
+# Left out on purpose, with the reason in the checklist: notice periods (depend on worker
+# category and allow pay in lieu), probation (extension wording), wage payment deadline
+# (working days versus calendar days), annual leave (a ratio, not a number of days).
+
+- id: bd-daily-hours-max
+  clause_type: WORKING_HOURS
+  fact: DAILY_WORKING_HOURS
+  comparator: MAX
+  value: 8
+  unit: HOURS_PER_DAY
+  applies_to_category: null
+  legal_basis:
+    act: BLA-2006
+    section: "100"
+    quote: "কোন প্রাপ্তবয়স্ক শ্রমিক কোন প্রতিষ্ঠানে সাধারণতঃ দৈনিক আট ঘণ্টার অধিক সময় কাজ করিবেন না"
+  severity: HIGH
+  explanation_bn: "প্রাপ্তবয়স্ক শ্রমিকের সাধারণ কর্মঘণ্টা দিনে আট ঘণ্টার বেশি হতে পারে না। দৈনিক ১০ ঘণ্টা পর্যন্ত কাজ কেবল অধিকাল কাজের নিয়ম মেনে (ধারা ১০৮) করানো যায়।"
+  explanation_en: "An adult worker's ordinary hours may not exceed eight a day (section 100). Up to ten hours a day is allowed only under the overtime rules of section 108."
+  authored_by: "Claude (draft, phase P6)"
+  reviewed_by: null
+  review_note: null
+  status: draft
+
+- id: bd-weekly-hours-max
+  clause_type: WORKING_HOURS
+  fact: WEEKLY_WORKING_HOURS
+  comparator: MAX
+  value: 48
+  unit: HOURS_PER_WEEK
+  applies_to_category: null
+  legal_basis:
+    act: BLA-2006
+    section: "102"
+    quote: "কোন প্রাপ্তবয়স্ক শ্রমিক কোন প্রতিষ্ঠানে সাধারণতঃ সপ্তাহে আটচল্লিশ ঘণ্টার অধিক সময় কাজ করিবেন না"
+  severity: HIGH
+  explanation_bn: "প্রাপ্তবয়স্ক শ্রমিকের সাধারণ কর্মঘণ্টা সপ্তাহে আটচল্লিশ ঘণ্টার বেশি হতে পারে না। বেশি কাজ করালে অধিকাল কাজের নিয়ম ও সীমা প্রযোজ্য হয়।"
+  explanation_en: "An adult worker's ordinary hours may not exceed forty-eight a week (section 102(1)). Longer weeks fall under the overtime rules and their limits."
+  authored_by: "Claude (draft, phase P6)"
+  reviewed_by: null
+  review_note: null
+  status: draft
+
+- id: bd-overtime-rate-min
+  clause_type: OVERTIME
+  fact: OVERTIME_RATE
+  comparator: MIN
+  value: 2
+  unit: MULTIPLIER
+  applies_to_category: null
+  legal_basis:
+    act: BLA-2006
+    section: "108"
+    quote: "মূল মজুরী ও মহার্ঘভাতা এবং এডহক বা অন্তবর্তী মজুরী, যদি থাকে, এর সাধারণ হারের দ্বিগুণ হারে ভাতা পাইবেন"
+  severity: CRITICAL
+  explanation_bn: "অধিকাল কাজের জন্য শ্রমিক সাধারণ হারের দ্বিগুণ হারে ভাতা পাবেন। ঠিকা-হার (পিস রেট) ভিত্তিতে মজুরিপ্রাপ্ত শ্রমিকের ক্ষেত্রে এই নিয়ম প্রযোজ্য নয় (ধারা ১০৮(২))।"
+  explanation_en: "Overtime is paid at twice the ordinary rate of basic wage, dearness allowance and ad hoc pay (section 108(1)). Piece-rate workers are outside this rule (section 108(2))."
+  authored_by: "Claude (draft, phase P6)"
+  reviewed_by: null
+  review_note: null
+  status: draft
+
+- id: bd-weekly-rest-min
+  clause_type: REST_AND_HOLIDAYS
+  fact: WEEKLY_REST_DAYS
+  comparator: MIN
+  value: 1
+  unit: COUNT
+  applies_to_category: null
+  legal_basis:
+    act: BLA-2006
+    section: "103"
+    quote: "প্রতি সপ্তাহে কারখানা ও শিল্পের ক্ষেত্রে একদিন এবং দোকান ও প্রতিষ্ঠানের ক্ষেত্রে দেড় দিন ছুটি পাইবেন"
+  severity: HIGH
+  explanation_bn: "প্রতি সপ্তাহে অন্তত একদিন সাপ্তাহিক ছুটি পাওয়া শ্রমিকের অধিকার (দোকান ও প্রতিষ্ঠানে দেড় দিন)। এই ছুটির জন্য মজুরি কাটা যায় না।"
+  explanation_en: "A worker is entitled to at least one weekly day off (one and a half days in shops and establishments), section 103. No wage deduction may be made for it."
+  authored_by: "Claude (draft, phase P6)"
+  reviewed_by: null
+  review_note: null
+  status: draft
+
+- id: bd-casual-leave-min
+  clause_type: LEAVE
+  fact: CASUAL_LEAVE
+  comparator: MIN
+  value: 10
+  unit: DAYS
+  applies_to_category: null
+  legal_basis:
+    act: BLA-2006
+    section: "115"
+    quote: "প্রত্যেক শ্রমিক প্রতি পঞ্জিকা বৎসরে পূর্ণ মজুরীতে দশ দিনের নৈমিত্তিক ছুটি পাইবার অধিকারী হইবেন"
+  severity: HIGH
+  explanation_bn: "প্রতি পঞ্জিকা বছরে পূর্ণ মজুরিতে দশ দিনের নৈমিত্তিক ছুটি শ্রমিকের প্রাপ্য। চা-বাগানের শ্রমিকের ক্ষেত্রে এই ধারা প্রযোজ্য নয়।"
+  explanation_en: "Every worker is entitled to ten days of casual leave on full wages each calendar year (section 115). Tea-garden workers are outside this section."
+  authored_by: "Claude (draft, phase P6)"
+  reviewed_by: null
+  review_note: null
+  status: draft
+
+- id: bd-sick-leave-min
+  clause_type: LEAVE
+  fact: SICK_LEAVE
+  comparator: MIN
+  value: 14
+  unit: DAYS
+  applies_to_category: null
+  legal_basis:
+    act: BLA-2006
+    section: "116"
+    quote: "প্রত্যেক শ্রমিক প্রত্যেক পঞ্জিকা বৎসরে পূর্ণ মজুরীতে চৌদ্দ দিনের পীড়া ছুটি পাইবার অধিকারী হইবেন"
+  severity: HIGH
+  explanation_bn: "সংবাদপত্র শ্রমিক ছাড়া প্রত্যেক শ্রমিক প্রতি বছরে পূর্ণ মজুরিতে চৌদ্দ দিনের পীড়া ছুটি পাবেন (ধারা ১১৬(১))। সংবাদপত্র শ্রমিকের জন্য আলাদা নিয়ম আছে।"
+  explanation_en: "Except newspaper workers, every worker is entitled to fourteen days of sick leave on full wages each year (section 116(1)). Newspaper workers have a separate rule."
+  authored_by: "Claude (draft, phase P6)"
+  reviewed_by: null
+  review_note: null
+  status: draft
+
+- id: bd-festival-holidays-min
+  clause_type: REST_AND_HOLIDAYS
+  fact: FESTIVAL_HOLIDAYS
+  comparator: MIN
+  value: 13
+  unit: DAYS
+  applies_to_category: null
+  legal_basis:
+    act: BLA-2006
+    section: "118"
+    quote: "প্রত্যেক শ্রমিককে প্রতি পঞ্জিকা বৎসরে [১৩ (তের)] দিনের মজুরীসহ উৎসব ছুটি মঞ্জুর করিতে হইবে"
+  severity: HIGH
+  explanation_bn: "প্রতি পঞ্জিকা বছরে প্রত্যেক শ্রমিককে মজুরিসহ ১৩ দিন উৎসব ছুটি দিতে হবে (ধারা ১১৮(১), ২০২৬ সালের সংশোধিত রূপ)।"
+  explanation_en: "Every worker must be given thirteen festival holidays with wages each calendar year (section 118(1), as amended in the corpus version)."
+  authored_by: "Claude (draft, phase P6)"
+  reviewed_by: null
+  review_note: null
+  status: draft
+
+- id: bd-maternity-leave-min
+  clause_type: MATERNITY_BENEFIT
+  fact: MATERNITY_LEAVE
+  comparator: MIN
+  value: 120
+  unit: DAYS
+  applies_to_category: null
+  legal_basis:
+    act: BLA-2006
+    section: "47"
+    quote: "প্রাপ্য প্রসূতি কল্যাণ সুবিধাসহ ১২০ (একশত বিশ) দিন পর্যন্ত কাজে অনুপস্থিত থাকিবার জন্য অনুমতি প্রদান করিবেন"
+  severity: CRITICAL
+  explanation_bn: "যোগ্য নারী শ্রমিককে প্রসূতি কল্যাণ সুবিধাসহ ১২০ দিন পর্যন্ত কাজে অনুপস্থিত থাকার অনুমতি দিতে হবে (ধারা ৪৭(৩)); সুবিধা পাওয়ার শর্ত ধারা ৪৬-এ আছে।"
+  explanation_en: "An eligible woman worker must be allowed up to 120 days of absence with maternity benefit (section 47(3)); the eligibility conditions are in section 46."
+  authored_by: "Claude (draft, phase P6)"
+  reviewed_by: null
+  review_note: null
+  status: draft

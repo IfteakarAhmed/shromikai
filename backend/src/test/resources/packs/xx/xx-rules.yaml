@@ -1,0 +1,91 @@
+# FICTIONAL rules of the fictional pack xx (R-10). Nothing here is law.
+- id: xx-notice-min
+  clause_type: NOTICE_AND_RESIGNATION
+  fact: NOTICE_BY_EMPLOYER
+  comparator: MIN
+  value: 14
+  unit: DAYS
+  applies_to_category: null
+  legal_basis:
+    act: XX-LAB
+    section: "9"
+    quote: "An employer shall give a worker written notice of dismissal at least fourteen days before"
+  severity: HIGH
+  explanation_bn: "কাল্পনিক নিয়ম: নোটিশ কমপক্ষে চৌদ্দ দিন হতে হবে (পরীক্ষার জন্য)।"
+  explanation_en: "Fictional rule: notice must be at least fourteen days (for tests only)."
+  authored_by: "author@example.test"
+  reviewed_by: "reviewer@example.test"
+  review_note: "fictional"
+  status: active
+- id: xx-hours-max
+  clause_type: WORKING_HOURS
+  fact: WEEKLY_WORKING_HOURS
+  comparator: MAX
+  value: 40
+  unit: HOURS_PER_WEEK
+  applies_to_category: null
+  legal_basis:
+    act: XX-LAB
+    section: "11"
+    quote: "Ordinary work shall not exceed forty hours in any week"
+  severity: HIGH
+  explanation_bn: "কাল্পনিক নিয়ম: সপ্তাহে চল্লিশ ঘণ্টার বেশি নয় (পরীক্ষার জন্য)।"
+  explanation_en: "Fictional rule: at most forty hours a week (for tests only)."
+  authored_by: "author@example.test"
+  reviewed_by: "reviewer@example.test"
+  review_note: null
+  status: active
+- id: xx-leave-required
+  clause_type: LEAVE
+  fact: ANNUAL_LEAVE
+  comparator: REQUIRED
+  value: null
+  unit: null
+  applies_to_category: null
+  legal_basis:
+    act: XX-LAB
+    section: "13"
+    quote: "Every worker is entitled to paid annual leave after one year of service"
+  severity: MEDIUM
+  explanation_bn: "কাল্পনিক নিয়ম: বার্ষিক ছুটির উল্লেখ থাকতে হবে (পরীক্ষার জন্য)।"
+  explanation_en: "Fictional rule: annual leave must be stated (for tests only)."
+  authored_by: "author@example.test"
+  reviewed_by: "reviewer@example.test"
+  review_note: null
+  status: active
+- id: xx-overtime-forced
+  clause_type: OVERTIME
+  fact: OVERTIME_COMPULSORY
+  comparator: PROHIBITED
+  value: null
+  unit: null
+  applies_to_category: null
+  legal_basis:
+    act: XX-LAB
+    section: "15"
+    quote: "A worker shall not be compelled to work overtime against the worker's will"
+  severity: HIGH
+  explanation_bn: "কাল্পনিক নিয়ম: জোর করে ওভারটাইম নয় (পরীক্ষার জন্য)।"
+  explanation_en: "Fictional rule: no compulsory overtime (for tests only)."
+  authored_by: "author@example.test"
+  reviewed_by: "reviewer@example.test"
+  review_note: null
+  status: active
+- id: xx-draft-rule
+  clause_type: WAGES
+  fact: BASIC_WAGE
+  comparator: MIN
+  value: 10000
+  unit: BDT_PER_MONTH
+  applies_to_category: null
+  legal_basis:
+    act: XX-LAB
+    section: "20"
+    quote: "A quote that the corpus of the fictional pack does not contain at all"
+  severity: LOW
+  explanation_bn: "কাল্পনিক খসড়া নিয়ম (পরীক্ষার জন্য)।"
+  explanation_en: "Fictional draft rule (for tests only)."
+  authored_by: "author@example.test"
+  reviewed_by: null
+  review_note: null
+  status: draft
