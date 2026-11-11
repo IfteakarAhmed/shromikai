@@ -1,0 +1,24 @@
+{
+  "fixtureVersion" : 1,
+  "promptId" : "counter-offer",
+  "promptVersion" : 2,
+  "caseId" : "syn-en-02-worker",
+  "modelId" : "claude-sonnet-5-5",
+  "requestSha256" : "cae4dc46db71b0601fcdf1d7c6aeacc10779733358b28cc17dcc18d2c7999bab",
+  "provenance" : "synthetic",
+  "source" : "recorded from a live call",
+  "recordedAt" : "2026-11-11T13:36:43.441852Z",
+  "stopReason" : "end_turn",
+  "usage" : {
+    "inputTokens" : 518,
+    "outputTokens" : 352,
+    "cacheReadTokens" : 0
+  },
+  "response" : {
+    "status" : "OK",
+    "reason" : "NONE",
+    "action" : "REPLACE",
+    "proposed_text" : "6. আঘাত ও অসুস্থতা: কর্মকালীন দুর্ঘটনা বা পেশাগত রোগে আক্রান্ত হলে গার্ড সম্পূর্ণ সুস্থ না হওয়া পর্যন্ত কোম্পানি নিজ খরচে ও দায়িত্বে উপযুক্ত চিকিৎসকের মাধ্যমে চিকিৎসা করাবে। অন্যান্য অসুস্থতায় অনুপস্থিত দিনের মজুরি প্রযোজ্য আইন অনুযায়ী প্রদেয় হবে।",
+    "rationale" : "ধারাটি এখন পেশাগত আঘাত ও রোগে মালিকের খরচে চিকিৎসার আইনি দায় মানে এবং অন্য অসুস্থতার মজুরি আইন অনুযায়ী রাখে।"
+  }
+}

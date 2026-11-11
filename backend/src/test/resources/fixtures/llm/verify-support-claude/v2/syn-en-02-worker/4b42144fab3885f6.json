@@ -1,0 +1,22 @@
+{
+  "fixtureVersion" : 1,
+  "promptId" : "verify-support-claude",
+  "promptVersion" : 2,
+  "caseId" : "syn-en-02-worker",
+  "modelId" : "claude-haiku-5-5",
+  "requestSha256" : "4b42144fab3885f620fbcdf6bee5e7eb149182a4a13763ed5ab715bbf46ae341",
+  "provenance" : "synthetic",
+  "source" : "recorded from a live call",
+  "recordedAt" : "2026-11-11T13:36:32.132735Z",
+  "stopReason" : "end_turn",
+  "usage" : {
+    "inputTokens" : 1579,
+    "outputTokens" : 74,
+    "cacheReadTokens" : 982
+  },
+  "response" : {
+    "label" : "SUPPORTS",
+    "confidence" : 0.92,
+    "reason" : "Section 89(7) requires employer to bear treatment costs at own expense for occupational disease or workplace accident until full recovery; claim matches."
+  }
+}

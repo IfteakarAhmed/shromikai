@@ -1,0 +1,22 @@
+{
+  "fixtureVersion" : 1,
+  "promptId" : "verify-support-claude",
+  "promptVersion" : 2,
+  "caseId" : "syn-en-02-worker",
+  "modelId" : "claude-haiku-5-5",
+  "requestSha256" : "128c26469b7715d19ef4d55d0b3ef86a16a4b93fa9ae13cf26617213fa19d989",
+  "provenance" : "synthetic",
+  "source" : "recorded from a live call",
+  "recordedAt" : "2026-11-11T13:36:30.657605Z",
+  "stopReason" : "end_turn",
+  "usage" : {
+    "inputTokens" : 383,
+    "outputTokens" : 70,
+    "cacheReadTokens" : 0
+  },
+  "response" : {
+    "label" : "SUPPORTS",
+    "confidence" : 0.93,
+    "reason" : "Section s.100 says adult workers normally shall not work more than eight hours daily, matching the claim's normal eight-hour workday."
+  }
+}

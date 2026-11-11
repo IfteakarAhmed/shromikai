@@ -1,0 +1,24 @@
+{
+  "fixtureVersion" : 1,
+  "promptId" : "counter-offer",
+  "promptVersion" : 2,
+  "caseId" : "syn-en-02-worker",
+  "modelId" : "claude-sonnet-5-5",
+  "requestSha256" : "b9fdfe9664a5c9e05bec306c303b8974eddf000d0639baba17be1ee3327df953",
+  "provenance" : "synthetic",
+  "source" : "recorded from a live call",
+  "recordedAt" : "2026-11-11T13:36:45.973795Z",
+  "stopReason" : "end_turn",
+  "usage" : {
+    "inputTokens" : 589,
+    "outputTokens" : 249,
+    "cacheReadTokens" : 1222
+  },
+  "response" : {
+    "status" : "OK",
+    "reason" : "NONE",
+    "action" : "REPLACE",
+    "proposed_text" : "9. Governing law and disputes: This contract is governed by the laws of Bangladesh. Any dispute shall be settled in the first instance through discussion between the parties; if unresolved, either party may refer it to the Labour Court or the alternative dispute resolution authority under the Bangladesh Labour Act, 2006.",
+    "rationale" : "ম্যানেজারের চূড়ান্ত সিদ্ধান্তের বদলে নিরপেক্ষ শ্রম আদালত বা বিকল্প বিরোধ নিষ্পত্তি কর্তৃপক্ষে যাওয়ার অধিকার থাকে।"
+  }
+}

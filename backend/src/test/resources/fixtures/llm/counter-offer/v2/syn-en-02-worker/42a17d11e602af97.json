@@ -1,0 +1,24 @@
+{
+  "fixtureVersion" : 1,
+  "promptId" : "counter-offer",
+  "promptVersion" : 2,
+  "caseId" : "syn-en-02-worker",
+  "modelId" : "claude-sonnet-5-5",
+  "requestSha256" : "42a17d11e602af97d144515092c1a3cf2ab91b4652a9df7369aa55edf6cbdc63",
+  "provenance" : "synthetic",
+  "source" : "recorded from a live call",
+  "recordedAt" : "2026-11-11T13:36:47.228064Z",
+  "stopReason" : "end_turn",
+  "usage" : {
+    "inputTokens" : 768,
+    "outputTokens" : 367,
+    "cacheReadTokens" : 1222
+  },
+  "response" : {
+    "status" : "OK",
+    "reason" : "NONE",
+    "action" : "REPLACE",
+    "proposed_text" : "২. বেতন: মাসিক বেতন ১১,০০০ টাকা, যা মজুরীকাল শেষ হওয়ার পর ৭ কর্মদিবসের মধ্যে পরিশোধ করা হবে। শ্রমিকের অবহেলায় সরঞ্জামের ক্ষতি হলে, ন্যায়বিচারের নীতি মেনে যথাযথ তদন্তে দোষী সাব্যস্ত হওয়ার পর, প্রকৃত ক্ষতির অধিক নয় এমন অর্থ কর্তন করা যাবে।",
+    "rationale" : "মজুরী পরিশোধের ৭ কর্মদিবসের সময় এবং তদন্ত-পরবর্তী ক্ষতির সীমায় কর্তন যুক্ত করায় ঝুঁকি দূর হয়, নিয়োগকর্তার ন্যায্য দাবিও থাকে।"
+  }
+}

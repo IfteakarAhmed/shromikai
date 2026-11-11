@@ -1,0 +1,24 @@
+{
+  "fixtureVersion" : 1,
+  "promptId" : "counter-offer",
+  "promptVersion" : 2,
+  "caseId" : "syn-en-02-worker",
+  "modelId" : "claude-sonnet-5-5",
+  "requestSha256" : "a8423783a75dd2521fb4e67abde8210576d8c796b4009a23baec76d1cb28b395",
+  "provenance" : "synthetic",
+  "source" : "recorded from a live call",
+  "recordedAt" : "2026-11-11T13:36:43.721253Z",
+  "stopReason" : "end_turn",
+  "usage" : {
+    "inputTokens" : 485,
+    "outputTokens" : 335,
+    "cacheReadTokens" : 0
+  },
+  "response" : {
+    "status" : "OK",
+    "reason" : "NONE",
+    "action" : "REPLACE",
+    "proposed_text" : "১. নিয়োগ: কোম্পানি গার্ডকে নিরাপত্তা প্রহরী হিসেবে নিয়োগ দেয় এবং ন্যূনতম ৭ দিনের লিখিত নোটিশ দিয়ে দেশের যেকোনো ক্লায়েন্ট সাইটে পোস্টিং দিতে পারবে। স্থানান্তরের যুক্তিসংগত ব্যয় কোম্পানি বহন করবে এবং বেতন-ভাতা কমানো যাবে না।",
+    "rationale" : "নোটিশ, ব্যয় বহন ও বেতন সুরক্ষা যোগ হওয়ায় বদলির ক্ষমতা সীমিত হলো, অথচ কোম্পানির পোস্টিংয়ের সুযোগ বজায় থাকল।"
+  }
+}

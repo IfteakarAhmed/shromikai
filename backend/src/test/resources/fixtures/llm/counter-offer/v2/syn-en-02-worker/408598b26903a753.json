@@ -1,0 +1,24 @@
+{
+  "fixtureVersion" : 1,
+  "promptId" : "counter-offer",
+  "promptVersion" : 2,
+  "caseId" : "syn-en-02-worker",
+  "modelId" : "claude-sonnet-5-5",
+  "requestSha256" : "408598b26903a753e629e973b902c9dab0394cf949230e7f5d73e7e3416a29ef",
+  "provenance" : "synthetic",
+  "source" : "recorded from a live call",
+  "recordedAt" : "2026-11-11T13:36:43.201501Z",
+  "stopReason" : "end_turn",
+  "usage" : {
+    "inputTokens" : 437,
+    "outputTokens" : 292,
+    "cacheReadTokens" : 0
+  },
+  "response" : {
+    "status" : "OK",
+    "reason" : "NONE",
+    "action" : "REPLACE",
+    "proposed_text" : "৫. শিক্ষানবিশকাল: প্রথম ৩ মাস (কেরানী-সংক্রান্ত কাজে ৬ মাস) শিক্ষানবিশকাল হইবে। এই সময়ে শ্রমিক চুক্তিতে নির্ধারিত পূর্ণ বেতন পাইবেন। এই সময়ের পর শ্রমিক স্থায়ী বলিয়া গণ্য হইবেন।",
+    "rationale" : "শিক্ষানবিশকাল আইনের সীমা ৩ মাস (কেরানী কাজে ৬ মাস) এ আনা হয়েছে এবং পূর্ণ বেতন নিশ্চিত করা হয়েছে।"
+  }
+}

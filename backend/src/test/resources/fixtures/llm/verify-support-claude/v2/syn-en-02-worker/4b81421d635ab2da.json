@@ -1,0 +1,22 @@
+{
+  "fixtureVersion" : 1,
+  "promptId" : "verify-support-claude",
+  "promptVersion" : 2,
+  "caseId" : "syn-en-02-worker",
+  "modelId" : "claude-haiku-5-5",
+  "requestSha256" : "4b81421d635ab2da1167eee892818b589b8ea2174c5c7f698286e1e3a8eea779",
+  "provenance" : "synthetic",
+  "source" : "recorded from a live call",
+  "recordedAt" : "2026-11-11T13:36:30.662154Z",
+  "stopReason" : "end_turn",
+  "usage" : {
+    "inputTokens" : 1162,
+    "outputTokens" : 63,
+    "cacheReadTokens" : 0
+  },
+  "response" : {
+    "label" : "SUPPORTS",
+    "confidence" : 0.93,
+    "reason" : "Section 26(3) lets the employer end employment without notice by paying wages for the notice period, matching the claim."
+  }
+}

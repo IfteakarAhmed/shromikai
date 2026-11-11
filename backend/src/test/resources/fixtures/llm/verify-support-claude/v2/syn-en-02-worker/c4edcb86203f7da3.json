@@ -1,0 +1,22 @@
+{
+  "fixtureVersion" : 1,
+  "promptId" : "verify-support-claude",
+  "promptVersion" : 2,
+  "caseId" : "syn-en-02-worker",
+  "modelId" : "claude-haiku-5-5",
+  "requestSha256" : "c4edcb86203f7da331602262277278f6891011a69fd6cacef2a4eefb8844b1bf",
+  "provenance" : "synthetic",
+  "source" : "recorded from a live call",
+  "recordedAt" : "2026-11-11T13:36:30.654271Z",
+  "stopReason" : "end_turn",
+  "usage" : {
+    "inputTokens" : 462,
+    "outputTokens" : 70,
+    "cacheReadTokens" : 0
+  },
+  "response" : {
+    "label" : "SUPPORTS",
+    "confidence" : 0.95,
+    "reason" : "Section 118(1) requires 13 days of festival leave with wages per calendar year, matching the claim's 13 paid days annually."
+  }
+}

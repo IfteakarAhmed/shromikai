@@ -1,0 +1,24 @@
+{
+  "fixtureVersion" : 1,
+  "promptId" : "counter-offer",
+  "promptVersion" : 2,
+  "caseId" : "syn-en-02-worker",
+  "modelId" : "claude-sonnet-5-5",
+  "requestSha256" : "40b02b29da4fcf9485effae8a643b13e97653de477330c670ea8b7b47c37400a",
+  "provenance" : "synthetic",
+  "source" : "recorded from a live call",
+  "recordedAt" : "2026-11-11T13:36:43.716676Z",
+  "stopReason" : "end_turn",
+  "usage" : {
+    "inputTokens" : 738,
+    "outputTokens" : 339,
+    "cacheReadTokens" : 0
+  },
+  "response" : {
+    "status" : "OK",
+    "reason" : "NONE",
+    "action" : "REPLACE",
+    "proposed_text" : "৩. কাজের সময়: গার্ড সাধারণত দৈনিক ৮ ঘণ্টা কাজ করবেন। ৮ ঘণ্টার অতিরিক্ত কাজ অধিকাল কাজ হিসেবে গণ্য হবে এবং তার জন্য মূল মজুরী ও মহার্ঘভাতার সাধারণ হারের দ্বিগুণ হারে ভাতা দেওয়া হবে। রাতের শিফটও প্রযোজ্য আইন অনুযায়ী পরিচালিত হবে।",
+    "rationale" : "দৈনিক ৮ ঘণ্টা সীমা ও অধিকালে দ্বিগুণ ভাতা রেখে ধারাটি আইনসম্মত ও উভয় পক্ষের জন্য ন্যায্য করা হয়েছে।"
+  }
+}

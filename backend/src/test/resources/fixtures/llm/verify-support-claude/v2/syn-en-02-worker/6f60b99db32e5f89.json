@@ -1,0 +1,22 @@
+{
+  "fixtureVersion" : 1,
+  "promptId" : "verify-support-claude",
+  "promptVersion" : 2,
+  "caseId" : "syn-en-02-worker",
+  "modelId" : "claude-haiku-5-5",
+  "requestSha256" : "6f60b99db32e5f894f475c5444eb6c67addd08ed67042d85cc0e4c84a1020cc5",
+  "provenance" : "synthetic",
+  "source" : "recorded from a live call",
+  "recordedAt" : "2026-11-11T13:36:30.753295Z",
+  "stopReason" : "end_turn",
+  "usage" : {
+    "inputTokens" : 629,
+    "outputTokens" : 75,
+    "cacheReadTokens" : 0
+  },
+  "response" : {
+    "label" : "SUPPORTS",
+    "confidence" : 0.95,
+    "reason" : "Section 108(1) states overtime workers receive allowance at double the ordinary rate of basic wage, dearness allowance and adhoc pay."
+  }
+}
