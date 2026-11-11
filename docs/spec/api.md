@@ -24,6 +24,7 @@ Example values that look like statute references use the fictional pack `xx`; th
 | IDs | UUID v4 strings unless a schema states another pattern |
 | Nulls | Optional response fields are present with `null`; requests may omit optional fields |
 | Pagination | Query `page` (0-based, default 0) and `size` (1 to 100, default 20); response `{ "items": [...], "page": 0, "size": 20, "totalItems": 57 }` |
+| Concurrency | At most 1 analysis at a time per guest device, 5 per organisation, 2 per signed-in user without an organisation (`429` `concurrency-limit`; ADR-0020 item 16) |
 | Idempotency | `POST /analyses` and `POST /compare` accept `Idempotency-Key` (1 to 64 visible ASCII characters); same subject and key within 30 minutes returns the original response; same key with a different body returns `409` `idempotency-key-reused` |
 | Request IDs | Every response carries `X-Request-Id`; problem documents carry it as `traceId` |
 | Caching | Responses under `/analyses`, `/compare`, `/memos`, `/review-tickets` and `/auth` send `Cache-Control: no-store` |
@@ -94,7 +95,7 @@ Demo accounts receive `403` `demo-account-restricted` on password change and del
 | E-09 | `PATCH /api/v1/auth/me` | `{ profile?: Profile, locale?: bn \| en }` | `200` `Me` | `400`, `403` (guest) | FR-56 |
 | E-10 | `POST /api/v1/auth/me/password` | `{ currentPassword, newPassword (12..128) }` | `204` | `400`, `401`, `403` `demo-account-restricted` | FR-08 |
 | E-11 | `DELETE /api/v1/auth/me` | none | `204` | `403` `demo-account-restricted` | FR-78 |
-| E-12 | `POST /api/v1/analyses` | multipart (§4.1) or JSON `AnalysisTextRequest` | `200` `AnalysisResult` (JSON text ≤ 8,000 characters finished within 60 s) or `202` `AnalysisAccepted` | `400`, `401`, `409`, `413`, `415`, `422`, `429`, `503` | FR-24, FR-58 |
+| E-12 | `POST /api/v1/analyses` | multipart (§4.1) or JSON `AnalysisTextRequest` | `200` `AnalysisResult` (JSON text ≤ 8,000 characters that finished within `sync-wait`, 45 s; ADR-0020 item 14) or `202` `AnalysisAccepted` | `400`, `401`, `409`, `413`, `415`, `422`, `429`, `503` | FR-24, FR-58 |
 | E-13 | `GET /api/v1/analyses/{id}` | none | `200` `AnalysisResult` (`SUCCEEDED`); `202` `AnalysisStatusView` (`QUEUED`, `RUNNING`); `200` `AnalysisStatusView` with `problem` (`FAILED`) | `404`, `410` `analysis-expired` | FR-54, FR-58 |
 | E-14 | `GET /api/v1/analyses/{id}/events` | `Authorization: Bearer`, `Accept: text/event-stream`, optional `Last-Event-ID` | SSE (§4.2) | `404`, `410` | FR-58 |
 | E-15 | `GET /api/v1/analyses/{id}/trace` | none | `200` `AnalysisTrace` (30 days) | `404` | FR-48, FR-58 |
@@ -145,7 +146,7 @@ Request and response objects without a full schema in §5:
 | `AnalysisTextRequest` | `text` (200..60,000), `side`, `outputLanguage`, `profile` (\| `null`), `playbookId` (\| `null`, HR only), `workerCategory` (corpus code \| `null`) |
 | `AnalysisAccepted` | `analysisId`, `status` (`QUEUED`), `eventsUrl`, `resultUrl`, `deadlineAt` (created + 120 s) |
 | `AnalysisStatusView` | `analysisId`, `status`, `stage` (`Stage` \| `null`), `progress` (0..100), `problem` (`Problem` \| `null`) |
-| `AnalysisTrace` | `analysisId`, `createdAt`, `events[]` `{ stage, at, durationMs, promptId, promptVersion, modelId, tokensIn, tokensOut, cacheReadTokens, costUsdMicros, outcome, detail }`; `detail` holds only section keys, scores, statuses, reason codes, flags and counts |
+| `AnalysisTrace` | `analysisId`, `createdAt`, `events[]` `{ stage, at, durationMs, promptId, promptVersion, modelId, tokensIn, tokensOut, cacheReadTokens, cacheWriteTokens, costUsdMicros, outcome, detail }`, plus `totals` `{ tokensIn, tokensOut, cacheReadTokens, cacheWriteTokens, costUsdMicros }` of the run; `detail` holds only section keys, scores, statuses, reason codes, flags and counts (cache tokens of a model step are also in its `detail`) |
 | `ObligationsExport` | `analysisId`, `parties` `{ EMPLOYER: ObligationItem[], WORKER: ObligationItem[], BOTH: ObligationItem[] }`, `disclaimer` |
 | `CompareAccepted` | `compareId`, `eventsUrl`, `resultUrl` |
 | `CompareResult` | `compareId`, `baseline` `{ modelId, findings[] { title, severity, explanation, citations[] { claimed: ClaimedCitation, verification: VerificationResult } } }`, `shromikai` (`AnalysisResult`), `summary` `{ baselineCitations, baselineRejected, baselineUncertain, baselineVerified, shromikaiShownCitations }`, `disclaimer` |
@@ -217,6 +218,7 @@ part; any content part sent with `sample: true` is rejected with `400`):
 
 - **Authentication:** the same `Authorization: Bearer` header as every other endpoint (user, guest or API key token); no query-string tokens (§2). Browsers use the project's fetch-based SSE client (architecture §17), not `EventSource`. A missing or invalid token returns `401` before the stream opens; another subject's job returns `404`. When the token expires during an open stream, the stream continues until it closes; the next reconnect must carry a fresh token.
 - Each event has an integer `id`, increasing by 1 per job, starting at 1. Reconnecting with `Last-Event-ID: n` replays events `n+1` onward from the in-memory job.
+- **Implemented in P7:** only `stage` events with state `COMPLETED` are sent (no `STARTED` or `SKIPPED`); events are numbered by their position in the job's trace, then `warning`s, then `completed` or `failed`. A client that sends `Accept-Language: en` gets English messages.
 - A comment line `: keep-alive` is sent every 15 seconds; the stream closes after `completed` or `failed`.
 
 | `event` | `data` (JSON) |
@@ -731,7 +733,7 @@ A `citationChip` may reference only a `VerifiedCitation` present in the result
       "items": {
         "type": "object", "additionalProperties": false, "required": ["code", "message"],
         "properties": {
-          "code": { "enum": ["counter-offer-dropped", "low-ocr-confidence-page", "retrieval-keyword-only", "verifier-same-family", "fewer-than-three-findings", "translation-unofficial", "legacy-font-converted", "instruction-like-text"] },
+          "code": { "enum": ["counter-offer-dropped", "low-ocr-confidence-page", "retrieval-keyword-only", "verifier-same-family", "fewer-than-three-findings", "translation-unofficial", "legacy-font-converted", "instruction-like-text", "obligations-unavailable", "memo-narrative-unavailable", "counter-offer-unchecked"] },
           "message": { "type": "string", "maxLength": 300 }
         }
       }
@@ -1006,7 +1008,7 @@ All errors use `application/problem+json` per RFC 9457 with the `Problem` schema
 | `upstream-unavailable` | 503 | AI service temporarily unavailable | AI সেবা সাময়িকভাবে বন্ধ | Provider failure; `Retry-After` |
 | `renderer-unavailable` | 503 | Memo could not be rendered | মেমো তৈরি করা যায়নি | Gotenberg failure |
 | `budget-exceeded` | 503 | Analysis exceeded its cost limit | খরচের সীমা অতিক্রম | FR-62 |
-| `capacity-exhausted` | 503 | Service is at capacity today | আজকের সক্ষমতা শেষ | Daily cost cap |
+| `capacity-exhausted` | 503 | Service is at capacity today | আজকের সক্ষমতা শেষ | Daily cost cap (`shromikai.budget.daily-usd`) or too many jobs in memory |
 | `instance-lost` | 503 | Analysis was interrupted; please resubmit | বিশ্লেষণ বিঘ্নিত; আবার জমা দিন | Owner instance died |
 | `analysis-timeout` | 504 | Analysis took too long | বিশ্লেষণে বেশি সময় লেগেছে | Step timeout or 120 s |
 
