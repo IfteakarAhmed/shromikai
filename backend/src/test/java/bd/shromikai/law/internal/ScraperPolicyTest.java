@@ -194,6 +194,111 @@ class ScraperPolicyTest {
   }
 
   @Test
+  void shouldTreatASlowBodyAsATimeout_retryIt_andReportItAsFetchFailure() {
+    portal.stubFor(get(urlEqualTo("/robots.txt")).willReturn(aResponse().withStatus(404)));
+    // Headers arrive at once, the body takes longer than the whole-response timeout.
+    portal.stubFor(
+        get(urlEqualTo("/slow-body.html"))
+            .willReturn(
+                aResponse()
+                    .withStatus(200)
+                    .withBody("x".repeat(2000))
+                    .withChunkedDribbleDelay(40, 3000)));
+    PoliteFetcher fetcher =
+        new PoliteFetcher(
+            new ScraperSettings(
+                AGENT,
+                Duration.ZERO,
+                Duration.ofMillis(700),
+                2,
+                Duration.ofMillis(10),
+                raw,
+                ScraperSettings.CachePolicy.REFRESH),
+            new RawCache(raw));
+
+    assertThatThrownBy(() -> fetcher.fetch(url("/slow-body.html")))
+        .isInstanceOfSatisfying(
+            FetchException.class,
+            e -> {
+              assertThat(e.reason()).isEqualTo(FetchException.Reason.UNREACHABLE);
+              assertThat(IngestCliRunner.rootCauseClass(e)).isEqualTo("SocketTimeoutException");
+            });
+    portal.verify(3, getRequestedFor(urlEqualTo("/slow-body.html"))); // 1 try + 2 retries
+  }
+
+  @Test
+  void shouldRecover_whenTheFirstDownloadIsTooSlowButTheRetryIsFast() {
+    portal.stubFor(get(urlEqualTo("/robots.txt")).willReturn(aResponse().withStatus(404)));
+    portal.stubFor(
+        get(urlEqualTo("/flaky-body.html"))
+            .inScenario("slow-then-fast")
+            .whenScenarioStateIs(Scenario.STARTED)
+            .willReturn(
+                aResponse()
+                    .withStatus(200)
+                    .withBody("x".repeat(2000))
+                    .withChunkedDribbleDelay(40, 3000))
+            .willSetStateTo("fast"));
+    portal.stubFor(
+        get(urlEqualTo("/flaky-body.html"))
+            .inScenario("slow-then-fast")
+            .whenScenarioStateIs("fast")
+            .willReturn(aResponse().withStatus(200).withBody("fast body")));
+    PoliteFetcher fetcher =
+        new PoliteFetcher(
+            new ScraperSettings(
+                AGENT,
+                Duration.ZERO,
+                Duration.ofMillis(700),
+                2,
+                Duration.ofMillis(10),
+                raw,
+                ScraperSettings.CachePolicy.REFRESH),
+            new RawCache(raw));
+
+    assertThat(fetcher.fetch(url("/flaky-body.html")).text()).isEqualTo("fast body");
+    portal.verify(2, getRequestedFor(urlEqualTo("/flaky-body.html")));
+  }
+
+  @Test
+  void shouldOnlyUseGet_neverHeadOrOtherMethods() {
+    portal.stubFor(get(urlEqualTo("/robots.txt")).willReturn(aResponse().withStatus(404)));
+    page("/a.html", "a");
+    page("/b.html", "b");
+    PoliteFetcher fetcher = fetcher(Duration.ZERO, Duration.ofMillis(10));
+
+    fetcher.fetch(url("/a.html"));
+    fetcher.fetch(url("/b.html"));
+
+    List<LoggedRequest> all =
+        portal.findAll(
+            com.github.tomakehurst.wiremock.client.WireMock.anyRequestedFor(
+                com.github.tomakehurst.wiremock.client.WireMock.anyUrl()));
+    assertThat(all).hasSize(3); // robots.txt, a, b
+    assertThat(all).allSatisfy(r -> assertThat(r.getMethod().getName()).isEqualTo("GET"));
+  }
+
+  @Test
+  @SuppressWarnings("unchecked")
+  void shippedConfigurationAllowsASlowResponse_butStaysPolite() throws IOException {
+    java.util.Map<String, Object> yaml =
+        (java.util.Map<String, Object>)
+            new org.yaml.snakeyaml.Yaml()
+                .loadAll(Files.newInputStream(Path.of("src/main/resources/application.yml")))
+                .iterator()
+                .next();
+    java.util.Map<String, Object> scraper =
+        (java.util.Map<String, Object>)
+            ((java.util.Map<String, Object>) yaml.get("shromikai")).get("scraper");
+
+    // The portal builds /act-print-{id}.html slowly (about 20 s measured on 2026-11-11).
+    assertThat(Duration.parse("PT" + scraper.get("timeout").toString().toUpperCase()))
+        .isGreaterThanOrEqualTo(Duration.ofSeconds(120));
+    assertThat(Duration.parse("PT" + scraper.get("min-interval").toString().toUpperCase()))
+        .isGreaterThanOrEqualTo(Duration.ofSeconds(1));
+  }
+
+  @Test
   void shouldSendDescriptiveUserAgentWithContact() {
     portal.stubFor(get(urlEqualTo("/robots.txt")).willReturn(aResponse().withStatus(404)));
     page("/a.html", "a");

@@ -249,8 +249,9 @@ Key prompts given to AI tools while building ShromikAI, and what they produced. 
 
 ## Phase report - P3 (statute corpus, knowledge graph, quality report)
 
-Status: code, tests and documentation done; the **real ingestion run, the ILO conventions and the
-acceptance check are still open** (see Known gaps). The tag `phase-3` is therefore **not** created.
+Status: code, tests, documentation and the **live ingestion run are done**; the **ILO conventions
+and the acceptance check are still open** (see Known gaps). The tag `phase-3` is therefore **not**
+created.
 
 - **Summary:**
   - A versioned, hash-tracked statute corpus pipeline for the Bangladesh pack: polite scraper,
@@ -273,13 +274,13 @@ acceptance check are still open** (see Known gaps). The tag `phase-3` is therefo
     `PROVENANCE.md`). Regenerated OpenAPI snapshot and frontend types.
   - Docs: ADR-0011, ADR-0001 version log, architecture §11.2 and §18.4, api.md E-41, README.
 - **Tests added and passing:**
-  - Unit 299/299 (139 new), integration 134/134 (7 new), `./gradlew check requirementsReport`
+  - Unit 308/308 (148 new), integration 134/134 (7 new), `./gradlew check requirementsReport`
     BUILD SUCCESSFUL, `promptLint: OK`, `checkFixtures: OK`; frontend lint, typecheck, tests and
     build pass.
   - New: `BanglaNormalizerPropertyTest` (7 jqwik properties), `BanglaNormalizerTest` (9),
     `QuoteMatcherTest` (8), `SectionNumbersTest`, `SectionParserGoldenTest` (13),
     `AmendmentParserTest` (11), `CrossReferenceExtractorTest` (31), `DefinitionExtractorTest` (4),
-    `ScraperPolicyTest` (15, WireMock), `PackManifestTest` (3), `QualityReportTest` (10),
+    `ScraperPolicyTest` (19, WireMock), `IngestCliRunnerTest` (5), `PackManifestTest` (3), `QualityReportTest` (10),
     `IloMappingLoaderTest` (12), `IngestionIdempotencyIT` (7).
   - Updated: `ApplicationContextIT` (V4), `MetaControllerIT` (`section_key`), `TestTaggingRulesTest`
     (reads jqwik's `@Tag` and `@Property`).
@@ -287,14 +288,22 @@ acceptance check are still open** (see Known gaps). The tag `phase-3` is therefo
   (137/153), `law.internal` 88 % (1366/1544), `api` 94 %, whole backend 91 % (3120/3438).
 - **Acceptance commands with output:**
   - `cd backend && ./gradlew check requirementsReport`: `BUILD SUCCESSFUL`.
-  - Not yet run: `./gradlew ingestLaws` against the live portal, because `SCRAPER_CONTACT` is empty
-    in `.env` (the contact goes into the User-Agent, so it must be the team's choice).
-  - Informal check, not the acceptance run: the pages saved during reconnaissance were replayed
-    through the real ingestion code with WireMock in a throwaway test (not committed). The Labour
-    Act parsed to 369 sections and the Contract Act to 197 (11 unnumbered rows merged into the
-    previous section), 2 unresolved references, quality report PASSED. These figures are replaced by
-    `eval/reports/corpus-quality.md` once the real run exists (R-07).
-- **Quality report summary:** none yet from the live run; the report file does not exist until then.
+  - `cd backend && ./gradlew ingestLaws` against the live portal: first attempt failed (see the
+    follow-up below), after the fix it printed `ingestion finished ... status SUCCEEDED` and created
+    corpus release `2026.11.11-1` (2 acts, 563 current sections in the dev database). The run takes
+    about 47 s, most of it the portal building `/act-print-952.html`.
+- **Quality report summary** (from `eval/reports/corpus-quality.md`, release `2026.11.11-1`, git
+  `3485159` plus the uncommitted fixes of the follow-up; status PASSED):
+  - BLA-2006: 369 versions, 368 current, 1 omitted, 0 of 368 empty texts, 0 of 369 missing source
+    URL, 0 duplicate numbers; 5 amending acts detected from footnotes.
+  - CA-1872: 197 versions, 195 current, 2 omitted, 0 of 195 empty texts, 0 of 197 missing source URL,
+    0 duplicate numbers; 4 amending acts detected.
+  - BLR-2015: not published on the portal (recorded as missing, optional).
+  - Edges: REFERS_TO 176, USES_DEFINITION 366, AMENDED_BY 0 (nothing was ingested earlier),
+    ALIGNS_WITH 0; 2 references unresolved. "Missing translation" is 368 of 368 and 195 of 195: the
+    portal publishes one language per act.
+  - ILO: C001, C029, C095 and C132 skipped as unreviewed. The report lists 5 sampled sections with
+    seed `1941556536324032468` for your manual comparison.
 - **Key decisions and ADRs:** ADR-0011 (corpus acquisition, versioning and section keys).
   Highlights: print view plus index instead of ~370 section requests; amending acts read from
   footnote citations; versions are never reconstructed; omitted sections stored non-current;
@@ -302,7 +311,7 @@ acceptance check are still open** (see Known gaps). The tag `phase-3` is therefo
   Cloudflare challenge (no bypass); one run at a time through a PostgreSQL advisory lock; the whole
   run commits or rolls back, so a failed quality check leaves the corpus unchanged.
 - **Known gaps:**
-  - No live ingestion yet; ILO conventions are not ingested: the pack lists C001, C029, C095 and
+  - ILO conventions are not ingested: the pack lists C001, C029, C095 and
     C132 as proposed (by the playbook), none has a `reviewed_by`, and no NORMLEX page has been
     saved. The NORMLEX parser is not written because the page structure has not been seen;
     Bangladesh's ratification status is therefore not recorded yet.
@@ -320,11 +329,32 @@ acceptance check are still open** (see Known gaps). The tag `phase-3` is therefo
     expectations were checked against the saved pages by hand.
   - AGENTS.md §7 items 10 and 11 are open (human acceptance check, Prompt R in a fresh session).
 - **Open questions for the team:**
-  1. Set `SCRAPER_CONTACT` in `.env` (a monitored address is polite), then run
-     `cd backend && ./gradlew ingestLaws`.
-  2. Save the four NORMLEX pages (text and Bangladesh ratification) under `data/raw/ilo/` and name
+  1. Save the four NORMLEX pages (text and Bangladesh ratification) under `data/raw/ilo/` and name
      the legal reviewer who sets `reviewed_by` in `data/packs/bd.yaml`.
-  3. Compare the 5 sampled sections of the generated report with the official site.
-  4. Run Prompt R in a fresh session, then tag `phase-3` on the commit that passes.
+  2. Compare the 5 sampled sections of the generated report with the official site.
+  3. Run Prompt R in a fresh session, then tag `phase-3` on the commit that passes.
 - **Next phase prerequisites:** P4 needs the corpus ingested (this phase's real run) and Ollama
   with `bge-m3` pulled for the embedding backfill.
+
+### P3 follow-up: `ingestLaws` failed with empty log placeholders
+
+- **Symptom:** the log showed `acquiring act {}` and, 33 s later, `ingestion could not run: {}`.
+- **Why the placeholders were empty:** by design, not by accident. `AllowlistJsonFormatter` prints
+  only the message *template* for `bd.shromikai.*` loggers; values reach the log only as
+  allowlisted keys (NFR-18, R-02). The P3 code passed values as `{}` arguments, so they were
+  dropped. Fixed: the runner, orchestrator and fetcher log `errorCode`, `reasonCode` (exception
+  class), `httpStatus` and `status`; failure lines are reduced to leading code words (for example
+  `ACT_FAILED/BLA-2006/HTML_UNUSABLE`), so URLs and free text stay in the report only.
+  `IngestCliRunnerTest` failed first with exactly the literal `{}` lines.
+- **Real cause:** `/act-print-952.html` (2 MB) is built slowly by the portal: first byte after 0.26 s,
+  whole page after about 20 s (measured with curl, also with gzip, which only shrinks it to 215 KB),
+  and the scraper's 30 s limit is for the *whole* response, so a slower moment ended in
+  `SocketTimeoutException: Read timeout`. jsoup reports a slow body as an `UncheckedIOException`,
+  which the fetcher did not catch, so there was no retry and no per-act report, and the run died.
+- **Fixes:** the body is read inside the request method and a slow body becomes a retryable
+  `FetchException` (`UNREACHABLE`, at most 2 retries); an unexpected exception while acquiring an
+  act becomes that act's failure in the report; `shromikai.scraper.timeout` is 180 s. Two WireMock
+  tests reproduce the failure first (a dribbling body).
+- **Checked and unchanged:** the scraper only sends `GET` (`ScraperPolicyTest` asserts no other
+  method reaches the server); `robots.txt` handling is unchanged; the contact from `.env` appears
+  only in the User-Agent.

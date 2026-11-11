@@ -1,7 +1,9 @@
 package bd.shromikai.law.internal;
 
 import bd.shromikai.shared.Hashing;
+import bd.shromikai.shared.logging.LogKeys;
 import java.io.IOException;
+import java.io.UncheckedIOException;
 import java.net.URI;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
@@ -13,6 +15,7 @@ import java.util.Map;
 import java.util.Optional;
 import org.jsoup.Connection;
 import org.jsoup.Jsoup;
+import org.jspecify.annotations.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -92,8 +95,8 @@ final class PoliteFetcher {
   private RobotsPolicy loadRobots(String origin) {
     String robotsUrl = origin + "/robots.txt";
     try {
-      Connection.Response response = request(robotsUrl);
-      int status = response.statusCode();
+      Reply response = request(robotsUrl);
+      int status = response.status();
       if (status >= 500) {
         throw new FetchException(
             FetchException.Reason.ROBOTS_UNAVAILABLE,
@@ -105,7 +108,7 @@ final class PoliteFetcher {
         return RobotsPolicy.allowAll(); // RFC 9309: no robots file means no restriction
       }
       return RobotsPolicy.parse(
-          new String(response.bodyAsBytes(), StandardCharsets.UTF_8),
+          new String(response.body(), StandardCharsets.UTF_8),
           response.contentType(),
           productToken);
     } catch (IOException e) {
@@ -125,10 +128,10 @@ final class PoliteFetcher {
         pause(settings.backoffBase().multipliedBy(1L << (attempt - 1)));
       }
       try {
-        Connection.Response response = request(url);
-        int status = response.statusCode();
+        Reply response = request(url);
+        int status = response.status();
         if (status >= 200 && status < 300) {
-          return response.bodyAsBytes();
+          return response.body();
         }
         last =
             new FetchException(
@@ -143,7 +146,11 @@ final class PoliteFetcher {
         last =
             new FetchException(FetchException.Reason.UNREACHABLE, "GET " + url + " failed", 0, e);
       }
-      LOG.warn("fetch attempt failed, attempt={} of {}", attempt + 1, attempts);
+      LOG.atWarn()
+          .addKeyValue(LogKeys.ERROR_CODE, last.reason().name())
+          .addKeyValue(LogKeys.REASON_CODE, IngestCliRunner.rootCauseClass(last))
+          .addKeyValue(LogKeys.HTTP_STATUS, last.status())
+          .log("fetch attempt failed");
     }
     throw last;
   }
@@ -152,18 +159,31 @@ final class PoliteFetcher {
     return status == 408 || status == 429 || status >= 500;
   }
 
-  /** One HTTP request, spaced from the previous one by at least {@code minInterval}. */
-  private Connection.Response request(String url) throws IOException {
+  /** Status, content type and the whole body of one response. */
+  private record Reply(int status, @Nullable String contentType, byte[] body) {}
+
+  /**
+   * One HTTP GET, spaced from the previous one by at least {@code minInterval}. The body is read
+   * here: jsoup reads it lazily under the same timeout and reports a slow body as an unchecked
+   * exception, which is turned back into an {@link IOException} so it is retried and reported like
+   * any other connection failure.
+   */
+  private Reply request(String url) throws IOException {
     waitForTurn();
     try {
-      return Jsoup.connect(url)
-          .userAgent(settings.userAgent())
-          .timeout((int) settings.timeout().toMillis())
-          .ignoreContentType(true)
-          .ignoreHttpErrors(true)
-          .maxBodySize(0)
-          .followRedirects(true)
-          .execute();
+      Connection.Response response =
+          Jsoup.connect(url)
+              .method(Connection.Method.GET)
+              .userAgent(settings.userAgent())
+              .timeout((int) settings.timeout().toMillis())
+              .ignoreContentType(true)
+              .ignoreHttpErrors(true)
+              .maxBodySize(0)
+              .followRedirects(true)
+              .execute();
+      return new Reply(response.statusCode(), response.contentType(), response.bodyAsBytes());
+    } catch (UncheckedIOException e) {
+      throw e.getCause();
     } finally {
       lastRequestNanos = System.nanoTime();
     }

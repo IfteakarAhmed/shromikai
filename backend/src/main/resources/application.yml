@@ -135,7 +135,7 @@ shromikai:
     user-agent: "ShromikAI-ingest/1.0 (+${SCRAPER_CONTACT:})"
     contact: ${SCRAPER_CONTACT:}          # required for a real run; never committed
     min-interval: 1s                      # at most 1 request per second (startup refuses less)
-    timeout: 30s
+    timeout: 180s                         # whole response; the portal builds big pages slowly (~20 s measured)
     raw-dir: ${user.dir}/../data/raw      # git-ignored cache with SHA-256 sidecars
     cache-policy: REFRESH                 # PREFER_CACHE only while developing the parser
   ingest:

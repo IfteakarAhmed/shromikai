@@ -11,6 +11,7 @@ import bd.shromikai.law.internal.VersionPlanner.Existing;
 import bd.shromikai.law.internal.VersionPlanner.Incoming;
 import bd.shromikai.law.internal.VersionPlanner.Plan;
 import bd.shromikai.shared.Hashing;
+import bd.shromikai.shared.logging.LogKeys;
 import bd.shromikai.shared.text.BanglaNormalizer;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -103,8 +104,8 @@ public final class IngestOrchestrator {
             new PoliteFetcher(settings, new RawCache(scraper.rawDir())), pack.portalBaseUrl());
     List<AcquiredAct> acquired = new ArrayList<>();
     for (ActDefinition def : selected) {
-      LOG.info("acquiring act {}", def.code());
-      acquired.add(acquirer.acquire(def));
+      LOG.atInfo().addKeyValue(LogKeys.STAGE, "ACQUIRE").log("acquiring an act of the pack");
+      acquired.add(acquireSafely(acquirer, def));
     }
 
     long seed =
@@ -120,12 +121,16 @@ public final class IngestOrchestrator {
               status ->
                   persistAndRelease(pack, acquired, selected, summaries, missing, seed, gitSha));
       report.write(ingest.reportDir());
-      LOG.info("ingestion succeeded, release {}", report.corpusRelease());
+      LOG.atInfo()
+          .addKeyValue(LogKeys.STATUS, "SUCCEEDED")
+          .log("ingestion committed a corpus release");
       return new IngestOutcome(
           "SUCCEEDED", report.corpusRelease(), summaries, List.of(), ingest.reportDir().toString());
     } catch (QualityFailed failed) {
       failed.report.write(ingest.reportDir());
-      LOG.warn("ingestion failed the quality check, nothing committed");
+      LOG.atWarn()
+          .addKeyValue(LogKeys.STATUS, "FAILED")
+          .log("ingestion failed the quality check, nothing committed");
       return new IngestOutcome(
           "FAILED",
           null,
@@ -141,6 +146,29 @@ public final class IngestOrchestrator {
           failedSummaries(acquired),
           report.failures(),
           ingest.reportDir().toString());
+    }
+  }
+
+  /**
+   * Acquires one act; an unexpected exception becomes that act's failure (class and message in the
+   * report, class only in the log), so the report names the act instead of the run dying.
+   */
+  private static AcquiredAct acquireSafely(ActAcquirer acquirer, ActDefinition def) {
+    try {
+      return acquirer.acquire(def);
+    } catch (RuntimeException e) {
+      LOG.atWarn()
+          .addKeyValue(LogKeys.ERROR_CODE, "ACQUIRE_FAILED")
+          .addKeyValue(LogKeys.REASON_CODE, IngestCliRunner.rootCauseClass(e))
+          .log("acquiring an act failed unexpectedly");
+      return new AcquiredAct(
+          def,
+          null,
+          AcquiredAct.SourceKind.NONE,
+          null,
+          Instant.now(),
+          List.of(),
+          "UNEXPECTED_ERROR: " + IngestCliRunner.rootCauseClass(e) + ": " + e.getMessage());
     }
   }
 

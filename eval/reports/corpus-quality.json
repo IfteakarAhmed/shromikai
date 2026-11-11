@@ -1,0 +1,131 @@
+{
+  "status" : "PASSED",
+  "corpusRelease" : "2026.11.11-1",
+  "generatedAt" : "2026-11-11T04:35:27.358665Z",
+  "gitSha" : "3485159",
+  "sampleSeed" : 1941556536324032468,
+  "acts" : [ {
+    "code" : "BLA-2006",
+    "title" : "বাংলাদেশ শ্রম আইন, ২০০৬",
+    "jurisdiction" : "BD",
+    "authoritativeLang" : "bn",
+    "actStatus" : "IN_FORCE",
+    "sourceKind" : "HTML",
+    "parserVersion" : "bdlaws-print-1",
+    "sourceUrl" : "http://bdlaws.minlaw.gov.bd/act-952.html",
+    "failure" : null,
+    "versions" : 369,
+    "currentSections" : 368,
+    "omittedSections" : 1,
+    "emptyTexts" : 0,
+    "missingSourceUrls" : 0,
+    "duplicateNumbers" : 0,
+    "missingAuthoritativeLang" : 0,
+    "missingTranslation" : 368,
+    "amendingActs" : [ "2026-43 (২০২৬ সনের ৪৩ নং আইন)", "2013-30 (২০১৩ সনের ৩০ নং আইন)", "2018-58 (২০১৮ সনের ৫৮ নং আইন)", "2010-32 (২০১০ সনের ৩২ নং আইন)", "2009-66 (২০০৯ সনের ৬৬ নং আইন)" ],
+    "problems" : [ ]
+  }, {
+    "code" : "CA-1872",
+    "title" : "The Contract Act, 1872",
+    "jurisdiction" : "BD",
+    "authoritativeLang" : "en",
+    "actStatus" : "IN_FORCE",
+    "sourceKind" : "HTML",
+    "parserVersion" : "bdlaws-print-1",
+    "sourceUrl" : "http://bdlaws.minlaw.gov.bd/act-26.html",
+    "failure" : null,
+    "versions" : 197,
+    "currentSections" : 195,
+    "omittedSections" : 2,
+    "emptyTexts" : 0,
+    "missingSourceUrls" : 0,
+    "duplicateNumbers" : 0,
+    "missingAuthoritativeLang" : 0,
+    "missingTranslation" : 195,
+    "amendingActs" : [ "1899-vi (Act No. VI of 1899)", "1973-viii (Act No. VIII of 1973)", "1960-xlvii (Ordinance No. XLVII of 1960)", "1930-iv (Act No. IV of 1930)" ],
+    "problems" : [ ]
+  }, {
+    "code" : "BLR-2015",
+    "title" : "Bangladesh Labour Rules, 2015",
+    "jurisdiction" : "BD",
+    "authoritativeLang" : "bn",
+    "actStatus" : "IN_FORCE",
+    "sourceKind" : "NONE",
+    "parserVersion" : "bdlaws-print-1",
+    "sourceUrl" : "-",
+    "failure" : "NOT_PUBLISHED_ON_PORTAL: pack lists no portal act id",
+    "versions" : 0,
+    "currentSections" : 0,
+    "omittedSections" : 0,
+    "emptyTexts" : 0,
+    "missingSourceUrls" : 0,
+    "duplicateNumbers" : 0,
+    "missingAuthoritativeLang" : 0,
+    "missingTranslation" : 0,
+    "amendingActs" : [ ],
+    "problems" : [ ]
+  } ],
+  "ilo" : [ {
+    "code" : "C001",
+    "titleLabel" : "hours of work",
+    "status" : "SKIPPED_UNREVIEWED",
+    "ratificationStatus" : null,
+    "sourceUrl" : "https://normlex.ilo.org/dyn/nrmlx_en/f?p=NORMLEXPUB:12100:0::NO::P12100_ILO_CODE:C001"
+  }, {
+    "code" : "C029",
+    "titleLabel" : "forced labour",
+    "status" : "SKIPPED_UNREVIEWED",
+    "ratificationStatus" : null,
+    "sourceUrl" : "https://normlex.ilo.org/dyn/nrmlx_en/f?p=NORMLEXPUB:12100:0::NO::P12100_ILO_CODE:C029"
+  }, {
+    "code" : "C095",
+    "titleLabel" : "protection of wages",
+    "status" : "SKIPPED_UNREVIEWED",
+    "ratificationStatus" : null,
+    "sourceUrl" : "https://normlex.ilo.org/dyn/nrmlx_en/f?p=NORMLEXPUB:12100:0::NO::P12100_ILO_CODE:C095"
+  }, {
+    "code" : "C132",
+    "titleLabel" : "holidays with pay",
+    "status" : "SKIPPED_UNREVIEWED",
+    "ratificationStatus" : null,
+    "sourceUrl" : "https://normlex.ilo.org/dyn/nrmlx_en/f?p=NORMLEXPUB:12100:0::NO::P12100_ILO_CODE:C132"
+  } ],
+  "missing" : [ {
+    "what" : "BLR-2015",
+    "reason" : "NOT_PUBLISHED_ON_PORTAL: pack lists no portal act id"
+  } ],
+  "edges" : {
+    "ALIGNS_WITH" : 0,
+    "AMENDED_BY" : 0,
+    "REFERS_TO" : 176,
+    "USES_DEFINITION" : 366
+  },
+  "unresolvedReferences" : 2,
+  "failures" : [ ],
+  "samples" : [ {
+    "actCode" : "CA-1872",
+    "sectionKey" : "CA-1872:226@original",
+    "heading" : "Enforcement and consequences of agent's contracts",
+    "officialUrl" : "http://bdlaws.minlaw.gov.bd/act-26/section-375.html"
+  }, {
+    "actCode" : "BLA-2006",
+    "sectionKey" : "BLA-2006:276@original",
+    "heading" : "ত্রিপক্ষীয় উপদেষ্টা কমিটি",
+    "officialUrl" : "http://bdlaws.minlaw.gov.bd/act-952/section-26328.html"
+  }, {
+    "actCode" : "BLA-2006",
+    "sectionKey" : "BLA-2006:94A@amend-2013",
+    "heading" : "প্রতিবন্ধী শ্রমিকদের আবাসন সুবিধা",
+    "officialUrl" : "http://bdlaws.minlaw.gov.bd/act-952/section-43727.html"
+  }, {
+    "actCode" : "BLA-2006",
+    "sectionKey" : "BLA-2006:133@original",
+    "heading" : "ধারা ১৩২ এর অধীন দরখাস্তের ক্ষেত্রে কোর্ট-ফিস",
+    "officialUrl" : "http://bdlaws.minlaw.gov.bd/act-952/section-29460.html"
+  }, {
+    "actCode" : "BLA-2006",
+    "sectionKey" : "BLA-2006:282@original",
+    "heading" : "ক্ষমতা অর্পণ",
+    "officialUrl" : "http://bdlaws.minlaw.gov.bd/act-952/section-30071.html"
+  } ]
+}
