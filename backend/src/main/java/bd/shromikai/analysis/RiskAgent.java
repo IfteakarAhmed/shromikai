@@ -255,7 +255,7 @@ public final class RiskAgent {
     return out;
   }
 
-  private static List<Map<String, Object>> clauseJson(List<ClauseView> batch) {
+  static List<Map<String, Object>> clauseJson(List<ClauseView> batch) {
     List<Map<String, Object>> out = new ArrayList<>();
     for (ClauseView view : batch) {
       Map<String, Object> item = new LinkedHashMap<>();

@@ -74,6 +74,9 @@ dependencies {
     // In-memory retrieval cache (P4, ADR-0012); version managed by Spring Boot
     implementation 'com.github.ben-manes.caffeine:caffeine'
 
+    // Word-level redline diff (P7, FR-52, ADR-0020)
+    implementation 'io.github.java-diff-utils:java-diff-utils:4.15'
+
     // Nullness annotations
     implementation 'org.jspecify:jspecify:1.0.1'
 

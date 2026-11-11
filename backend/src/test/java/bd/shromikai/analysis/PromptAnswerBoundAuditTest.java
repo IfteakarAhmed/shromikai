@@ -82,6 +82,28 @@ class PromptAnswerBoundAuditTest {
     return out;
   }
 
+  private static JsonNode obligations() {
+    ObjectNode out = obj();
+    out.put("status", "OK").put("reason", "NONE");
+    ArrayNode list = out.putArray("items");
+    for (int i = 0; i < 6; i++) {
+      ObjectNode item = list.addObject();
+      item.put("party", "EMPLOYER").put("obligation", bn(100)).put("trigger", bn(60));
+      item.putObject("deadline").put("value", 14.5).put("unit", "MONTHS");
+      item.put("source", "BOTH").put("status", "STATUTORY_NOT_IN_CONTRACT");
+      ArrayNode ids = item.putArray("clause_ids");
+      for (int c = 1; c <= 3; c++) {
+        ids.add("c" + (100 + c));
+      }
+      item.putArray("citations")
+          .addObject()
+          .put("section_key", KEY)
+          .put("quote", bn(100))
+          .put("claim", bn(80));
+    }
+    return out;
+  }
+
   private static JsonNode counterOffer() {
     return obj()
         .put("status", "OK")
@@ -176,16 +198,17 @@ class PromptAnswerBoundAuditTest {
 
   /** Prompts whose answer is bounded by schema, prompt text or caller, and must fit. */
   private Map<String, JsonNode> bounded() {
-    return Map.of(
-        "risk-analysis", riskAnalysis(),
-        "counter-offer", counterOffer(),
-        "risk-citation-repair", repair(),
-        "verify-support", verify(),
-        "verify-support-claude", verify(),
-        "clause-classify", classify(ClauseClassifier.MAX_PER_BATCH),
+    return Map.ofEntries(
+        Map.entry("risk-analysis", riskAnalysis()),
+        Map.entry("counter-offer", counterOffer()),
+        Map.entry("risk-citation-repair", repair()),
+        Map.entry("verify-support", verify()),
+        Map.entry("verify-support-claude", verify()),
+        Map.entry("clause-classify", classify(ClauseClassifier.MAX_PER_BATCH)),
         // Bounded by the prompt text (three queries of twelve words), not by the schema; the
         // margin is thin (254 of 255 tokens) only in this synthetic worst case.
-        "query-rewrite", queryRewrite());
+        Map.entry("query-rewrite", queryRewrite()),
+        Map.entry("obligations", obligations()));
   }
 
   /** Prompts that cannot be bounded, with what protects the analysis when the answer is cut. */

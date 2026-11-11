@@ -8,6 +8,7 @@ import bd.shromikai.rules.RuleEngine;
 import bd.shromikai.rules.RuleSet;
 import bd.shromikai.rules.RuleViolation;
 import bd.shromikai.shared.ai.CostCalculator;
+import bd.shromikai.shared.ai.EgressBlockedException;
 import bd.shromikai.shared.ai.ModelException;
 import bd.shromikai.shared.ai.ModelGateway;
 import bd.shromikai.shared.problem.ProblemException;
@@ -76,6 +77,7 @@ public class AnalysisPipeline {
   private final RiskAgent risk;
   private final FindingMerge merge;
   private final FindingVerifier verifier;
+  private final ObligationsAgent obligations;
   private final CorrectiveLoop corrective;
   private final ReviewQueue reviews;
   private final CounterOfferAgent counterOffers;
@@ -97,6 +99,7 @@ public class AnalysisPipeline {
       RiskAgent risk,
       FindingMerge merge,
       FindingVerifier verifier,
+      ObligationsAgent obligations,
       CorrectiveLoop corrective,
       ReviewQueue reviews,
       CounterOfferAgent counterOffers,
@@ -115,6 +118,7 @@ public class AnalysisPipeline {
     this.risk = risk;
     this.merge = merge;
     this.verifier = verifier;
+    this.obligations = obligations;
     this.corrective = corrective;
     this.reviews = reviews;
     this.counterOffers = counterOffers;
@@ -256,6 +260,8 @@ public class AnalysisPipeline {
     for (Clause clause : clauses) {
       views.add(new ClauseView(clause, factsByClause.getOrDefault(clause.id(), List.of())));
     }
+    Future<List<ObligationItem>> obligationsFuture =
+        executor.submit(() -> obligations.propose(d.session, d.request, views, candidates));
     RiskAgent.Result riskResult =
         step(
             Stage.RISK,
@@ -268,6 +274,7 @@ public class AnalysisPipeline {
                     candidates,
                     ruleFindingJson(evaluation.violations()),
                     List.of()));
+    List<ObligationItem> proposedObligations = collectObligations(obligationsFuture, d);
     FindingMerge.Result merged = merge.merge(ruleFindings, riskResult.findings());
     List<Finding> findings = merged.findings();
     record(
@@ -299,6 +306,10 @@ public class AnalysisPipeline {
     FindingVerifier.Round verified =
         step(Stage.VERIFY, d, () -> verifier.verify(toVerify, context));
     findings = verified.findings();
+    List<ObligationItem> checklist =
+        proposedObligations.isEmpty()
+            ? List.of()
+            : step(Stage.VERIFY, d, () -> obligations.verify(proposedObligations, context));
     d.verdicts.addAll(verified.verdicts());
     noteIndependence(d, findings);
     record(
@@ -308,7 +319,9 @@ public class AnalysisPipeline {
         detail(
             "verdicts", verdictJson(verified.verdicts()),
             "verifiedFindings", count(findings, FindingVerification.VERIFIED),
-            "uncertainFindings", count(findings, FindingVerification.UNCERTAIN)));
+            "uncertainFindings", count(findings, FindingVerification.UNCERTAIN),
+            "obligations", checklist.size(),
+            "obligationsDropped", proposedObligations.size() - checklist.size()));
 
     // CORRECT, only when a citation is not verified.
     if (corrective.needed(findings)) {
@@ -444,7 +457,8 @@ public class AnalysisPipeline {
             d.release == null ? "none" : d.release,
             d.session.costUsdMicros(),
             durationMs,
-            d.verdicts);
+            d.verdicts,
+            checklist);
     d.job.analysed(outcome);
     record(
         d,
@@ -491,6 +505,45 @@ public class AnalysisPipeline {
   }
 
   // ------------------------------------------------------------------ helpers
+
+  /**
+   * The checklist of the {@code obligations} call that ran beside the risk batches. A model failure
+   * leaves the checklist out with a warning; an egress block or a spent budget still ends the job.
+   */
+  private List<ObligationItem> collectObligations(Future<List<ObligationItem>> future, JobData d) {
+    long limit = Math.max(1, Math.min(d.deadline.remaining(), 15_000));
+    try {
+      return future.get(limit, TimeUnit.MILLISECONDS);
+    } catch (TimeoutException e) {
+      future.cancel(true);
+      return unavailable(d);
+    } catch (InterruptedException e) {
+      Thread.currentThread().interrupt();
+      future.cancel(true);
+      throw new StageFailure(Stage.RISK, new ProblemException(ProblemType.INTERNAL_ERROR));
+    } catch (ExecutionException e) {
+      Throwable cause = e.getCause();
+      if (cause instanceof EgressBlockedException blocked) {
+        throw new StageFailure(Stage.RISK, blocked);
+      }
+      if (cause instanceof ProblemException problem
+          && problem.type() == ProblemType.BUDGET_EXCEEDED) {
+        throw new StageFailure(Stage.RISK, problem);
+      }
+      if (cause instanceof ModelException) {
+        return unavailable(d);
+      }
+      LOG.error("obligations failed: " + cause.getClass().getSimpleName());
+      return unavailable(d);
+    }
+  }
+
+  private static List<ObligationItem> unavailable(JobData d) {
+    d.warnings.add(
+        new AnalysisJob.Warning(
+            "obligations-unavailable", "The obligations checklist could not be produced."));
+    return List.of();
+  }
 
   private <T> T step(Stage stage, JobData d, Callable<T> body) {
     Future<T> future = executor.submit(body);

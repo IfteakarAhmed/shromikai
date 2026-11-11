@@ -113,6 +113,40 @@ class OrchestratorStateMachineTest {
     assertThat(h.dailyBudget.remainingMicros()).isEqualTo(before - job.outcome().costUsdMicros());
   }
 
+  /** FR-53: the checklist rides along in RISK and is verified in VERIFY. */
+  @Test
+  void shouldProduceAVerifiedObligationsChecklist() {
+    PipelineHarness h = PipelineHarness.standard();
+
+    AnalysisJob job = h.run();
+
+    assertThat(job.status()).isEqualTo(AnalysisJob.Status.ANALYSED);
+    assertThat(job.outcome().obligations()).hasSize(2);
+    assertThat(job.outcome().obligations().get(0).citations()).hasSize(1);
+    assertThat(h.calls("obligations")).isEqualTo(1);
+  }
+
+  @Test
+  void shouldLeaveTheChecklistOutWithAWarning_whenTheObligationsAnswerStaysInvalid() {
+    PipelineHarness h =
+        new PipelineHarness(
+            request ->
+                request.promptId().equals("obligations")
+                    ? bd.shromikai.testsupport.TestGateways.json("{\"nonsense\":true}")
+                    : null,
+            new AnalysisFixtures.StubSource(q -> List.of(AnalysisFixtures.KEY_NOTICE)),
+            List.of(AnalysisFixtures.noticeMinRule()),
+            PipelineHarness.properties());
+
+    AnalysisJob job = h.run();
+
+    assertThat(job.status()).isEqualTo(AnalysisJob.Status.ANALYSED);
+    assertThat(job.outcome().obligations()).isEmpty();
+    assertThat(job.outcome().warnings())
+        .extracting(AnalysisJob.Warning::code)
+        .contains("obligations-unavailable");
+  }
+
   @Test
   void shouldWriteOneContentFreeTraceEventPerTransition() {
     PipelineHarness h = PipelineHarness.standard();

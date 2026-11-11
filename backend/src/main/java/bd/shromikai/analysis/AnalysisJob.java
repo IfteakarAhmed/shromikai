@@ -45,7 +45,8 @@ public final class AnalysisJob {
       String corpusRelease,
       long costUsdMicros,
       long durationMs,
-      List<FindingVerifier.VerdictSummary> verdicts) {
+      List<FindingVerifier.VerdictSummary> verdicts,
+      List<ObligationItem> obligations) {
 
     public Outcome {
       findings = List.copyOf(findings);
@@ -54,6 +55,7 @@ public final class AnalysisJob {
       promptVersions = Map.copyOf(promptVersions);
       models = Map.copyOf(models);
       verdicts = List.copyOf(verdicts);
+      obligations = List.copyOf(obligations);
     }
   }
 

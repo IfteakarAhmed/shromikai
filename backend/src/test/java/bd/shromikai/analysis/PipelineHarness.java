@@ -103,6 +103,7 @@ final class PipelineHarness {
             new RiskAgent(),
             new FindingMerge(),
             findingVerifier,
+            new ObligationsAgent(citationVerifier),
             loop,
             new ReviewQueue(new ReviewItemFactory(Clock.systemUTC()), reviewStore),
             new CounterOfferAgent(facts, engine),
@@ -176,6 +177,20 @@ final class PipelineHarness {
                  "quote":"shall give a worker written notice of dismissal at least fourteen days",
                  "claim":"An employer must give a worker written notice before dismissal."}],
                "confidence":0.8}]}
+              """);
+      case "obligations" ->
+          TestGateways.json(
+              """
+              {"status":"OK","reason":"NONE","items":[
+               {"party":"EMPLOYER","obligation":"Give written notice of dismissal.",
+                "trigger":"Dismissal","deadline":{"value":14,"unit":"DAYS"},"source":"BOTH",
+                "status":"CONFLICTS_WITH_CONTRACT","clause_ids":["c1"],
+                "citations":[{"section_key":"XV-LAB:9@original",
+                 "quote":"shall give a worker written notice of dismissal at least fourteen days",
+                 "claim":"An employer must give notice before dismissal."}]},
+               {"party":"WORKER","obligation":"Report for duty on time.","trigger":null,
+                "deadline":null,"source":"CONTRACT","status":"STATED_IN_CONTRACT",
+                "clause_ids":["c1"],"citations":[]}]}
               """);
       case "verify-support", "verify-support-claude" ->
           TestGateways.json("{\"label\":\"SUPPORTS\",\"confidence\":0.92,\"reason\":\"stand-in\"}");

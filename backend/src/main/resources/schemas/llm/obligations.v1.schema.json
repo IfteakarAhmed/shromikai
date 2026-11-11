@@ -1,0 +1,57 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:shromikai:schema:llm:obligations:1",
+  "title": "obligations output (bounded)",
+  "type": "object",
+  "properties": {
+    "status": { "type": "string", "enum": ["OK", "ABSTAIN"] },
+    "reason": { "type": "string", "enum": ["NONE", "NOT_AN_EMPLOYMENT_CONTRACT", "UNREADABLE"] },
+    "items": {
+      "type": "array",
+      "maxItems": 6,
+      "items": {
+        "type": "object",
+        "properties": {
+          "party": { "type": "string", "enum": ["EMPLOYER", "WORKER", "BOTH"] },
+          "obligation": { "type": "string", "minLength": 5, "maxLength": 100 },
+          "trigger": { "type": ["string", "null"], "maxLength": 60 },
+          "deadline": {
+            "type": ["object", "null"],
+            "properties": {
+              "value": { "type": "number", "minimum": 0 },
+              "unit": { "type": "string", "enum": ["DAYS", "WEEKS", "MONTHS"] }
+            },
+            "required": ["value", "unit"],
+            "additionalProperties": false
+          },
+          "source": { "type": "string", "enum": ["CONTRACT", "STATUTE", "BOTH"] },
+          "status": {
+            "type": "string",
+            "enum": ["STATED_IN_CONTRACT", "STATUTORY_NOT_IN_CONTRACT", "CONFLICTS_WITH_CONTRACT"]
+          },
+          "clause_ids": { "type": "array", "maxItems": 3, "items": { "type": "string" } },
+          "citations": {
+            "type": "array",
+            "maxItems": 1,
+            "items": {
+              "type": "object",
+              "properties": {
+                "section_key": { "type": "string" },
+                "quote": { "type": "string", "maxLength": 100 },
+                "claim": { "type": "string", "maxLength": 80 }
+              },
+              "required": ["section_key", "quote", "claim"],
+              "additionalProperties": false
+            }
+          }
+        },
+        "required": [
+          "party", "obligation", "trigger", "deadline", "source", "status", "clause_ids", "citations"
+        ],
+        "additionalProperties": false
+      }
+    }
+  },
+  "required": ["status", "reason", "items"],
+  "additionalProperties": false
+}

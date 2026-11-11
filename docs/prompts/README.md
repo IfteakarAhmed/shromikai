@@ -25,7 +25,7 @@ This page is the index for the team and for the submission form's "Prompt Librar
 | `counter-offer` | REASONING | Claude Sonnet 5.5 | Revised clause (v2 bounded: at most 600 characters, ADR-0017) that resolves the risk and stays reasonable for both sides; runs after verification, one call per `VERIFIED` finding | `contracts`: M-27 | Experimental (P6) |
 | `verify-support` | VERIFIER | Gemini Flash | Independent judgement: SUPPORTS, PARTIAL, CONTRADICTS or UNRELATED | `citations`: M-04, M-05 | Experimental (P6) |
 | `verify-support-claude` | VERIFIER_FALLBACK | Claude Haiku 5.5 | Same judgement when Gemini is unavailable (flagged `SAME_FAMILY`) | `citations`: M-04, M-05 | Experimental (P6) |
-| `obligations` | FAST | Claude Haiku 5.5 | Obligations checklist for employer and worker; runs in `RISK`, citations restricted to candidates | `contracts`: M-28 | Planned (P7) |
+| `obligations` | FAST | Claude Haiku 5.5 | Obligations checklist for employer and worker; runs in `RISK`, citations restricted to candidates | `contracts`: M-28 | Experimental v1 (P7) |
 | `memo-bn` | REASONING | Claude Sonnet 5.5 | Plain-Bangla summary and next-steps narrative of the memo (about grade-8 reading level) | `clarity`: M-21 | Planned (P7) |
 | `memo-en` | REASONING | Claude Sonnet 5.5 | English summary and next-steps narrative of the memo | `contracts`: M-21 (English raters) | Planned (P7) |
 | `baseline` | REASONING | Claude Sonnet 5.5 | Plain-LLM baseline for compare mode and evaluation (no retrieval, no verifier) | `contracts`: M-03 | Planned (P7) |
