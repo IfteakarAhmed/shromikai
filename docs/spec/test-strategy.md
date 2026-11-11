@@ -91,6 +91,7 @@ than `localhost` and Testcontainers-mapped hosts. `live` and `eval` tasks disabl
 - Tests can also register inline responses (fixed JSON or a function of the rendered variables) and failure modes: timeout, HTTP 429, HTTP 500, refusal, schema-invalid output, and invalid-then-valid (repair path).
 - `FakeChatPort` records each call (prompt ID, version, rendered variables) for assertions such as "the corrective loop ran once" or "no untrusted variable contained a PII canary".
 - `FakeEmbeddingPort` returns stable 1024-dimension unit vectors seeded from the SHA-256 of the input text; it can be given hand-set vectors for ranking tests.
+- A recording that holds many calls of one prompt is addressed by request hash: `{promptId}/v{n}/{caseId}/{sha16}.json` (checked before the single-file form). `RecordingChatPort` writes it from a live call; `CappedChatPort` and `LiveSpendLedger` keep live runs under the cumulative US$3 cap (ADR-0015).
 - The `fake-models` Spring profile wires both fakes into the running application for Playwright, k6, `scripts/demo-fake-citation.sh` and offline demos; results then carry `provenance.recorded = true` and the UI shows "recorded".
 
 Fixture file:

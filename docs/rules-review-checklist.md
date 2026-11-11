@@ -18,7 +18,9 @@ A rule is evaluated only when `status: active` and `reviewed_by` names a person 
    "team member, not a lawyer" and `status: active`. Claude does not do this on its own.
 
 The application refuses to start if an active rule's quote is not in the current section text, so a
-mistake here is caught at startup, not in a user's result.
+mistake here is caught at startup, not in a user's result. `./gradlew checkRules` runs the same
+check for every rule, draft or active, against the corpus in your local database (it reported all 8
+quotes found when the rules were drafted).
 
 Corpus release at drafting: `2026.11.11-1`.
 

@@ -145,6 +145,13 @@ tasks.named('integrationTest', Test) {
 }
 taggedTask('slowTest', 'slow', true)
 taggedTask('liveTest', 'live', false)
+tasks.named('liveTest', Test) {
+    // A live test runs only with an explicit opt-in: -PliveOk=smoke or -PliveOk=record. Nothing here
+    // spends money by accident, and the US$3 cap of LiveSpendLedger holds on top (ADR-0015).
+    systemProperty 'shromikai.live', project.findProperty('liveOk') ?: ''
+    systemProperty 'shromikai.live.contract', project.findProperty('contract') ?: 'syn-en-02'
+    outputs.upToDateWhen { false }
+}
 
 // ---------------------------------------------------------------------------------------------
 // Coverage gates (test-strategy.md §15). A package gate applies once the package contains code.
@@ -231,6 +238,30 @@ toolTask('checkFixtures', 'bd.shromikai.tooling.FixtureScanner',
         file('src/test/resources').absolutePath,
         file('src/main/resources').absolutePath,
 ])
+
+// scripts/demo-fake-citation.sh: the verifier catches a planted fake section (FR-46). Offline: scripted
+// stand-ins for the models, the statute text from the local corpus. Nothing is spent.
+tasks.register('demoFakeCitation', JavaExec) {
+    description = 'Shows the verifier catching a planted fake section, step by step (no cloud call).'
+    group = 'verification'
+    dependsOn tasks.named('testClasses')
+    classpath = sourceSets.test.runtimeClasspath
+    mainClass = 'bd.shromikai.tooling.DemoFakeCitation'
+    javaLauncher = javaToolchains.launcherFor { languageVersion = JavaLanguageVersion.of(21) }
+    standardOutput = System.out
+}
+
+// ./gradlew checkRules: every rule's quote against the corpus in the local database (FR-36).
+tasks.register('checkRules', JavaExec) {
+    description = 'Checks data/rules/*.yaml against the current statute text in the local database.'
+    group = 'verification'
+    dependsOn tasks.named('testClasses')
+    classpath = sourceSets.test.runtimeClasspath
+    mainClass = 'bd.shromikai.tooling.RulesCorpusCheck'
+    args new File(repoRoot, 'data/rules/bd-labour.yaml').absolutePath
+    javaLauncher = javaToolchains.launcherFor { languageVersion = JavaLanguageVersion.of(21) }
+    standardOutput = System.out
+}
 
 toolTask('requirementsReport', 'bd.shromikai.tooling.RequirementsReport',
         'Writes build/reports/requirements.md (requirement -> tests).', [

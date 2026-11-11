@@ -50,6 +50,10 @@ phase order, and the team has only a small API balance, so live spend needs its 
    until P7, so `GET /api/v1/dev/analyses/{id}/findings` (E-45b) returns the redacted findings (verified
    citations only) and `POST /api/v1/dev/analyses?full=true&side=WORKER` runs the whole P6 pipeline. Re-identification and signing remain P7.
 
+9. **Recordings are addressed by request hash, and some tests use stand-ins.** See architecture
+   §18.6 C35 to C37: hash-addressed fixtures, scripted stand-ins on a fictional act for the
+   pipeline integration tests, and an offline demo tool.
+
 ## Consequences
 
 - No new runtime dependency (AGENTS.md §9 item 1 does not apply); the migration `V6__analysis.sql`

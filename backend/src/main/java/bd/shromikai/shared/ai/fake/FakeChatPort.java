@@ -48,7 +48,8 @@ public final class FakeChatPort implements ChatPort {
     this(root, mapper, schemas, defaultCase, FakeChatPort.class.getClassLoader());
   }
 
-  FakeChatPort(
+  /** Fixtures from another class loader, for tests that record into a temporary directory. */
+  public FakeChatPort(
       String root,
       ObjectMapper mapper,
       JsonSchemas schemas,
@@ -130,8 +131,11 @@ public final class FakeChatPort implements ChatPort {
   }
 
   private ChatResponse replay(ChatRequest request, String caseId) {
-    String location =
-        root + "/" + request.promptId() + "/v" + request.promptVersion() + "/" + caseId + ".json";
+    String base = root + "/" + request.promptId() + "/v" + request.promptVersion() + "/" + caseId;
+    // A recorded analysis makes many calls of one prompt, so recordings are addressed by the hash
+    // of the request (a changed prompt or input finds no file); a hand-made fixture is one file.
+    String hashed = base + "/" + request.renderedSha256().substring(0, 16) + ".json";
+    String location = classLoader.getResource(hashed) != null ? hashed : base + ".json";
     JsonNode fixture = read(location, request, caseId);
     List<String> problems = checkFixture(fixture, request.promptId(), request.promptVersion());
     if (!problems.isEmpty()) {

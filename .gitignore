@@ -30,3 +30,6 @@ data/raw/
 
 # jqwik property-test database
 .jqwik-database
+
+# Live-spend ledger of the development cap (docs/adr/0015)
+.live-spend/

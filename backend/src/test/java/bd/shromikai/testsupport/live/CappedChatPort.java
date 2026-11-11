@@ -1,0 +1,80 @@
+package bd.shromikai.testsupport.live;
+
+import bd.shromikai.shared.ai.ChatPort;
+import bd.shromikai.shared.ai.ChatRequest;
+import bd.shromikai.shared.ai.ChatResponse;
+import bd.shromikai.shared.ai.CostCalculator;
+import bd.shromikai.shared.ai.ModelOutputInvalidException;
+import bd.shromikai.shared.ai.TokenUsage;
+import java.util.concurrent.atomic.AtomicInteger;
+
+/**
+ * Wraps a real cloud {@link ChatPort} so that no live call is made without the cumulative cap and a
+ * per-run call limit holding (ADR-0015, rule "never loop live calls in a test"). Before a call it
+ * estimates the worst case (input tokens at two characters per token, which over-counts Bangla less
+ * than it should, plus the prompt's output cap) and refuses if that could pass the cap. After the
+ * call it records the reported usage. It does not retry: the adapters already retry twice.
+ */
+public final class CappedChatPort implements ChatPort {
+
+  private final ChatPort delegate;
+  private final LiveSpendLedger ledger;
+  private final CostCalculator cost;
+  private final String purpose;
+  private final int maxCalls;
+  private final AtomicInteger calls = new AtomicInteger();
+
+  public CappedChatPort(
+      ChatPort delegate,
+      LiveSpendLedger ledger,
+      CostCalculator cost,
+      String purpose,
+      int maxCalls) {
+    this.delegate = delegate;
+    this.ledger = ledger;
+    this.cost = cost;
+    this.purpose = purpose;
+    this.maxCalls = maxCalls;
+  }
+
+  @Override
+  public String provider() {
+    return delegate.provider();
+  }
+
+  public int calls() {
+    return calls.get();
+  }
+
+  @Override
+  public ChatResponse call(ChatRequest request) {
+    if (calls.incrementAndGet() > maxCalls) {
+      throw new LiveSpendLedger.SpendCapException(
+          "More than " + maxCalls + " live calls in one run for " + purpose + "; stopping.");
+    }
+    long inputEstimate = (request.system().length() + request.user().reveal().length()) / 2 + 200;
+    long worst =
+        cost.worstCaseUsdMicros(request.modelId(), inputEstimate, request.maxOutputTokens());
+    ledger.reserve(request.promptId() + " (" + request.modelId() + ")", worst);
+    try {
+      ChatResponse response = delegate.call(request);
+      TokenUsage u = response.usage();
+      ledger.record(
+          purpose + ":" + request.promptId(),
+          response.modelId(),
+          u.totalInputTokens(),
+          u.outputTokens(),
+          cost.usdMicros(response.modelId(), u));
+      return response;
+    } catch (ModelOutputInvalidException e) {
+      TokenUsage u = e.usage();
+      ledger.record(
+          purpose + ":" + request.promptId(),
+          request.modelId(),
+          u.totalInputTokens(),
+          u.outputTokens(),
+          cost.usdMicros(request.modelId(), u));
+      throw e;
+    }
+  }
+}
