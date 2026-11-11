@@ -114,7 +114,7 @@ Demo accounts receive `403` `demo-account-restricted` on password change and del
 | E-29 | `PUT /api/v1/playbooks/{id}` | `PlaybookInput` | `200` `Playbook` (`version` + 1) | `400`, `404` | FR-57 |
 | E-30 | `DELETE /api/v1/playbooks/{id}` | none | `204` (archives) | `404` | FR-57 |
 | E-31 | `GET /api/v1/laws` | query `jurisdiction` | `200` `ActSummary[]` | `401` | FR-22 |
-| E-32 | `GET /api/v1/laws/search` | `q` (1..500), `lang` (`bn`, `en`, `any`), `k` (1..20, default 8), `jurisdiction` | `200` `SearchResults`; local retrieval only, no cloud call and no query rewriting (architecture §8.2, §10.7) | `400`, `401`, `429` | FR-22 |
+| E-32 | `GET /api/v1/laws/search` | `q` (1..500), `lang` (`bn`, `en`, `any`), `k` (1..20, default 8), `jurisdiction` | `200` `SearchResults`; local retrieval only, no cloud call and no query rewriting (architecture §8.2, §10.7). `lang` names the language of the query and does not filter results (bge-m3 and the text index span both languages); `jurisdiction` may be repeated or comma-separated, values `BD` and `ILO`. The response holds up to `k` `SEARCH` results followed by at most 4 `GRAPH` context sections | `400`, `401`, `429` | FR-22 |
 | E-33 | `GET /api/v1/laws/{act}` | none | `200` `Act` | `404` | FR-22 |
 | E-34 | `GET /api/v1/laws/{act}/{section}` | `version` (optional; default current) | `200` `Section` | `404` | FR-22 |
 | E-35 | `GET /api/v1/admin/users`, `POST /api/v1/admin/users` | page / `UserInput` | `200` page of `User` / `201` `User` | `400`, `409` `email-taken` | FR-73 |

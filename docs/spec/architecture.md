@@ -509,7 +509,7 @@ Signed result envelope (FR-55, ADR-0006):
 
 ### 8.1 Index
 
-- **One section = one chunk.** `law_section.embedding vector(1024)` (V1) holds the bge-m3 embedding of `"{heading_bn} | {heading_en}\n{authoritative text}"`; texts above 8,000 tokens are truncated and listed in the quality report. HNSW index with `vector_cosine_ops` (`m = 16`, `ef_construction = 64`; query `ef_search = 100`). Sections with an unchanged `content_hash` are not re-embedded.
+- **One section = one chunk.** `law_section.embedding vector(1024)` (V1) holds the bge-m3 embedding of `"{heading_bn} | {heading_en}\n{authoritative text}"`; texts above 8,000 tokens (about 16,000 characters of Bangla) are truncated and flagged in `law_section.embedding_truncated` (V5). HNSW index with `vector_cosine_ops` (`m = 16`, `ef_construction = 64`; query `ef_search = 100`). Sections with an unchanged `content_hash` are not re-embedded.
 - `law_section.search_tsv` (V1): `simple` configuration; P3 adds a normalised-text column so full-text search runs on `BanglaNormalizer` output.
 - `section_edge`: `REFERS_TO`, `USES_DEFINITION`, `AMENDED_BY`, `ALIGNS_WITH` (with `reviewed` flag).
 - `data/mappings/bd-topics.yaml`: curated map from `ClauseType` to section keys, with `expected_for` worker categories for omission detection; author and reviewer recorded.
@@ -518,10 +518,10 @@ Signed result envelope (FR-55, ADR-0006):
 
 1. **Query rewriting:** `query-rewrite` (Haiku) returns 1 to 3 queries in Bangla and English for the redacted clause (batched across clauses); invalid JSON → one retry → raw clause text. Results are cached in Caffeine by normalised query (10,000 entries, 1 hour).
 2. **Vector search:** per query, top 20 sections by cosine similarity among current sections of the requested jurisdictions (`BD` default, `ILO` optional).
-3. **Full-text search:** per query, `websearch_to_tsquery('simple', normalised query)`, top 20 by `ts_rank_cd`.
+3. **Full-text search:** per query, top 20 by `ts_rank_cd` on `normalised_text` (`simple` configuration). The tsquery is an **OR** query over the lexemes PostgreSQL extracts from the normalised query (`to_tsquery('simple', string_agg(quote_literal(lexeme), ' | '))`), not `websearch_to_tsquery`, which ANDs every word and so rarely matches a natural-language question (ADR-0012).
 4. **Fusion:** reciprocal-rank fusion over all lists of all queries, `score(s) = Σ 1 ÷ (60 + rank(s))`; keep the top 8 (`origin: SEARCH`).
-5. **Graph expansion:** one hop along `USES_DEFINITION` and `REFERS_TO` from the top 8; at most 4 added sections (`origin: GRAPH`, context).
-6. **Topic map:** at most 4 sections mapped to the clause's `ClauseType` (`origin: TOPIC_MAP`).
+5. **Graph expansion:** one hop along `USES_DEFINITION` and `REFERS_TO` from the top 8; at most 4 added sections (`origin: GRAPH`, context). Definitions come before cross-references, then the section reached from the better-ranked seed, then the lower section ID (ADR-0012).
+6. **Topic map:** at most 4 sections mapped to the clause's `ClauseType` (`origin: TOPIC_MAP`). A topic-map key resolves to the current version of its act and section number, so an outdated version label never hides a section; a section already in the result keeps its `SEARCH` or `GRAPH` origin.
 
 Each result records section key, act, section number, heading, vector rank, text rank, fused
 score and origin (FR-22).
@@ -532,7 +532,8 @@ on the caller's query as written, with no cloud call (ADR-0006): a query may con
 and running it through local redaction would not fit the NFR-02 search budget (p95 ≤ 500 ms).
 
 ```sql
--- Graph expansion (step 5); :seeds = fused top-8 section ids
+-- Graph expansion (step 5); :seeds = fused top-8 section ids.
+-- Sketch only: the ordering and the cap of 4 are applied in GraphExpander (definitions first).
 SELECT DISTINCT e.to_section_id AS section_id, e.kind
 FROM section_edge e
 JOIN law_section s ON s.id = e.to_section_id AND s.is_current
@@ -749,7 +750,7 @@ Every table: **contract text = No**.
 | Table | Columns |
 | --- | --- |
 | `law_act` (V1 + V4) | V1: `id`, `code` unique, `title_en`, `title_bn`, `year`, `jurisdiction`, `source_url`, `fetched_at`. V4: `authoritative_lang` (`bn`, `en`), `status` (`IN_FORCE`, `REPEALED`), `source_sha256`, `ratification_status` (ILO acts: text as published by NORMLEX, else null) |
-| `law_section` (V1 + V2 + V4) | V1: `id`, `act_id`, `section_no`, headings and texts in both languages, `version_label`, `effective_from`, `is_current`, `source_url`, `embedding vector(1024)`, `search_tsv`. V2 (P1): `content_hash char(64)`, `parser_version text`. V4 (P3): `section_no_original` (Bangla form), `chapter`, `parent_section_id`, `fetched_at not null`, `normalised_text` with a GIN `tsvector` index, `section_key text not null unique` (a stored column written by the ingestor from the act code, Latin section number and version label, with a `CHECK` on the api.md §5.4 pattern; a generated column cannot read `law_act.code`); `amendment_notes jsonb not null default '[]'` keeps the footnote text and kind the parser read for the version (ADR-0011); sub-sections are not stored as rows, `parent_section_id` stays unused in P3 |
+| `law_section` (V1 + V2 + V4 + V5) | V1: `id`, `act_id`, `section_no`, headings and texts in both languages, `version_label`, `effective_from`, `is_current`, `source_url`, `embedding vector(1024)`, `search_tsv`. V2 (P1): `content_hash char(64)`, `parser_version text`. V4 (P3): `section_no_original` (Bangla form), `chapter`, `parent_section_id`, `fetched_at not null`, `normalised_text` with a GIN `tsvector` index, `section_key text not null unique` (a stored column written by the ingestor from the act code, Latin section number and version label, with a `CHECK` on the api.md §5.4 pattern; a generated column cannot read `law_act.code`); `amendment_notes jsonb not null default '[]'` keeps the footnote text and kind the parser read for the version (ADR-0011); sub-sections are not stored as rows, `parent_section_id` stays unused in P3. V5 (P4): `embedded_hash char(64)` (the `content_hash` the stored embedding was computed from), `embedded_model text`, `embedding_truncated boolean not null default false`; a section is re-embedded when its hash or the model changes (ADR-0012) |
 | `section_edge` (V1 + V4) | V1: `from_section_id`, `to_section_id`, `kind`. V4: kind adds `ALIGNS_WITH`; `reviewed boolean default false`; `reviewed_by text`; `source` (`PARSER`, `MAPPING`) |
 | `law_term` (V4) | `id`, `section_id`, `kind` (`DEFINED_TERM`, `WORKER_CATEGORY`), `code`, `term_bn`, `term_en`; unique (`kind`, `code`) |
 | `corpus_release` (V4) | `id`, `label` unique (`YYYY.MM.DD-n`), `sha256`, `act_count`, `section_count`, `created_at` |

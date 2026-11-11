@@ -15,7 +15,7 @@ This page is the index for the team and for the submission form's "Prompt Librar
 
 | Prompt | Model role | Model | Purpose | Eval set and metrics | Status |
 | --- | --- | --- | --- | --- | --- |
-| `query-rewrite` | FAST | Claude Haiku 5.5 | 1 to 3 short legal search queries in Bangla and English per redacted clause or failed finding (never for free-text law search) | `retrieval`: M-15 | Planned (P4) |
+| `query-rewrite` | FAST | Claude Haiku 5.5 | 1 to 3 short legal search queries in Bangla and English per redacted clause or failed finding (never for free-text law search) | `retrieval`: M-15 | Experimental v1 (P4); lock after its dev-split report |
 | `pii-extract` | LOCAL_PII | qwen2.5:7b-instruct (local) | Persons, organisations, addresses and employee IDs in a text chunk | `pii`: M-25 | Planned (P5) |
 | `clause-segment` | FAST | Claude Haiku 5.5 | Fallback segmentation for unnumbered text | `contracts`: M-23 | Planned (P5) |
 | `clause-classify` | FAST | Claude Haiku 5.5 | Document-type gate; clause type with confidence | `contracts`: M-23 | Planned (P5) |
