@@ -29,6 +29,13 @@ public final class ClauseClassifier {
   static final String PROMPT = "clause-classify";
   static final int BATCHES = 2;
 
+  /**
+   * At most this many clauses per call, so the answer (about 49 tokens per clause) fits the
+   * prompt's output cap of 700 tokens whatever the size of the document (ADR-0019, {@code
+   * PromptAnswerBoundAuditTest}). A document of up to 20 clauses is still sent in two batches.
+   */
+  static final int MAX_PER_BATCH = 10;
+
   /** The classified clauses and what the model recorded about the call. */
   public record Result(List<Clause> clauses, String promptId, int promptVersion, String modelId) {}
 
@@ -92,10 +99,13 @@ public final class ClauseClassifier {
     return new Result(out, first.promptId(), first.promptVersion(), first.modelId());
   }
 
-  /** Two roughly equal batches in document order (one if there are fewer than two clauses). */
+  /**
+   * Two roughly equal batches in document order (one if there are fewer than two clauses), or more
+   * batches of {@link #MAX_PER_BATCH} clauses for a long document.
+   */
   static List<List<Clause>> batches(List<Clause> clauses) {
     List<List<Clause>> out = new ArrayList<>();
-    int size = (clauses.size() + BATCHES - 1) / BATCHES;
+    int size = Math.min(MAX_PER_BATCH, (clauses.size() + BATCHES - 1) / BATCHES);
     for (int from = 0; from < clauses.size(); from += Math.max(1, size)) {
       out.add(clauses.subList(from, Math.min(clauses.size(), from + Math.max(1, size))));
     }

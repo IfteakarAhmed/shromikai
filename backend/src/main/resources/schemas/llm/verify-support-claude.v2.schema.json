@@ -1,0 +1,30 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:shromikai:schema:llm:verify-support-claude:2",
+  "title": "verify-support-claude output",
+  "type": "object",
+  "properties": {
+    "label": {
+      "type": "string",
+      "enum": [
+        "SUPPORTS",
+        "PARTIAL",
+        "CONTRADICTS",
+        "UNRELATED"
+      ]
+    },
+    "confidence": {
+      "type": "number"
+    },
+    "reason": {
+      "type": "string",
+      "maxLength": 200
+    }
+  },
+  "required": [
+    "label",
+    "confidence",
+    "reason"
+  ],
+  "additionalProperties": false
+}

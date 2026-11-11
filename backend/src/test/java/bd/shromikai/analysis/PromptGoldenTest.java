@@ -152,6 +152,23 @@ class PromptGoldenTest {
         .isEqualTo(500);
   }
 
+  @ParameterizedTest
+  @ValueSource(strings = {"risk-citation-repair", "verify-support", "verify-support-claude"})
+  void shouldRenderTheGoldenPromptOfV2(String id) {
+    Prompt prompt = registry.get(id, 2);
+    PromptRenderer.Rendered rendered = renderer.render(prompt, inputs(id));
+    String actual =
+        "<system>\n"
+            + rendered.system()
+            + "\n</system>\n<user>\n"
+            + rendered.user().reveal()
+            + "\n</user>\n";
+
+    assertThat(actual).isEqualTo(Golden.expect("prompts/" + id + ".v2.txt", actual));
+    assertThat(registry.latest(id).version()).isEqualTo(2);
+    assertThat(prompt.maxOutputTokens()).isEqualTo(id.equals("risk-citation-repair") ? 600 : 250);
+  }
+
   @Test
   void shouldKeepTheSeverityRubricInV2AndTheBoundsInItsText() {
     String system = registry.get("risk-analysis", 2).system();

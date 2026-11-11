@@ -14,11 +14,12 @@ import org.junit.jupiter.api.Test;
 /**
  * The P6 prompts (and their output schemas) are frozen at the checkpoint before the live model
  * calls, 2026-11-11; {@code risk-analysis} v2 and {@code counter-offer} v2 were frozen the same day
- * after live runs showed the v1 caps failing (ADR-0016, ADR-0017). A recorded fixture stores the
- * hash of the request rendered from a prompt, and money was spent recording it, so a silent edit
- * would invalidate it (R-05). Changing a frozen file needs a new prompt version, an update of this
- * table with the reason, and a new recording. The same hashes are in {@code prompts/LOCK}, which
- * {@code promptLint} checks.
+ * after live runs showed the v1 caps failing (ADR-0016, ADR-0017), and {@code
+ * risk-citation-repair}, {@code verify-support} and {@code verify-support-claude} v2 after the
+ * answer-size audit (ADR-0019). A recorded fixture stores the hash of the request rendered from a
+ * prompt, and money was spent recording it, so a silent edit would invalidate it (R-05). Changing a
+ * frozen file needs a new prompt version, an update of this table with the reason, and a new
+ * recording. The same hashes are in {@code prompts/LOCK}, which {@code promptLint} checks.
  */
 @Tag("unit")
 @Requirement("FR-37")
@@ -55,6 +56,21 @@ class PromptFreezeTest {
               1,
               "c87a8a6a7147cf1cbe70b91c2456e942c1b93f25a81a7326f988fe7ea574443e",
               "ec2f64f55b0dc63a2129ad8ff9bd770682cad24f2e715634f7cc19c406826c45"),
+          new Frozen(
+              "risk-citation-repair",
+              2,
+              "0e1cf3c7ad6524c1f72b1a7631e9532c5f8f59522ef3fe7c99abe057c21f68b3",
+              "88c9ae38786c7debfa83c1eba4eb06b9d0300febbffaac84cc424427914733f2"),
+          new Frozen(
+              "verify-support",
+              2,
+              "ca00ae276f855512e71772663df079857deefaf13d3dac7e42908636ca0beac0",
+              "8b24e5df073a47ffcf144051bfd0b101e41cee89f13a31ecac9731d3b567a84a"),
+          new Frozen(
+              "verify-support-claude",
+              2,
+              "dca7605ef642ad3b6b4847c91949e176cae7721f7831d9230fdd58688822959d",
+              "3c455230f9421f1667735ad09ac66c87af99f1cc5c3a3ec9b611cd58a4fbf280"),
           new Frozen(
               "counter-offer",
               1,

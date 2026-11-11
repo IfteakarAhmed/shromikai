@@ -52,26 +52,26 @@ class LiveContractIT extends LiveBase {
     Run.purpose = "record:" + CONTRACT;
     Run.caseId = CONTRACT + "-worker";
     Run.maxCalls = 40;
-    // Replay everything already recorded; go live only for CORRECT (repair, its verification) and
-    // the counter-offers. A call that a recording should have answered but did not (the prompt or
-    // the input changed) is a live call of a prompt with limit 0 and stops the run at once. The
-    // limits equal the number of calls expected, so a gateway repair would be one call too many.
+    // Replay everything already recorded; go live only for the verifier (its prompt has a new
+    // version, ADR-0019), CORRECT (repair, its verification) and the counter-offers. A call that a
+    // recording should have answered but did not (the prompt or
+    // the input changed) is a live call of a prompt with limit 0 and stops the run at once.
     Run.perPromptLimits =
         java.util.Map.of(
             "clause-classify", 0,
             "clause-facts", 0,
             "query-rewrite", 0,
             "risk-analysis", 0,
-            "risk-citation-repair", 2,
-            "verify-support-claude", 4,
-            "counter-offer", 9);
+            "risk-citation-repair", 4,
+            "verify-support-claude", 30,
+            "counter-offer", 11);
     Run.contractPrefix = "record:" + CONTRACT;
-    // An extra US$0.40 for this run, and never more than US$1.20 for the contract in total.
+    // An extra US$0.20 for this run, and never more than US$1.20 for the contract in total.
     Run.contractCapMicros =
         Math.min(
             1_200_000,
             new bd.shromikai.testsupport.live.LiveSpendLedger().spentOn("record:" + CONTRACT)
-                + 400_000);
+                + 200_000);
     Run.record = true;
     Run.localPiiStandInFor = CONTRACT;
   }

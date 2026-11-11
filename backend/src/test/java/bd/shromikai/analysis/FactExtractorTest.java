@@ -191,4 +191,84 @@ class FactExtractorTest {
     assertThat(log.getFirst().user().reveal()).contains("[PERSON_1]");
     assertThat(log.getFirst().promptId()).isEqualTo("clause-facts");
   }
+
+  @Test
+  void shouldSendAtMostFourClausesPerCallWhateverTheLengthOfTheDocument() {
+    List<Clause> clauses = new ArrayList<>();
+    for (int i = 1; i <= 30; i++) {
+      clauses.add(clause("c" + i, ClauseType.OTHER, "Clause number " + i + " text."));
+    }
+
+    extractor.extract(session(Map.of()), Stage.RULES, clauses);
+
+    assertThat(log).hasSize(8);
+    assertThat(FactExtractor.batches(clauses)).allMatch(b -> b.size() <= 4);
+  }
+
+  @Test
+  void shouldSplitABatchThatStopsAtTheCapAndKeepTheFactsOfTheOtherClauses() {
+    ModelSession session =
+        AnalysisFixtures.session(
+            AnalysisFixtures.gateway(
+                request -> {
+                  String user = request.user().reveal();
+                  if (user.contains("\"id\":\"c1\"") && user.contains("\"id\":\"c2\"")) {
+                    throw new bd.shromikai.shared.ai.ModelOutputInvalidException(
+                        "anthropic-max-tokens",
+                        new bd.shromikai.shared.ai.TokenUsage(100, 600, 0, 0));
+                  }
+                  ObjectNode out = TestGateways.MAPPER.createObjectNode();
+                  out.put("status", "OK").put("reason", "NONE");
+                  ArrayNode clauses = out.putArray("clauses");
+                  for (int i = 1; i <= 6; i++) {
+                    if (user.contains("\"id\":\"c" + i + "\"")) {
+                      clauses
+                          .addObject()
+                          .put("id", "c" + i)
+                          .putArray("facts")
+                          .addObject()
+                          .put("parameter", "WEEKLY_REST_DAYS")
+                          .put("value", 1.0)
+                          .put("unit", "COUNT")
+                          .put("confidence", 0.9);
+                    }
+                  }
+                  return out;
+                },
+                log));
+    List<Clause> six = new ArrayList<>();
+    for (int i = 1; i <= 6; i++) {
+      six.add(clause("c" + i, ClauseType.OTHER, "One rest day a week."));
+    }
+
+    Map<String, List<ClauseFact>> facts = extractor.extract(session, Stage.RULES, six);
+
+    assertThat(log).as("three batches of two, the first cut and read again as two").hasSize(5);
+    for (int i = 1; i <= 6; i++) {
+      assertThat(facts.get("c" + i)).as("c" + i).hasSize(1);
+    }
+  }
+
+  @Test
+  void shouldGiveNoFactsForASingleClauseThatStillStopsAtTheCap_butNeverForAProposalRecheck() {
+    ModelSession session =
+        AnalysisFixtures.session(
+            AnalysisFixtures.gateway(
+                request -> {
+                  throw new bd.shromikai.shared.ai.ModelOutputInvalidException(
+                      "anthropic-max-tokens",
+                      new bd.shromikai.shared.ai.TokenUsage(100, 600, 0, 0));
+                },
+                log));
+
+    Map<String, List<ClauseFact>> facts =
+        extractor.extract(
+            session, Stage.RULES, List.of(clause("c1", ClauseType.OTHER, "Many facts.")));
+
+    assertThat(facts.get("c1")).isEmpty();
+    org.assertj.core.api.Assertions.assertThatThrownBy(
+            () -> extractor.extractOne(session, Stage.COMPOSE, "p1", "A proposal."))
+        .as("a counter-offer re-check must not pass because facts are missing")
+        .isInstanceOf(bd.shromikai.shared.ai.ModelOutputInvalidException.class);
+  }
 }

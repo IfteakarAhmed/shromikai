@@ -1,9 +1,9 @@
-# `verify-support-claude` (v1, experimental)
+# `verify-support-claude` (v2, experimental)
 
 | | |
 | --- | --- |
-| Runtime file | `backend/src/main/resources/prompts/verify-support-claude/v1.md` |
-| Output schema | `backend/src/main/resources/schemas/llm/verify-support-claude.v1.schema.json` |
+| Runtime file | `backend/src/main/resources/prompts/verify-support-claude/v1.md` (v1), `backend/src/main/resources/prompts/verify-support-claude/v2.md` (v2, latest) |
+| Output schema | `backend/src/main/resources/schemas/llm/verify-support-claude.v1.schema.json` (v1), `backend/src/main/resources/schemas/llm/verify-support-claude.v2.schema.json` (v2, latest) |
 | Role | `VERIFIER_FALLBACK` (Claude Haiku, effort low) |
 | Phase | P6 (FR-44, FR-45) |
 | Eval | set `citations`, metrics M-04, M-05 |
@@ -34,3 +34,4 @@ The system prompt declares the claim and quote untrusted and forbids using any l
 ## Changelog
 
 - v1 (2026-11-11): initial version; status `experimental` until its report on the `citations` set is attached.
+- v2 (2026-11-11): the one-sentence reason of at most 200 characters is now a schema limit and the output cap is 250 tokens (was 150), so the largest allowed answer (about 182 tokens at measured rates) fits; wording unchanged. v1 is kept as it was (ADR-0019).

@@ -4,6 +4,7 @@ import bd.shromikai.rules.ClauseFact;
 import bd.shromikai.rules.FactParameter;
 import bd.shromikai.rules.Unit;
 import bd.shromikai.shared.ai.ModelGateway;
+import bd.shromikai.shared.ai.ModelOutputInvalidException;
 import com.fasterxml.jackson.databind.JsonNode;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -26,6 +27,14 @@ public final class FactExtractor {
 
   static final String PROMPT = "clause-facts";
   static final int BATCHES = 3;
+
+  /**
+   * At most this many clauses per call. The schema does not bound the facts per clause (a clause
+   * can state several), so a batch can still stop at the output cap; {@link #extractTolerant} then
+   * splits it (ADR-0019).
+   */
+  static final int MAX_PER_BATCH = 4;
+
   static final double DISAGREEMENT_PENALTY = 0.3;
 
   private final ExecutorService executor = Executors.newVirtualThreadPerTaskExecutor();
@@ -36,7 +45,7 @@ public final class FactExtractor {
     List<List<Clause>> batches = batches(clauses);
     List<Future<Map<String, List<ClauseFact>>>> futures = new ArrayList<>();
     for (List<Clause> batch : batches) {
-      futures.add(executor.submit(() -> extractBatch(session, stage, batch)));
+      futures.add(executor.submit(() -> extractTolerant(session, stage, batch)));
     }
     Map<String, List<ClauseFact>> out = new LinkedHashMap<>();
     try {
@@ -76,6 +85,31 @@ public final class FactExtractor {
                     ClauseType.OTHER,
                     1.0)))
         .getOrDefault(id, List.of());
+  }
+
+  /**
+   * Reads a batch; if the answer stops at the output cap the batch is split in two and each half is
+   * read again (the usage of the cut call is already counted). A single clause that still stops at
+   * the cap yields no facts: its rules then cannot be evaluated, but the analysis goes on and the
+   * risk agent still reads the clause. Other failures are thrown.
+   */
+  private Map<String, List<ClauseFact>> extractTolerant(
+      ModelSession session, Stage stage, List<Clause> batch) {
+    try {
+      return extractBatch(session, stage, batch);
+    } catch (ModelOutputInvalidException e) {
+      if (!e.stoppedAtCap()) {
+        throw e;
+      }
+      if (batch.size() < 2) {
+        return Map.of();
+      }
+      int half = batch.size() / 2;
+      Map<String, List<ClauseFact>> merged = new HashMap<>();
+      merged.putAll(extractTolerant(session, stage, batch.subList(0, half)));
+      merged.putAll(extractTolerant(session, stage, batch.subList(half, batch.size())));
+      return merged;
+    }
   }
 
   private Map<String, List<ClauseFact>> extractBatch(
@@ -132,13 +166,13 @@ public final class FactExtractor {
     return new ClauseFact(parameter, value, unit, confidence, agrees);
   }
 
-  /** Up to three contiguous batches of roughly equal size. */
+  /** Three contiguous batches of roughly equal size, or batches of {@link #MAX_PER_BATCH}. */
   static List<List<Clause>> batches(List<Clause> clauses) {
     List<List<Clause>> out = new ArrayList<>();
     if (clauses.isEmpty()) {
       return out;
     }
-    int size = (clauses.size() + BATCHES - 1) / BATCHES;
+    int size = Math.min(MAX_PER_BATCH, (clauses.size() + BATCHES - 1) / BATCHES);
     for (int from = 0; from < clauses.size(); from += size) {
       out.add(clauses.subList(from, Math.min(clauses.size(), from + size)));
     }
