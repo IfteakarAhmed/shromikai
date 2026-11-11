@@ -21,7 +21,7 @@ import org.junit.jupiter.api.extension.RegisterExtension;
 /** FR-55: the Gotenberg contract, retries on 5xx, and renderer-unavailable when it is down. */
 @Tag("it")
 @Requirement("FR-55")
-class GotenbergClientTest {
+class GotenbergClientIT {
 
   private static final String PATH = "/forms/chromium/convert/html";
 
