@@ -13,8 +13,8 @@ import org.springframework.web.bind.annotation.RestController;
 
 /**
  * Stand-ins for endpoints that later phases add (analyses P6, playbooks and admin P7, review items
- * P7, laws P3), so the access matrix of api.md §2 can be tested now. A real controller replaces its
- * probe path when its phase lands.
+ * P7), so the access matrix of api.md §2 can be tested now. A real controller replaces its probe
+ * path when its phase lands.
  */
 @Hidden
 @Profile("test")
@@ -33,7 +33,6 @@ class AccessProbeController {
         "/api/v1/dev/probe",
         "/api/v1/playbooks",
         "/api/v1/review-items",
-        "/api/v1/laws",
         "/api/v1/compare/probe"
       },
       method = {RequestMethod.GET, RequestMethod.POST})
