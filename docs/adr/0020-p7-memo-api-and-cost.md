@@ -47,3 +47,15 @@ no live call was made and no number below is a measurement of a live answer.
 8. **Memo module takes its own input records** (`MemoInput`), so it does not depend on `analysis`
    (AGENTS.md §4 matrix is unchanged). The composer refuses a finding that carries citation IDs
    without being `VERIFIED`.
+9. **The 30 minutes run from completion (FR-54).** `JobStore` expired jobs 30 minutes after
+   creation (P5 behaviour); a long analysis therefore lost up to 150 s of its life. Expiry is now
+   30 minutes after `completedAt`, or after creation for a job that never completes (bounded by the
+   150 s hard timeout). `JobStoreTest` and `AnalysisResultsTest` (controllable clock) cover 29 and
+   31 minutes. The store also keeps `id → owner key` of expired or deleted jobs (at most 10,000,
+   no contract data) so the owner gets `410 analysis-expired` and every other subject `404`.
+10. **The envelope key is derived when none is set.** `shromikai.memo.envelope-key` (env
+    `ENVELOPE_KEY`) is used if present; otherwise the key is HMAC-SHA256(JWT secret,
+    "shromikai-envelope-key-v1"), so a deployment needs no extra secret. The MAC covers the RFC 8785
+    canonical payload, the key ID and the expiry. Numbers are canonicalised as shortest plain
+    decimals, which equals the RFC form for the integers and values like 0.8 the result holds; a
+    payload with exponent-form doubles is not supported (documented limit).

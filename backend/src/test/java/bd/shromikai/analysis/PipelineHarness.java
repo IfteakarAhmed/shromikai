@@ -58,7 +58,8 @@ final class PipelineHarness {
           Clock.systemUTC(),
           properties().budget().dailyUsdMicros());
   final AnalysisTraceStore traces = mock(AnalysisTraceStore.class);
-  final JobStore jobs = new JobStore(Clock.systemUTC());
+  final JobStore jobs;
+  final Clock clock;
   final AnalysisPipeline pipeline;
 
   /** Answers a prompt; {@code null} falls through to the default answer. */
@@ -71,6 +72,17 @@ final class PipelineHarness {
       AnalysisFixtures.StubSource source,
       List<Rule> activeRules,
       AnalysisProperties properties) {
+    this(overrides, source, activeRules, properties, Clock.systemUTC());
+  }
+
+  PipelineHarness(
+      Answers overrides,
+      AnalysisFixtures.StubSource source,
+      List<Rule> activeRules,
+      AnalysisProperties properties,
+      Clock clock) {
+    this.clock = clock;
+    this.jobs = new JobStore(clock);
     this.source = source;
     Function<ChatRequest, JsonNode> answers =
         request -> {
@@ -115,7 +127,7 @@ final class PipelineHarness {
             traces,
             properties,
             dailyBudget,
-            Clock.systemUTC());
+            clock);
   }
 
   static AnalysisProperties properties() {

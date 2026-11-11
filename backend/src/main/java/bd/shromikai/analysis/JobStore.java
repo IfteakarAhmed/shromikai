@@ -16,8 +16,9 @@ import org.springframework.stereotype.Component;
 
 /**
  * The in-memory job store (architecture §10.1): a job, with its placeholder map and redacted
- * clauses, lives at most 30 minutes and is purged on expiry or delete. Nothing is written to disk
- * or the database (R-02).
+ * clauses, lives at most 30 minutes <em>after it completes</em> (FR-54), or 30 minutes after it was
+ * created if it never completes, and is purged on expiry or delete. Nothing is written to disk or
+ * the database (R-02).
  */
 @Component
 public final class JobStore {
@@ -25,6 +26,17 @@ public final class JobStore {
   public static final Duration TTL = Duration.ofMinutes(30);
 
   private final Map<UUID, AnalysisJob> jobs = new ConcurrentHashMap<>();
+
+  /** IDs of expired or deleted jobs with their owner key, so the owner gets 410, others 404. */
+  private final Map<UUID, String> gone =
+      java.util.Collections.synchronizedMap(
+          new java.util.LinkedHashMap<>() {
+            @Override
+            protected boolean removeEldestEntry(Map.Entry<UUID, String> eldest) {
+              return size() > 10_000;
+            }
+          });
+
   private final Clock clock;
   private final int maxJobs;
 
@@ -46,7 +58,7 @@ public final class JobStore {
         throw new ProblemException(
             ProblemType.CAPACITY_EXHAUSTED, "Too many analyses are running. Try again shortly.");
       }
-      AnalysisJob job = new AnalysisJob(UUID.randomUUID(), clock.instant());
+      AnalysisJob job = new AnalysisJob(UUID.randomUUID(), clock.instant(), clock);
       jobs.put(job.id(), job);
       return job;
     }
@@ -61,9 +73,22 @@ public final class JobStore {
   public boolean delete(UUID id) {
     AnalysisJob job = jobs.remove(id);
     if (job != null) {
+      remember(job);
       job.purge();
     }
     return job != null;
+  }
+
+  /** True when the job existed, belonged to this subject and has expired or been deleted. */
+  public boolean wasOwnedBy(UUID id, AnalysisSubject subject) {
+    return subject.key().equals(gone.get(id));
+  }
+
+  private void remember(AnalysisJob job) {
+    AnalysisSubject owner = job.owner();
+    if (owner != null) {
+      gone.put(job.id(), owner.key());
+    }
   }
 
   public int size() {
@@ -79,7 +104,9 @@ public final class JobStore {
     jobs.values()
         .removeIf(
             job -> {
-              if (job.createdAt().isBefore(cutoff)) {
+              Instant since = job.completedAt() != null ? job.completedAt() : job.createdAt();
+              if (since.isBefore(cutoff)) {
+                remember(job);
                 job.purge();
                 return true;
               }

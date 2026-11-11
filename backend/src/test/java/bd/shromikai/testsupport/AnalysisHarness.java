@@ -49,6 +49,18 @@ public final class AnalysisHarness {
             new ClauseSegmenter(gateway),
             new ClauseClassifier(gateway),
             jobs,
+            new bd.shromikai.analysis.AnalysisResults(
+                jobs,
+                new bd.shromikai.memo.MemoComposer(TestGateways.MAPPER),
+                new bd.shromikai.verify.SignedResultCodec(
+                    "harness-envelope-key-0123456789abcdefgh"
+                        .getBytes(java.nio.charset.StandardCharsets.UTF_8),
+                    "k1",
+                    java.time.Duration.ofHours(24),
+                    Clock.systemUTC()),
+                TestGateways.MAPPER,
+                Clock.systemUTC(),
+                new org.springframework.mock.env.MockEnvironment()),
             Clock.systemUTC());
   }
 

@@ -139,6 +139,10 @@ shromikai:
     per-analysis-usd: 1.00                # budget-exceeded above this (architecture §5.3)
     per-analysis-tokens: 400000           # total input + output tokens of one analysis
     daily-usd: 50                         # all analyses of one Dhaka day; budget-exceeded above it (FR-62)
+  memo:
+    envelope-key: ${ENVELOPE_KEY:}       # blank: derived from JWT_SECRET (SignedResultCodec)
+    key-id: k1
+    envelope-ttl: 24h                    # how long a signed result can be rendered as a memo (FR-55)
   privacy:
     store-contracts: false                # startup fails if true (R-02)
     redact-money: false                   # ADR-0003

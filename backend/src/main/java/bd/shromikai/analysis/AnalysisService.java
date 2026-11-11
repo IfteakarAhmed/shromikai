@@ -40,6 +40,7 @@ public class AnalysisService {
   private final ClauseSegmenter segmenter;
   private final ClauseClassifier classifier;
   private final JobStore jobs;
+  private final AnalysisResults results;
   private final Clock clock;
 
   public AnalysisService(
@@ -48,13 +49,25 @@ public class AnalysisService {
       ClauseSegmenter segmenter,
       ClauseClassifier classifier,
       JobStore jobs,
+      AnalysisResults results,
       Clock clock) {
     this.intake = intake;
     this.shield = shield;
     this.segmenter = segmenter;
     this.classifier = classifier;
     this.jobs = jobs;
+    this.results = results;
     this.clock = clock;
+  }
+
+  /**
+   * The signed result for the owning subject, with placeholder names restored (FR-54, FR-55,
+   * architecture §10.4). The one entry point that re-identifies; the {@code api} module calls this
+   * and never {@code privacy}.
+   */
+  public com.fasterxml.jackson.databind.node.ObjectNode resultFor(
+      java.util.UUID id, AnalysisSubject subject) {
+    return results.resultFor(id, subject);
   }
 
   /** Analyses uploaded files (one PDF, images, or a text file). */

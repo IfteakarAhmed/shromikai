@@ -72,4 +72,31 @@ class JobStoreTest {
     assertThat(store.create()).isNotNull();
     assertThat(store.size()).isEqualTo(1);
   }
+
+  /** FR-54: the 30 minutes run from completion, not from creation. */
+  @Test
+  void aCompletedJobLivesThirtyMinutesFromCompletionNotFromCreation() {
+    var clock = new MutableClock();
+    var store = new JobStore(clock, 10);
+    AnalysisJob job = store.create();
+    clock.advance(Duration.ofMinutes(20)); // a long run
+    job.fail(new ProblemException(ProblemType.ANALYSIS_TIMEOUT)); // completes at +20
+
+    clock.advance(Duration.ofMinutes(29)); // 49 minutes after creation, 29 after completion
+    assertThat(store.find(job.id())).isPresent();
+
+    clock.advance(Duration.ofMinutes(2)); // 31 after completion
+    assertThat(store.find(job.id())).isEmpty();
+  }
+
+  @Test
+  void aJobThatNeverCompletesStillExpiresThirtyMinutesAfterCreation() {
+    var clock = new MutableClock();
+    var store = new JobStore(clock, 10);
+    AnalysisJob job = store.create();
+
+    clock.advance(Duration.ofMinutes(31));
+
+    assertThat(store.find(job.id())).isEmpty();
+  }
 }

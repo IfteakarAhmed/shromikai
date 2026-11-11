@@ -140,6 +140,7 @@ public class AnalysisPipeline {
     if (job.status() != AnalysisJob.Status.CLASSIFIED) {
       throw new IllegalStateException("The job has not finished CLASSIFY");
     }
+    job.owner(subject, request);
     long started = clock.millis();
     String release = law.corpusRelease();
     runs.start(job, request, subject, PIPELINE_VERSION, release);

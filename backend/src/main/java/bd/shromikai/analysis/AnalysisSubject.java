@@ -10,6 +10,11 @@ import org.jspecify.annotations.Nullable;
  */
 public record AnalysisSubject(String kind, String hash, @Nullable UUID orgId, String clientKind) {
 
+  /** Identity for access checks: two requests are the same subject only when both parts match. */
+  public String key() {
+    return kind + ":" + hash;
+  }
+
   public static AnalysisSubject dev() {
     return new AnalysisSubject("USER", Hashing.sha256Hex("dev"), null, "DESKTOP_WEB");
   }

@@ -2,6 +2,7 @@ package bd.shromikai.analysis;
 
 import bd.shromikai.privacy.PlaceholderMap;
 import bd.shromikai.shared.problem.ProblemException;
+import java.time.Clock;
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -62,6 +63,10 @@ public final class AnalysisJob {
 
   private final UUID id;
   private final Instant createdAt;
+  private final Clock clock;
+  private volatile @Nullable Instant completedAt;
+  private volatile @Nullable AnalysisSubject owner;
+  private volatile @Nullable AnalysisRequest request;
   private final PlaceholderMap placeholders;
   private final List<TraceEvent> trace = Collections.synchronizedList(new ArrayList<>());
   private volatile Status status = Status.RUNNING;
@@ -73,9 +78,10 @@ public final class AnalysisJob {
   private volatile int pageCount = 1;
   private volatile @Nullable String language;
 
-  AnalysisJob(UUID id, Instant createdAt) {
+  AnalysisJob(UUID id, Instant createdAt, Clock clock) {
     this.id = id;
     this.createdAt = createdAt;
+    this.clock = clock;
     this.placeholders = new PlaceholderMap(id.toString());
   }
 
@@ -85,6 +91,25 @@ public final class AnalysisJob {
 
   public Instant createdAt() {
     return createdAt;
+  }
+
+  /** When the job finished or failed; {@code null} while it runs. */
+  public @Nullable Instant completedAt() {
+    return completedAt;
+  }
+
+  /** The subject that asked; only that subject may read the job (T-07). */
+  public @Nullable AnalysisSubject owner() {
+    return owner;
+  }
+
+  public @Nullable AnalysisRequest request() {
+    return request;
+  }
+
+  void owner(AnalysisSubject subject, AnalysisRequest asked) {
+    this.owner = subject;
+    this.request = asked;
   }
 
   /** The placeholder map; package-private so that only the analysis module touches it (§10.4). */
@@ -141,6 +166,7 @@ public final class AnalysisJob {
 
   void analysed(Outcome result) {
     this.outcome = result;
+    this.completedAt = clock.instant();
     this.status = Status.ANALYSED;
     this.stage = Stage.COMPLETE;
   }
@@ -160,6 +186,7 @@ public final class AnalysisJob {
 
   void fail(ProblemException problem) {
     this.failure = problem;
+    this.completedAt = clock.instant();
     this.status = Status.FAILED;
     this.clauses = List.of();
     this.outcome = null;
