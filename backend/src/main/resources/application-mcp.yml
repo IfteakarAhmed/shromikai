@@ -1,0 +1,22 @@
+# Profile mcp (ADR-0021): the MCP server at /mcp over Streamable HTTP, nothing else changes.
+spring:
+  ai:
+    mcp:
+      server:
+        enabled: true
+        name: shromikai
+        version: 0.1.0
+        type: SYNC
+        protocol: STREAMABLE
+        instructions: >-
+          ShromikAI answers questions about Bangladeshi employment law from its own verified
+          corpus. Use search_bd_law and get_law_section to find official text, and
+          verify_legal_citation before you repeat any citation. This is not legal advice
+          (এটা আইনি পরামর্শ নয়).
+        streamable-http:
+          mcp-endpoint: /mcp
+        capabilities:
+          tool: true
+          resource: true
+          prompt: true
+          completion: false

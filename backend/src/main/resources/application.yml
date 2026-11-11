@@ -42,6 +42,9 @@ spring:
   jackson:
     default-property-inclusion: always    # optional fields are present with null (api.md §1)
   ai:
+    mcp:
+      server:
+        enabled: false                    # only profile mcp turns the MCP server on (ADR-0021)
     retry:                                # Spring AI Ollama calls: at most 2 retries from 500 ms (AGENTS.md §6)
       max-attempts: 3
       on-client-errors: false
