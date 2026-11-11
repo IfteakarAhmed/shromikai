@@ -1,0 +1,22 @@
+{
+  "fixtureVersion" : 1,
+  "promptId" : "verify-support-claude",
+  "promptVersion" : 1,
+  "caseId" : "syn-en-02-worker",
+  "modelId" : "claude-haiku-5-5",
+  "requestSha256" : "65fc7c244d751fd533bc457073047afaa202326424d069182e0f91d1a8b51489",
+  "provenance" : "synthetic",
+  "source" : "recorded from a live call",
+  "recordedAt" : "2026-11-11T12:44:47.149068Z",
+  "stopReason" : "end_turn",
+  "usage" : {
+    "inputTokens" : 1162,
+    "outputTokens" : 64,
+    "cacheReadTokens" : 0
+  },
+  "response" : {
+    "label" : "SUPPORTS",
+    "confidence" : 0.93,
+    "reason" : "Section 26(3) lets the employer dismiss without notice by paying wages for the notice period, matching the claim."
+  }
+}

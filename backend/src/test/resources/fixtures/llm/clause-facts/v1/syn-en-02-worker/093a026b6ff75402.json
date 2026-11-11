@@ -1,0 +1,48 @@
+{
+  "fixtureVersion" : 1,
+  "promptId" : "clause-facts",
+  "promptVersion" : 1,
+  "caseId" : "syn-en-02-worker",
+  "modelId" : "claude-haiku-5-5",
+  "requestSha256" : "093a026b6ff75402d091ed6f532363ae3e90d10b207bf616f8380721833b242a",
+  "provenance" : "synthetic",
+  "source" : "recorded from a live call",
+  "recordedAt" : "2026-11-11T12:10:48.528192Z",
+  "usage" : {
+    "inputTokens" : 382,
+    "outputTokens" : 232,
+    "cacheReadTokens" : 2595
+  },
+  "response" : {
+    "status" : "OK",
+    "reason" : "NONE",
+    "clauses" : [ {
+      "id" : "c1",
+      "facts" : [ ]
+    }, {
+      "id" : "c2",
+      "facts" : [ ]
+    }, {
+      "id" : "c3",
+      "facts" : [ {
+        "parameter" : "BASIC_WAGE",
+        "value" : 11000,
+        "unit" : "BDT_PER_MONTH",
+        "confidence" : 0.9
+      } ]
+    }, {
+      "id" : "c4",
+      "facts" : [ {
+        "parameter" : "DAILY_WORKING_HOURS",
+        "value" : 12,
+        "unit" : "HOURS_PER_DAY",
+        "confidence" : 0.95
+      }, {
+        "parameter" : "WEEKLY_WORKING_HOURS",
+        "value" : 0,
+        "unit" : "HOURS_PER_WEEK",
+        "confidence" : 0.0
+      } ]
+    } ]
+  }
+}

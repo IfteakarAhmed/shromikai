@@ -1,0 +1,22 @@
+{
+  "fixtureVersion" : 1,
+  "promptId" : "verify-support-claude",
+  "promptVersion" : 1,
+  "caseId" : "syn-en-02-worker",
+  "modelId" : "claude-haiku-5-5",
+  "requestSha256" : "3d69b1e162ad3ed442e7a94592f03b226c682e3116e045732a683ad4e6bf12e5",
+  "provenance" : "synthetic",
+  "source" : "recorded from a live call",
+  "recordedAt" : "2026-11-11T12:44:48.573665Z",
+  "stopReason" : "end_turn",
+  "usage" : {
+    "inputTokens" : 1579,
+    "outputTokens" : 80,
+    "cacheReadTokens" : 982
+  },
+  "response" : {
+    "label" : "SUPPORTS",
+    "confidence" : 0.92,
+    "reason" : "Section 89(7) requires the employer at its own cost and responsibility to treat workers with occupational disease or accident injury until fully cured by a qualified doctor."
+  }
+}

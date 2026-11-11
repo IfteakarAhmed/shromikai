@@ -28,13 +28,13 @@ import org.springframework.test.context.DynamicPropertySource;
  */
 @ActiveProfiles("dev")
 @Import(LiveBase.Wrapping.class)
-abstract class LiveBase {
+public abstract class LiveBase {
 
   /** Directory the recorder writes fixtures to. */
-  static final Path FIXTURES = Path.of("src/test/resources/fixtures/llm");
+  public static final Path FIXTURES = Path.of("src/test/resources/fixtures/llm");
 
   @DynamicPropertySource
-  static void live(DynamicPropertyRegistry registry) {
+  public static void live(DynamicPropertyRegistry registry) {
     registry.add("shromikai.providers.anthropic.api-key", () -> LiveEnv.get("ANTHROPIC_API_KEY"));
     registry.add("shromikai.providers.gemini.api-key", () -> LiveEnv.get("GEMINI_API_KEY"));
     registry.add("shromikai.models.verifier", () -> LiveEnv.get("GEMINI_MODEL"));
@@ -58,22 +58,22 @@ abstract class LiveBase {
   }
 
   /** What a live run is called in the ledger and where it records. */
-  static final class Run {
-    static volatile String purpose = "live";
-    static volatile String caseId = "live";
-    static volatile int maxCalls = 3;
-    static volatile boolean record = false;
+  public static final class Run {
+    public static volatile String purpose = "live";
+    public static volatile String caseId = "live";
+    public static volatile int maxCalls = 3;
+    public static volatile boolean record = false;
 
     /** At most this many live calls of a prompt in one run (for example risk-analysis: 1). */
-    static volatile java.util.Map<String, Integer> perPromptLimits = java.util.Map.of();
+    public static volatile java.util.Map<String, Integer> perPromptLimits = java.util.Map.of();
 
     /** Ledger purpose prefix of the contract and its own cap (US$1.20 for the first recording). */
-    static volatile String contractPrefix = "live";
+    public static volatile String contractPrefix = "live";
 
-    static volatile long contractCapMicros = Long.MAX_VALUE;
+    public static volatile long contractCapMicros = Long.MAX_VALUE;
 
     /** The synthetic contract whose ground-truth entities stand in for the local PII model. */
-    static volatile String localPiiStandInFor = null;
+    public static volatile String localPiiStandInFor = null;
 
     private Run() {}
   }

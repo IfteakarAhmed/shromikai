@@ -1,0 +1,22 @@
+{
+  "fixtureVersion" : 1,
+  "promptId" : "verify-support-claude",
+  "promptVersion" : 1,
+  "caseId" : "syn-en-02-worker",
+  "modelId" : "claude-haiku-5-5",
+  "requestSha256" : "91ffa316fb8935c3bbe93665b8c283bf094014938be0850e39568d8d944293d7",
+  "provenance" : "synthetic",
+  "source" : "recorded from a live call",
+  "recordedAt" : "2026-11-11T12:44:47.024072Z",
+  "stopReason" : "end_turn",
+  "usage" : {
+    "inputTokens" : 516,
+    "outputTokens" : 70,
+    "cacheReadTokens" : 0
+  },
+  "response" : {
+    "label" : "PARTIAL",
+    "confidence" : 0.6,
+    "reason" : "Section confirms deductions under clause (ঙ) are subject to government-imposed conditions, but says nothing about excluding work tools."
+  }
+}

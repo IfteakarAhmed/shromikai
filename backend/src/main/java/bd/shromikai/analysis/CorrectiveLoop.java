@@ -55,7 +55,11 @@ public class CorrectiveLoop {
 
   /** Content-free record of what the loop did for one finding. */
   public record Correction(
-      String findingId, boolean repaired, int newSections, boolean abstained) {}
+      String findingId,
+      boolean repaired,
+      int newSections,
+      boolean abstained,
+      FindingVerifier.VerdictSummary verdict) {}
 
   public record Round(List<Finding> findings, List<Correction> corrections) {}
 
@@ -157,7 +161,7 @@ public class CorrectiveLoop {
     }
     JsonNode citations = output == null ? null : output.path("citations");
     if (citations == null || !"OK".equals(output.path("status").asText()) || citations.isEmpty()) {
-      return new Object[] {finding, new Correction(finding.id(), false, added.size(), true)};
+      return new Object[] {finding, new Correction(finding.id(), false, added.size(), true, null)};
     }
     JsonNode c = citations.get(0);
     ClaimedCitation repaired =
@@ -177,7 +181,13 @@ public class CorrectiveLoop {
       updated = finding.withClaims(List.of(repaired)).uncertain(reasons);
     }
     return new Object[] {
-      updated, new Correction(finding.id(), verdict.verified(), added.size(), false)
+      updated,
+      new Correction(
+          finding.id(),
+          verdict.verified(),
+          added.size(),
+          false,
+          FindingVerifier.VerdictSummary.of(finding.id(), verdict))
     };
   }
 }

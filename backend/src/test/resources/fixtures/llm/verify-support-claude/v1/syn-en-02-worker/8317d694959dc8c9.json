@@ -1,0 +1,22 @@
+{
+  "fixtureVersion" : 1,
+  "promptId" : "verify-support-claude",
+  "promptVersion" : 1,
+  "caseId" : "syn-en-02-worker",
+  "modelId" : "claude-haiku-5-5",
+  "requestSha256" : "8317d694959dc8c9c74f7793a6547b219f194ae2c6da0edf08150318e4d82abb",
+  "provenance" : "synthetic",
+  "source" : "recorded from a live call",
+  "recordedAt" : "2026-11-11T12:44:48.882338Z",
+  "stopReason" : "end_turn",
+  "usage" : {
+    "inputTokens" : 1796,
+    "outputTokens" : 72,
+    "cacheReadTokens" : 982
+  },
+  "response" : {
+    "label" : "PARTIAL",
+    "confidence" : 0.6,
+    "reason" : "Section 27(1) allows resignation by written notice to the employer, but says nothing explicit about permission not being required; the claim is partly supported."
+  }
+}

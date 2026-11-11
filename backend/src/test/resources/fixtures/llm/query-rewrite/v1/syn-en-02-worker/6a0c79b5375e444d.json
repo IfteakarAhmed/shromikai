@@ -1,0 +1,21 @@
+{
+  "fixtureVersion" : 1,
+  "promptId" : "query-rewrite",
+  "promptVersion" : 1,
+  "caseId" : "syn-en-02-worker",
+  "modelId" : "claude-haiku-5-5",
+  "requestSha256" : "6a0c79b5375e444d08bdcf79865a83eea11aa4b46bdeba8c3b4010894f70968a",
+  "provenance" : "synthetic",
+  "source" : "recorded from a live call",
+  "recordedAt" : "2026-11-11T12:10:48.897541Z",
+  "usage" : {
+    "inputTokens" : 80,
+    "outputTokens" : 106,
+    "cacheReadTokens" : 798
+  },
+  "response" : {
+    "status" : "OK",
+    "reason" : "NONE",
+    "queries" : [ "বেতন থেকে পোশাক ও সরঞ্জাম বাবদ কর্তন", "employee salary deductions for uniform and equipment costs", "মাসিক বেতন পরিশোধ ও কর্তনের শর্ত" ]
+  }
+}

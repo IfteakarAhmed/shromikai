@@ -1,0 +1,22 @@
+{
+  "fixtureVersion" : 1,
+  "promptId" : "verify-support-claude",
+  "promptVersion" : 1,
+  "caseId" : "syn-en-02-worker",
+  "modelId" : "claude-haiku-5-5",
+  "requestSha256" : "4aa686c9b6bb1f25342ff5fd527f152b971a2491ddeaa9cbe950d93deb5c33d4",
+  "provenance" : "synthetic",
+  "source" : "recorded from a live call",
+  "recordedAt" : "2026-11-11T12:44:58.675285Z",
+  "stopReason" : "end_turn",
+  "usage" : {
+    "inputTokens" : 2419,
+    "outputTokens" : 78,
+    "cacheReadTokens" : 982
+  },
+  "response" : {
+    "label" : "PARTIAL",
+    "confidence" : 0.8,
+    "reason" : "Section fixes 6 months for clerical and 3 months for others, and allows extension for skilled workers; the claim's extension conditions match the proviso in the section."
+  }
+}

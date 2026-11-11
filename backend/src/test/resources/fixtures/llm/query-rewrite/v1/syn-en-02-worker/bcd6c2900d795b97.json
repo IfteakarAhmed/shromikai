@@ -1,0 +1,21 @@
+{
+  "fixtureVersion" : 1,
+  "promptId" : "query-rewrite",
+  "promptVersion" : 1,
+  "caseId" : "syn-en-02-worker",
+  "modelId" : "claude-haiku-5-5",
+  "requestSha256" : "bcd6c2900d795b97450555365fe0563c0a224df205b17e8c338d7d9f8de599ca",
+  "provenance" : "synthetic",
+  "source" : "recorded from a live call",
+  "recordedAt" : "2026-11-11T12:10:48.925539Z",
+  "usage" : {
+    "inputTokens" : 182,
+    "outputTokens" : 116,
+    "cacheReadTokens" : 798
+  },
+  "response" : {
+    "status" : "OK",
+    "reason" : "NONE",
+    "queries" : [ "নিরাপত্তা প্রহরী নিয়োগের চুক্তি ও কর্মসংস্থানের শর্ত", "security guard employment contract terms Bangladesh", "চুক্তির পক্ষ ও চাকরির শুরুর তারিখ" ]
+  }
+}

@@ -1,0 +1,21 @@
+{
+  "fixtureVersion" : 1,
+  "promptId" : "query-rewrite",
+  "promptVersion" : 1,
+  "caseId" : "syn-en-02-worker",
+  "modelId" : "claude-haiku-5-5",
+  "requestSha256" : "e45b4aa86c3b167a828dafb446fed9eddfc97ddb37312221ca3314a605f7a635",
+  "provenance" : "synthetic",
+  "source" : "recorded from a live call",
+  "recordedAt" : "2026-11-11T12:10:48.693367Z",
+  "usage" : {
+    "inputTokens" : 60,
+    "outputTokens" : 131,
+    "cacheReadTokens" : 798
+  },
+  "response" : {
+    "status" : "OK",
+    "reason" : "NONE",
+    "queries" : [ "security guard employment terms and posting transfer rights Bangladesh", "চাকরির নিয়োগ ও কর্মস্থল বদলির শর্ত বাংলাদেশ", "নিরাপত্তা প্রহরীর নিয়োগপত্র ও কর্মস্থল পরিবর্তন" ]
+  }
+}

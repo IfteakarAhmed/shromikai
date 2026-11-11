@@ -117,6 +117,31 @@ public final class LiveSpendLedger {
     save(state);
   }
 
+  /** One recorded call. */
+  public record Entry(
+      String purpose, String modelId, long tokensIn, long tokensOut, long costMicros) {}
+
+  public synchronized int entryCount() {
+    return load().withArray("calls").size();
+  }
+
+  /** The calls recorded from position {@code index} on, for the cost of one run. */
+  public synchronized java.util.List<Entry> entriesFrom(int index) {
+    java.util.List<Entry> out = new java.util.ArrayList<>();
+    var calls = load().withArray("calls");
+    for (int i = index; i < calls.size(); i++) {
+      var c = calls.get(i);
+      out.add(
+          new Entry(
+              c.path("purpose").asText(),
+              c.path("modelId").asText(),
+              c.path("tokensIn").asLong(),
+              c.path("tokensOut").asLong(),
+              c.path("costMicros").asLong()));
+    }
+    return out;
+  }
+
   /** Spend recorded for one purpose (for example one analysis), in micro-dollars. */
   public synchronized long spentOn(String purposePrefix) {
     long sum = 0;

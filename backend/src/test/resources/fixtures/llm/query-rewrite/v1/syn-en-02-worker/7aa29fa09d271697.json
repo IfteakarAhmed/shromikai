@@ -1,0 +1,22 @@
+{
+  "fixtureVersion" : 1,
+  "promptId" : "query-rewrite",
+  "promptVersion" : 1,
+  "caseId" : "syn-en-02-worker",
+  "modelId" : "claude-haiku-5-5",
+  "requestSha256" : "7aa29fa09d271697a9fe63880134fc9e186f40540fb1c2ba7f62849e24c71d7b",
+  "provenance" : "synthetic",
+  "source" : "recorded from a live call",
+  "recordedAt" : "2026-11-11T12:44:51.665841Z",
+  "stopReason" : "end_turn",
+  "usage" : {
+    "inputTokens" : 140,
+    "outputTokens" : 120,
+    "cacheReadTokens" : 0
+  },
+  "response" : {
+    "status" : "OK",
+    "reason" : "NONE",
+    "queries" : [ "শ্রমিকের পদত্যাগ ও নোটিশ মেয়াদ", "resignation notice period and payment in lieu of notice Bangladesh labour law", "মালিকের লিখিত অনুমতি ছাড়া চাকরি ছাড়ার বিধান" ]
+  }
+}

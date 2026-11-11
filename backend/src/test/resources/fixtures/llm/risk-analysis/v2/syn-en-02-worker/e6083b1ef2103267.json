@@ -1,0 +1,72 @@
+{
+  "fixtureVersion" : 1,
+  "promptId" : "risk-analysis",
+  "promptVersion" : 2,
+  "caseId" : "syn-en-02-worker",
+  "modelId" : "claude-sonnet-5-5",
+  "requestSha256" : "e6083b1ef21032672ee1f6e1d653620368596c1dedfe72e2e5d88dd6599a864c",
+  "provenance" : "synthetic",
+  "source" : "recorded from a live call",
+  "recordedAt" : "2026-11-11T12:44:44.799863Z",
+  "stopReason" : "end_turn",
+  "usage" : {
+    "inputTokens" : 17492,
+    "outputTokens" : 1446,
+    "cacheReadTokens" : 0
+  },
+  "response" : {
+    "status" : "OK",
+    "reason" : "NONE",
+    "findings" : [ {
+      "title" : "দৈনিক ১২ ঘণ্টা কাজ ও অধিকাল ভাতা নেই",
+      "kind" : "CONFLICT",
+      "severity" : "CRITICAL",
+      "non_obvious" : false,
+      "clause_type" : "WORKING_HOURS",
+      "clause_ids" : [ "c4" ],
+      "explanation" : "চুক্তিতে দিনে ১২ ঘণ্টা কাজ এবং অতিরিক্ত বা রাতের কাজের জন্য কোনো ভাতা নেই। আইনে ৮ ঘণ্টা সীমা এবং অধিকাল কাজে দ্বিগুণ হারের ভাতা বাধ্যতামূলক।",
+      "citations" : [ {
+        "section_key" : "BLA-2006:100@original",
+        "quote" : "দৈনিক আট ঘণ্টার অধিক সময় কাজ করিবেন না",
+        "claim" : "প্রাপ্তবয়স্ক শ্রমিকের সাধারণ কর্মঘণ্টা দৈনিক আট ঘণ্টা।"
+      }, {
+        "section_key" : "BLA-2006:108@amend-2018",
+        "quote" : "তাহার মূল মজুরী ও মহার্ঘভাতা এবং এডহক বা অন্তবর্তী মজুরী, যদি থাকে, এর সাধারণ হারের দ্বিগুণ হারে ভাতা পাইবেন",
+        "claim" : "অধিকাল কাজের জন্য সাধারণ হারের দ্বিগুণ ভাতা প্রাপ্য।"
+      } ],
+      "confidence" : 0.95
+    }, {
+      "title" : "সাপ্তাহিক ও উৎসব ছুটি সম্পূর্ণ অস্বীকার",
+      "kind" : "CONFLICT",
+      "severity" : "CRITICAL",
+      "non_obvious" : false,
+      "clause_type" : "REST_AND_HOLIDAYS",
+      "clause_ids" : [ "c5", "c4" ],
+      "explanation" : "চুক্তিতে সাপ্তাহিক ছুটি ও উৎসব ছুটি নেই; মাসে ৩০ দিন কাজ। আইনে সাপ্তাহিক ছুটি ও ১৩ দিনের মজুরীসহ উৎসব ছুটি বাধ্যতামূলক।",
+      "citations" : [ {
+        "section_key" : "BLA-2006:103@amend-2018",
+        "quote" : "প্রতি সপ্তাহে কারখানা ও শিল্পের ক্ষেত্রে একদিন এবং দোকান ও প্রতিষ্ঠানের ক্ষেত্রে দেড় দিন ছুটি পাইবেন",
+        "claim" : "শ্রমিক প্রতি সপ্তাহে সাপ্তাহিক ছুটি পাইবেন।"
+      }, {
+        "section_key" : "BLA-2006:118@amend-2026",
+        "quote" : "প্রতি পঞ্জিকা বৎসরে [১৩ (তের)] দিনের মজুরীসহ উৎসব ছুটি মঞ্জুর করিতে হইবে",
+        "claim" : "প্রতি বছর ১৩ দিনের মজুরীসহ উৎসব ছুটি প্রাপ্য।"
+      } ],
+      "confidence" : 0.93
+    }, {
+      "title" : "৯ মাস শিক্ষানবিশকাল ও ৭০% মজুরি",
+      "kind" : "CONFLICT",
+      "severity" : "HIGH",
+      "non_obvious" : false,
+      "clause_type" : "PROBATION",
+      "clause_ids" : [ "c6" ],
+      "explanation" : "চুক্তিতে ৯ মাস শিক্ষানবিশকাল ও কম মজুরি। আইনে সাধারণ শ্রমিকের জন্য তিন মাস, সর্বোচ্চ ছয় মাস।",
+      "citations" : [ {
+        "section_key" : "BLA-2006:4@amend-2026",
+        "quote" : "অন্যান্য শ্রমিকের জন্য এই সময় হইবে তিন মাস",
+        "claim" : "কেরানি ছাড়া অন্য শ্রমিকের শিক্ষানবিশকাল তিন মাস, বাড়ানো গেলে ছয় মাস।"
+      } ],
+      "confidence" : 0.85
+    } ]
+  }
+}

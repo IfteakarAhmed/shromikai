@@ -51,7 +51,21 @@ class LiveContractIT extends LiveBase {
     assumeTrue(LiveEnv.optedIn("record"), "live recording: run with -PliveOk=record");
     Run.purpose = "record:" + CONTRACT;
     Run.caseId = CONTRACT + "-worker";
-    Run.maxCalls = 80;
+    Run.maxCalls = 70;
+    // Stop at once on trouble: three live risk calls (the first batch is replayed from its
+    // recording), so a repair or a split after truncated output is refused, not paid for.
+    Run.perPromptLimits =
+        java.util.Map.of(
+            "risk-analysis",
+            3,
+            "risk-citation-repair",
+            6,
+            "counter-offer",
+            10,
+            "clause-classify",
+            3);
+    Run.contractPrefix = "record:" + CONTRACT;
+    Run.contractCapMicros = 1_200_000;
     Run.record = true;
     Run.localPiiStandInFor = CONTRACT;
   }
@@ -59,17 +73,18 @@ class LiveContractIT extends LiveBase {
   @Test
   void shouldAnalyseTheShortestSyntheticContractWithRealModelsAndRecordIt() throws IOException {
     long spentBefore = ledger.spentMicros();
+    int entriesBefore = ledger.entryCount();
     AnalysisJob job = analyses.analyseText(SyntheticContracts.text(CONTRACT));
     try {
       if (job.status() != AnalysisJob.Status.CLASSIFIED) {
-        report(job, spentBefore);
+        report(job, spentBefore, entriesBefore);
         throw new AssertionError(
             "The P5 steps failed before the pipeline could start: "
                 + (job.failure() == null ? "?" : job.failure().type().code())
                 + " (see .live-spend/last-run.txt)");
       }
       pipeline.run(job, AnalysisRequest.of(Side.WORKER), AnalysisSubject.dev());
-      report(job, spentBefore);
+      report(job, spentBefore, entriesBefore);
       assertThat(job.failure()).as("the pipeline failed").isNull();
       assertThat(job.status()).isEqualTo(AnalysisJob.Status.ANALYSED);
       var findings = job.outcome().findings();
@@ -82,15 +97,19 @@ class LiveContractIT extends LiveBase {
           assertThat(finding.citations()).isEmpty();
         }
       }
-      var json = new ObjectMapper().findAndRegisterModules().valueToTree(findings);
-      assertThat(VerifiedOnlyScanner.violations(json)).isEmpty();
+      // What a user can see of a finding is its citations (the claims are internal): scan those.
+      var mapper = new ObjectMapper().findAndRegisterModules();
+      var shown = mapper.createArrayNode();
+      findings.forEach(f -> shown.add(mapper.valueToTree(f.citations())));
+      assertThat(VerifiedOnlyScanner.violations(shown)).isEmpty();
+      assertThat(VerifiedOnlyScanner.citations(shown)).isPositive();
     } finally {
       jdbc.sql("delete from analysis_run where id = :id").param("id", job.id()).update();
     }
   }
 
   /** Writes what the run cost and found to the (git-ignored) ledger folder; never contract text. */
-  private void report(AnalysisJob job, long spentBefore) throws IOException {
+  private void report(AnalysisJob job, long spentBefore, int entriesBefore) throws IOException {
     StringBuilder out = new StringBuilder();
     out.append("contract: ").append(CONTRACT).append(" (WORKER)\n");
     out.append("local PII step: ground-truth entity list stand-in (local model too slow here)\n");
@@ -221,6 +240,62 @@ class LiveContractIT extends LiveBase {
             .append('\n');
       }
     }
+    if (job.outcome() != null) {
+      out.append("\n--- every citation the verifier checked (finding, section, attempt) ---\n");
+      for (var v : job.outcome().verdicts()) {
+        out.append(
+            String.format(
+                "%s %s attempt %d: %s  reasons=%s%n    support: %s confidence=%s%n    verifier's reason: %s%n",
+                v.findingId(),
+                v.sectionKey(),
+                v.attempt(),
+                v.status(),
+                v.reasonCodes(),
+                v.supportLabel(),
+                v.supportConfidence(),
+                v.supportReason()));
+      }
+      long verified =
+          job.outcome().verdicts().stream()
+              .filter(v -> v.status().name().equals("VERIFIED"))
+              .count();
+      long uncertain =
+          job.outcome().verdicts().stream()
+              .filter(v -> v.status().name().equals("UNCERTAIN"))
+              .count();
+      long rejected =
+          job.outcome().verdicts().stream()
+              .filter(v -> v.status().name().equals("REJECTED"))
+              .count();
+      out.append("citation verdicts: VERIFIED=")
+          .append(verified)
+          .append(" UNCERTAIN=")
+          .append(uncertain)
+          .append(" REJECTED=")
+          .append(rejected)
+          .append('\n');
+    }
+    out.append("\n--- cost of this run's live calls by prompt (ledger) ---\n");
+    java.util.Map<String, long[]> byPrompt = new java.util.TreeMap<>();
+    for (var e : ledger.entriesFrom(entriesBefore)) {
+      String prompt = e.purpose().substring(e.purpose().lastIndexOf(':') + 1);
+      long[] sum = byPrompt.computeIfAbsent(prompt + " (" + e.modelId() + ")", k -> new long[4]);
+      sum[0]++;
+      sum[1] += e.tokensIn();
+      sum[2] += e.tokensOut();
+      sum[3] += e.costMicros();
+    }
+    byPrompt.forEach(
+        (k, v) ->
+            out.append(
+                String.format(
+                    Locale.ROOT,
+                    "%-48s calls=%d in=%d out=%d cost=US$%.4f%n",
+                    k,
+                    v[0],
+                    v[1],
+                    v[2],
+                    v[3] / 1_000_000.0)));
     out.append("\n--- trace details (content-free) ---\n");
     job.trace().forEach(e -> out.append(e.stage()).append(' ').append(e.detail()).append('\n'));
     Path file = Path.of("..", ".live-spend", "last-run.txt");

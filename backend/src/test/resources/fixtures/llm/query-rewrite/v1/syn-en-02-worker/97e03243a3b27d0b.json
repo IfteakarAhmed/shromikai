@@ -1,0 +1,22 @@
+{
+  "fixtureVersion" : 1,
+  "promptId" : "query-rewrite",
+  "promptVersion" : 1,
+  "caseId" : "syn-en-02-worker",
+  "modelId" : "claude-haiku-5-5",
+  "requestSha256" : "97e03243a3b27d0b40ecb1cc2c899c7d365d2e014b150f1e955b9b583f90d304",
+  "provenance" : "synthetic",
+  "source" : "recorded from a live call",
+  "recordedAt" : "2026-11-11T12:44:51.524595Z",
+  "stopReason" : "end_turn",
+  "usage" : {
+    "inputTokens" : 139,
+    "outputTokens" : 126,
+    "cacheReadTokens" : 0
+  },
+  "response" : {
+    "status" : "OK",
+    "reason" : "NONE",
+    "queries" : [ "শ্রমিকের শিক্ষানবিশকাল ও শিক্ষানবিশ সময়সীমা", "শিক্ষানবিশ শ্রমিকের মজুরি ও বেতন নির্ধারণ", "probationary period and apprentice wage in Bangladesh labour law" ]
+  }
+}

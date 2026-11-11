@@ -1,0 +1,42 @@
+{
+  "fixtureVersion" : 1,
+  "promptId" : "clause-classify",
+  "promptVersion" : 1,
+  "caseId" : "syn-en-02-worker",
+  "modelId" : "claude-haiku-5-5",
+  "requestSha256" : "2266c3f4e6d2478e07290238477ab0c5af3804dad02ac089a7e75b1afd6e82cf",
+  "provenance" : "synthetic",
+  "source" : "recorded from a live call",
+  "recordedAt" : "2026-11-11T12:10:47.015875Z",
+  "usage" : {
+    "inputTokens" : 433,
+    "outputTokens" : 228,
+    "cacheReadTokens" : 1692
+  },
+  "response" : {
+    "status" : "OK",
+    "reason" : "NONE",
+    "document_type" : "EMPLOYMENT_CONTRACT",
+    "clauses" : [ {
+      "id" : "c1",
+      "type" : "APPOINTMENT_AND_ROLE",
+      "confidence" : 0.9
+    }, {
+      "id" : "c2",
+      "type" : "TRANSFER_AND_DEPLOYMENT",
+      "confidence" : 0.9
+    }, {
+      "id" : "c3",
+      "type" : "WAGE_PAYMENT_AND_DEDUCTIONS",
+      "confidence" : 0.9
+    }, {
+      "id" : "c4",
+      "type" : "WORKING_HOURS",
+      "confidence" : 0.95
+    }, {
+      "id" : "c5",
+      "type" : "REST_AND_HOLIDAYS",
+      "confidence" : 0.95
+    } ]
+  }
+}

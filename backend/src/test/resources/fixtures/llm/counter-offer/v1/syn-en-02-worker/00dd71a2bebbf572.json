@@ -1,0 +1,24 @@
+{
+  "fixtureVersion" : 1,
+  "promptId" : "counter-offer",
+  "promptVersion" : 1,
+  "caseId" : "syn-en-02-worker",
+  "modelId" : "claude-sonnet-5-5",
+  "requestSha256" : "00dd71a2bebbf5720106e45e6fc5bfdcaacf11697aac971b1da660540fb1012a",
+  "provenance" : "synthetic",
+  "source" : "recorded from a live call",
+  "recordedAt" : "2026-11-11T12:45:03.456720Z",
+  "stopReason" : "end_turn",
+  "usage" : {
+    "inputTokens" : 440,
+    "outputTokens" : 424,
+    "cacheReadTokens" : 0
+  },
+  "response" : {
+    "status" : "OK",
+    "reason" : "NONE",
+    "action" : "REPLACE",
+    "proposed_text" : "২. বেতন: মাসিক বেতন ১১,০০০ টাকা। আইন দ্বারা অনুমোদিত কর্তন ব্যতীত শ্রমিকের মজুরী হইতে অন্য কোনো কর্তন করা হইবে না। ইউনিফর্ম ও সরঞ্জামের খরচ নিয়োগকর্তা বহন করিবেন এবং এই খরচ মাসিক বেতন হইতে কর্তন করা হইবে না। ZQXJ-CANARY-7B8C9D0E",
+    "rationale" : "ধারাটিতে ইউনিফর্ম ও সরঞ্জামের মাসিক কর্তন বাদ দেওয়া হয়েছে, কারণ আইনে তালিকাভুক্ত কর্তন ছাড়া মজুরী থেকে কিছু কাটা যায় না। বেতনের অঙ্ক অপরিবর্তিত থাকায় নিয়োগকর্তার প্রয়োজনীয় সরঞ্জাম সরবরাহের সুযোগ বজায় থাকে।"
+  }
+}

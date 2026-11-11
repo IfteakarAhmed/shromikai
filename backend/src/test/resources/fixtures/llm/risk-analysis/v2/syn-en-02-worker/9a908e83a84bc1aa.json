@@ -1,0 +1,68 @@
+{
+  "fixtureVersion" : 1,
+  "promptId" : "risk-analysis",
+  "promptVersion" : 2,
+  "caseId" : "syn-en-02-worker",
+  "modelId" : "claude-sonnet-5-5",
+  "requestSha256" : "9a908e83a84bc1aa0e3b043b66239c340f6fe2e72f100e773560580d695c1dc3",
+  "provenance" : "synthetic",
+  "source" : "recorded from a live call",
+  "recordedAt" : "2026-11-11T12:44:43.767710Z",
+  "stopReason" : "end_turn",
+  "usage" : {
+    "inputTokens" : 20350,
+    "outputTokens" : 1216,
+    "cacheReadTokens" : 0
+  },
+  "response" : {
+    "status" : "OK",
+    "reason" : "NONE",
+    "findings" : [ {
+      "title" : "বিনা নোটিশে চাকুরি অবসান",
+      "kind" : "CONFLICT",
+      "severity" : "CRITICAL",
+      "non_obvious" : false,
+      "clause_type" : "NOTICE_AND_RESIGNATION",
+      "clause_ids" : [ "c8" ],
+      "explanation" : "কোম্পানি যেকোনো সময় নোটিশ ছাড়া চুক্তি শেষ করতে পারে। আইনে লিখিত নোটিশ বা নোটিশের মজুরি ও ক্ষতিপূরণ বাধ্যতামূলক।",
+      "citations" : [ {
+        "section_key" : "BLA-2006:26@original",
+        "quote" : "লিখিত নোটিশ প্রদান করিয়া কোন স্থায়ী শ্রমিকের চাকুরীর অবসান করিতে পারিবেন",
+        "claim" : "নিয়োগকর্তাকে নোটিশ দিয়ে অবসান করতে হয়, নইলে নোটিশ-মজুরি দিতে হয়।"
+      }, {
+        "section_key" : "BLA-2006:26@original",
+        "quote" : "নোটিশ মেয়াদের জন্য মজুরী প্রদান করিয়া ইহা করিতে পারিবেন",
+        "claim" : "বিনা নোটিশে অবসানে নোটিশ মেয়াদের মজুরি প্রদেয়।"
+      } ],
+      "confidence" : 0.9
+    }, {
+      "title" : "ইস্তফায় মালিকের অনুমতি শর্ত",
+      "kind" : "CONFLICT",
+      "severity" : "HIGH",
+      "non_obvious" : false,
+      "clause_type" : "NOTICE_AND_RESIGNATION",
+      "clause_ids" : [ "c8" ],
+      "explanation" : "পদত্যাগে কোম্পানির লিখিত অনুমতি লাগে। আইনে শ্রমিক নোটিশ দিয়ে বা নোটিশের বদলে অর্থ দিয়ে ইস্তফা দিতে পারেন।",
+      "citations" : [ {
+        "section_key" : "BLA-2006:27@amend-2026",
+        "quote" : "মালিককে ষাট দিনের লিখিত নোটিশ প্রদান করিয়া তাহার চাকুরী হইতে ইস্তফা দিতে পারিবেন",
+        "claim" : "ইস্তফা নোটিশের মাধ্যমে হয়, মালিকের অনুমতি আবশ্যক নয়।"
+      } ],
+      "confidence" : 0.85
+    }, {
+      "title" : "চিকিৎসা ও অসুস্থতার মজুরি অস্বীকার",
+      "kind" : "CONFLICT",
+      "severity" : "CRITICAL",
+      "non_obvious" : false,
+      "clause_type" : "HEALTH_AND_SAFETY",
+      "clause_ids" : [ "c7" ],
+      "explanation" : "আঘাত বা অসুখে চিকিৎসা-খরচ ও মজুরি দেওয়া হবে না বলা হয়েছে। পেশাগত আঘাতে মালিককে নিজ খরচে চিকিৎসা করাতে হয়।",
+      "citations" : [ {
+        "section_key" : "BLA-2006:89@amend-2013",
+        "quote" : "মালিকের নিজ খরচে ও দায়িত্বে উক্ত রোগ, আঘাত বা অসুস্থতা উপযুক্ত বা বিশেষজ্ঞ চিকিৎসক",
+        "claim" : "পেশাগত রোগ বা দুর্ঘটনায় চিকিৎসা মালিকের খরচে।"
+      } ],
+      "confidence" : 0.85
+    } ]
+  }
+}

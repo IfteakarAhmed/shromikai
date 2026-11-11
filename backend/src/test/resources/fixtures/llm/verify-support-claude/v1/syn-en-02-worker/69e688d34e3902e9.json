@@ -1,0 +1,22 @@
+{
+  "fixtureVersion" : 1,
+  "promptId" : "verify-support-claude",
+  "promptVersion" : 1,
+  "caseId" : "syn-en-02-worker",
+  "modelId" : "claude-haiku-5-5",
+  "requestSha256" : "69e688d34e3902e9e4f5d3522a02e60b1d09151ca6055bd6bd9631d7682d7e72",
+  "provenance" : "synthetic",
+  "source" : "recorded from a live call",
+  "recordedAt" : "2026-11-11T12:44:49.634937Z",
+  "stopReason" : "end_turn",
+  "usage" : {
+    "inputTokens" : 566,
+    "outputTokens" : 60,
+    "cacheReadTokens" : 982
+  },
+  "response" : {
+    "label" : "SUPPORTS",
+    "confidence" : 0.95,
+    "reason" : "Section 123(1) requires wages paid within seven working days after the wage period ends, matching the claim."
+  }
+}

@@ -1,0 +1,24 @@
+{
+  "fixtureVersion" : 1,
+  "promptId" : "counter-offer",
+  "promptVersion" : 1,
+  "caseId" : "syn-en-02-worker",
+  "modelId" : "claude-sonnet-5-5",
+  "requestSha256" : "e2f2dea72f255b3ce6cb0fb7b189da3ef9d2353d63f55215689b0720b17804d3",
+  "provenance" : "synthetic",
+  "source" : "recorded from a live call",
+  "recordedAt" : "2026-11-11T12:45:02.400596Z",
+  "stopReason" : "end_turn",
+  "usage" : {
+    "inputTokens" : 598,
+    "outputTokens" : 352,
+    "cacheReadTokens" : 0
+  },
+  "response" : {
+    "status" : "OK",
+    "reason" : "NONE",
+    "action" : "REPLACE",
+    "proposed_text" : "7. Notice and termination The Company may end this contract by giving the Guard written notice, or by paying the Guard wages for the notice period in place of notice, together with any compensation and dues the law requires. The Guard may resign by giving the Company written notice, and the Company's permission is not required for the resignation to take effect. ZQXJ-CANARY-7B8C9D0E",
+    "rationale" : "ধারাটিতে এখন লিখিত নোটিশ বা নোটিশ মেয়াদের মজুরি দিয়ে চুক্তি শেষ করার ব্যবস্থা আছে, যা উদ্ধৃত আইনের সঙ্গে সামঞ্জস্যপূর্ণ। কোম্পানি চুক্তি শেষ করার সুযোগ রাখে, আর শ্রমিকও অনুমতি ছাড়াই লিখিত নোটিশে পদত্যাগ করতে পারে।"
+  }
+}

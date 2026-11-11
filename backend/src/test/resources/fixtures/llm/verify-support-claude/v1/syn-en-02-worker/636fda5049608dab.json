@@ -1,0 +1,22 @@
+{
+  "fixtureVersion" : 1,
+  "promptId" : "verify-support-claude",
+  "promptVersion" : 1,
+  "caseId" : "syn-en-02-worker",
+  "modelId" : "claude-haiku-5-5",
+  "requestSha256" : "636fda5049608dab25d49ddc156d7ec38468dbbce8fc5801441e972d8413a228",
+  "provenance" : "synthetic",
+  "source" : "recorded from a live call",
+  "recordedAt" : "2026-11-11T12:44:47.491751Z",
+  "stopReason" : "end_turn",
+  "usage" : {
+    "inputTokens" : 514,
+    "outputTokens" : 81,
+    "cacheReadTokens" : 0
+  },
+  "response" : {
+    "label" : "SUPPORTS",
+    "confidence" : 0.9,
+    "reason" : "Section s.103(ক) and (খ) state workers get a weekly holiday each week (one day in factories, one and a half in shops, 24 hours in road transport)."
+  }
+}

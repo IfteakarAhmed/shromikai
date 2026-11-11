@@ -175,6 +175,7 @@ public class AnalysisPipeline {
     final Map<String, String> models = new TreeMap<>();
     final Set<VerifierIndependence> independence = new LinkedHashSet<>();
     final Map<Stage, ModelSession.StageUsage> reported = new EnumMap<>(Stage.class);
+    final List<FindingVerifier.VerdictSummary> verdicts = new ArrayList<>();
 
     JobData(
         AnalysisJob job,
@@ -291,6 +292,7 @@ public class AnalysisPipeline {
     FindingVerifier.Round verified =
         step(Stage.VERIFY, d, () -> verifier.verify(toVerify, context));
     findings = verified.findings();
+    d.verdicts.addAll(verified.verdicts());
     noteIndependence(d, findings);
     record(
         d,
@@ -314,6 +316,9 @@ public class AnalysisPipeline {
                   corrective.correct(
                       d.session, d.request, toCorrect, clauses, candidates, context));
       findings = corrected.findings();
+      corrected.corrections().stream()
+          .filter(c -> c.verdict() != null)
+          .forEach(c -> d.verdicts.add(c.verdict()));
       noteIndependence(d, findings);
       record(
           d,
@@ -424,7 +429,8 @@ public class AnalysisPipeline {
             independence,
             d.release == null ? "none" : d.release,
             d.session.costUsdMicros(),
-            durationMs);
+            durationMs,
+            d.verdicts);
     d.job.analysed(outcome);
     record(
         d,

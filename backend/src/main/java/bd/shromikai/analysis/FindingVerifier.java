@@ -31,7 +31,25 @@ public class FindingVerifier {
       String sectionKey,
       VerificationStatus status,
       List<String> reasonCodes,
-      int attempt) {}
+      int attempt,
+      String supportLabel,
+      Double supportConfidence,
+      String supportReason) {
+
+    /** The summary of one verdict; the verifier's one-line reason stays in memory only. */
+    public static VerdictSummary of(String findingId, Verdict verdict) {
+      var support = verdict.result().checks().support();
+      return new VerdictSummary(
+          findingId,
+          verdict.result().sectionKey(),
+          verdict.result().status(),
+          verdict.result().reasonCodes().stream().map(ReasonCode::name).toList(),
+          verdict.result().attempt(),
+          support.label() == null ? null : support.label().name(),
+          support.confidence(),
+          support.reason());
+    }
+  }
 
   /** Findings after verification and the verdicts that led there. */
   public record Round(List<Finding> findings, List<VerdictSummary> verdicts) {}
@@ -60,13 +78,7 @@ public class FindingVerifier {
       LinkedHashSet<String> reasons = new LinkedHashSet<>();
       for (ClaimedCitation claim : finding.claims()) {
         Verdict verdict = verdicts.get(claim.citationId());
-        summaries.add(
-            new VerdictSummary(
-                finding.id(),
-                claim.sectionKey(),
-                verdict.result().status(),
-                verdict.result().reasonCodes().stream().map(ReasonCode::name).toList(),
-                verdict.result().attempt()));
+        summaries.add(VerdictSummary.of(finding.id(), verdict));
         if (verdict.verified() && verified.size() < 4) {
           verified.add(verdict.citation());
         } else {

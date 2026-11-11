@@ -1,0 +1,22 @@
+{
+  "fixtureVersion" : 1,
+  "promptId" : "verify-support-claude",
+  "promptVersion" : 1,
+  "caseId" : "syn-en-02-worker",
+  "modelId" : "claude-haiku-5-5",
+  "requestSha256" : "2bd939a54d3c20f486065a2a41b15d813053e63737b0f434d76c968cdec5be39",
+  "provenance" : "synthetic",
+  "source" : "recorded from a live call",
+  "recordedAt" : "2026-11-11T12:44:49.102320Z",
+  "stopReason" : "end_turn",
+  "usage" : {
+    "inputTokens" : 559,
+    "outputTokens" : 72,
+    "cacheReadTokens" : 982
+  },
+  "response" : {
+    "label" : "SUPPORTS",
+    "confidence" : 0.9,
+    "reason" : "Section s.127(1) bars deduction until the worker is found guilty through proper inquiry following fair-trial principles, matching the claim."
+  }
+}
