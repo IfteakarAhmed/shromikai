@@ -214,6 +214,145 @@ class NoContractPersistenceIT {
     }
   }
 
+  /**
+   * P7 and P8 paths (FR-32, R-02): memo narrative, obligations checklist, compare baseline, the MCP
+   * analysis and a playbook run, each with a stand-in model that copies contract text into its
+   * answer. After them no table, log line or temp file holds a canary or an 8-token window.
+   */
+  @Autowired bd.shromikai.analysis.BaselineAgent baselines;
+
+  @Autowired bd.shromikai.analysis.ExternalAnalysisService external;
+
+  @Test
+  void shouldFindNoCanaryAfterMemoObligationsCompareMcpAndPlaybookRuns() throws IOException {
+    bd.shromikai.testsupport.FictionalCorpus.load(jdbc);
+    java.util.UUID org =
+        jdbc.sql(
+                "insert into organisation (name, kind, plan) values ('Persistence Org', 'NGO',"
+                    + " 'API') returning id")
+            .query(java.util.UUID.class)
+            .single();
+    try {
+      bd.shromikai.testsupport.P6Stubs.install(fake);
+      ObjectMapper mapper = new ObjectMapper();
+      // Each of these answers copies the first 160 characters of what the model was shown.
+      fake.respondWith(
+          "memo-en",
+          request ->
+              mapper
+                  .createObjectNode()
+                  .put("status", "OK")
+                  .put("reason", "NONE")
+                  .put("summary", copy(request.user().reveal()))
+                  .set("next_steps", mapper.createArrayNode().add(copy(request.user().reveal()))));
+      fake.respondWith(
+          "memo-bn",
+          request ->
+              mapper
+                  .createObjectNode()
+                  .put("status", "OK")
+                  .put("reason", "NONE")
+                  .put("summary", copy(request.user().reveal()))
+                  .set("next_steps", mapper.createArrayNode().add(copy(request.user().reveal()))));
+      fake.respondWith(
+          "obligations",
+          request -> {
+            com.fasterxml.jackson.databind.node.ObjectNode out = mapper.createObjectNode();
+            out.put("status", "OK").put("reason", "NONE");
+            com.fasterxml.jackson.databind.node.ObjectNode item = out.putArray("items").addObject();
+            item.put("party", "WORKER")
+                .put("obligation", copy(request.user().reveal()))
+                .putNull("trigger");
+            item.putNull("deadline");
+            item.put("source", "CONTRACT").put("status", "STATED_IN_CONTRACT");
+            item.putArray("clause_ids");
+            item.putArray("citations");
+            return out;
+          });
+      fake.respondWith(
+          "baseline",
+          request ->
+              mapper
+                  .createObjectNode()
+                  .put("status", "OK")
+                  .put("reason", "NONE")
+                  .set(
+                      "findings",
+                      mapper
+                          .createArrayNode()
+                          .add(
+                              mapper
+                                  .createObjectNode()
+                                  .put("title", "Copied")
+                                  .put("severity", "HIGH")
+                                  .put("explanation", copy(request.user().reveal()))
+                                  .set("citations", mapper.createArrayNode()))));
+      bd.shromikai.rules.Playbook playbook =
+          new bd.shromikai.rules.Playbook(
+              java.util.UUID.randomUUID(),
+              org,
+              "Standard",
+              "EMPLOYER",
+              1,
+              java.time.Instant.parse("2026-11-16T10:00:00Z"),
+              null,
+              List.of(
+                  new bd.shromikai.rules.PlaybookRule(
+                      "NOTICE_AND_RESIGNATION",
+                      bd.shromikai.rules.FactParameter.NOTICE_BY_EMPLOYER,
+                      bd.shromikai.rules.RuleComparator.MIN,
+                      30.0,
+                      bd.shromikai.rules.Unit.DAYS,
+                      bd.shromikai.rules.Severity.MEDIUM,
+                      "নীতি",
+                      "Policy is at least 30 days notice.",
+                      null)));
+      List<String> documents = new ArrayList<>();
+      List<String> secrets = new ArrayList<>();
+      for (String id : List.of("syn-en-01", "syn-bn-01")) {
+        String text = SyntheticContracts.text(id);
+        documents.add(text);
+        secrets.add(SyntheticContracts.marker(id));
+        SyntheticContracts.entities(id).forEach(e -> secrets.add(e.value()));
+        // Memo, obligations, playbook findings: one pipeline run with a playbook.
+        AnalysisJob job = analyses.analyseText(text);
+        pipeline.run(
+            job,
+            new bd.shromikai.analysis.AnalysisRequest(
+                bd.shromikai.analysis.Side.EMPLOYER, "en", Map.of(), playbook),
+            bd.shromikai.analysis.AnalysisSubject.dev());
+        assertThat(job.status()).isEqualTo(AnalysisJob.Status.ANALYSED);
+        assertThat(job.outcome().obligations()).isNotNull();
+        // Compare: the baseline runs on the finished job.
+        baselines.run(job);
+        assertThat(job.baseline()).isNotNull();
+        // MCP: the external service builds the tool result and deletes its job.
+        external.analyse(
+            java.util.UUID.randomUUID(),
+            org,
+            text,
+            bd.shromikai.analysis.Side.WORKER,
+            "en",
+            Duration.ofSeconds(60));
+      }
+      List<String> offenders = new ArrayList<>();
+      scanDatabase(secrets, new Windows(documents), offenders);
+      scanLogs(secrets, new Windows(documents), offenders);
+      scanTemp(secrets, new Windows(documents), offenders);
+      assertThat(offenders).as("places where contract text or PII was found").isEmpty();
+    } finally {
+      jdbc.sql("delete from usage_event").update();
+      jdbc.sql("delete from analysis_run").update();
+      jdbc.sql("delete from organisation where id = :o").param("o", org).update();
+      bd.shromikai.testsupport.FictionalCorpus.clean(jdbc);
+    }
+  }
+
+  private static String copy(String shown) {
+    String flat = shown.replaceAll("\\s+", " ").trim();
+    return flat.substring(0, Math.min(flat.length(), 160));
+  }
+
   @Test
   void shouldNotStoreAQuoteCopiedFromAClause() throws IOException {
     leakScenario(false, true);
