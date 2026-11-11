@@ -101,6 +101,10 @@ class AnthropicChatAdapterIT {
         .isEqualTo("string");
     assertThat(body.at("/output_config/format/schema").has("$schema")).isFalse();
     assertThat(body.at("/output_config/effort").asText()).isEqualTo("low");
+    assertThat(body.at("/thinking/type").asText())
+        .as("hidden thinking tokens must not eat the prompt's output cap")
+        .isEqualTo("disabled");
+    assertThat(body.at("/system/0/cache_control/type").asText()).isEqualTo("ephemeral");
     assertThat(body.has("temperature")).isFalse();
     assertThat(body.has("top_p")).isFalse();
     assertThat(body.has("top_k")).isFalse();
@@ -165,7 +169,7 @@ class AnthropicChatAdapterIT {
                 aResponse()
                     .withStatus(400)
                     .withBody(
-                        "{\"type\":\"error\",\"error\":{\"type\":\"invalid_request_error\",\"message\":\"x\"}}")));
+                        "{\"type\":\"error\",\"error\":{\"type\":\"invalid_request_error\",\"message\":\"output_config.format: schema not supported\"}}")));
 
     assertThatThrownBy(() -> adapter(recordingGuard).call(request(ModelRole.FAST, null)))
         .isInstanceOfSatisfying(
@@ -174,6 +178,9 @@ class AnthropicChatAdapterIT {
               assertThat(e.type()).isEqualTo(ProblemType.INTERNAL_ERROR);
               assertThat(e.httpStatus()).isEqualTo(400);
               assertThat(e.detail()).isNull();
+              assertThat(e.reasonCode())
+                  .startsWith("anthropic-http-400")
+                  .contains("output_config.format");
             });
     anthropic.verify(1, postRequestedFor(urlEqualTo("/v1/messages")));
   }
@@ -240,5 +247,27 @@ class AnthropicChatAdapterIT {
   private JsonNode sentBody() throws Exception {
     return mapper.readTree(
         anthropic.findAll(postRequestedFor(urlEqualTo("/v1/messages"))).get(0).getBodyAsString());
+  }
+
+  @Test
+  void shouldTurnThinkingOffTheWayEachModelAccepts() throws Exception {
+    anthropic.stubFor(
+        post("/v1/messages").willReturn(okJson(message("end_turn", "{\"echo\":\"hi\"}"))));
+
+    adapter(recordingGuard).call(request(ModelRole.FAST, null));
+    adapter(recordingGuard).call(request(ModelRole.REASONING, null));
+
+    var bodies =
+        anthropic.findAll(postRequestedFor(urlEqualTo("/v1/messages"))).stream()
+            .map(
+                r -> {
+                  try {
+                    return mapper.readTree(r.getBodyAsString()).at("/thinking/type").asText();
+                  } catch (Exception e) {
+                    throw new IllegalStateException(e);
+                  }
+                })
+            .toList();
+    assertThat(bodies).containsExactlyInAnyOrder("disabled", "between_tools");
   }
 }

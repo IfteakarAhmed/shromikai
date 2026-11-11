@@ -64,6 +64,9 @@ abstract class LiveBase {
     static volatile int maxCalls = 3;
     static volatile boolean record = false;
 
+    /** The synthetic contract whose ground-truth entities stand in for the local PII model. */
+    static volatile String localPiiStandInFor = null;
+
     private Run() {}
   }
 
@@ -84,6 +87,31 @@ abstract class LiveBase {
         return bean;
       }
       ChatPort wrapped = port;
+      if (port.provider().equals("ollama") && Run.localPiiStandInFor != null) {
+        // The local qwen model on this machine (Docker, no GPU) needs about 30 s to load and then
+        // runs at about 7 tokens a second, so pii-extract hits its 30 s timeout and the job fails
+        // closed before any cloud call (as designed). For this recording only, the local step
+        // answers with the contract's ground-truth entity list; redaction, the placeholder map and
+        // the egress guard are the real ones.
+        String contract = Run.localPiiStandInFor;
+        return new ChatPort() {
+          @Override
+          public String provider() {
+            return "ollama";
+          }
+
+          @Override
+          public bd.shromikai.shared.ai.ChatResponse call(
+              bd.shromikai.shared.ai.ChatRequest request) {
+            return new bd.shromikai.shared.ai.ChatResponse(
+                bd.shromikai.testsupport.AnalysisHarness.piiAnswer(
+                    bd.shromikai.testsupport.AnalysisHarness.entitiesOf(contract)),
+                "local-stand-in-ground-truth",
+                bd.shromikai.shared.ai.TokenUsage.NONE,
+                false);
+          }
+        };
+      }
       if (Run.record) {
         wrapped = new RecordingChatPort(wrapped, FIXTURES, Run.caseId);
       }

@@ -81,7 +81,7 @@ public final class AnthropicChatAdapter implements ChatPort {
     } catch (AnthropicServiceException e) {
       int status = e.statusCode();
       if (ModelRequestRejectedException.applies(status)) {
-        throw new ModelRequestRejectedException("anthropic-http-" + status, status);
+        throw new ModelRequestRejectedException("anthropic-http-" + status + reason(e), status);
       }
       String retryAfter = e.headers().values("retry-after").stream().findFirst().orElse(null);
       throw new UpstreamUnavailableException(
@@ -124,6 +124,9 @@ public final class AnthropicChatAdapter implements ChatPort {
     if (request.effort() != null) {
       outputConfig.effort(OutputConfig.Effort.of(request.effort().name().toLowerCase()));
     }
+    // Extended thinking is off. Its tokens count against max_tokens, and a live run showed Haiku
+    // spending 90 to 550 hidden tokens on a 150-token answer, so a prompt's output cap was hit at
+    // random and the call failed (ADR-0015 decision 10, architecture §18.6 C38).
     MessageCreateParams.Builder builder =
         MessageCreateParams.builder()
             .model(request.modelId())
@@ -138,13 +141,35 @@ public final class AnthropicChatAdapter implements ChatPort {
                         .cacheControl(CacheControlEphemeral.builder().build())
                         .build()))
             .addUserMessage(request.user().reveal())
-            .outputConfig(outputConfig.build());
+            .outputConfig(outputConfig.build())
+            .putAdditionalBodyProperty(
+                "thinking", JsonValue.from(Map.of("type", thinkingOff(request.role()))));
     if (request.role() == ModelRole.REASONING) {
       builder
           .putAdditionalHeader("anthropic-beta", FALLBACK_BETA)
           .putAdditionalBodyProperty("fallbacks", JsonValue.from("default"));
     }
     return builder.build();
+  }
+
+  /**
+   * How a model is told not to think. Haiku 5.5 takes {@code disabled}; Sonnet 5.5 answers a 400
+   * ("send between_tools instead of disabled": it never thinks before responding, the setting only
+   * covers the notes it writes between tool calls). Found in a live run.
+   */
+  static String thinkingOff(ModelRole role) {
+    return role == ModelRole.REASONING ? "between_tools" : "disabled";
+  }
+
+  /**
+   * The provider's own error text (for example which request field it rejected), for logs and
+   * traces only; it never becomes the client-facing detail (NFR-04). The text describes the request
+   * shape, not its content.
+   */
+  private static String reason(AnthropicServiceException e) {
+    String message =
+        e.getMessage() == null ? "" : e.getMessage().replaceAll("[\\p{Cntrl}]", " ").strip();
+    return message.isEmpty() ? "" : " " + message.substring(0, Math.min(message.length(), 300));
   }
 
   private static Map<String, JsonValue> schemaProperties(JsonNode schema) {

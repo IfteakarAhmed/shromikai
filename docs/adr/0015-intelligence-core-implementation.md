@@ -54,6 +54,10 @@ phase order, and the team has only a small API balance, so live spend needs its 
    §18.6 C35 to C37: hash-addressed fixtures, scripted stand-ins on a fictional act for the
    pipeline integration tests, and an offline demo tool.
 
+10. **Claude extended thinking is off.** A live run showed hidden thinking tokens consuming a
+    prompt's `max_output_tokens` (architecture §18.6 C38), so the adapter sends `thinking: disabled`.
+    This amends ADR-0005's "adaptive thinking"; the effort setting stays.
+
 ## Consequences
 
 - No new runtime dependency (AGENTS.md §9 item 1 does not apply); the migration `V6__analysis.sql`

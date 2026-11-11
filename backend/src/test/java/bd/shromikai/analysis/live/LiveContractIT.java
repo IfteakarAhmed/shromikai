@@ -53,6 +53,7 @@ class LiveContractIT extends LiveBase {
     Run.caseId = CONTRACT + "-worker";
     Run.maxCalls = 80;
     Run.record = true;
+    Run.localPiiStandInFor = CONTRACT;
   }
 
   @Test
@@ -60,6 +61,13 @@ class LiveContractIT extends LiveBase {
     long spentBefore = ledger.spentMicros();
     AnalysisJob job = analyses.analyseText(SyntheticContracts.text(CONTRACT));
     try {
+      if (job.status() != AnalysisJob.Status.CLASSIFIED) {
+        report(job, spentBefore);
+        throw new AssertionError(
+            "The P5 steps failed before the pipeline could start: "
+                + (job.failure() == null ? "?" : job.failure().type().code())
+                + " (see .live-spend/last-run.txt)");
+      }
       pipeline.run(job, AnalysisRequest.of(Side.WORKER), AnalysisSubject.dev());
       report(job, spentBefore);
       assertThat(job.failure()).as("the pipeline failed").isNull();
@@ -85,6 +93,7 @@ class LiveContractIT extends LiveBase {
   private void report(AnalysisJob job, long spentBefore) throws IOException {
     StringBuilder out = new StringBuilder();
     out.append("contract: ").append(CONTRACT).append(" (WORKER)\n");
+    out.append("local PII step: ground-truth entity list stand-in (local model too slow here)\n");
     out.append("status: ").append(job.status()).append('\n');
     if (job.failure() != null) {
       out.append("failure: ").append(job.failure().type().code()).append('\n');
@@ -130,6 +139,90 @@ class LiveContractIT extends LiveBase {
           .append(job.outcome().warnings().stream().map(w -> w.code()).toList())
           .append('\n');
     }
+    if (job.outcome() != null) {
+      out.append("\n--- findings in full (synthetic contract, placeholders not names) ---\n");
+      for (var f : job.outcome().findings()) {
+        out.append(
+            String.format(
+                "%n%s [%s %s %s] source=%s nonObvious=%s confidence=%.2f clauses=%s clauseType=%s%n",
+                f.id(),
+                f.kind(),
+                f.severity(),
+                f.verification(),
+                f.source(),
+                f.nonObvious(),
+                f.confidence(),
+                f.clauseIds(),
+                f.clauseType()));
+        out.append("  title: ").append(f.title().reveal()).append('\n');
+        out.append("  explanation: ").append(f.explanation().reveal()).append('\n');
+        out.append("  why it matters: ").append(f.whyItMatters().reveal()).append('\n');
+        for (var c : f.citations()) {
+          var v = c.verification();
+          out.append("  VERIFIED citation ")
+              .append(c.sectionKey())
+              .append(" (attempt ")
+              .append(v.attempt())
+              .append(")\n");
+          out.append("    heading: ")
+              .append(c.headingBn() != null ? c.headingBn() : c.headingEn())
+              .append('\n');
+          out.append("    quote shown (stored statute text): ").append(c.quote()).append('\n');
+          out.append("    quote similarity: ")
+              .append(v.checks().quoteMatch().similarity())
+              .append('\n');
+          var sup = v.checks().support();
+          out.append("    support: ")
+              .append(sup.label())
+              .append(" confidence=")
+              .append(sup.confidence())
+              .append(" independence=")
+              .append(sup.independence())
+              .append(" model=")
+              .append(sup.modelId())
+              .append('\n');
+          out.append("    support reason: ").append(sup.reason()).append('\n');
+          out.append("    source: ").append(c.sourceUrl()).append('\n');
+        }
+        if (f.citations().isEmpty()) {
+          out.append("  no citation shown; reason codes: ").append(f.reasonCodes()).append('\n');
+        }
+        out.append("  redline: ")
+            .append(f.redlineId())
+            .append("  review item: ")
+            .append(f.reviewItemId() != null)
+            .append('\n');
+      }
+      out.append("\n--- redlines ---\n");
+      for (var r : job.outcome().redlines()) {
+        out.append(r.id())
+            .append(" for ")
+            .append(r.findingId())
+            .append(" ")
+            .append(r.action())
+            .append(" attempts=")
+            .append(r.attempts())
+            .append(" rules=")
+            .append(r.ruleIds())
+            .append('\n');
+        out.append("  original: ")
+            .append(r.originalText() == null ? null : r.originalText().reveal())
+            .append('\n');
+        out.append("  proposed: ").append(r.proposedText().reveal()).append('\n');
+        out.append("  rationale: ").append(r.rationale().reveal()).append('\n');
+      }
+      out.append("\n--- clauses (redacted) ---\n");
+      for (var c : job.clauses()) {
+        out.append(c.id())
+            .append(" ")
+            .append(c.type())
+            .append(": ")
+            .append(c.text().reveal())
+            .append('\n');
+      }
+    }
+    out.append("\n--- trace details (content-free) ---\n");
+    job.trace().forEach(e -> out.append(e.stage()).append(' ').append(e.detail()).append('\n'));
     Path file = Path.of("..", ".live-spend", "last-run.txt");
     Files.createDirectories(file.getParent());
     Files.writeString(file, out.toString());

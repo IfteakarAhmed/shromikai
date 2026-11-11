@@ -101,4 +101,21 @@ class PiiDetectorTest {
     assertThat(detector.containsPii("call 01712345678")).isTrue();
     assertThat(detector.containsPii("no identifiers here")).isFalse();
   }
+
+  @org.junit.jupiter.api.Test
+  void shouldLabelAPhoneShapedNumberNextToAnNidKeywordAsNid() {
+    // 13 digits starting 8801x look like a phone number; next to "NID No:" they are an NID.
+    var matches = detector.detect("NID No: 8801712345678 (verified)");
+
+    org.assertj.core.api.Assertions.assertThat(matches).hasSize(1);
+    org.assertj.core.api.Assertions.assertThat(matches.get(0).type()).isEqualTo(PiiType.NID);
+  }
+
+  @org.junit.jupiter.api.Test
+  void shouldStillLabelAPhoneNumberWithoutAnNidKeywordAsPhone() {
+    var matches = detector.detect("Call 8801712345678 today");
+
+    org.assertj.core.api.Assertions.assertThat(matches).hasSize(1);
+    org.assertj.core.api.Assertions.assertThat(matches.get(0).type()).isEqualTo(PiiType.PHONE);
+  }
 }

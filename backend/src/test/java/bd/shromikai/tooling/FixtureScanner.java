@@ -42,7 +42,8 @@ public final class FixtureScanner {
   static final Set<String> TEXT_EXTENSIONS =
       Set.of(".json", ".yml", ".yaml", ".txt", ".md", ".html", ".csv", ".jsonl", ".xml");
   private static final Pattern LLM_PATH =
-      Pattern.compile("llm/([a-z0-9-]+)/v([1-9][0-9]*)/([A-Za-z0-9._-]+)\\.json");
+      Pattern.compile(
+          "llm/([a-z0-9-]+)/v([1-9][0-9]*)/(?:([A-Za-z0-9._-]+)/([0-9a-f]{16})|([A-Za-z0-9._-]+))\\.json");
 
   private final Path testResources;
   private final Path mainResources;
@@ -106,7 +107,10 @@ public final class FixtureScanner {
       throws IOException {
     Matcher path = LLM_PATH.matcher(relative);
     if (!path.matches()) {
-      violations.add(relative + ": model fixtures must be llm/{promptId}/v{n}/{caseId}.json");
+      violations.add(
+          relative
+              + ": model fixtures must be llm/{promptId}/v{n}/{caseId}.json or"
+              + " llm/{promptId}/v{n}/{caseId}/{requestSha16}.json");
       return;
     }
     JsonNode fixture;
@@ -118,8 +122,13 @@ public final class FixtureScanner {
     }
     FakeChatPort.checkFixture(fixture, path.group(1), Integer.parseInt(path.group(2)), schemas)
         .forEach(problem -> violations.add(relative + ": " + problem));
-    if (!path.group(3).equals(fixture.path("caseId").asText())) {
+    String caseId = path.group(3) != null ? path.group(3) : path.group(5);
+    if (!caseId.equals(fixture.path("caseId").asText())) {
       violations.add(relative + ": caseId does not match the file name");
+    }
+    if (path.group(4) != null
+        && !fixture.path("requestSha256").asText().startsWith(path.group(4))) {
+      violations.add(relative + ": file name is not the start of requestSha256");
     }
     StringBuilder text = new StringBuilder();
     collectStrings(fixture, text);

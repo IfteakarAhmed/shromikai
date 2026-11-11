@@ -120,7 +120,11 @@ public final class PiiDetector {
     List<PiiMatch> sorted = new ArrayList<>(found);
     sorted.sort(
         Comparator.comparingInt(PiiMatch::start)
-            .thenComparing(Comparator.comparingInt(PiiMatch::length).reversed()));
+            .thenComparing(Comparator.comparingInt(PiiMatch::length).reversed())
+            // The phone pattern is shape only; the NID reading of the same digits needs a keyword
+            // ("NID No:") or 17 digits, so it is the better label. Either way the value is
+            // replaced.
+            .thenComparingInt(m -> m.type() == PiiType.NID ? 0 : 1));
     List<PiiMatch> out = new ArrayList<>();
     int end = -1;
     for (PiiMatch match : sorted) {
