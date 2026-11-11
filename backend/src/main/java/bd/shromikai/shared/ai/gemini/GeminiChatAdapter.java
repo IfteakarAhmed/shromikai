@@ -86,6 +86,11 @@ public final class GeminiChatAdapter implements ChatPort {
     config.set("responseJsonSchema", schemaForGemini(request.outputSchema()));
     config.put("temperature", request.temperature() == null ? 0.0 : request.temperature());
     config.put("maxOutputTokens", request.maxOutputTokens());
+    if (request.modelId().startsWith("gemini-2.5")) {
+      // 2.5 Flash thinks by default and thinking tokens count against maxOutputTokens; a short
+      // JSON verdict needs none. Later families take other thinking settings and are left alone.
+      config.putObject("thinkingConfig").put("thinkingBudget", 0);
+    }
     return body;
   }
 
@@ -167,7 +172,8 @@ public final class GeminiChatAdapter implements ChatPort {
         response.path("modelVersion").asText(request.modelId()),
         new TokenUsage(
             usage.path("promptTokenCount").asLong(),
-            usage.path("candidatesTokenCount").asLong(),
+            // Thinking tokens are billed as output tokens.
+            usage.path("candidatesTokenCount").asLong() + usage.path("thoughtsTokenCount").asLong(),
             usage.path("cachedContentTokenCount").asLong()),
         false);
   }

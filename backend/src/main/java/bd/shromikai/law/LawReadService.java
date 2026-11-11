@@ -35,6 +35,29 @@ public class LawReadService {
     return repository.section(actCode, sectionNo, version, corpusRelease());
   }
 
+  /**
+   * Finds the exact section version a section key names, whether or not it is current, with the
+   * act's jurisdiction and status; used by the citation verifier's existence check (FR-42).
+   */
+  public Optional<SectionLookup> lookup(String sectionKey) {
+    return SectionKey.parse(sectionKey)
+        .flatMap(
+            key ->
+                repository
+                    .section(key.actCode(), key.sectionNo(), key.versionLabel(), corpusRelease())
+                    .flatMap(
+                        section ->
+                            repository
+                                .act(key.actCode())
+                                .map(
+                                    act ->
+                                        new SectionLookup(
+                                            section, act.jurisdiction(), act.status()))));
+  }
+
+  /** A section version with the jurisdiction and status of its act. */
+  public record SectionLookup(Section section, String jurisdiction, String actStatus) {}
+
   /** Label of the latest corpus release, or {@code null} before the first ingestion. */
   public @Nullable String corpusRelease() {
     return stats.current().release();

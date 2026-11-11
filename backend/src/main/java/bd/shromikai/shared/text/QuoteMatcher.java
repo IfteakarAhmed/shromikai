@@ -52,4 +52,39 @@ public final class QuoteMatcher {
     }
     return best;
   }
+
+  /**
+   * The shortest run of whole sentences of {@code displayText} that matches {@code quote} with at
+   * least {@code threshold} similarity, taken from the stored text itself so a user only ever sees
+   * the authoritative wording, never the model's copy (R-01). Sentences end at a full stop, a danda
+   * or a line break. If no run of at most four sentences reaches the threshold (the quote spans a
+   * fragment of several), the whole text is returned.
+   */
+  public static String bestSegment(String quote, String displayText, double threshold) {
+    java.util.List<String> sentences = new java.util.ArrayList<>();
+    java.util.regex.Matcher m =
+        java.util.regex.Pattern.compile("[^.\\u0964\\u0965\\n]+[.\\u0964\\u0965]?\\s*")
+            .matcher(displayText);
+    while (m.find()) {
+      if (!m.group().isBlank()) {
+        sentences.add(m.group());
+      }
+    }
+    for (int run = 1; run <= Math.min(4, sentences.size()); run++) {
+      String best = null;
+      double bestScore = -1;
+      for (int from = 0; from + run <= sentences.size(); from++) {
+        String candidate = String.join("", sentences.subList(from, from + run));
+        double score = similarity(quote, candidate);
+        if (score >= threshold && score > bestScore) {
+          best = candidate;
+          bestScore = score;
+        }
+      }
+      if (best != null) {
+        return best.strip();
+      }
+    }
+    return displayText.strip();
+  }
 }

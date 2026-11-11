@@ -125,6 +125,13 @@ shromikai:
     gemini:                               # prices the configured GEMINI_MODEL; set the real list
       input: ${GEMINI_PRICE_IN:1.00}      # price in .env. The defaults are deliberately high so the
       output: ${GEMINI_PRICE_OUT:5.00}    # budget guard over-counts rather than under-counts.
+  verify:                                 # architecture §7.7; a change needs an ADR and an eval report
+    quote-min-chars: 20
+    quote-max-chars: 300
+    quote-similarity-threshold: 0.92
+    support-min-confidence: 0.70
+    corrective-attempts: 1
+    parallelism: 8
   budget:
     per-analysis-usd: 1.00                # budget-exceeded above this (architecture §5.3)
     per-analysis-tokens: 400000           # total input + output tokens of one analysis
