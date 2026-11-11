@@ -358,3 +358,127 @@ created.
 - **Checked and unchanged:** the scraper only sends `GET` (`ScraperPolicyTest` asserts no other
   method reaches the server); `robots.txt` handling is unchanged; the contact from `.env` appears
   only in the User-Agent.
+
+
+## Phase report - P4 (hybrid retrieval, graph expansion, query rewriting, law API)
+
+Status: code, tests, documentation and the live embedding and evaluation runs are done. The
+**FR-23 acceptance comparison is not met** (hybrid + graph is below vector only on hit@5; explained
+and with a proposed fix below), the **query-rewrite row was not run** (no `ANTHROPIC_API_KEY`), and
+AGENTS.md §7 items 10 and 11 (human acceptance check, Prompt R in a fresh session) are open. The tag
+`phase-4` is therefore **not** created, as for P3.
+
+- **Summary:**
+  - Embedding backfill (bge-m3, skips unchanged sections, V5 tracking columns), hybrid search
+    (pgvector top 20 + full-text top 20, RRF k = 60, top 8), one-hop graph context (at most 4),
+    topic-map additions (at most 4), Caffeine query cache, `query-rewrite` v1 behind a new
+    `ModelGateway`, and the four `/api/v1/laws` endpoints. Free-text search is local only.
+  - `RetrievalMetrics` is shared with the future smoke service; `./gradlew evalRetrieval` wrote
+    `eval/reports/retrieval.md` at git `79baa9f` over 40 draft questions.
+  - Result: vector only beat hybrid on this corpus. The text list adds noise (details below).
+- **Files created or changed:**
+  - `retrieval/`: `RrfFusion`, `RetrievalMetrics`, `RetrievalService`, `SearchOptions`, `Retrieval`,
+    `RetrievalResult`, `RetrievalOrigin`, `QueryRewriter`, `EmbeddingBackfillService`,
+    `BackfillResult`; `retrieval/internal/`: repository, `GraphExpander`, `TopicMap`,
+    `RetrievalCache`, `ModelGatewayQueryRewriter`, `EmbeddingCliRunner`, properties.
+  - `shared/ai/`: `Prompt`, `PromptRegistry`, `PromptRenderer`, `ModelGateway`.
+  - `law/`: `LawReadService`, `Act`, `ActSummary`, `Section`, `SectionRef`, `law/internal/LawReadRepository`.
+  - `api/`: `LawController`, `api/internal/SearchRateLimiter`, `ApiProperties`.
+  - `V5__embedding_tracking.sql`; `prompts/query-rewrite/v1.md`, its schema and
+    `docs/prompts/query-rewrite.md`; `data/mappings/bd-topics.yaml` (draft);
+    `eval/retrieval/questions.jsonl`; `build.gradle` (Caffeine, `embedLaws`, `evalRetrieval`);
+    `application.yml` (`shromikai.retrieval`, `shromikai.api`); OpenAPI snapshot and generated
+    frontend types; ADR-0012; architecture §8 and api.md clarifications.
+- **Tests added and passing:** 65 new tests, all green; `./gradlew check` (spotless, ArchUnit,
+  `promptLint`, fixture scanner, coverage gates) and the frontend lint, typecheck and tests pass
+  (507 backend tests in total). Unit: `RrfFusionTest` 6, `RetrievalMetricsTest` 6,
+  `GraphExpanderTest` 3, `TopicMapTest` 3, `RetrievalCacheTest` 4, `QueryRewriteContractTest` 7,
+  `EmbeddingCliRunnerTest` 2, `PromptRendererTest` 3, `ModelGatewayTest` 4,
+  `SearchRateLimiterTest` 2. Integration (Testcontainers + `FakeEmbeddingPort`): `HybridSearchIT` 6,
+  `GraphExpansionIT` 5, `EmbeddingBackfillIT` 5, `LawApiIT` 9. `RetrievalEvalRunnerIT`
+  (`@Tag("eval")`) produced the table below. The `RoleAccessIT` probe for `/api/v1/laws` was
+  removed because the real controller replaced it (still 200 for every signed-in role).
+- **Coverage of touched packages:** `retrieval` 93 % of lines (368 of 396; gate 80 %), of which
+  `retrieval.internal` 95 %; `shared.ai` 88 % (66 of 75); backend overall 91 %.
+- **Acceptance commands with output:**
+  - `./gradlew embedLaws`: `embedded=566 skipped=0 truncated=1` in 6 min 40 s on local Ollama (one
+    truncated section: `BLA-2006:2@amend-2026`, the definitions section). A second run embeds
+    nothing (`EmbeddingBackfillIT`).
+  - `./gradlew evalRetrieval` (corpus release 2026.11.11-1, 566 sections embedded):
+
+| Method | hit@5 | MRR@10 | recall@8 | mean ms/query |
+| --- | ---: | ---: | ---: | ---: |
+| Vector only | 1.000 (40/40) | 0.963 | 1.000 | 141 |
+| Text only | 0.150 (6/40) | 0.081 | 0.225 | 21 |
+| Hybrid (RRF) | 0.900 (36/40) | 0.725 | 0.950 | 58 |
+| Hybrid + graph | 0.900 (36/40) | 0.725 | 0.963 | 56 |
+| Hybrid + graph + rewrite | not run | not run | not run | not run |
+
+  By question language:
+
+| Method | Bangla hit@5 | Bangla MRR@10 | English hit@5 | English MRR@10 |
+| --- | ---: | ---: | ---: | ---: |
+| Vector only | 1.000 (19/19) | 0.947 | 1.000 (21/21) | 0.976 |
+| Text only | 0.211 (4/19) | 0.101 | 0.095 (2/21) | 0.063 |
+| Hybrid (RRF) | 0.789 (15/19) | 0.549 | 1.000 (21/21) | 0.885 |
+| Hybrid + graph | 0.789 (15/19) | 0.549 | 1.000 (21/21) | 0.885 |
+
+  Report: `eval/reports/retrieval.md` / `.json` (generated; nothing edited by hand).
+- **FR-23 acceptance check: not met, with the reason.** Hybrid + graph hit@5 is 36/40, vector only
+  40/40. Targets (not results) are hit@5 ≥ 0.80 and recall@8 ≥ 0.85; hybrid + graph is above both
+  on these draft questions (0.900, 0.963), but the clause "at least as good as the best single
+  method" fails. Why:
+  - The text list is weak: text only 6/40 (Bangla 4/19, English 2/21). English questions cannot
+    match lexically, because 368 of the 563 current sections are in Bangla only (BLA-2006) and the
+    text index has no translation.
+  - For Bangla the OR query is dominated by function words. Measured on the development database
+    (`ts_stat`, diagnostic only): `কোন` is in 313 of 563 current BD sections, `বা` in 264, `এবং` in
+    251, `জন্য` in 233. They outrank the one or two discriminating words.
+  - Plain RRF gives the weak text list the same weight as the strong vector list, so a text rank 1
+    on a wrong section pushes a correct vector rank 1 down. All four misses are Bangla questions
+    (rq-004, rq-014, rq-032, rq-040; listed with their top results in the report).
+  - Graph expansion raised recall@8 from 0.950 to 0.963 and did not change hit@5 or MRR (it only
+    appends context after the ranked list).
+- **Proposed fix (not applied):** (1) build the text query from discriminating lexemes only: drop
+  lexemes whose document frequency is above a threshold, or weight by IDF; (2) for a query whose
+  script differs from the act's authoritative language, let the text list contribute less or not at
+  all; (3) only if (1) and (2) are not enough, weighted RRF (a change to FR-19 and an ADR). I did
+  not apply any of them: the 40 questions are the test split, and tuning on them would make the
+  next table a training result (evaluation.md §10). Needed first: a separate `dev` question set of
+  at least 30 questions, written and checked by a team member, to tune on; then one run on the
+  test set.
+- **Key decisions and ADRs:** ADR-0012 (Caffeine; V5 columns; the gateway arrives now; OR text
+  query; definitions-first graph order; topic-map resolution; evaluation design).
+- **Known gaps:**
+  - The `Hybrid + graph + rewrite` row is **not run**: `ANTHROPIC_API_KEY` is empty in `.env`. The
+    code path is covered by `QueryRewriteContractTest` against a WireMock stand-in whose response
+    bodies are hand-written in the Messages API shape (not recorded from a live call). In a running
+    application every cloud call is blocked by the fail-closed egress guard until P5, so rewriting
+    always falls back to the raw clause for now.
+  - All 40 questions and the topic map are `draft`: drafted by me from the ingested text, not
+    reviewed. The eval report says so and shows `checked` results separately (0 of 40).
+  - `bd-topics.yaml` maps 16 of the 22 clause types; the others have no clear section in the
+    ingested acts and are left out on purpose. `expected_for` is empty (the corpus has no
+    `WORKER_CATEGORY` terms). The topic map is off in every ablation row.
+  - The corpus has no ILO sections, so the jurisdiction filter is tested on fixtures only.
+  - The truncated-section list is in `law_section.embedding_truncated`, not in the P3 quality
+    report (FR-18 asks for the quality report); the count is in the `embedLaws` output.
+  - `query-rewrite` v1 is `experimental` and not in `prompts/LOCK`; there is no dev-split report
+    for it yet (AGENTS.md §7 item 6). No cost ledger or `LlmCallListener` yet (P6/P7).
+  - `lang` is accepted and does not filter; `RetrievalSmokeService` and the admin smoke endpoint
+    are P11; the 60 per minute search limit is tested at unit level, not through HTTP.
+  - `RrfFusion` and `RetrievalMetrics` were written just before their tests, and the other tests in
+    the same batches as the code, not strictly red-first.
+  - Environment note: Gradle's default JDK here is 25 and Spotless fails on it; use
+    `export JAVA_HOME=$(/usr/libexec/java_home -v 21)` (as the README says).
+  - AGENTS.md §7 items 10 and 11 are open.
+- **Open questions for the team:**
+  1. Put `ANTHROPIC_API_KEY` in `.env` and re-run `./gradlew evalRetrieval` to fill the rewrite row
+     (about 40 Haiku calls).
+  2. Review and check the 40 questions (`status: checked`, `checkedBy`) and `bd-topics.yaml`
+     (`reviewed_by`).
+  3. Approve the proposed text-list fix and assign the 30-question `dev` set.
+  4. Run Prompt R in a fresh session, then `git tag phase-4` on the commit that passes.
+- **Next phase prerequisites:** P5 (intake and privacy shield) replaces the fail-closed egress
+  guard; P6 needs the retrieval API (`RetrievalService.search` with `SearchOptions.forClause`) and
+  a decision on the text-list fix, because the candidate set feeds the risk agent.

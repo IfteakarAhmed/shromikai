@@ -1,0 +1,51 @@
+{
+  "gitSha" : "79baa9f",
+  "generatedAt" : "2026-11-11T05:24:16.954229Z",
+  "corpusRelease" : "2026.11.11-1",
+  "embeddingModel" : "bge-m3",
+  "embeddedSections" : 566,
+  "rewriteModel" : "claude-haiku-5-5",
+  "rewritePrompt" : "query-rewrite v1",
+  "questions" : 40,
+  "questionsChecked" : 0,
+  "rows" : [ {
+    "method" : "VECTOR_ONLY",
+    "questions" : 40,
+    "hitsAt5" : 40,
+    "hitAt5" : 1.0,
+    "mrrAt10" : 0.9625,
+    "recallAt8" : 1.0,
+    "meanMillis" : 140.98585,
+    "rewritten" : 0
+  }, {
+    "method" : "TEXT_ONLY",
+    "questions" : 40,
+    "hitsAt5" : 6,
+    "hitAt5" : 0.15,
+    "mrrAt10" : 0.08125,
+    "recallAt8" : 0.225,
+    "meanMillis" : 21.359309325,
+    "rewritten" : 0
+  }, {
+    "method" : "HYBRID",
+    "questions" : 40,
+    "hitsAt5" : 36,
+    "hitAt5" : 0.9,
+    "mrrAt10" : 0.7252083333333333,
+    "recallAt8" : 0.95,
+    "meanMillis" : 57.59633229999999,
+    "rewritten" : 0
+  }, {
+    "method" : "HYBRID_GRAPH",
+    "questions" : 40,
+    "hitsAt5" : 36,
+    "hitAt5" : 0.9,
+    "mrrAt10" : 0.7252083333333333,
+    "recallAt8" : 0.9625,
+    "meanMillis" : 56.430217775,
+    "rewritten" : 0
+  }, {
+    "method" : "HYBRID_GRAPH_REWRITE",
+    "skipped" : "ANTHROPIC_API_KEY is not set, so no Claude Haiku call was made; the row is not simulated."
+  } ]
+}
