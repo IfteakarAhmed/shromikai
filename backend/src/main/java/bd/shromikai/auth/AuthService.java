@@ -177,6 +177,82 @@ public class AuthService {
     return view(user);
   }
 
+  private static final java.util.Set<String> SECTORS =
+      java.util.Set.of(
+          "READY_MADE_GARMENTS",
+          "TEXTILES",
+          "CONSTRUCTION",
+          "IT_SOFTWARE",
+          "RETAIL",
+          "DOMESTIC_WORK",
+          "SECURITY_SERVICES",
+          "NGO",
+          "BANKING_FINANCE",
+          "OTHER");
+
+  /**
+   * Stores the locale and the personalisation profile of an account (E-09, FR-56). A guest cannot
+   * (403); omitted values stay; the profile changes wording only and never findings.
+   */
+  public AccountView updateProfile(
+      AuthenticatedSubject subject,
+      @Nullable String locale,
+      @Nullable Map<String, Object> profile) {
+    if (subject.guest() || subject.userId() == null) {
+      throw new ProblemException(ProblemType.FORBIDDEN);
+    }
+    java.util.List<bd.shromikai.shared.problem.ValidationProblemException.Error> errors =
+        new java.util.ArrayList<>();
+    if (locale != null && !locale.equals("bn") && !locale.equals("en")) {
+      errors.add(error("/locale", "must be bn or en"));
+    }
+    if (profile != null) {
+      for (Map.Entry<String, Object> e : profile.entrySet()) {
+        String key = e.getKey();
+        Object value = e.getValue();
+        String at = "/profile/" + key;
+        switch (key) {
+          case "side" -> {
+            if (!java.util.List.of("WORKER", "EMPLOYER").contains(value)) {
+              errors.add(error(at, "must be WORKER or EMPLOYER"));
+            }
+          }
+          case "sector" -> {
+            if (!(value instanceof String v) || !SECTORS.contains(v)) {
+              errors.add(error(at, "is not a sector"));
+            }
+          }
+          case "jobRole" -> {
+            if (value != null && (!(value instanceof String v) || v.length() > 60)) {
+              errors.add(error(at, "must be at most 60 characters"));
+            }
+          }
+          case "preferredLanguage" -> {
+            if (!java.util.List.of("bn", "en").contains(value)) {
+              errors.add(error(at, "must be bn or en"));
+            }
+          }
+          case "readingLevel" -> {
+            if (!java.util.List.of("BASIC", "STANDARD").contains(value)) {
+              errors.add(error(at, "must be BASIC or STANDARD"));
+            }
+          }
+          default -> errors.add(error(at, "is not a profile field"));
+        }
+      }
+    }
+    if (!errors.isEmpty()) {
+      throw new bd.shromikai.shared.problem.ValidationProblemException(errors);
+    }
+    users.updateProfile(subject.userId(), locale, profile);
+    return me(subject);
+  }
+
+  private static bd.shromikai.shared.problem.ValidationProblemException.Error error(
+      String pointer, String message) {
+    return new bd.shromikai.shared.problem.ValidationProblemException.Error(pointer, message);
+  }
+
   public AuthResult guest(String deviceToken, String clientIp) {
     limiter.checkIp(clientIp);
     if (!UUID_V4.matcher(deviceToken).matches()) {

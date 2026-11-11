@@ -27,9 +27,8 @@ class OpenApiContractTest {
   /** Catalogue entries without an implementation yet (compare is P7, the rest later phases). */
   private static final Set<String> NOT_YET =
       Set.of(
-          // P7, not done: the account profile (FR-56, PATCH /auth/me)
-          "PATCH /api/v1/auth/me",
-          // later phases (admin console, API keys, usage: P8/P9; account deletion FR-78)
+          //           // later phases (admin console, API keys, usage: P8/P9; account deletion
+          // FR-78)
           "DELETE /api/v1/auth/me",
           "GET /api/v1/admin/users",
           "PATCH /api/v1/admin/users/{id}",

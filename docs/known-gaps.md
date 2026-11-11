@@ -34,9 +34,9 @@ A running list of what is not done, not measured or not proven, so nothing is cl
 | Weak citation relevance can pass the verifier | FR-47 | The support check judges claim against section, not whether the section bears on the clause: the c2 transfer finding was verified against `BLA-2006:3` (first full live run). The 0.55 seen on that finding is the risk agent's own confidence in the finding, not the verifier's support confidence. |
 | Playbook `statuteSectionKey` is not verified | FR-57, architecture §9 | The key is stored and returned but not turned into a verified citation; a playbook finding never carries a citation. |
 | `clauses[].facts` is empty in the result | FR-33, api.md §5.3 | The job does not keep the typed facts after the pipeline; the result's clauses show `facts: []`. |
-| Compare is not implemented | FR-59, E-18 to E-20 | `POST /api/v1/compare` and its result and events are missing; `baseline` v1 exists and is audited, and `GuestQuotaService.reserve` takes a weight for it. `CompareApiIT` does not exist. |
-| Account profile endpoint is missing | FR-56, E-09 | `PATCH /api/v1/auth/me` is not implemented; guests and accounts send the profile per request. `OpenApiContractTest` lists it. |
 | SSE sends only `COMPLETED` stage events | FR-58 | No `STARTED` or `SKIPPED` states; the stream polls the job every 100 ms. |
 | Memo clarity is not measured | FR-51, M-21 | `PlainLanguageLintTest` checks average sentence length only; the clarity judge is P10. |
 | `usage_event` and `MEMO_RENDER` are not written | FR-55, NFR-20 | `POST /memos/render` writes no usage event yet (the table is not in V7). |
 | Per-user concurrency limit is a P7 choice | NFR-20 | Signed-in users without an organisation may run 2 analyses at once; the PRD names only guests and organisations. |
+| Compare baseline runs after the analysis | FR-59 | The baseline starts when the analysis has finished, so `GET /compare/{id}` stays `202` for one more model call. Compare events are the analysis events (no baseline stage); the compare ID is the analysis ID. `baseline` v1 has no dev-split report. |
+| Stored profile covers wording only and is read per request | FR-56 | `PATCH /auth/me` validates and stores the profile; an analysis uses it only when the request sends none. `side` of the profile is not applied to the analysis. |

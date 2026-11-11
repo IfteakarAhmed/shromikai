@@ -43,7 +43,7 @@ export interface paths {
       path?: never
       cookie?: never
     }
-    get: operations['get_3']
+    get: operations['get_4']
     put?: never
     post?: never
     delete: operations['delete']
@@ -59,7 +59,7 @@ export interface paths {
       path?: never
       cookie?: never
     }
-    get: operations['events']
+    get: operations['events_1']
     put?: never
     post?: never
     delete?: never
@@ -161,7 +161,7 @@ export interface paths {
     delete?: never
     options?: never
     head?: never
-    patch?: never
+    patch: operations['updateMe']
     trace?: never
   }
   '/api/v1/auth/me/password': {
@@ -190,6 +190,54 @@ export interface paths {
     get?: never
     put?: never
     post: operations['refresh']
+    delete?: never
+    options?: never
+    head?: never
+    patch?: never
+    trace?: never
+  }
+  '/api/v1/compare': {
+    parameters: {
+      query?: never
+      header?: never
+      path?: never
+      cookie?: never
+    }
+    get?: never
+    put?: never
+    post: operations['start']
+    delete?: never
+    options?: never
+    head?: never
+    patch?: never
+    trace?: never
+  }
+  '/api/v1/compare/{id}': {
+    parameters: {
+      query?: never
+      header?: never
+      path?: never
+      cookie?: never
+    }
+    get: operations['get_3']
+    put?: never
+    post?: never
+    delete?: never
+    options?: never
+    head?: never
+    patch?: never
+    trace?: never
+  }
+  '/api/v1/compare/{id}/events': {
+    parameters: {
+      query?: never
+      header?: never
+      path?: never
+      cookie?: never
+    }
+    get: operations['events']
+    put?: never
+    post?: never
     delete?: never
     options?: never
     head?: never
@@ -474,6 +522,13 @@ export interface components {
       kind: string
       name: string
       plan: string
+    }
+    /** @default null */
+    MeUpdate: {
+      locale: string | null
+      profile: {
+        [key: string]: Record<string, never>
+      } | null
     }
     /** @default null */
     MemoRenderRequest: {
@@ -820,7 +875,7 @@ export interface operations {
       }
     }
   }
-  get_3: {
+  get_4: {
     parameters: {
       query?: never
       header?: never
@@ -880,7 +935,7 @@ export interface operations {
       }
     }
   }
-  events: {
+  events_1: {
     parameters: {
       query?: never
       header?: {
@@ -1100,6 +1155,39 @@ export interface operations {
       }
     }
   }
+  updateMe: {
+    parameters: {
+      query?: never
+      header?: never
+      path?: never
+      cookie?: never
+    }
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['MeUpdate']
+      }
+    }
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          '*/*': components['schemas']['Me']
+        }
+      }
+      /** @description Problem document */
+      default: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/problem+json': components['schemas']['Problem']
+        }
+      }
+    }
+  }
   changePassword: {
     parameters: {
       query?: never
@@ -1149,6 +1237,106 @@ export interface operations {
         }
         content: {
           '*/*': components['schemas']['TokenResponse']
+        }
+      }
+      /** @description Problem document */
+      default: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/problem+json': components['schemas']['Problem']
+        }
+      }
+    }
+  }
+  start: {
+    parameters: {
+      query?: never
+      header?: {
+        'Idempotency-Key'?: string
+      }
+      path?: never
+      cookie?: never
+    }
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['AnalysisTextRequest']
+      }
+    }
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          '*/*': Record<string, never>
+        }
+      }
+      /** @description Problem document */
+      default: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/problem+json': components['schemas']['Problem']
+        }
+      }
+    }
+  }
+  get_3: {
+    parameters: {
+      query?: never
+      header?: never
+      path: {
+        id: string
+      }
+      cookie?: never
+    }
+    requestBody?: never
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          '*/*': Record<string, never>
+        }
+      }
+      /** @description Problem document */
+      default: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/problem+json': components['schemas']['Problem']
+        }
+      }
+    }
+  }
+  events: {
+    parameters: {
+      query?: never
+      header?: {
+        'Last-Event-ID'?: string
+        'Accept-Language'?: string
+      }
+      path: {
+        id: string
+      }
+      cookie?: never
+    }
+    requestBody?: never
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'text/event-stream': components['schemas']['SseEmitter']
         }
       }
       /** @description Problem document */

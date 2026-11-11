@@ -7,6 +7,7 @@ import bd.shromikai.auth.AuthenticatedSubject;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import java.time.Duration;
+import java.util.Map;
 import org.jspecify.annotations.Nullable;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseCookie;
@@ -67,6 +68,16 @@ public class AuthController {
   public Me me(@AuthenticationPrincipal AuthenticatedSubject subject) {
     AccountView view = auth.me(subject);
     return Me.from(view);
+  }
+
+  /** Body of {@code PATCH /auth/me}; values are validated in {@code AuthService} with pointers. */
+  @io.swagger.v3.oas.annotations.media.Schema(name = "MeUpdate")
+  public record MeUpdate(@Nullable String locale, @Nullable Map<String, Object> profile) {}
+
+  @org.springframework.web.bind.annotation.PatchMapping("/me")
+  public Me updateMe(
+      @AuthenticationPrincipal AuthenticatedSubject subject, @RequestBody MeUpdate update) {
+    return Me.from(auth.updateProfile(subject, update.locale(), update.profile()));
   }
 
   @PostMapping("/guest")

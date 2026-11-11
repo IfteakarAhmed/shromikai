@@ -71,6 +71,24 @@ public class UserRepository {
         .update();
   }
 
+  /** Sets the locale and/or the profile; {@code null} leaves a value as it is. */
+  public void updateProfile(
+      UUID id, @Nullable String locale, @Nullable Map<String, Object> profile) {
+    String json;
+    try {
+      json = profile == null ? null : mapper.writeValueAsString(profile);
+    } catch (com.fasterxml.jackson.core.JsonProcessingException e) {
+      throw new IllegalArgumentException(e);
+    }
+    jdbc.sql(
+            "update app_user set locale = coalesce(:locale, locale),"
+                + " profile = coalesce(cast(:profile as jsonb), profile) where id = :id")
+        .param("locale", locale)
+        .param("profile", json)
+        .param("id", id)
+        .update();
+  }
+
   public void updatePasswordHash(UUID id, String hash) {
     jdbc.sql("update app_user set password_hash = :hash where id = :id")
         .param("hash", hash)

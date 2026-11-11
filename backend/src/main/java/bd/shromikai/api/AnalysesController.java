@@ -73,6 +73,7 @@ public class AnalysesController {
   private final AnalysisResults results;
   private final AnalysisEvents events;
   private final PlaybookStore playbooks;
+  private final bd.shromikai.auth.AuthService auth;
   private final GuestQuotaService quotas;
   private final IdempotencyCache idempotency;
   private final AnalysisProperties properties;
@@ -86,6 +87,7 @@ public class AnalysesController {
       AnalysisResults results,
       AnalysisEvents events,
       PlaybookStore playbooks,
+      bd.shromikai.auth.AuthService auth,
       GuestQuotaService quotas,
       IdempotencyCache idempotency,
       AnalysisProperties properties,
@@ -96,6 +98,7 @@ public class AnalysesController {
     this.results = results;
     this.events = events;
     this.playbooks = playbooks;
+    this.auth = auth;
     this.quotas = quotas;
     this.idempotency = idempotency;
     this.properties = properties;
@@ -442,6 +445,21 @@ public class AnalysesController {
       throw new ProblemException(ProblemType.VALIDATION_FAILED, "outputLanguage must be bn or en");
     }
     Map<String, String> map = new LinkedHashMap<>();
+    if (profile == null && !caller.guest()) {
+      // the account's stored profile applies when the request sends none (FR-56)
+      Map<String, Object> stored = null;
+      try {
+        stored = auth.me(caller).profile();
+      } catch (ProblemException unknownAccount) {
+        // a token whose account is gone: no stored profile, the analysis still runs
+      }
+      if (stored != null) {
+        putIfPresent(map, "sector", asText(stored.get("sector")));
+        putIfPresent(map, "job_role", asText(stored.get("jobRole")));
+        putIfPresent(map, "preferred_language", asText(stored.get("preferredLanguage")));
+        putIfPresent(map, "reading_level", asText(stored.get("readingLevel")));
+      }
+    }
     if (profile != null) {
       putIfPresent(map, "sector", profile.sector());
       putIfPresent(map, "job_role", profile.jobRole());
@@ -462,6 +480,10 @@ public class AnalysesController {
         .find(playbookId)
         .filter(p -> caller.role() == Role.ADMIN || p.orgId().equals(caller.orgId()))
         .orElseThrow(() -> new ProblemException(ProblemType.NOT_FOUND));
+  }
+
+  private static @Nullable String asText(@Nullable Object value) {
+    return value instanceof String text ? text : null;
   }
 
   private static void putIfPresent(Map<String, String> map, String key, @Nullable String value) {

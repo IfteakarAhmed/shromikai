@@ -92,7 +92,7 @@ Demo accounts receive `403` `demo-account-restricted` on password change and del
 | E-06 | `GET /api/v1/auth/me` | none | `200` `Me` | `401` | FR-05 |
 | E-07 | `POST /api/v1/auth/guest` | `{ deviceToken: uuid }` | `200` `TokenResponse` (`guest: true`) | `400`, `429` | FR-09 |
 | E-08 | `POST /api/v1/auth/demo/{role}` (`worker`, `hr`, `admin`; profile `demo` only) | none | `200` `TokenResponse` + refresh cookie | `404` outside `demo` | FR-08 |
-| E-09 | `PATCH /api/v1/auth/me` | `{ profile?: Profile, locale?: bn \| en }` | `200` `Me` | `400`, `403` (guest) | FR-56 |
+| E-09 | `PATCH /api/v1/auth/me` | `{ profile?: Profile, locale?: bn \| en }` (omitted fields stay; errors carry pointers such as `/profile/sector`; the stored profile is used by an analysis that sends none) | `200` `Me` | `400`, `403` (guest) | FR-56 |
 | E-10 | `POST /api/v1/auth/me/password` | `{ currentPassword, newPassword (12..128) }` | `204` | `400`, `401`, `403` `demo-account-restricted` | FR-08 |
 | E-11 | `DELETE /api/v1/auth/me` | none | `204` | `403` `demo-account-restricted` | FR-78 |
 | E-12 | `POST /api/v1/analyses` | multipart (§4.1) or JSON `AnalysisTextRequest` | `200` `AnalysisResult` (JSON text ≤ 8,000 characters that finished within `sync-wait`, 45 s; ADR-0020 item 14) or `202` `AnalysisAccepted` | `400`, `401`, `409`, `413`, `415`, `422`, `429`, `503` | FR-24, FR-58 |
@@ -101,7 +101,7 @@ Demo accounts receive `403` `demo-account-restricted` on password change and del
 | E-15 | `GET /api/v1/analyses/{id}/trace` | none | `200` `AnalysisTrace` (30 days) | `404` | FR-48, FR-58 |
 | E-16 | `GET /api/v1/analyses/{id}/obligations` | none | `200` `ObligationsExport` | `404`, `410` | FR-53 |
 | E-17 | `DELETE /api/v1/analyses/{id}` | none | `204` | `404` | FR-54 |
-| E-18 | `POST /api/v1/compare` | same as E-12 | `202` `CompareAccepted` | as E-12 | FR-59 |
+| E-18 | `POST /api/v1/compare` | same as E-12 (JSON text; counts as 2 analyses for a guest; the compare ID is the ID of the analysis behind it) | `202` `CompareAccepted` | as E-12 | FR-59 |
 | E-19 | `GET /api/v1/compare/{id}` | none | `200` `CompareResult`; `202` while running | `404`, `410` | FR-59 |
 | E-20 | `GET /api/v1/compare/{id}/events` | SSE | SSE (§4.2) | `404`, `410` | FR-59 |
 | E-21 | `POST /api/v1/memos/render` | `MemoRenderRequest` | `200` `application/pdf` or `text/html; charset=utf-8`; writes a `MEMO_RENDER` usage event | `400` `signature-invalid`, `410` `envelope-expired`, `503` `renderer-unavailable` | FR-55 |
