@@ -26,9 +26,10 @@ import org.springframework.web.filter.OncePerRequestFilter;
 /**
  * Authenticates {@code /mcp} requests by API key (FR-65, ADR-0021): {@code Authorization: Bearer
  * shk_...}. Only an active key counts; anything else presented is refused here with 401 and an
- * {@code ACCESS_DENIED} audit row that carries the reason and never the credential (T-12). A
- * request with no credential falls through to the 401 entry point. The key's scopes become the
- * authorities {@code SCOPE_<scope>}.
+ * {@code ACCESS_DENIED} audit row that carries the reason and never the credential (T-12); rows are
+ * limited to 5 a minute per source address ({@link DeniedAuditThrottle}). A request with no
+ * credential falls through to the 401 entry point. The key's scopes become the authorities {@code
+ * SCOPE_<scope>}.
  */
 final class ApiKeyAuthenticationFilter extends OncePerRequestFilter {
 
@@ -37,12 +38,17 @@ final class ApiKeyAuthenticationFilter extends OncePerRequestFilter {
   private final ApiKeyService keys;
   private final AuditService audit;
   private final ProblemResponseWriter problems;
+  private final DeniedAuditThrottle throttle;
 
   ApiKeyAuthenticationFilter(
-      ApiKeyService keys, AuditService audit, ProblemResponseWriter problems) {
+      ApiKeyService keys,
+      AuditService audit,
+      ProblemResponseWriter problems,
+      DeniedAuditThrottle throttle) {
     this.keys = keys;
     this.audit = audit;
     this.problems = problems;
+    this.throttle = throttle;
   }
 
   @Override
@@ -65,11 +71,14 @@ final class ApiKeyAuthenticationFilter extends OncePerRequestFilter {
             ? keys.authenticate(header.substring(PREFIX.length()).trim())
             : Optional.empty();
     if (principal.isEmpty()) {
-      Map<String, Object> detail = new HashMap<>();
-      detail.put("reason", "invalid_key");
-      detail.put("httpMethod", request.getMethod());
-      detail.put("httpPath", request.getRequestURI());
-      audit.record(AuditEvent.of(null, ActorKind.API_KEY, AuditAction.ACCESS_DENIED, detail));
+      // The refusal is always answered; the audit row is limited per source address.
+      if (throttle.tryAcquire(request.getRemoteAddr())) {
+        Map<String, Object> detail = new HashMap<>();
+        detail.put("reason", "invalid_key");
+        detail.put("httpMethod", request.getMethod());
+        detail.put("httpPath", request.getRequestURI());
+        audit.record(AuditEvent.of(null, ActorKind.API_KEY, AuditAction.ACCESS_DENIED, detail));
+      }
       response.setHeader(HttpHeaders.WWW_AUTHENTICATE, "Bearer");
       problems.write(request, response, ProblemType.INVALID_TOKEN, null);
       return;

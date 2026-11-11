@@ -118,7 +118,8 @@ class SecurityConfig {
         .addFilterBefore(
             new CredentialQueryParamFilter(problemWriter), SecurityContextHolderFilter.class)
         .addFilterBefore(
-            new ApiKeyAuthenticationFilter(apiKeys, audit, problemWriter),
+            new ApiKeyAuthenticationFilter(
+                apiKeys, audit, problemWriter, new DeniedAuditThrottle(5)),
             UsernamePasswordAuthenticationFilter.class)
         .addFilterBefore(
             new JwtAuthenticationFilter(jwt), UsernamePasswordAuthenticationFilter.class)
