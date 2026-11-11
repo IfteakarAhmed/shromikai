@@ -7,7 +7,6 @@ import bd.shromikai.shared.ai.ChatPort;
 import bd.shromikai.shared.ai.EgressGuard;
 import bd.shromikai.shared.ai.fake.FakeChatPort;
 import bd.shromikai.shared.ai.fake.FakeEmbeddingPort;
-import bd.shromikai.shared.ai.internal.FailClosedEgressGuard;
 import bd.shromikai.testsupport.IntegrationTest;
 import bd.shromikai.testsupport.Requirement;
 import java.util.List;
@@ -96,11 +95,12 @@ class ApplicationContextIT {
   }
 
   @Test
-  void shouldWireFakesAndFailClosedGuard_whenTestProfileIsActive() {
+  void shouldWireFakesAndThePrivacyGuard_whenTestProfileIsActive() {
     assertThat(context.getBeansOfType(ChatPort.class).values())
         .singleElement()
         .isInstanceOf(FakeChatPort.class);
     assertThat(context.getBean(FakeEmbeddingPort.class)).isNotNull();
-    assertThat(context.getBean(EgressGuard.class)).isInstanceOf(FailClosedEgressGuard.class);
+    assertThat(context.getBean(EgressGuard.class))
+        .isInstanceOf(bd.shromikai.privacy.PrivacyEgressGuard.class);
   }
 }

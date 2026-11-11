@@ -21,7 +21,7 @@ public class AuditService {
   private final ObjectMapper mapper;
   private final JsonSchemas schemas = new JsonSchemas();
 
-  AuditService(JdbcClient jdbc, ObjectMapper mapper) {
+  public AuditService(JdbcClient jdbc, ObjectMapper mapper) {
     this.jdbc = jdbc;
     this.mapper = mapper;
   }

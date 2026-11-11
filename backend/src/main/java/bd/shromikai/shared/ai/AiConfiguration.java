@@ -5,7 +5,6 @@ import bd.shromikai.shared.ai.fake.FakeChatPort;
 import bd.shromikai.shared.ai.fake.FakeEmbeddingPort;
 import bd.shromikai.shared.ai.gemini.GeminiChatAdapter;
 import bd.shromikai.shared.ai.internal.Backoff;
-import bd.shromikai.shared.ai.internal.FailClosedEgressGuard;
 import bd.shromikai.shared.ai.ollama.OllamaChatAdapter;
 import bd.shromikai.shared.ai.ollama.OllamaEmbeddingAdapter;
 import bd.shromikai.shared.config.ShromikaiProperties;
@@ -27,12 +26,6 @@ public class AiConfiguration {
   @Bean
   JsonSchemas jsonSchemas() {
     return new JsonSchemas();
-  }
-
-  /** Blocks every cloud call until the privacy module provides the real guard in P5 (R-03). */
-  @Bean
-  EgressGuard egressGuard() {
-    return new FailClosedEgressGuard();
   }
 
   @Configuration(proxyBeanMethods = false)

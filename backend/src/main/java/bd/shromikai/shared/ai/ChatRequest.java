@@ -16,6 +16,8 @@ import org.jspecify.annotations.Nullable;
  *
  * @param temperature {@code null} means provider default (required for Claude, ADR-0005)
  * @param effort Claude effort; {@code null} for other providers
+ * @param egressContext the job's protected values for the egress guard; {@code null} outside an
+ *     analysis (the guard still runs the deterministic detectors)
  */
 public record ChatRequest(
     String promptId,
@@ -28,7 +30,8 @@ public record ChatRequest(
     int maxOutputTokens,
     Duration timeout,
     @Nullable Double temperature,
-    @Nullable Effort effort) {
+    @Nullable Effort effort,
+    @Nullable EgressContext egressContext) {
 
   public ChatRequest {
     Objects.requireNonNull(promptId, "promptId");
@@ -44,6 +47,34 @@ public record ChatRequest(
     if (maxOutputTokens < 1) {
       throw new IllegalArgumentException("maxOutputTokens must be positive");
     }
+  }
+
+  /** A request without an egress context (calls outside an analysis). */
+  public ChatRequest(
+      String promptId,
+      int promptVersion,
+      ModelRole role,
+      String modelId,
+      String system,
+      SensitiveText user,
+      JsonNode outputSchema,
+      int maxOutputTokens,
+      Duration timeout,
+      @Nullable Double temperature,
+      @Nullable Effort effort) {
+    this(
+        promptId,
+        promptVersion,
+        role,
+        modelId,
+        system,
+        user,
+        outputSchema,
+        maxOutputTokens,
+        timeout,
+        temperature,
+        effort,
+        null);
   }
 
   /**

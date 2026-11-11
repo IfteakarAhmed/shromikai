@@ -9,6 +9,7 @@ import java.time.Duration;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import org.jspecify.annotations.Nullable;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -52,17 +53,26 @@ public class ModelGateway {
 
   /** Calls the latest version of the prompt. */
   public Result call(String promptId, Map<String, ?> variables) {
-    return call(registry.latest(promptId), variables);
+    return call(registry.latest(promptId), variables, null);
+  }
+
+  /** Calls the latest version of the prompt for a job whose placeholder values the guard checks. */
+  public Result call(String promptId, Map<String, ?> variables, @Nullable EgressContext context) {
+    return call(registry.latest(promptId), variables, context);
   }
 
   public Result call(Prompt prompt, Map<String, ?> variables) {
+    return call(prompt, variables, null);
+  }
+
+  public Result call(Prompt prompt, Map<String, ?> variables, @Nullable EgressContext context) {
     Rendered rendered = renderer.render(prompt, variables);
     ChatPort port = port(prompt.role());
     String modelId = modelId(prompt.role());
     ChatResponse response = null;
     List<String> errors;
     try {
-      response = port.call(request(prompt, modelId, rendered.system(), rendered.user()));
+      response = port.call(request(prompt, modelId, rendered.system(), rendered.user(), context));
       errors = JsonSchemas.validate(prompt.outputSchema(), response.output());
       if (errors.isEmpty()) {
         return result(prompt, response);
@@ -78,7 +88,8 @@ public class ModelGateway {
             + "\n</validation_errors>";
     ChatResponse second;
     try {
-      second = port.call(request(prompt, modelId, rendered.system(), SensitiveText.of(repair)));
+      second =
+          port.call(request(prompt, modelId, rendered.system(), SensitiveText.of(repair), context));
     } catch (ModelOutputInvalidException e) {
       throw new ModelOutputInvalidException("schema-invalid-after-repair");
     }
@@ -93,7 +104,11 @@ public class ModelGateway {
   }
 
   private static ChatRequest request(
-      Prompt prompt, String modelId, String system, SensitiveText user) {
+      Prompt prompt,
+      String modelId,
+      String system,
+      SensitiveText user,
+      @Nullable EgressContext context) {
     return new ChatRequest(
         prompt.id(),
         prompt.version(),
@@ -105,7 +120,8 @@ public class ModelGateway {
         prompt.maxOutputTokens(),
         Duration.ofSeconds(prompt.timeoutSeconds()),
         prompt.temperature(),
-        prompt.effort());
+        prompt.effort(),
+        context);
   }
 
   private ChatPort port(ModelRole role) {

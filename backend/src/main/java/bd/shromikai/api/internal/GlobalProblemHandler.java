@@ -45,8 +45,11 @@ public class GlobalProblemHandler extends ResponseEntityExceptionHandler {
               e instanceof ModelException model ? model.reasonCode() : e.getClass().getSimpleName())
           .log("Request failed");
     }
-    return ProblemFactory.response(
-        ProblemFactory.build(e.type(), e.detail(), request), e.retryAfterSeconds());
+    ProblemDetail problem = ProblemFactory.build(e.type(), e.detail(), request);
+    if (!e.pages().isEmpty()) {
+      problem.setProperty("pages", e.pages());
+    }
+    return ProblemFactory.response(problem, e.retryAfterSeconds());
   }
 
   @ExceptionHandler(ConstraintViolationException.class)
