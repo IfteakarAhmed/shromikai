@@ -58,6 +58,8 @@ dependencies {
     // (ADR-0001, ADR-0005). Gemini uses Spring's RestClient, no extra dependency.
     implementation 'com.anthropic:anthropic-java:3.7.0'
     implementation 'org.springframework.ai:spring-ai-starter-model-ollama'
+    // MCP server, Streamable HTTP (P8, ADR-0021); version from the Spring AI BOM
+    implementation 'org.springframework.ai:spring-ai-starter-mcp-server-webmvc'
 
     // Identity (P2, ADR-0010): Spring Security filter chain, HS256 JWTs through Nimbus (managed by
     // pinned here), Bucket4j rate limits.

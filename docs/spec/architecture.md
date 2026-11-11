@@ -764,9 +764,9 @@ Every table: **contract text = No**.
 | `organisation` (V3) | `id` uuid, `name`, `kind` (`SME`, `HR`, `NGO`, `LAW_FIRM`, `JOB_PORTAL`, `PLATFORM`), `plan` (`FREE`, `TEAM`, `API`, `LEGAL_AID`), `created_at`, `deleted_at` |
 | `app_user` (V3) | `id` uuid, `org_id` null, `email citext unique`, `password_hash` (BCrypt), `role` (`WORKER`, `HR`, `ADMIN`), `locale` (`bn`, `en`; default `bn`), `profile jsonb` (side, sector, job role, language, reading level), `is_demo boolean`, `failed_logins int`, `locked_until`, `created_at`, `disabled_at` |
 | `refresh_token` (V3) | `id` uuid, `user_id`, `family_id` uuid, `token_sha256 char(64) unique`, `expires_at`, `revoked_at`, `replaced_by` uuid null |
-| `api_key` (V7) | `id` uuid, `org_id`, `prefix char(8) unique`, `key_sha256 char(64) unique`, `name`, `scopes text[]`, `created_by`, `created_at`, `last_used_at`, `revoked_at` |
-| `usage_counter` (V6) | `subject_hash char(64)`, `day date`, `analyses int`; PK (`subject_hash`, `day`) |
-| `usage_event` (V6) | `id`, `org_id` null, `api_key_id` null, `user_id` null, `kind` (`ANALYSIS`, `COMPARE`, `MEMO_RENDER`, `API_CALL`, `MCP_CALL`), `units`, `cost_usd_micros`, `occurred_at` |
+| `api_key` (V8) | `id` uuid, `org_id`, `prefix char(8) unique`, `key_sha256 char(64) unique`, `name`, `scopes text[]`, `created_by`, `created_at`, `last_used_at`, `revoked_at` |
+| `usage_counter` (guest quotas) | `subject_hash char(64)`, `day date`, `analyses int`; PK (`subject_hash`, `day`) |
+| `usage_event` (V8; no earlier migration created it, ADR-0021) | `id`, `org_id` null, `api_key_id` null, `user_id` null, `kind` (`ANALYSIS`, `COMPARE`, `MEMO_RENDER`, `API_CALL`, `MCP_CALL`), `units`, `cost_usd_micros`, `occurred_at` |
 
 **Analysis metadata, traces and review (modules `analysis`, `trace`, `verify`)**
 
@@ -789,8 +789,8 @@ Every table: **contract text = No**.
 | `V4__corpus.sql` | P3 | `law_act`, `law_section` and `section_edge` changes; `law_term`, `corpus_release` |
 | `V5__embedding_tracking.sql` | P4 (applied) | `law_section.embedded_hash`, `embedded_model`, `embedding_truncated` (ADR-0012) |
 | `V6__analysis.sql` (was `V5__analysis.sql`, C26) | P6 | `instance_registry`, `analysis_run`; `analysis_trace` changes (empty-table assertion, FK, `Stage` check, new columns); `review_item` replaced (empty-table assertion, drop, create; conflicts C13 and C14 in §18.1) |
-| `V7__playbooks_usage.sql` (was V6, C26) | P7 | `playbook`, `playbook_rule`, `usage_counter`, `usage_event` |
-| `V8__api_keys.sql` (was V7, C26) | P8 | `api_key` |
+| `V7__playbooks_usage.sql` (was V6, C26) | P7 | `playbook`, `playbook_rule`, `daily_spend`, cache-token columns (`usage_counter` and `usage_event` were not created; ADR-0021) |
+| `V8__api_keys.sql` (was V7, C26) | P8 | `api_key`, `usage_event` (ADR-0021) |
 
 ### 11.4 Jurisdiction packs as data
 
