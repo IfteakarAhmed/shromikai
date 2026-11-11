@@ -40,6 +40,21 @@ abstract class LiveBase {
     registry.add("shromikai.models.verifier", () -> LiveEnv.get("GEMINI_MODEL"));
     registry.add("shromikai.models.judge", () -> LiveEnv.get("GEMINI_MODEL"));
     registry.add("shromikai.live.kind", () -> System.getProperty("shromikai.live", ""));
+    // Settings the application reads from the environment; the values come from ../.env.
+    registry.add("shromikai.auth.jwt-secret", () -> LiveEnv.get("JWT_SECRET"));
+    for (String[] pair :
+        new String[][] {
+          {"spring.datasource.url", "DB_URL"},
+          {"spring.datasource.username", "DB_USER"},
+          {"spring.datasource.password", "DB_PASSWORD"},
+          {"shromikai.ollama.base-url", "OLLAMA_URL"},
+          {"shromikai.pricing.gemini.input", "GEMINI_PRICE_IN"},
+          {"shromikai.pricing.gemini.output", "GEMINI_PRICE_OUT"},
+        }) {
+      if (LiveEnv.has(pair[1])) {
+        registry.add(pair[0], () -> LiveEnv.get(pair[1]));
+      }
+    }
   }
 
   /** What a live run is called in the ledger and where it records. */
