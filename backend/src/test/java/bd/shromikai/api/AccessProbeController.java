@@ -31,7 +31,6 @@ class AccessProbeController {
       path = {
         "/api/v1/admin/probe",
         "/api/v1/dev/probe",
-        "/api/v1/playbooks",
         "/api/v1/review-items",
         "/api/v1/compare/probe"
       },

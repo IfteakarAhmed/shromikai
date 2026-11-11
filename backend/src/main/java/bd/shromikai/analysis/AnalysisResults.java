@@ -301,6 +301,8 @@ public class AnalysisResults {
     int nonObvious = 0;
     int verified = 0;
     int uncertain = 0;
+    int policy = 0;
+    int legal = 0;
     int citations = 0;
     SeverityRank overall = null;
     for (Finding f : outcome.findings()) {
@@ -312,6 +314,8 @@ public class AnalysisResults {
       nonObvious += f.nonObvious() ? 1 : 0;
       verified += f.verification() == FindingVerification.VERIFIED ? 1 : 0;
       uncertain += f.verification() == FindingVerification.UNCERTAIN ? 1 : 0;
+      policy += f.verification() == FindingVerification.POLICY_ONLY ? 1 : 0;
+      legal += f.verification() == FindingVerification.POLICY_ONLY ? 0 : 1;
       citations += f.citations().size();
     }
     ObjectNode node = mapper.createObjectNode();
@@ -327,9 +331,9 @@ public class AnalysisResults {
     node.put("nonObviousFindings", nonObvious);
     node.put("verifiedFindings", verified);
     node.put("uncertainFindings", uncertain);
-    node.put("policyFindings", 0);
+    node.put("policyFindings", policy);
     node.put("verifiedCitations", citations);
-    boolean few = outcome.findings().size() < 3;
+    boolean few = legal < 3;
     if (few) {
       node.put("coverageNote", "Fewer than three risks were found; none were invented.");
     } else {

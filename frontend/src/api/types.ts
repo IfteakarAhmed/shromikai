@@ -196,6 +196,38 @@ export interface paths {
     patch?: never
     trace?: never
   }
+  '/api/v1/playbooks': {
+    parameters: {
+      query?: never
+      header?: never
+      path?: never
+      cookie?: never
+    }
+    get: operations['list']
+    put?: never
+    post: operations['create']
+    delete?: never
+    options?: never
+    head?: never
+    patch?: never
+    trace?: never
+  }
+  '/api/v1/playbooks/{id}': {
+    parameters: {
+      query?: never
+      header?: never
+      path?: never
+      cookie?: never
+    }
+    get: operations['get']
+    put: operations['replace']
+    post?: never
+    delete: operations['archive']
+    options?: never
+    head?: never
+    patch?: never
+    trace?: never
+  }
 }
 export type webhooks = Record<string, never>
 export interface components {
@@ -325,6 +357,88 @@ export interface components {
     PasswordChangeRequest: {
       currentPassword: string
       newPassword: string
+    }
+    Playbook: {
+      /** Format: date-time */
+      archivedAt: string
+      /** Format: date-time */
+      createdAt: string
+      /** Format: uuid */
+      id: string
+      name: string
+      /** Format: uuid */
+      orgId: string
+      rules: components['schemas']['PlaybookRule'][]
+      side: string
+      /** Format: int32 */
+      version: number
+    }
+    PlaybookInput: {
+      name: string
+      rules: components['schemas']['PlaybookRule'][]
+      side: string
+    }
+    /** @default null */
+    PlaybookPage: {
+      items: components['schemas']['Playbook'][]
+      /** Format: int32 */
+      page: number
+      /** Format: int32 */
+      size: number
+      /** Format: int64 */
+      totalItems: number
+    }
+    PlaybookRule: {
+      clauseType: string
+      /** @enum {string} */
+      comparator: 'MIN' | 'MAX' | 'EQ' | 'REQUIRED' | 'PROHIBITED'
+      /** @enum {string} */
+      fact:
+        | 'PROBATION_LENGTH'
+        | 'PROBATION_EXTENSION'
+        | 'CONTRACT_DURATION'
+        | 'NOTICE_BY_EMPLOYER'
+        | 'NOTICE_BY_WORKER'
+        | 'PAY_IN_LIEU_OF_NOTICE_ALLOWED'
+        | 'DAILY_WORKING_HOURS'
+        | 'WEEKLY_WORKING_HOURS'
+        | 'OVERTIME_RATE'
+        | 'OVERTIME_DAILY_HOURS'
+        | 'OVERTIME_COMPULSORY'
+        | 'WEEKLY_REST_DAYS'
+        | 'ANNUAL_LEAVE'
+        | 'CASUAL_LEAVE'
+        | 'SICK_LEAVE'
+        | 'FESTIVAL_HOLIDAYS'
+        | 'MATERNITY_LEAVE'
+        | 'WAGE_PERIOD'
+        | 'WAGE_PAYMENT_DEADLINE'
+        | 'DEDUCTION_LIMIT'
+        | 'BASIC_WAGE'
+        | 'GROSS_WAGE'
+        | 'TERMINATION_WITHOUT_NOTICE_ALLOWED'
+        | 'TERMINATION_BENEFIT_STATED'
+        | 'NON_COMPETE_DURATION'
+        | 'DISPUTE_FORUM_STATED'
+      messageBn: string
+      messageEn: string
+      /** @enum {string} */
+      severity: 'CRITICAL' | 'HIGH' | 'MEDIUM' | 'LOW'
+      statuteSectionKey: string
+      /** @enum {string} */
+      unit:
+        | 'DAYS'
+        | 'WEEKS'
+        | 'MONTHS'
+        | 'HOURS_PER_DAY'
+        | 'HOURS_PER_WEEK'
+        | 'MULTIPLIER'
+        | 'PERCENT'
+        | 'BDT_PER_MONTH'
+        | 'COUNT'
+        | 'BOOLEAN'
+      /** Format: double */
+      value: number
     }
     /** @description RFC 9457 problem document (api.md §5.14) */
     Problem: {
@@ -796,6 +910,168 @@ export interface operations {
         content: {
           '*/*': components['schemas']['Meta']
         }
+      }
+      /** @description Problem document */
+      default: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/problem+json': components['schemas']['Problem']
+        }
+      }
+    }
+  }
+  list: {
+    parameters: {
+      query?: {
+        page?: number
+        size?: number
+      }
+      header?: never
+      path?: never
+      cookie?: never
+    }
+    requestBody?: never
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          '*/*': components['schemas']['PlaybookPage']
+        }
+      }
+      /** @description Problem document */
+      default: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/problem+json': components['schemas']['Problem']
+        }
+      }
+    }
+  }
+  create: {
+    parameters: {
+      query?: {
+        orgId?: string
+      }
+      header?: never
+      path?: never
+      cookie?: never
+    }
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['PlaybookInput']
+      }
+    }
+    responses: {
+      /** @description Created */
+      201: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          '*/*': components['schemas']['Playbook']
+        }
+      }
+      /** @description Problem document */
+      default: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/problem+json': components['schemas']['Problem']
+        }
+      }
+    }
+  }
+  get: {
+    parameters: {
+      query?: never
+      header?: never
+      path: {
+        id: string
+      }
+      cookie?: never
+    }
+    requestBody?: never
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          '*/*': components['schemas']['Playbook']
+        }
+      }
+      /** @description Problem document */
+      default: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/problem+json': components['schemas']['Problem']
+        }
+      }
+    }
+  }
+  replace: {
+    parameters: {
+      query?: never
+      header?: never
+      path: {
+        id: string
+      }
+      cookie?: never
+    }
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['PlaybookInput']
+      }
+    }
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          '*/*': components['schemas']['Playbook']
+        }
+      }
+      /** @description Problem document */
+      default: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/problem+json': components['schemas']['Problem']
+        }
+      }
+    }
+  }
+  archive: {
+    parameters: {
+      query?: never
+      header?: never
+      path: {
+        id: string
+      }
+      cookie?: never
+    }
+    requestBody?: never
+    responses: {
+      /** @description No Content */
+      204: {
+        headers: {
+          [name: string]: unknown
+        }
+        content?: never
       }
       /** @description Problem document */
       default: {

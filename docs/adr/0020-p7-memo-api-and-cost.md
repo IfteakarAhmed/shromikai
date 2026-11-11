@@ -68,3 +68,14 @@ no live call was made and no number below is a measurement of a live answer.
     that a Bengali font is embedded and that the raster differs from a Chromium screenshot of the
     same HTML by at most 1% of the pixels. The test does not prove the PDF looks right on a
     phone; it proves the server's shaping matches Chromium's on one layout.
+12. **Playbooks follow architecture §11.** V7 (not yet applied anywhere outside local test
+    databases, so edited in place before first release) creates `playbook` and `playbook_rule`
+    (version, side, `archived_at`), not a JSON column. A playbook rule has the semantics of a legal
+    rule (`RuleEngine` is reused per rule on the clauses of the rule's type) but its deviation is a
+    `PLAYBOOK` finding with `verificationStatus` `POLICY_ONLY`, no citation, no verifier call, no
+    counter-offer and no review item; ids continue after the legal findings, and the memo labels it
+    "Company policy (not law)". **Not done:** a `statuteSectionKey` on a playbook rule is stored but
+    not turned into a verified citation (architecture §9 allows it); the API accepts and returns it.
+13. **The daily cap answers `capacity-exhausted` (503), not `budget-exceeded`.** api.md §7 reserves
+    `capacity-exhausted` for the daily cost cap and `budget-exceeded` for the per-analysis cap. The
+    first draft of `DailyBudget` used the wrong code; fixed with its tests.

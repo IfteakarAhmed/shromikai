@@ -117,6 +117,7 @@ final class PipelineHarness {
             findingVerifier,
             new ObligationsAgent(citationVerifier),
             new MemoNarrator(),
+            new bd.shromikai.rules.PlaybookEvaluator(engine),
             loop,
             new ReviewQueue(new ReviewItemFactory(Clock.systemUTC()), reviewStore),
             new CounterOfferAgent(facts, engine),

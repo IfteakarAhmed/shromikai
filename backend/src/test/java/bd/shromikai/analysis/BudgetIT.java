@@ -34,7 +34,7 @@ class BudgetIT {
     assertThatThrownBy(budget::admit)
         .isInstanceOfSatisfying(
             ProblemException.class,
-            p -> assertThat(p.type()).isEqualTo(ProblemType.BUDGET_EXCEEDED));
+            p -> assertThat(p.type()).isEqualTo(ProblemType.CAPACITY_EXHAUSTED));
   }
 
   @Test

@@ -4,9 +4,11 @@ import bd.shromikai.analysis.CandidateRetriever.Result;
 import bd.shromikai.analysis.RiskAgent.ClauseView;
 import bd.shromikai.law.LawReadService;
 import bd.shromikai.rules.ClauseFact;
+import bd.shromikai.rules.PlaybookEvaluator;
 import bd.shromikai.rules.RuleEngine;
 import bd.shromikai.rules.RuleSet;
 import bd.shromikai.rules.RuleViolation;
+import bd.shromikai.shared.SensitiveText;
 import bd.shromikai.shared.ai.CostCalculator;
 import bd.shromikai.shared.ai.EgressBlockedException;
 import bd.shromikai.shared.ai.ModelException;
@@ -79,6 +81,7 @@ public class AnalysisPipeline {
   private final FindingVerifier verifier;
   private final ObligationsAgent obligations;
   private final MemoNarrator narrator;
+  private final PlaybookEvaluator playbooks;
   private final CorrectiveLoop corrective;
   private final ReviewQueue reviews;
   private final CounterOfferAgent counterOffers;
@@ -102,6 +105,7 @@ public class AnalysisPipeline {
       FindingVerifier verifier,
       ObligationsAgent obligations,
       MemoNarrator narrator,
+      PlaybookEvaluator playbooks,
       CorrectiveLoop corrective,
       ReviewQueue reviews,
       CounterOfferAgent counterOffers,
@@ -122,6 +126,7 @@ public class AnalysisPipeline {
     this.verifier = verifier;
     this.obligations = obligations;
     this.narrator = narrator;
+    this.playbooks = playbooks;
     this.corrective = corrective;
     this.reviews = reviews;
     this.counterOffers = counterOffers;
@@ -254,6 +259,8 @@ public class AnalysisPipeline {
             "draftRules", rules.draftCount(),
             "violations", evaluation.violations().size(),
             "notes", evaluation.notes().stream().map(RuleEngine.Note::code).distinct().toList()));
+
+    List<PlaybookEvaluator.Deviation> deviations = playbookDeviations(d, byId, factsByClause);
 
     // RISK.
     d.job.enter(Stage.RISK);
@@ -432,8 +439,16 @@ public class AnalysisPipeline {
             "skippedUncertain", count(findings, FindingVerification.UNCERTAIN),
             "reviewItems", opened.items().size()));
 
+    // Playbook deviations: policy findings after the legal ones, never verified (FR-57).
+    int legalFindings = findings.size();
+    List<Finding> withPolicy = new ArrayList<>(findings);
+    for (PlaybookEvaluator.Deviation deviation : deviations) {
+      withPolicy.add(policyFinding(withPolicy.size() + 1, deviation, d.request.outputLanguage()));
+    }
+    findings = withPolicy;
+
     // COMPLETE.
-    if (findings.size() < 3) {
+    if (legalFindings < 3) {
       d.warnings.add(
           new AnalysisJob.Warning(
               "fewer-than-three-findings",
@@ -518,6 +533,48 @@ public class AnalysisPipeline {
   }
 
   // ------------------------------------------------------------------ helpers
+
+  private List<PlaybookEvaluator.Deviation> playbookDeviations(
+      JobData d, Map<String, Clause> byId, Map<String, List<ClauseFact>> factsByClause) {
+    if (d.request.playbook() == null) {
+      return List.of();
+    }
+    List<PlaybookEvaluator.TypedClause> typed = new ArrayList<>();
+    for (Clause clause : byId.values()) {
+      typed.add(
+          new PlaybookEvaluator.TypedClause(
+              clause.id(),
+              String.valueOf(clause.type()),
+              factsByClause.getOrDefault(clause.id(), List.of())));
+    }
+    return playbooks.evaluate(d.request.playbook().rules(), typed);
+  }
+
+  /** A deviation as a finding: company policy, no citation, no verification, no redline. */
+  private static Finding policyFinding(
+      int number, PlaybookEvaluator.Deviation deviation, String language) {
+    String message =
+        "bn".equals(language) ? deviation.rule().messageBn() : deviation.rule().messageEn();
+    return new Finding(
+        "f" + number,
+        SensitiveText.of(message.length() > 120 ? message.substring(0, 120) : message),
+        deviation.omission() ? FindingKind.OMISSION : FindingKind.POLICY_DEVIATION,
+        deviation.rule().severity(),
+        false,
+        FindingSource.PLAYBOOK,
+        deviation.rule().clauseType(),
+        deviation.clauseId() == null ? List.of() : List.of(deviation.clauseId()),
+        SensitiveText.of(message),
+        SensitiveText.of(""),
+        1.0,
+        "playbook-" + deviation.ruleIndex(),
+        List.of(),
+        FindingVerification.POLICY_ONLY,
+        List.of(),
+        List.of(),
+        null,
+        null);
+  }
 
   /**
    * The checklist of the {@code obligations} call that ran beside the risk batches. A model failure

@@ -10,8 +10,8 @@ import org.springframework.stereotype.Component;
 
 /**
  * The daily cost cap over all analyses (FR-62, {@code shromikai.budget.daily-usd}). A new analysis
- * is refused with {@code budget-exceeded} once the Dhaka day's spend has reached the cap; every
- * finished or failed analysis adds its cost.
+ * is refused with {@code capacity-exhausted} (api.md §7) once the Dhaka day's spend has reached the
+ * cap; every finished or failed analysis adds its cost.
  */
 @Component
 public final class DailyBudget {
@@ -36,7 +36,7 @@ public final class DailyBudget {
   /** Throws {@code budget-exceeded} when today's cap is spent. */
   public void admit() {
     if (remainingMicros() <= 0) {
-      throw new ProblemException(ProblemType.BUDGET_EXCEEDED);
+      throw new ProblemException(ProblemType.CAPACITY_EXHAUSTED);
     }
   }
 

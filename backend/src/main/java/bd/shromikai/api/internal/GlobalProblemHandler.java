@@ -49,6 +49,11 @@ public class GlobalProblemHandler extends ResponseEntityExceptionHandler {
     if (!e.pages().isEmpty()) {
       problem.setProperty("pages", e.pages());
     }
+    if (e instanceof bd.shromikai.shared.problem.ValidationProblemException validation) {
+      problem.setProperty(
+          "errors",
+          validation.errors().stream().map(v -> error(v.pointer(), v.message())).toList());
+    }
     return ProblemFactory.response(problem, e.retryAfterSeconds());
   }
 

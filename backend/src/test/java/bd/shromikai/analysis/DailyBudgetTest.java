@@ -14,7 +14,9 @@ import java.util.Map;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
-/** FR-62: the daily cap stops new analyses with budget-exceeded; a new Dhaka day starts at zero. */
+/**
+ * FR-62: the daily cap stops new analyses with capacity-exhausted; a new Dhaka day starts at zero.
+ */
 @Tag("unit")
 @Requirement("FR-62")
 class DailyBudgetTest {
@@ -49,7 +51,7 @@ class DailyBudgetTest {
     assertThatThrownBy(budget::admit)
         .isInstanceOfSatisfying(
             ProblemException.class,
-            p -> assertThat(p.type()).isEqualTo(ProblemType.BUDGET_EXCEEDED));
+            p -> assertThat(p.type()).isEqualTo(ProblemType.CAPACITY_EXHAUSTED));
   }
 
   @Test

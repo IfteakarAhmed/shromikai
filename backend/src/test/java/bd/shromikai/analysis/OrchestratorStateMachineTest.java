@@ -90,16 +90,16 @@ class OrchestratorStateMachineTest {
             any());
   }
 
-  /** FR-62: a spent daily cap fails the job with budget-exceeded before any model call. */
+  /** FR-62: a spent daily cap fails the job with capacity-exhausted before any model call. */
   @Test
-  void shouldFailWithBudgetExceededWhenTheDailyCapIsSpent() {
+  void shouldFailWithCapacityExhaustedWhenTheDailyCapIsSpent() {
     PipelineHarness h = PipelineHarness.standard();
     h.dailyBudget.record(h.dailyBudget.remainingMicros());
 
     AnalysisJob job = h.run();
 
     assertThat(job.status()).isEqualTo(AnalysisJob.Status.FAILED);
-    assertThat(job.failure().type()).isEqualTo(ProblemType.BUDGET_EXCEEDED);
+    assertThat(job.failure().type()).isEqualTo(ProblemType.CAPACITY_EXHAUSTED);
   }
 
   @Test
