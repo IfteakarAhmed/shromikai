@@ -693,3 +693,142 @@ created, as for P3 and P4 (`phase-4` is also still untagged).
   questions; real-Ollama `slow` test for PII recall (M-16/M-25), the plumbing test is not that;
   README details; ADR deciders; the https path of the scraper has no positive test (WireMock serves
   plain http only), only the fallback.
+
+## Phase report - P6 (intelligence core)
+
+Status: code, tests, documentation and ADR-0015 to ADR-0019 are done; `./gradlew check` and
+`integrationTest` are green on this machine (2026-11-11). **Not done:** the human acceptance check,
+Prompt R in a fresh session (AGENTS.md §7 items 10 and 11), any evaluation report (P10), the live
+side-swap run and the full M-19 measurement (both skipped by decision, to stay inside a US$3 cap).
+The tag `phase-6` is therefore **not** created. What the live evidence does and does not show is
+in "Honest limits" below and in [`docs/known-gaps.md`](known-gaps.md).
+
+- **Summary:**
+  - `rules`: fail-fast rule loader, deterministic engine over typed `ClauseFact`s, eight Bangladesh
+    rules, all `draft` (none is evaluated until a person other than the drafter reviews it).
+  - `verify`: three-check citation verifier (existence and currency, quote match, independent
+    support) with the decision table, review items and `VerifiedCitation` (package-private
+    constructor). Only verified citations reach the `dev` endpoint (R-01).
+  - `analysis`: orchestrator `RETRIEVE ∥ RULES → RISK → VERIFY → CORRECT → COMPOSE → COMPLETE`
+    (`FAILED` from any state), fact extraction, risk agent, corrective loop, counter-offer agent
+    with a rule re-check, finding merge, per-job budget, migration `V6__analysis.sql`.
+  - Live evidence: one contract, `syn-en-02` (worker side), recorded as hash-addressed fixtures and
+    replayable offline.
+- **Files created or changed** (307 files since `origin/main`, main sources listed by module):
+  - `rules/`: `RuleLoader`, `RuleSet`, `Rule`, `RuleEngine`, `RuleComparator`, `RuleViolation`,
+    `ClauseFact`, `FactParameter`, `Unit`, `Severity`, `RulesConfiguration`, `RulesProperties`;
+    `data/rules/bd-labour.yaml`, `schemas/rules.schema.json`.
+  - `verify/`: `CitationVerifier`, `DecisionTable`, `VerifiedCitation`, `ClaimedCitation`,
+    `Verdict`, `VerificationResult`, `ReviewItem`, `ReviewItemFactory`, `ReviewItemStore`;
+    `internal/`: `ExistenceCheck`, `QuoteCheck`, `SupportVerifier`, `JdbcReviewItemStore`,
+    `LawSectionLookup`.
+  - `analysis/`: `AnalysisPipeline`, `ModelSession`, `RiskAgent`, `CorrectiveLoop`,
+    `CounterOfferAgent`, `FactExtractor`, `RegexFacts`, `FindingMerge`, `FindingVerifier`,
+    `ReviewQueue`, `CandidateRetriever`, `CandidateSet`, `Finding`, `Redline`,
+    `AnalysisRunStore`, `AnalysisProperties`; `ClauseClassifier` (batch bound).
+  - `shared/ai/`: dynamic enums (`SchemaEnums`, `DynamicEnum`), `LlmCallListener`, `CostCalculator`,
+    `PricingProperties`, stop reason and usage in `ChatResponse`, `AnthropicSchemaSubset`, thinking
+    off per model, hash-addressed `FakeChatPort`; `shared/text/OverlapChecker`.
+  - `law/`: `LawReadService.lookup`; `privacy/PiiDetector` NID-over-phone tie-break; `api/`
+    `DevAnalysisController` (`POST /api/v1/dev/analyses?full=true&side=`, `GET …/{id}/findings`).
+  - Prompts (all `experimental`): `clause-facts` v1, `risk-analysis` v1 and v2, `risk-citation-repair`
+    v1 and v2, `counter-offer` v1 and v2, `verify-support` v1 and v2, `verify-support-claude` v1 and
+    v2, each with schema and `docs/prompts/*.md`; `prompts/LOCK` pins 11 released prompt files.
+  - Tests and tooling: see below; `scripts/demo-fake-citation.sh`; live tooling under
+    `src/test/java/bd/shromikai/testsupport/live` and `analysis/live` (opt-in with `-PliveOk`).
+  - Docs: ADR-0015 to ADR-0019, architecture §5.3 budgets and §18.6 findings C28 to C44, PRD NFR-01 and
+    KPI-08, `evaluation.md` M-19, `docs/known-gaps.md`, `docs/rules-review-checklist.md`.
+- **Tests added and passing:** `./gradlew check`: 781 unit tests, 0 failures; `integrationTest`: 235
+  tests, 0 failures; `promptLint` and `checkFixtures` OK. Named tests of the phase prompt:
+  `VerificationDecisionTableTest`, `CitationOutsideRetrievedSetTest`, `FakeCitationInjectionTest`,
+  `RuleLoaderFailFastTest`, `RuleEngineTest` and its jqwik property test, `RiskAgentSchemaTest`,
+  `FindingMergeTest`, `CounterOfferRuleCheckIT`, `OrchestratorStateMachineTest`, `GoldenAnalysisIT`,
+  `SideSymmetryIT`, `AllResponsesCarryOnlyVerifiedCitationsIT`. Added for the live runs and
+  budgets: `PromptFreezeTest`, `PromptGoldenTest`, `RiskAnswerSizeTest`,
+  `CounterOfferAnswerSizeTest`, `RepairAnswerSizeTest`, `PromptAnswerBoundAuditTest`,
+  `CorrectiveLoopCandidatesTest`, `LiveSpendLedgerTest` (cap, per-prompt limits, tripwire),
+  `AnthropicSchemaSubsetTest`, `ClauseClassifierBatchTest`. One live test (`LiveContractIT`,
+  opt-in) recorded the contract; it is skipped without `-PliveOk=record`.
+- **Coverage of touched packages** (JaCoCo line coverage, unit tests): `verify` 94.0%
+  (406/432), `rules` 94.7% (233/246), `analysis` 94.5% (1,648/1,743), `privacy` 96.9% (467/482),
+  `retrieval` 95.3% (444/466), `shared.text` 99.2% (125/126), `shared.ai` 90.9% (763/839); overall
+  92.7% (7,555/8,148). Gates (80% for `verify`, `rules`, `privacy`, `retrieval`, `shared.text`)
+  hold.
+- **Acceptance commands with output:**
+  - `./gradlew check` → `BUILD SUCCESSFUL` (`promptLint: OK`, `checkFixtures: OK`).
+  - `./gradlew integrationTest` → 235 tests, 0 failures.
+  - `scripts/demo-fake-citation.sh` runs offline: a model that invents a section is stopped by the
+    verifier and the finding is `UNCERTAIN` without a citation.
+  - Live (opt-in, real providers, cap US$3.00; ledger US$0.984 after all runs):
+    `./gradlew liveTest -PliveOk=record -Pcontract=syn-en-02 --tests '*LiveContractIT'` replays the
+    recorded steps and went live only for the verifier, repair and counter-offers in the last run:
+    status `ANALYSED`, 11 findings, 10 VERIFIED and 1 UNCERTAIN, 0 REJECTED, 10 redlines, none cut
+    or dropped; that run's live calls cost US$0.139 (verifier US$0.004, repair US$0.066,
+    counter-offers US$0.069).
+  - Live smoke: one Claude Haiku call succeeded; the Gemini call never produced an answer (see below).
+- **Measured live cost** (ledger, every call of every run of this phase, 122 calls, US$0.984 of the
+  US$3.00 cap): `risk-analysis` US$0.495 (10 calls, including the first v1 attempt that was cut at
+  its cap and the batch tests), `risk-citation-repair` US$0.332 (6), `counter-offer` US$0.141
+  (19), `verify-support-claude` US$0.009 (38), Haiku steps (`query-rewrite`, `clause-classify`,
+  `clause-facts`) US$0.008. Much of that is money spent finding the output bounds (C38 to C42, C44),
+  not the price of one analysis. The first complete run took 36 s end to end and cost about
+  US$0.35 with v1 repair and counter-offer prompts; no run since has measured all stages live
+  at once (the last run replayed RISK).
+- **Key decisions and ADRs:**
+  - ADR-0015: P6 choices (types in `rules`, dynamic enums in the gateway, per-job budget, US$3 live
+    cap, cheapest model per role, rules stay `draft`, review items, `dev` endpoint, hash-addressed
+    recordings, Claude thinking off).
+  - ADR-0016: risk answer bound (v2, 3,000 tokens) and revised RISK budget. ADR-0017: counter-offer
+    v2 (900 tokens), at most 12 candidate sections per repair call, COMPOSE 17 s, NFR-01 p95 targets
+    85 s and 95 s. ADR-0018: Gemini verifier dropped for now. ADR-0019: answer-size audit of every
+    prompt and the v2 prompts it produced.
+- **Honest limits (what the evidence does not show):**
+  - **All verification is `SAME_FAMILY`.** The independent verifier of §7.6 (Gemini Flash) was
+    never run live: the key had no access to `generateContent` on the 3.x models, 2.5 is closed to
+    new users, and the Interactions API would need a new adapter. Every verified citation was
+    judged by Claude Haiku, the same family as the agents, and carries the warning
+    `verifier-same-family`. No result may be called independently or cross-family verified. The
+    Gemini adapter and the `verify-support` prompt exist but are tested only against stand-ins.
+  - **One contract, one side, one recording.** `syn-en-02`, worker side. No side-swap run, no
+    Bangla contract, no `test` split, no metric of M-01 to M-14 computed from live data. The
+    pipeline integration tests use scripted stand-ins on a fictional act and prove behaviour, not
+    model quality.
+  - **One run is not a median.** The 36 s figure is a single sample; the stage budgets (84 s and
+    92 s) are planning numbers until M-19 is measured (P10). The cost per analysis is likewise one
+    sample, and the repair and counter-offer prompts changed after it.
+  - **Recall is capped by design and not measured.** `risk-analysis` v2 reports at most three
+    findings per batch (four batches). In both live runs the non-compete clause (c9) was not
+    reported. Recall loss is unmeasured.
+  - **`clause-facts` is not bounded.** Its schema has no limit on facts per clause, so its answer
+    can pass the 600-token cap. Mitigation: at most four clauses per call, a cut call is split, a
+    clause still cut gets no facts. A v2 with a bound would change the risk-step hashes and cost
+    about US$0.18 to re-record. `clause-segment` and `pii-extract` are also unbounded, with a safe
+    failure each (ADR-0019).
+  - **Weak relevance can pass.** The support check judges the claim against the section, not
+    whether the section bears on the clause: the transfer finding f9 (confidence 0.55) was verified
+    against `BLA-2006:3`. One finding (f7, resignation needs permission) stays `UNCERTAIN` after
+    one repair, which is the intended outcome.
+  - **The local PII model was a stand-in for the live runs.** `qwen2.5:7b-instruct` in Docker
+    without a GPU timed out, so the recordings use the contract's ground-truth entity list for that
+    step only. PII recall on the real model is unmeasured (M-16, M-25).
+  - **Rules need human review.** All eight rules are `draft`; none was evaluated in any run
+    (`RULES activeRules=0, draftRules=8`). `reviewed_by` is empty and was never set by the drafter.
+    The checklist is `docs/rules-review-checklist.md`.
+  - **ILO mapping is empty.** `iloReferences` is `[]`; the mapping rows are unreviewed (FR-16, R-10).
+  - **FR-58 window to revisit in P7.** `POST /api/v1/analyses` answers text synchronously when it
+    finishes within 60 s, but the stage budgets add up to 84 s (p95 target 85 s). P7 decides
+    between a shorter text limit, a longer window or always `202`.
+  - Statute sections are not prompt-cached (only the system prompt is); prompts are `experimental`
+    with no dev-split report; the memo, public API, re-identification and signing are P7.
+- **Open questions for the team:**
+  - Review the eight rules (`docs/rules-review-checklist.md`) and say "rule X reviewed" for each one
+    that holds; then set `reviewed_by` with the note "team member, not a lawyer".
+  - Get a Gemini key and model that work, or accept `SAME_FAMILY` for the submission and say so.
+  - Is a `clause-facts` v2 worth a re-recording before more contracts are recorded?
+  - Which contracts to record next (cap: 3 in total, US$1.20 each) and when to run the Bangla one.
+  - Run the human acceptance check and Prompt R, then tag `phase-6`.
+- **Next phase prerequisites:** P7 consumes `AnalysisPipeline` and `AnalysisJob.Outcome`
+  (findings, verdicts, redlines, review items), `AnalysisService.resultFor` for re-identification
+  and signing, and the `CostCalculator`/`LlmCallListener` for the cost ledger (FR-62). It must decide
+  the FR-58 window, add the persistent cost ledger and daily cap, and keep the prompts' output
+  bounds (`PromptAnswerBoundAuditTest` fails for any new prompt that is not bounded or listed).
