@@ -209,6 +209,11 @@ spring:
   http:
     client:
       factory: jdk                        # TestRestTemplate must not retry 429 or wait on Retry-After
+  datasource:
+    hikari:                               # cached test contexts share one Postgres (max_connections)
+      maximum-pool-size: 3
+      minimum-idle: 0
+      idle-timeout: 10000
 springdoc:
   paths-to-exclude: /api/v1/test-probe/**   # test-only controller stays out of the snapshot
 shromikai:
