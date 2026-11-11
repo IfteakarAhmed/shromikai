@@ -102,9 +102,8 @@ class ApiKeyAdminIT {
     ResponseEntity<JsonNode> listing = send(HttpMethod.GET, admin, "/api/v1/admin/api-keys", null);
     assertThat(listing.getStatusCode()).isEqualTo(HttpStatus.OK);
     assertThat(listing.getBody().toString()).doesNotContain(key).doesNotContain(stored);
-    assertThat(listing.getBody().path("items")).hasSize(1);
-    assertThat(listing.getBody().path("items").get(0).path("name").asText())
-        .isEqualTo("Claude Desktop");
+    assertThat(listing.getBody()).hasSize(1);
+    assertThat(listing.getBody().get(0).path("name").asText()).isEqualTo("Claude Desktop");
   }
 
   @Test
@@ -156,6 +155,18 @@ class ApiKeyAdminIT {
                     admin,
                     "/api/v1/admin/api-keys",
                     Map.of("name", "x", "scopes", java.util.List.of()))
+                .getStatusCode())
+        .isEqualTo(HttpStatus.BAD_REQUEST);
+  }
+
+  @Test
+  void aNameLongerThanSixtyCharactersIsRefused() {
+    assertThat(
+            send(
+                    HttpMethod.POST,
+                    admin,
+                    "/api/v1/admin/api-keys",
+                    Map.of("name", "n".repeat(61), "scopes", java.util.List.of("mcp")))
                 .getStatusCode())
         .isEqualTo(HttpStatus.BAD_REQUEST);
   }

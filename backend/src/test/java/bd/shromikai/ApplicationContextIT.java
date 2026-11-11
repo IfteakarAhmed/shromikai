@@ -29,7 +29,30 @@ class ApplicationContextIT {
             .query(String.class)
             .list();
 
-    assertThat(versions).containsExactly("1", "2", "3", "4", "5", "6", "7");
+    assertThat(versions).containsExactly("1", "2", "3", "4", "5", "6", "7", "8");
+  }
+
+  @Test
+  @Requirement("FR-65")
+  void shouldCreateTheApiKeyAndUsageTables_whenV8Applied() {
+    List<String> tables =
+        jdbc.sql(
+                """
+                select table_name from information_schema.tables
+                 where table_schema = 'public' and table_name in ('api_key', 'usage_event')
+                 order by table_name
+                """)
+            .query(String.class)
+            .list();
+    List<String> keyColumns =
+        jdbc.sql("select column_name from information_schema.columns where table_name = 'api_key'")
+            .query(String.class)
+            .list();
+
+    assertThat(tables).containsExactly("api_key", "usage_event");
+    assertThat(keyColumns)
+        .contains("key_sha256", "prefix", "scopes", "revoked_at")
+        .doesNotContain("key", "secret");
   }
 
   @Test

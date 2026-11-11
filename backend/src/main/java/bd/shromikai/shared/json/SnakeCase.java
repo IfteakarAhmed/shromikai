@@ -35,8 +35,14 @@ public final class SnakeCase {
     return node;
   }
 
-  /** {@code sectionKey} to {@code section_key}; text already in snake_case is unchanged. */
+  /**
+   * {@code sectionKey} to {@code section_key}. Text already in snake_case and constant-style names
+   * such as the severity {@code CRITICAL} (no lower-case letter) are unchanged.
+   */
   public static String of(String name) {
+    if (name.chars().noneMatch(Character::isLowerCase)) {
+      return name;
+    }
     StringBuilder out = new StringBuilder(name.length() + 4);
     for (int i = 0; i < name.length(); i++) {
       char c = name.charAt(i);

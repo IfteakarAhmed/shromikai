@@ -117,6 +117,9 @@ def configureTestTask = { Test task ->
     task.testClassesDirs = sourceSets.test.output.classesDirs
     task.classpath = sourceSets.test.runtimeClasspath
     task.jvmArgs '-XX:+EnableDynamicAgentLoading', '-Dfile.encoding=UTF-8'
+    // The integration tests cache one Spring context per profile set; with the mcp profile there
+    // are enough of them to exhaust the 512 MB default (OutOfMemoryError in P8).
+    task.maxHeapSize = '2g'
     task.testLogging {
         events 'failed', 'skipped'
         exceptionFormat 'full'

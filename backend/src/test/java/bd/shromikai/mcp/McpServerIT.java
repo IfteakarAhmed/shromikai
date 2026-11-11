@@ -284,6 +284,9 @@ class McpServerIT extends McpIT {
         }
       }
       assertThat(result.path("summary").has("verified_findings")).isTrue();
+      assertThat(result.path("summary").path("findings_by_severity").has("HIGH"))
+          .as("severity keys keep their names")
+          .isTrue();
       assertThat(result.path("provenance").path("corpus_release").asText()).isNotBlank();
       assertThat(result.path("disclaimer").asText()).contains("not legal advice");
       assertThat(jobStore.size()).as("the finished job is removed (FR-66)").isZero();

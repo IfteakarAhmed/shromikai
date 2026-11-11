@@ -3,6 +3,21 @@
 A running list of what is not done, not measured or not proven, so nothing is claimed by accident
 (R-07, R-12). Each phase report in `docs/dev-log.md` links here. Newest first.
 
+## P8 (MCP server)
+
+| Gap | Where it matters | Detail |
+| --- | --- | --- |
+| API keys open only `/mcp` | FR-65, ADR-0021 | A key with scope `analyses`, `laws` or `automation` authenticates nowhere yet; REST endpoints still need a user, guest or demo token. The n8n key (`automation`) follows in P11. |
+| Rate limit counts MCP calls only | FR-65, api.md §8 | The 60 per minute per key apply to tool calls and resource reads. "Across REST and MCP" is true only once keys are accepted on REST. The buckets are per instance and in memory. |
+| `usage_event` covers MCP calls only | FR-65, NFR-20 | `ANALYSIS`, `COMPARE`, `MEMO_RENDER` and `API_CALL` events are still not written for user and guest requests; the admin usage views are P9. An MCP call writes one `MCP_CALL` event whose cost is the analysis cost (not split from the call). |
+| Quote reaches the support model after the 92% match | R-03, architecture §10.7 | The quote of `verify_legal_citation` is compared with the official text before the support check, but a quote that matches at 92% could still carry up to 8% foreign characters; the egress guard scans the payload for known identifiers and PII patterns, it cannot know an unknown name inside the quote. |
+| Claude Desktop and Inspector not yet run by a person | FR-67 | `docs/mcp.md` describes both; no screenshot exists in `docs/img/` until the team takes them. The Claude Desktop `mcp-remote` configuration follows that tool's documentation and was not run. |
+| MCP servers used during development are not recorded | FR-67, R-12 | The honest list in `docs/mcp.md` says "none recorded" for the P8 session; the team must add what it actually used. |
+| `search_bd_law` ignores `language` | FR-64 | The argument is validated and then not used for filtering: bge-m3 shares one space across Bangla and English (same as `GET /laws/search`). |
+| MCP analyses are not stored | FR-66 | The job is deleted when the result is built, so a client that loses the response cannot fetch it again; only the content-free run row and trace stay (30 days). The review ticket has no token, so it cannot be claimed through the REST ticket flow. |
+| Intermittent test: `OrchestratorStateMachineTest` | NFR-15 | `shouldWriteOneContentFreeTraceEventPerTransition` failed once in a full `./gradlew test` (it expected the `risk-analysis` trace event and got `obligations`) and passed in 3 of 3 reruns, also with the P8 changes stashed. The two stages run in parallel, so the order of their events is not fixed; the test assumes it is. Not changed in P8. |
+| `json-schema-validator` moved to 2.0.0 | build | The MCP SDK 0.18.3 needs the 2.x line (a 1.5.9 pin made the server fail at start with `NoClassDefFoundError`). Only `JsonSchemas` uses it; all schema tests pass, but message texts of validation errors are the library's. |
+
 ## P7 and later (found in the P6 review, not yet fixed)
 
 | Gap | Where it matters | Detail |
@@ -36,7 +51,7 @@ A running list of what is not done, not measured or not proven, so nothing is cl
 | `clauses[].facts` is empty in the result | FR-33, api.md §5.3 | The job does not keep the typed facts after the pipeline; the result's clauses show `facts: []`. |
 | SSE sends only `COMPLETED` stage events | FR-58 | No `STARTED` or `SKIPPED` states; the stream polls the job every 100 ms. |
 | Memo clarity is not measured | FR-51, M-21 | `PlainLanguageLintTest` checks average sentence length only; the clarity judge is P10. |
-| `usage_event` and `MEMO_RENDER` are not written | FR-55, NFR-20 | `POST /memos/render` writes no usage event yet (the table is not in V7). |
+| `MEMO_RENDER` is not written | FR-55, NFR-20 | `POST /memos/render` writes no usage event yet (the `usage_event` table arrives in V8, P8; only MCP calls write to it so far). |
 | Per-user concurrency limit is a P7 choice | NFR-20 | Signed-in users without an organisation may run 2 analyses at once; the PRD names only guests and organisations. |
 | Compare baseline runs after the analysis | FR-59 | The baseline starts when the analysis has finished, so `GET /compare/{id}` stays `202` for one more model call. Compare events are the analysis events (no baseline stage); the compare ID is the analysis ID. `baseline` v1 has no dev-split report. |
 | Stored profile covers wording only and is read per request | FR-56 | `PATCH /auth/me` validates and stores the profile; an analysis uses it only when the request sends none. `side` of the profile is not applied to the analysis. |

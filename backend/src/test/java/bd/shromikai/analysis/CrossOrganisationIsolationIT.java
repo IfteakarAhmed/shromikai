@@ -221,8 +221,7 @@ class CrossOrganisationIsolationIT extends ApiAnalysisIT {
             .getBody();
     String id = created.path("id").asText();
 
-    assertThat(send(HttpMethod.GET, adminB, "/api/v1/admin/api-keys", null).getBody().path("items"))
-        .isEmpty();
+    assertThat(send(HttpMethod.GET, adminB, "/api/v1/admin/api-keys", null).getBody()).isEmpty();
     assertThat(
             send(HttpMethod.DELETE, adminB, "/api/v1/admin/api-keys/" + id, null).getStatusCode())
         .isEqualTo(HttpStatus.NOT_FOUND);
@@ -237,8 +236,7 @@ class CrossOrganisationIsolationIT extends ApiAnalysisIT {
                 .single())
         .as("B's admin did not revoke A's key")
         .isTrue();
-    assertThat(send(HttpMethod.GET, adminA, "/api/v1/admin/api-keys", null).getBody().path("items"))
-        .hasSize(1);
+    assertThat(send(HttpMethod.GET, adminA, "/api/v1/admin/api-keys", null).getBody()).hasSize(1);
   }
 
   private JsonNode mcpCall(String key, String tool, java.util.Map<String, Object> arguments)

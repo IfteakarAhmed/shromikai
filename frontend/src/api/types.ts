@@ -4,6 +4,38 @@
  */
 
 export interface paths {
+  '/api/v1/admin/api-keys': {
+    parameters: {
+      query?: never
+      header?: never
+      path?: never
+      cookie?: never
+    }
+    get: operations['list_1']
+    put?: never
+    post: operations['create_1']
+    delete?: never
+    options?: never
+    head?: never
+    patch?: never
+    trace?: never
+  }
+  '/api/v1/admin/api-keys/{id}': {
+    parameters: {
+      query?: never
+      header?: never
+      path?: never
+      cookie?: never
+    }
+    get?: never
+    put?: never
+    post?: never
+    delete: operations['revoke']
+    options?: never
+    head?: never
+    patch?: never
+    trace?: never
+  }
   '/api/v1/admin/laws/ingest': {
     parameters: {
       query?: never
@@ -379,7 +411,7 @@ export interface paths {
       path?: never
       cookie?: never
     }
-    get: operations['list_1']
+    get: operations['list_2']
     put?: never
     post?: never
     delete?: never
@@ -481,6 +513,43 @@ export interface components {
       side: 'WORKER' | 'EMPLOYER'
       text: string
       workerCategory: string | null
+    }
+    ApiKeyView: {
+      /** Format: date-time */
+      createdAt: string
+      /** Format: uuid */
+      id: string
+      /** Format: date-time */
+      lastUsedAt: string
+      name: string
+      /** Format: uuid */
+      orgId: string
+      prefix: string
+      /** Format: date-time */
+      revokedAt: string
+      scopes: string[]
+    }
+    CreateRequest: {
+      name: string
+      /** Format: uuid */
+      orgId: string
+      scopes: string[]
+    }
+    CreatedKey: {
+      /** Format: date-time */
+      createdAt: string
+      /** Format: uuid */
+      id: string
+      key: string
+      /** Format: date-time */
+      lastUsedAt: string
+      name: string
+      /** Format: uuid */
+      orgId: string
+      prefix: string
+      /** Format: date-time */
+      revokedAt: string
+      scopes: string[]
     }
     /** @default null */
     GuestRequest: {
@@ -800,6 +869,101 @@ export interface components {
 }
 export type $defs = Record<string, never>
 export interface operations {
+  list_1: {
+    parameters: {
+      query?: {
+        orgId?: string
+      }
+      header?: never
+      path?: never
+      cookie?: never
+    }
+    requestBody?: never
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          '*/*': components['schemas']['ApiKeyView'][]
+        }
+      }
+      /** @description Problem document */
+      default: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/problem+json': components['schemas']['Problem']
+        }
+      }
+    }
+  }
+  create_1: {
+    parameters: {
+      query?: never
+      header?: never
+      path?: never
+      cookie?: never
+    }
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['CreateRequest']
+      }
+    }
+    responses: {
+      /** @description Created */
+      201: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          '*/*': components['schemas']['CreatedKey']
+        }
+      }
+      /** @description Problem document */
+      default: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/problem+json': components['schemas']['Problem']
+        }
+      }
+    }
+  }
+  revoke: {
+    parameters: {
+      query?: {
+        orgId?: string
+      }
+      header?: never
+      path: {
+        id: string
+      }
+      cookie?: never
+    }
+    requestBody?: never
+    responses: {
+      /** @description No Content */
+      204: {
+        headers: {
+          [name: string]: unknown
+        }
+        content?: never
+      }
+      /** @description Problem document */
+      default: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/problem+json': components['schemas']['Problem']
+        }
+      }
+    }
+  }
   ingest: {
     parameters: {
       query?: never
@@ -1705,7 +1869,7 @@ export interface operations {
       }
     }
   }
-  list_1: {
+  list_2: {
     parameters: {
       query?: {
         status?: string

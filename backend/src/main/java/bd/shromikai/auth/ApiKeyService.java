@@ -38,8 +38,8 @@ public class ApiKeyService {
 
   public Created create(UUID orgId, String name, List<String> scopes, @Nullable UUID createdBy) {
     String trimmed = name == null ? "" : name.trim();
-    if (trimmed.isEmpty() || trimmed.length() > 80) {
-      throw new ProblemException(ProblemType.VALIDATION_FAILED, "name must be 1 to 80 characters");
+    if (trimmed.isEmpty() || trimmed.length() > 60) {
+      throw new ProblemException(ProblemType.VALIDATION_FAILED, "name must be 1 to 60 characters");
     }
     Set<String> unique = new LinkedHashSet<>(scopes == null ? List.of() : scopes);
     if (unique.isEmpty() || !SCOPES.containsAll(unique)) {

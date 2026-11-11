@@ -9,6 +9,7 @@ import bd.shromikai.trace.ActorKind;
 import bd.shromikai.trace.AuditAction;
 import bd.shromikai.trace.AuditEvent;
 import bd.shromikai.trace.AuditService;
+import java.time.Instant;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
@@ -45,7 +46,7 @@ public class AdminApiKeyController {
   public record CreateRequest(
       @Nullable String name, @Nullable List<String> scopes, @Nullable UUID orgId) {}
 
-  /** The created key with its secret, shown once. */
+  /** {@code ApiKeyCreated} of api.md §3: the key as listed plus its secret, shown once. */
   public record CreatedKey(
       UUID id,
       UUID orgId,
@@ -53,7 +54,9 @@ public class AdminApiKeyController {
       String name,
       List<String> scopes,
       String key,
-      String createdAt) {}
+      Instant createdAt,
+      @Nullable Instant lastUsedAt,
+      @Nullable Instant revokedAt) {}
 
   @PostMapping
   @ResponseStatus(HttpStatus.CREATED)
@@ -73,14 +76,16 @@ public class AdminApiKeyController {
         view.name(),
         view.scopes(),
         created.key(),
-        view.createdAt().toString());
+        view.createdAt(),
+        view.lastUsedAt(),
+        view.revokedAt());
   }
 
   @GetMapping
-  public Map<String, Object> list(
+  public List<ApiKeyView> list(
       @AuthenticationPrincipal AuthenticatedSubject admin,
       @RequestParam(required = false) @Nullable UUID orgId) {
-    return Map.of("items", keys.list(organisation(admin, orgId)));
+    return keys.list(organisation(admin, orgId));
   }
 
   @DeleteMapping("/{id}")
