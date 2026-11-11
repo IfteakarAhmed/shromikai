@@ -129,6 +129,7 @@ Demo accounts receive `403` `demo-account-restricted` on password change and del
 | E-44 | `POST /api/v1/admin/review-items` | `{ kind: CORPUS_CHANGE, sourceUrl, storedSha256, newSha256, ingestRunId }` | `201` `ReviewItem` | `400` | FR-84 |
 | E-45 | `GET /api/v1/dev/analyses/{id}/redacted` (profile `dev` only, admin) | none | `200` `{ clauses: [{ id, label, type, confidence, redactedText, flags }], trace: [{ stage, durationMs, outcome, promptId, promptVersion, modelId, detail }] }` | `404` outside `dev` | FR-33 |
 | E-45a | `POST /api/v1/dev/analyses` (profile `dev` only, admin; ADR-0014) | multipart `file` (one PDF, one text file or 1 to 15 images) or JSON `{ text }` | `201` `{ analysisId, status: CLASSIFIED, stage }` | `404` outside `dev`; `413`, `415`, `422` (`too-many-pages`, `unreadable-document` with `pages[]`, `not-an-employment-contract`), `502`/`503` as problem documents (`local-model-unavailable`, `privacy-guard-blocked`, `model-output-invalid`) | FR-24, FR-33 |
+| E-45b | `GET /api/v1/dev/analyses/{id}/findings` (profile `dev` only, admin; ADR-0015). `POST /api/v1/dev/analyses` also accepts `?full=true&side=WORKER\|EMPLOYER` to run the P6 pipeline to the end of `COMPOSE` (status `ANALYSED`) | none | `200` `{ status, findings: [RiskFinding without re-identification], redlines, warnings, review: { itemCount }, trace }`; citations are `VerifiedCitation` only | `404` outside `dev` | FR-47, FR-48 |
 
 Request and response objects without a full schema in §5:
 

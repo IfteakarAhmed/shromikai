@@ -1174,3 +1174,14 @@ where the specification needed a decision. None changes a requirement ID.
 | C25 | The egress guard must know the placeholder map of the job a request belongs to, but `EgressGuard.check(ChatRequest)` carried no job | `ChatRequest` gains an optional `EgressContext` (§10.5); `ModelGateway.call` takes it; no thread-local state | P5 |
 | C26 | P4 already created `V5__embedding_tracking.sql`, so the §11.3 name `V5__analysis.sql` is taken | P6 creates `V6__analysis.sql`; the P7 and P8 migrations move to `V7` and `V8`. Table contents are unchanged. The P5 persistence scan names `audit_event.detail` and covers every text and jsonb column, so the P6 tables are picked up when they exist | P5 |
 | C27 | E-45 only reads a job, but no public API exists before P7 to create one | The `dev` profile also exposes `POST /api/v1/dev/analyses` (E-45a) | P5 |
+
+### 18.6 Phase 6 findings (intelligence core, ADR-0015)
+
+| # | Finding | Resolution | Phase |
+| --- | --- | --- | --- |
+| C28 | The rule engine evaluates `ClauseFact`s that `analysis` produces, but the matrix forbids `rules → analysis`, and `ClauseType` lives in `analysis` | `ClauseFact`, `FactParameter` and `Unit` live in `rules`; a rule holds its clause type as a string checked against the api.md §5.1 list | P6 |
+| C29 | FR-48 needs a per-analysis token and cost budget, but the cost ledger (FR-62) is P7 | P6 ships `LlmCallListener` and a per-job `BudgetGuard` priced from `shromikai.pricing.*`; P7 adds the persistent ledger | P6 |
+| C30 | AGENTS.md §5.2 defines `dynamic_enums`, but `PromptRegistry` and `ModelGateway` ignore it | P6 implements it: the gateway replaces the `enum` of the selected schema nodes per request (§8.3, api.md §5.4) | P6 |
+| C31 | The corpus has no `WORKER_CATEGORY` terms and the legal rules need a second reviewer | `applies_to_category` stays null and `expected_for` empty; omissions come from `REQUIRED` rules and the risk agent; rules stay `draft` until reviewed (ADR-0015 decision 6) | P6 |
+| C32 | No public analysis API exists before P7, yet FR-47 needs a response to scan | `GET /api/v1/dev/analyses/{id}/findings` (E-45b, profile `dev`) returns the redacted findings with verified citations only, and `POST /api/v1/dev/analyses?full=true&side=` (E-45a) runs the whole P6 pipeline; the scan runs on E-45b | P6 |
+| C33 | The playbook says a regex disagreement "lowers confidence" without an amount | FR-35 fixes it: confidence − 0.3 (floor 0) | P6 |
