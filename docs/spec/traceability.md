@@ -19,7 +19,7 @@ status column at every phase exit; the P12 fact-check uses this file as its chec
 | | Citations restricted to retrieved sections; corrective agentic RAG | FR-21, FR-37, FR-42, FR-46 | `CitationOutsideRetrievedSetTest`, `FakeCitationInjectionTest` | P4, P6 | Specified |
 | | Deterministic rule engine beside LLM reasoning | FR-35, FR-36, FR-41, FR-49 | `RuleEngineTest`; `no-rules` ablation | P6, P10 | Specified |
 | | Bilingual statute reasoning with ILO alignment | FR-12, FR-16, FR-21 | M-13; reviewed `ALIGNS_WITH` rows; `retrieval.md` | P3, P4, P10 | Specified |
-| | Local-first privacy | FR-28 to FR-32; ADR-0003 | M-16, M-17; `NoPiiLeavesTheBoxIT` | P5 | Specified |
+| | Local-first privacy | FR-28 to FR-32; ADR-0003 | M-16, M-17; `EgressPlumbingIT` | P5 | Specified |
 | | MCP server for any AI agent | FR-64 to FR-67 | `McpServerIT`; `docs/mcp.md`; screenshots `docs/img/mcp-*.png` | P8 | Specified |
 | **Technical Execution (20)** | Input → processing → output pipeline as an explicit state machine | FR-48; architecture §5 | `OrchestratorStateMachineTest`; trace viewer | P6, P9 | Specified |
 | | Model choice with reasons | ADR-0005; FR-62 | architecture §6; `/docs/architecture` | P0, P9 | Specified |
@@ -56,7 +56,7 @@ status column at every phase exit; the P12 fact-check uses this file as its chec
 | --- | --- | --- | --- |
 | No fabricated demos or results | R-07, R-12; evaluation §11 | Eval reports with config and git SHA; `recorded` label on replays; P12 fact-check | Specified |
 | Lawfully sourced data | FR-12 (official sources, `robots.txt`, 1 request per second), FR-17; evaluation §2.1 | `data/packs/bd.yaml`; `corpus-quality.md`; contract `.meta.yml` source and licence | Specified |
-| Personal data anonymised | FR-28 to FR-32, FR-50, FR-66; NFR-05, NFR-06 | M-16, M-17 = 0; `NoPiiLeavesTheBoxIT`, `NoContractPersistenceIT` | Specified |
+| Personal data anonymised | FR-28 to FR-32, FR-50, FR-66; NFR-05, NFR-06 | M-16, M-17 = 0; `EgressPlumbingIT`, `NoContractPersistenceIT` | Specified |
 | All AI usage explainable and documented | FR-48, FR-74, FR-77; R-05; ADR-0005 | `docs/prompts/`, `docs/tooling-disclosure.md`, `docs/dev-log.md`, trace viewer | Specified |
 | Bangla localisation | R-11, FR-51, FR-75, NFR-09 | Bangla UI, memos and SSE messages; M-21 | Specified |
 | Judges get test credentials | FR-08, FR-85 | `/demo-user`, `/demo-hr`, `/demo-admin`; credentials table in `docs/submission/proof.md` (passwords never committed) | Specified |
@@ -157,7 +157,7 @@ status becomes `Verified` only when that proof exists and passes.
 | FR-27 | Local OCR with quality gate | Real-World Impact | P5 | `OcrIT` | Specified |
 | FR-28 | Deterministic PII detectors | Ethical AI | P5 | `PiiDetectorTest` | Specified |
 | FR-29 | Local entity extraction and placeholders | Ethical AI | P5 | `RedactionRoundTripTest`; M-25 | Specified |
-| FR-30 | Egress guard | Ethical AI | P5 | `EgressGuardTest`, `NoPiiLeavesTheBoxIT` | Specified |
+| FR-30 | Egress guard | Ethical AI | P5 | `EgressGuardTest`, `EgressPlumbingIT` | Specified |
 | FR-31 | Fail closed | Ethical AI | P5 | `FailClosedIT` | Specified |
 | FR-32 | No contract persistence | Ethical AI | P5 | `NoContractPersistenceIT` | Specified |
 | FR-33 | Clause segmentation and classification | Technical Execution | P5 | `ClauseSegmenterTest`, `DocumentGateIT`, `DevEndpointIT` | Specified |
@@ -222,7 +222,7 @@ status becomes `Verified` only when that proof exists and passes.
 | NFR-03 | Cost | Business Model | P7, P10 | `CostLedgerTest`; M-20 | Specified |
 | NFR-04 | Availability | Scalability | P11 | Uptime probe (n8n `uptime-probe` or provider monitor) | Specified |
 | NFR-05 | No content at rest | Ethical AI | P5 | `NoContractPersistenceIT`; M-17 | Specified |
-| NFR-06 | No PII egress | Ethical AI | P5 | `NoPiiLeavesTheBoxIT`; M-16 | Specified |
+| NFR-06 | No PII egress | Ethical AI | P5 | `EgressPlumbingIT`; M-16 | Specified |
 | NFR-07 | Security | Technical Execution | P11 | Dependency-Check, `npm audit`; `docs/security/asvs-l1.md` | Specified |
 | NFR-08 | Accessibility | Real-World Impact | P9 | Playwright `a11y`, `keyboard-j1` | Specified |
 | NFR-09 | Bangla first | Global Readiness | P9 | i18n parity check; snapshot tests | Specified |

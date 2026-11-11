@@ -507,7 +507,7 @@ Fixtures:
 - PiiDetectorTest (table-driven, Bangla and English, Bangla digits) plus jqwik generators for phone numbers and NIDs.
 - RedactionRoundTripTest: redact then restore gives the original text; placeholders are stable within one document.
 - EgressGuardTest: a payload that still contains an NID is blocked and audited.
-- NoPiiLeavesTheBoxIT: run the full intake on all synthetic contracts with WireMock standing in for the cloud model; assert no captured request contains any original name, NID, phone or email. Also: a law search whose query holds PII canaries makes zero cloud requests (the MCP claim path is added in P8).
+- EgressPlumbingIT: run the full intake on all synthetic contracts with WireMock standing in for the cloud model; assert no captured request contains any original name, NID, phone or email. Also: a law search whose query holds PII canaries makes zero cloud requests (the MCP claim path is added in P8).
 - NoContractPersistenceIT: after analyses of canary fixtures, scan every text and jsonb column (naming audit_event.detail explicitly now, and review_item.risk_summary, review_item.claimed_claim, review_item.facts and analysis_trace.detail once V5 creates them in P6), the log output and the temp directory for the canary marker and for any 8-token window of each canary document; nothing is found.
 - FailClosedIT: with the Ollama stub down, the analysis fails with local-model-unavailable and zero cloud requests are made.
 - ClauseSegmenterTest: the 5 synthetic contracts split into the expected clause counts.
@@ -687,7 +687,7 @@ Expose ShromikAI's legal knowledge and verifier as an MCP server, document it, a
 - McpAuthIT: missing or wrong key returns 401; a revoked key stops working.
 - McpRateLimitIT: limit enforced per key.
 - McpPrivacyIT: analyze_employment_contract results contain placeholders, not original identifiers; no field except suggested_clause contains an 8-token span of the input.
-- NoPiiLeavesTheBoxIT (extended): a verify_legal_citation claim with PII canaries reaches the Gemini and Claude stubs only with placeholders; search_bd_law makes zero cloud requests.
+- EgressPlumbingIT (extended): a verify_legal_citation claim with PII canaries reaches the Gemini and Claude stubs only with placeholders; search_bd_law makes zero cloud requests.
 - CrossOrganisationIsolationIT (extended): API keys, usage events and MCP-started analyses of organisation B are invisible to organisation A.
 - Every other test named for PP8 in docs/spec/test-strategy.md §16; that list is binding, and the tests above are its most important entries.
 </tests>

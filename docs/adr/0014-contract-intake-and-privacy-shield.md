@@ -71,5 +71,5 @@ to, and which data stays in the redacted text. Architecture §10.1 named `tess4j
 ## Verification
 
 `PiiDetectorTest`, `PiiDetectorPropertyTest`, `RedactionRoundTripTest`, `EgressGuardTest`,
-`NoPiiLeavesTheBoxIT` (real Claude adapter against WireMock, five contracts), `FailClosedIT`,
+`EgressPlumbingIT` (real Claude adapter against WireMock, five contracts), `FailClosedIT`,
 `NoContractPersistenceIT`, `MagicBytesTest`, `PdfTextExtractorIT`, `OcrIT`.

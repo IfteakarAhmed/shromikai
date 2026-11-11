@@ -711,8 +711,8 @@ Two paths take free text that did not come through contract intake (ADR-0006):
 
 | Path | Text | Handling | Proven by |
 | --- | --- | --- | --- |
-| `GET /api/v1/laws/search`, MCP `search_bd_law` | `q` / `query` (≤ 500 characters) | No cloud call at all: local embedding (bge-m3) and full-text search only; no query rewriting; the query is never logged (log allowlist) and lives only in the in-memory retrieval cache | `NoPiiLeavesTheBoxIT` (search with PII canaries makes zero cloud requests) |
-| MCP `verify_legal_citation` | `claim` (20 to 600 characters) | `analysis.ClaimRedactionService` runs the deterministic detectors and `pii-extract` locally, replaces values with placeholders, and passes the redacted claim to check (c); the egress guard checks the outgoing payload against that call's placeholder map; Ollama down → `local-model-unavailable`, no cloud call | `NoPiiLeavesTheBoxIT` (claim with PII canaries; captured Gemini and Claude bodies contain none), `FailClosedIT` |
+| `GET /api/v1/laws/search`, MCP `search_bd_law` | `q` / `query` (≤ 500 characters) | No cloud call at all: local embedding (bge-m3) and full-text search only; no query rewriting; the query is never logged (log allowlist) and lives only in the in-memory retrieval cache | `EgressPlumbingIT` (search with PII canaries makes zero cloud requests) |
+| MCP `verify_legal_citation` | `claim` (20 to 600 characters) | `analysis.ClaimRedactionService` runs the deterministic detectors and `pii-extract` locally, replaces values with placeholders, and passes the redacted claim to check (c); the egress guard checks the outgoing payload against that call's placeholder map; Ollama down → `local-model-unavailable`, no cloud call | `EgressPlumbingIT` (claim with PII canaries; captured Gemini and Claude bodies contain none), `FailClosedIT` |
 
 `quoted_text` is statute text by definition and is matched locally; it is sent to the support
 model only after check (b) has matched it against the corpus.
@@ -933,7 +933,7 @@ prompt-injection boundary).
 | T-02 | Tampering | B6 | Injection makes the agent cite an attacker-chosen or invented section | Candidate `enum`; `NOT_IN_CANDIDATES` check; three-check verification | M-04, `RiskAgentSchemaTest`, `CitationOutsideRetrievedSetTest` |
 | T-03 | Information disclosure | B6 | Injection asks the model to reveal the system prompt | Prompts hold no secrets; outputs are schema-constrained | M-18 |
 | T-04 | Tampering | B6 | Injection targets the support verifier | The verifier never sees contract text | `VerifierInputTest` |
-| T-05 | Information disclosure | B2 | PII reaches a cloud provider | Two-stage local redaction; egress guard; fail closed | M-16, `NoPiiLeavesTheBoxIT`, `EgressGuardTest` |
+| T-05 | Information disclosure | B2 | PII reaches a cloud provider | Two-stage local redaction; egress guard; fail closed | M-16, `EgressPlumbingIT`, `EgressGuardTest` |
 | T-06 | Information disclosure | B1, B3 | Contract text persists in DB, logs, temp files or dumps | §10.1 controls | M-17, `NoContractPersistenceIT` |
 | T-07 | Information disclosure | B1 | Another subject fetches an analysis result, its events, trace, obligations or compare result (IDOR) | Results bound to the creating subject; UUID v4 IDs; non-owner gets `404` | `AnalysisAccessIT` (P7) |
 | T-08 | Tampering | B1 | Forged memo showing fake verified citations | HMAC-signed envelope with expiry; constant-time comparison | `MemoEnvelopeTest` |
@@ -952,7 +952,7 @@ prompt-injection boundary).
 | T-21 | Information disclosure | B1 | Results left on a shared phone | No browser persistence; delete button; 30-minute server TTL | FR-54, `StorageGuard.test.ts` |
 | T-22 | Information disclosure | B5 | Exposing the dev server through Cloudflare Tunnel leaks data | API key required; dev-only; synthetic contracts only in demos | FR-67 |
 | T-23 | Information disclosure | B1 | An access token in a URL (for example an SSE query parameter) leaks through logs, proxies or browser history | Tokens only in the `Authorization` header; the SSE client is fetch-based (§17); the backend rejects `access_token`, `token` and `api_key` query parameters with `400` | `AnalysesApiIT`, `sse.test.ts` |
-| T-24 | Information disclosure | B2, B5 | Personal data typed into a law search or an MCP `verify_legal_citation` claim reaches a cloud model | Free-text search makes no cloud call; claims are redacted locally and pass the egress guard (§10.7) | `NoPiiLeavesTheBoxIT` |
+| T-24 | Information disclosure | B2, B5 | Personal data typed into a law search or an MCP `verify_legal_citation` claim reaches a cloud model | Free-text search makes no cloud call; claims are redacted locally and pass the egress guard (§10.7) | `EgressPlumbingIT` |
 | T-25 | Information disclosure | B3 | A reviewer-visible field (`claimed_claim`, `risk_summary`) stores an 8-token span of the contract | `OverlapChecker` on both fields before insert; facts-only fallback; persistence scan for 8-token windows | `ReviewItemFactoryTest`, `NoContractPersistenceIT` |
 | T-26 | Tampering | B1 | Data leaks across organisations (playbooks, API keys, usage, review items) | Every organisation-scoped query filters by `org_id`; non-members get `404` | `CrossOrganisationIsolationIT` (P7, extended in P8) |
 

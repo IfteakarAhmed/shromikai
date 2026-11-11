@@ -40,7 +40,7 @@ These change what data is sent where and for how long (AGENTS.md §9, criterion 
 
 Positive:
 
-- Each path that takes user text now has a stated privacy treatment and a test (`NoPiiLeavesTheBoxIT` covers search and MCP claims; `NoContractPersistenceIT` scans 8-token windows in every column).
+- Each path that takes user text now has a stated privacy treatment and a test (`EgressPlumbingIT` covers search and MCP claims; `NoContractPersistenceIT` scans 8-token windows in every column).
 - Memos rendered from real responses work and are tested end to end (`MemoFromRealResponseIT`).
 - No credential appears in a URL anywhere in the system.
 - Undecided review items leave the database after 30 days instead of 90 (less data at rest).
@@ -66,6 +66,6 @@ Negative:
 
 - `MemoFromRealResponseIT`, `MemoEnvelopeTest`, `MemoTemplateTest` (FR-55).
 - `AnalysesApiIT` (Bearer-only SSE, query-string token rejected) and `sse.test.ts` (FR-58).
-- `LawApiIT` (zero `ChatPort` calls), `NoPiiLeavesTheBoxIT` (search and MCP claim paths), `FailClosedIT` (FR-22, FR-30, FR-31, FR-64).
+- `LawApiIT` (zero `ChatPort` calls), `EgressPlumbingIT` (search and MCP claim paths), `FailClosedIT` (FR-22, FR-30, FR-31, FR-64).
 - `ReviewItemFactoryTest`, `NoContractPersistenceIT` (FR-32, FR-50).
 - `ReviewTicketIT`, `RetentionJobIT` (FR-61, NFR-16).

@@ -32,7 +32,7 @@ often use shared phones and should not need an account.
 
 Positive:
 
-- The privacy promise is testable on every CI run (`NoPiiLeavesTheBoxIT`, `NoContractPersistenceIT`; M-16, M-17).
+- The privacy promise is testable on every CI run (`EgressPlumbingIT`, `NoContractPersistenceIT`; M-16, M-17).
 - Cloud providers receive non-identifying text.
 - No stored contracts means no breach of stored contracts.
 
@@ -56,5 +56,5 @@ Negative:
 
 ## Verification
 
-- `PiiDetectorTest`, `RedactionRoundTripTest`, `EgressGuardTest`, `NoPiiLeavesTheBoxIT`, `FailClosedIT`, `NoContractPersistenceIT`, `LogRedactionTest`, `McpPrivacyIT`, `StorageGuard.test.ts`.
+- `PiiDetectorTest`, `RedactionRoundTripTest`, `EgressGuardTest`, `EgressPlumbingIT`, `FailClosedIT`, `NoContractPersistenceIT`, `LogRedactionTest`, `McpPrivacyIT`, `StorageGuard.test.ts`.
 - Evaluation hard gates M-16 = 0 and M-17 = 0; M-25 targets per PII type.
