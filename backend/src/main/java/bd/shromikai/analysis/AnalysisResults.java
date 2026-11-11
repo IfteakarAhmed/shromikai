@@ -456,7 +456,7 @@ public class AnalysisResults {
     return out;
   }
 
-  private ObjectNode summary(AnalysisJob.Outcome outcome) {
+  ObjectNode summary(AnalysisJob.Outcome outcome) {
     Map<SeverityRank, Integer> bySeverity = new EnumMap<>(SeverityRank.class);
     for (SeverityRank s : SeverityRank.values()) {
       bySeverity.put(s, 0);

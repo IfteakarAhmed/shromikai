@@ -1,0 +1,144 @@
+{
+  "name": "analyze_employment_contract",
+  "title": "Analyse an employment contract",
+  "description": "Analyse one employment contract (pasted text, Bangla or English) with the full ShromikAI pipeline from the worker's or the employer's side. Personal data is removed on the server by local models before any cloud model sees the text; the contract is neither stored nor echoed. Returns findings with severity, a verification status and verified statute citations (a finding without a verified citation is UNCERTAIN and has none), plus suggested replacement clauses that keep placeholders such as [PERSON_1] instead of names. Runs for up to two minutes. Example: {\"text\": \"<the contract text, at least 200 characters>\", \"side\": \"WORKER\", \"output_language\": \"en\"}.",
+  "example": {
+    "text": "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+    "side": "WORKER",
+    "output_language": "en"
+  },
+  "input": {
+    "$schema": "https://json-schema.org/draft/2020-12/schema",
+    "type": "object",
+    "properties": {
+      "text": {
+        "type": "string",
+        "minLength": 200,
+        "maxLength": 60000,
+        "description": "The full contract text."
+      },
+      "side": {
+        "enum": [
+          "WORKER",
+          "EMPLOYER"
+        ],
+        "description": "Whose side the explanations and suggested clauses take."
+      },
+      "output_language": {
+        "enum": [
+          "bn",
+          "en"
+        ],
+        "default": "bn"
+      }
+    },
+    "required": [
+      "text",
+      "side"
+    ],
+    "additionalProperties": false
+  },
+  "output": {
+    "$schema": "https://json-schema.org/draft/2020-12/schema",
+    "type": "object",
+    "properties": {
+      "analysis_id": {
+        "type": "string"
+      },
+      "findings": {
+        "type": "array",
+        "items": {
+          "type": "object",
+          "properties": {
+            "id": {
+              "type": "string"
+            },
+            "title": {
+              "type": "string"
+            },
+            "kind": {
+              "type": "string"
+            },
+            "severity": {
+              "type": "string"
+            },
+            "non_obvious": {
+              "type": "boolean"
+            },
+            "explanation": {
+              "type": "string"
+            },
+            "verification_status": {
+              "enum": [
+                "VERIFIED",
+                "UNCERTAIN",
+                "POLICY_ONLY"
+              ]
+            },
+            "citations": {
+              "type": "array",
+              "items": {
+                "type": "object"
+              }
+            },
+            "suggested_clause": {
+              "type": [
+                "string",
+                "null"
+              ]
+            }
+          },
+          "required": [
+            "id",
+            "title",
+            "kind",
+            "severity",
+            "non_obvious",
+            "explanation",
+            "verification_status",
+            "citations",
+            "suggested_clause"
+          ]
+        }
+      },
+      "summary": {
+        "type": "object"
+      },
+      "review_ticket": {
+        "type": [
+          "object",
+          "null"
+        ]
+      },
+      "provenance": {
+        "type": "object"
+      },
+      "warnings": {
+        "type": "array",
+        "items": {
+          "type": "object"
+        }
+      },
+      "corpus_release": {
+        "type": [
+          "string",
+          "null"
+        ],
+        "description": "Label of the corpus release the answer was produced from."
+      },
+      "disclaimer": {
+        "type": "string",
+        "description": "Always states that this is not legal advice (এটা আইনি পরামর্শ নয়)."
+      }
+    },
+    "required": [
+      "analysis_id",
+      "findings",
+      "summary",
+      "review_ticket",
+      "provenance",
+      "corpus_release",
+      "disclaimer"
+    ]
+  }
+}

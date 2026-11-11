@@ -22,9 +22,11 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 
 /**
  * NFR-12, T-26: an HR user of organisation A gets 404 on organisation B's playbooks and analyses,
- * and cannot use B's playbook for an analysis of A. (API keys, usage events and MCP are P8.)
+ * and cannot use B's playbook for an analysis of A. P8 adds API keys, usage events and analyses
+ * started through MCP (T-26).
  */
 @Requirement("NFR-12")
+@org.springframework.test.context.ActiveProfiles({"test", "mcp"})
 class CrossOrganisationIsolationIT extends ApiAnalysisIT {
 
   @Autowired PasswordEncoder encoder;
@@ -177,5 +179,155 @@ class CrossOrganisationIsolationIT extends ApiAnalysisIT {
         assertThat(finding.path("citations")).isEmpty();
       }
     }
+  }
+
+  // ---------------------------------------------------------------------------- P8
+
+  @Autowired bd.shromikai.auth.ApiKeyService keys;
+  @Autowired com.fasterxml.jackson.databind.ObjectMapper mapper;
+
+  private String admin(UUID org) {
+    UUID user =
+        IdentityFixtures.insertUser(
+            jdbc,
+            encoder,
+            IdentityFixtures.uniqueEmail("admin"),
+            IdentityFixtures.PASSWORD,
+            Role.ADMIN,
+            false);
+    jdbc.sql("update app_user set org_id = :org where id = :id")
+        .param("org", org)
+        .param("id", user)
+        .update();
+    return jwt.issueUser(user, Role.ADMIN, org, false).value();
+  }
+
+  private ResponseEntity<JsonNode> send(HttpMethod method, String token, String path, Object body) {
+    HttpHeaders headers = bearer(token);
+    headers.setContentType(MediaType.APPLICATION_JSON);
+    return http.exchange(path, method, new HttpEntity<>(body, headers), JsonNode.class);
+  }
+
+  @Test
+  void anAdminOfAnotherOrganisationSeesNeitherTheKeysNorCanRevokeThem() {
+    String adminA = admin(orgA);
+    String adminB = admin(orgB);
+    JsonNode created =
+        send(
+                HttpMethod.POST,
+                adminA,
+                "/api/v1/admin/api-keys",
+                java.util.Map.of("name", "A key", "scopes", java.util.List.of("mcp")))
+            .getBody();
+    String id = created.path("id").asText();
+
+    assertThat(send(HttpMethod.GET, adminB, "/api/v1/admin/api-keys", null).getBody().path("items"))
+        .isEmpty();
+    assertThat(
+            send(HttpMethod.DELETE, adminB, "/api/v1/admin/api-keys/" + id, null).getStatusCode())
+        .isEqualTo(HttpStatus.NOT_FOUND);
+    assertThat(
+            send(HttpMethod.GET, adminB, "/api/v1/admin/api-keys?orgId=" + orgA, null)
+                .getStatusCode())
+        .isEqualTo(HttpStatus.NOT_FOUND);
+    assertThat(
+            jdbc.sql("select revoked_at is null from api_key where id = cast(:id as uuid)")
+                .param("id", id)
+                .query(Boolean.class)
+                .single())
+        .as("B's admin did not revoke A's key")
+        .isTrue();
+    assertThat(send(HttpMethod.GET, adminA, "/api/v1/admin/api-keys", null).getBody().path("items"))
+        .hasSize(1);
+  }
+
+  private JsonNode mcpCall(String key, String tool, java.util.Map<String, Object> arguments)
+      throws Exception {
+    HttpHeaders headers = new HttpHeaders();
+    headers.setBearerAuth(key);
+    headers.setContentType(MediaType.APPLICATION_JSON);
+    headers.setAccept(java.util.List.of(MediaType.APPLICATION_JSON, MediaType.TEXT_EVENT_STREAM));
+    ResponseEntity<String> init =
+        http.exchange(
+            "/mcp",
+            HttpMethod.POST,
+            new HttpEntity<>(
+                java.util.Map.of(
+                    "jsonrpc",
+                    "2.0",
+                    "id",
+                    1,
+                    "method",
+                    "initialize",
+                    "params",
+                    java.util.Map.of(
+                        "protocolVersion",
+                        "2025-06-18",
+                        "capabilities",
+                        java.util.Map.of(),
+                        "clientInfo",
+                        java.util.Map.of("name", "t", "version", "1"))),
+                headers),
+            String.class);
+    headers.set("Mcp-Session-Id", init.getHeaders().getFirst("Mcp-Session-Id"));
+    String body =
+        http.exchange(
+                "/mcp",
+                HttpMethod.POST,
+                new HttpEntity<>(
+                    java.util.Map.of(
+                        "jsonrpc",
+                        "2.0",
+                        "id",
+                        2,
+                        "method",
+                        "tools/call",
+                        "params",
+                        java.util.Map.of("name", tool, "arguments", arguments)),
+                    headers),
+                String.class)
+            .getBody();
+    int data = body.indexOf("data:");
+    return mapper.readTree(data >= 0 ? body.substring(data + 5).trim() : body).path("result");
+  }
+
+  @Test
+  void usageEventsAndMcpStartedAnalysesOfOneOrganisationAreInvisibleToTheOther() throws Exception {
+    String keyB = keys.create(orgB, "B key", java.util.List.of("mcp"), null).key();
+
+    JsonNode result =
+        mcpCall(
+            keyB,
+            "analyze_employment_contract",
+            java.util.Map.of("text", text(), "side", "WORKER", "output_language", "en"));
+    String analysisId = result.path("structuredContent").path("analysis_id").asText();
+    assertThat(analysisId).isNotBlank();
+
+    assertThat(
+            jdbc.sql("select count(*) from usage_event where org_id = :o and kind = 'MCP_CALL'")
+                .param("o", orgB)
+                .query(Long.class)
+                .single())
+        .isEqualTo(1L);
+    assertThat(
+            jdbc.sql("select count(*) from usage_event where org_id = :o")
+                .param("o", orgA)
+                .query(Long.class)
+                .single())
+        .isZero();
+    for (String hr : java.util.List.of(hrA, hrB)) {
+      assertThat(get(hr, "/api/v1/analyses/" + analysisId).getStatusCode())
+          .isEqualTo(HttpStatus.NOT_FOUND);
+      assertThat(get(hr, "/api/v1/analyses/" + analysisId + "/trace").getStatusCode())
+          .isEqualTo(HttpStatus.NOT_FOUND);
+    }
+    assertThat(
+            jdbc.sql(
+                    "select org_id from analysis_run where id = cast(:id as uuid)"
+                        + " and client_kind = 'MCP'")
+                .param("id", analysisId)
+                .query(UUID.class)
+                .optional())
+        .contains(orgB);
   }
 }

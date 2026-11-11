@@ -1,0 +1,176 @@
+{
+  "name": "verify_legal_citation",
+  "title": "Verify a legal citation",
+  "description": "Run ShromikAI's 3-check verifier on a citation before you show it to anyone: (1) the section exists and is current, (2) the quoted text is found in the official text, (3) an independent model judges that the section supports your claim. Personal data in the claim is removed on the server, with local models, before the support model sees it. Returns VERIFIED, UNCERTAIN or REJECTED with reason codes; only a VERIFIED result carries a citation you may repeat. Example: {\"act_code\": \"BLA-2006\", \"section_no\": \"1\", \"quoted_text\": \"<words copied from the official text of that section>\", \"claim\": \"<the legal proposition you cite the section for>\"}.",
+  "example": {
+    "act_code": "BLA-2006",
+    "section_no": "1",
+    "quoted_text": "<words copied from the official text of that section>",
+    "claim": "<the legal proposition you cite the section for>"
+  },
+  "input": {
+    "$schema": "https://json-schema.org/draft/2020-12/schema",
+    "type": "object",
+    "properties": {
+      "act_code": {
+        "type": "string",
+        "minLength": 2,
+        "maxLength": 32
+      },
+      "section_no": {
+        "type": "string",
+        "minLength": 1,
+        "maxLength": 32
+      },
+      "quoted_text": {
+        "type": "string",
+        "minLength": 20,
+        "maxLength": 300,
+        "description": "Words copied from the section's official text."
+      },
+      "claim": {
+        "type": "string",
+        "minLength": 20,
+        "maxLength": 600,
+        "description": "The legal proposition you cite the section for."
+      }
+    },
+    "required": [
+      "act_code",
+      "section_no",
+      "quoted_text",
+      "claim"
+    ],
+    "additionalProperties": false
+  },
+  "output": {
+    "$schema": "https://json-schema.org/draft/2020-12/schema",
+    "type": "object",
+    "properties": {
+      "status": {
+        "enum": [
+          "VERIFIED",
+          "UNCERTAIN",
+          "REJECTED"
+        ]
+      },
+      "checks": {
+        "type": "object",
+        "properties": {
+          "existence": {
+            "type": "object",
+            "properties": {
+              "outcome": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "outcome"
+            ]
+          },
+          "quote_match": {
+            "type": "object",
+            "properties": {
+              "outcome": {
+                "type": "string"
+              },
+              "similarity": {
+                "type": [
+                  "number",
+                  "null"
+                ]
+              },
+              "matched_language": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              }
+            },
+            "required": [
+              "outcome"
+            ]
+          },
+          "support": {
+            "type": "object",
+            "properties": {
+              "outcome": {
+                "type": "string"
+              },
+              "label": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "confidence": {
+                "type": [
+                  "number",
+                  "null"
+                ]
+              },
+              "independence": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "model_id": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "reason": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              }
+            },
+            "required": [
+              "outcome"
+            ]
+          }
+        },
+        "required": [
+          "existence",
+          "quote_match",
+          "support"
+        ]
+      },
+      "reason_codes": {
+        "type": "array",
+        "items": {
+          "type": "string"
+        }
+      },
+      "verified_citation": {
+        "type": [
+          "object",
+          "null"
+        ],
+        "description": "Present only when status is VERIFIED."
+      },
+      "corpus_release": {
+        "type": [
+          "string",
+          "null"
+        ],
+        "description": "Label of the corpus release the answer was produced from."
+      },
+      "disclaimer": {
+        "type": "string",
+        "description": "Always states that this is not legal advice (এটা আইনি পরামর্শ নয়)."
+      }
+    },
+    "required": [
+      "status",
+      "checks",
+      "reason_codes",
+      "verified_citation",
+      "corpus_release",
+      "disclaimer"
+    ]
+  }
+}

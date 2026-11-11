@@ -1,6 +1,7 @@
 package bd.shromikai.law;
 
 import bd.shromikai.law.internal.LawReadRepository;
+import bd.shromikai.law.internal.PackCatalogReader;
 import java.util.List;
 import java.util.Optional;
 import org.jspecify.annotations.Nullable;
@@ -12,10 +13,17 @@ public class LawReadService {
 
   private final LawReadRepository repository;
   private final CorpusStatsService stats;
+  private final PackCatalogReader packs;
 
-  LawReadService(LawReadRepository repository, CorpusStatsService stats) {
+  LawReadService(LawReadRepository repository, CorpusStatsService stats, PackCatalogReader packs) {
     this.repository = repository;
     this.stats = stats;
+    this.packs = packs;
+  }
+
+  /** The jurisdiction packs and their coverage (MCP {@code list_jurisdiction_packs}). */
+  public List<PackInfo> packs() {
+    return packs.packs();
   }
 
   public List<ActSummary> acts(List<String> jurisdictions) {

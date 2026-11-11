@@ -1,0 +1,114 @@
+{
+  "name": "search_bd_law",
+  "title": "Search Bangladeshi labour law",
+  "description": "Search Bangladeshi labour law and the ingested ILO conventions in Bangla or English with hybrid retrieval (vector plus full text, then graph expansion) on ShromikAI's own servers: no cloud model sees the query and it is not rewritten. Returns section keys, short snippets and official source URLs; use get_law_section for the full text and verify_legal_citation before you repeat any citation. Example: {\"query\": \"overtime pay rate\", \"top_k\": 5, \"language\": \"en\"}.",
+  "example": {
+    "query": "overtime pay rate",
+    "top_k": 5,
+    "language": "en"
+  },
+  "input": {
+    "$schema": "https://json-schema.org/draft/2020-12/schema",
+    "type": "object",
+    "properties": {
+      "query": {
+        "type": "string",
+        "minLength": 1,
+        "maxLength": 500,
+        "description": "What to look for, in Bangla or English. Do not include personal data."
+      },
+      "top_k": {
+        "type": "integer",
+        "minimum": 1,
+        "maximum": 20,
+        "default": 8,
+        "description": "How many results to return."
+      },
+      "language": {
+        "enum": [
+          "bn",
+          "en",
+          "any"
+        ],
+        "default": "any",
+        "description": "Language of the query; the index holds both languages, so this does not filter."
+      }
+    },
+    "required": [
+      "query"
+    ],
+    "additionalProperties": false
+  },
+  "output": {
+    "$schema": "https://json-schema.org/draft/2020-12/schema",
+    "type": "object",
+    "properties": {
+      "results": {
+        "type": "array",
+        "items": {
+          "type": "object",
+          "properties": {
+            "section_key": {
+              "type": "string"
+            },
+            "act_code": {
+              "type": "string"
+            },
+            "section_no": {
+              "type": "string"
+            },
+            "heading_bn": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "heading_en": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "snippet": {
+              "type": "string"
+            },
+            "source_url": {
+              "type": "string"
+            },
+            "fused_score": {
+              "type": "number"
+            },
+            "origin": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "section_key",
+            "act_code",
+            "section_no",
+            "snippet",
+            "source_url",
+            "fused_score",
+            "origin"
+          ]
+        }
+      },
+      "corpus_release": {
+        "type": [
+          "string",
+          "null"
+        ],
+        "description": "Label of the corpus release the answer was produced from."
+      },
+      "disclaimer": {
+        "type": "string",
+        "description": "Always states that this is not legal advice (এটা আইনি পরামর্শ নয়)."
+      }
+    },
+    "required": [
+      "results",
+      "corpus_release",
+      "disclaimer"
+    ]
+  }
+}

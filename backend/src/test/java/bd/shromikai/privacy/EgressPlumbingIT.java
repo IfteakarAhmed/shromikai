@@ -234,4 +234,82 @@ class EgressPlumbingIT {
     fakeChat.calls().forEach(c -> seen.add(c.request().promptId()));
     assertThat(seen).isEmpty();
   }
+
+  /**
+   * MCP {@code verify_legal_citation} (FR-64, architecture §10.7): the claim is redacted locally by
+   * {@code ClaimRedactionService}, then the support check goes through the real Claude adapter and
+   * the real guard. WireMock sees placeholders and none of the canaries.
+   */
+  @Test
+  void shouldSendAnMcpClaimToTheCloudModelOnlyAsPlaceholders() {
+    var found = new LocalEntities(List.of("Abdul Karim Sample"), List.of(), List.of(), List.of());
+    var guard =
+        new PrivacyEgressGuard(
+            new PiiDetector(),
+            org.mockito.Mockito.mock(bd.shromikai.trace.AuditService.class),
+            new SimpleMeterRegistry());
+    var anthropic =
+        new AnthropicChatAdapter(
+            guard,
+            new ShromikaiProperties.Provider("test-key", cloud.baseUrl()),
+            TestGateways.MAPPER);
+    var gateway = TestGateways.gateway(anthropic, AnalysisHarness.ollamaReturning(found));
+    var models =
+        new ShromikaiProperties.Models(
+            "claude-sonnet-5-5",
+            "claude-haiku-5-5",
+            null,
+            "claude-haiku-5-5",
+            null,
+            "qwen2.5:7b-instruct",
+            "bge-m3");
+    var claims =
+        new bd.shromikai.analysis.ClaimRedactionService(
+            new PrivacyShield(
+                new LocalEntityExtractor(gateway),
+                new Redactor(new PiiDetector()),
+                new InjectionDetector()));
+    cloud.stubFor(
+        post(anyUrl())
+            .willReturn(
+                aResponse()
+                    .withStatus(200)
+                    .withHeader("Content-Type", "application/json")
+                    .withBody(
+                        "{\"id\":\"msg_stub\",\"type\":\"message\",\"role\":\"assistant\","
+                            + "\"model\":\"claude-haiku-5-5\",\"stop_reason\":\"end_turn\","
+                            + "\"stop_sequence\":null,\"content\":[{\"type\":\"text\",\"text\":"
+                            + "\"{\\\"label\\\":\\\"SUPPORTS\\\",\\\"confidence\\\":0.9,"
+                            + "\\\"reason\\\":\\\"stand-in\\\"}\"}],"
+                            + "\"usage\":{\"input_tokens\":10,\"output_tokens\":5}}")));
+    String claim =
+        "Abdul Karim Sample, phone 01712345678, NID 1234567890123, mail karim@example.org,"
+            + " was dismissed without the notice the section requires.";
+
+    try (var redacted = claims.redact(claim)) {
+      var outcome =
+          new bd.shromikai.verify.internal.SupportVerifier(gateway, models)
+              .verify(
+                  redacted.text(),
+                  "Fictional section text about notice of dismissal.",
+                  null,
+                  "written notice of dismissal",
+                  redacted.context(),
+                  bd.shromikai.shared.text.OverlapChecker.of());
+      assertThat(outcome).isInstanceOf(bd.shromikai.verify.internal.SupportVerifier.Judged.class);
+    }
+
+    String all =
+        String.join(
+            "\n",
+            cloud.findAll(anyRequestedFor(anyUrl())).stream()
+                .map(LoggedRequest::getBodyAsString)
+                .toList());
+    assertThat(all).as("the cloud model was called").isNotEmpty();
+    for (String canary :
+        List.of("Abdul Karim", "01712345678", "1234567890123", "karim@example.org")) {
+      assertThat(all.replace("\\\"", "\"")).as(canary).doesNotContain(canary);
+    }
+    assertThat(all).contains("[PERSON_1]");
+  }
 }

@@ -1,0 +1,158 @@
+{
+  "name": "get_law_section",
+  "title": "Get one statute section",
+  "description": "Get the current official text of one statute section in Bangla and English, with its version, effective date and source URL. The act's authoritative language is stated; a translation is never presented as official unless the source says so. Section numbers may use Latin or Bangla digits. Example: {\"act_code\": \"BLA-2006\", \"section_no\": \"1\"}.",
+  "example": {
+    "act_code": "BLA-2006",
+    "section_no": "1"
+  },
+  "input": {
+    "$schema": "https://json-schema.org/draft/2020-12/schema",
+    "type": "object",
+    "properties": {
+      "act_code": {
+        "type": "string",
+        "minLength": 2,
+        "maxLength": 32,
+        "description": "Act code as listed by list_jurisdiction_packs, for example BLA-2006."
+      },
+      "section_no": {
+        "type": "string",
+        "minLength": 1,
+        "maxLength": 32,
+        "description": "Section number, Latin or Bangla digits, with an optional letter suffix."
+      }
+    },
+    "required": [
+      "act_code",
+      "section_no"
+    ],
+    "additionalProperties": false
+  },
+  "output": {
+    "$schema": "https://json-schema.org/draft/2020-12/schema",
+    "type": "object",
+    "properties": {
+      "section_key": {
+        "type": "string"
+      },
+      "act_code": {
+        "type": "string"
+      },
+      "act_title_bn": {
+        "type": [
+          "string",
+          "null"
+        ]
+      },
+      "act_title_en": {
+        "type": "string"
+      },
+      "section_no": {
+        "type": "string"
+      },
+      "section_no_original": {
+        "type": [
+          "string",
+          "null"
+        ]
+      },
+      "heading_bn": {
+        "type": [
+          "string",
+          "null"
+        ]
+      },
+      "heading_en": {
+        "type": [
+          "string",
+          "null"
+        ]
+      },
+      "authoritative_lang": {
+        "type": "string"
+      },
+      "text_bn": {
+        "type": [
+          "string",
+          "null"
+        ]
+      },
+      "text_en": {
+        "type": [
+          "string",
+          "null"
+        ]
+      },
+      "translation_official": {
+        "type": [
+          "boolean",
+          "null"
+        ]
+      },
+      "version_label": {
+        "type": "string"
+      },
+      "effective_from": {
+        "type": [
+          "string",
+          "null"
+        ]
+      },
+      "is_current": {
+        "type": "boolean"
+      },
+      "source_url": {
+        "type": "string"
+      },
+      "fetched_at": {
+        "type": "string"
+      },
+      "related": {
+        "type": "array",
+        "items": {
+          "type": "object",
+          "properties": {
+            "section_key": {
+              "type": "string"
+            },
+            "kind": {
+              "type": "string"
+            },
+            "reviewed": {
+              "type": "boolean"
+            }
+          },
+          "required": [
+            "section_key",
+            "kind",
+            "reviewed"
+          ]
+        }
+      },
+      "corpus_release": {
+        "type": [
+          "string",
+          "null"
+        ],
+        "description": "Label of the corpus release the answer was produced from."
+      },
+      "disclaimer": {
+        "type": "string",
+        "description": "Always states that this is not legal advice (এটা আইনি পরামর্শ নয়)."
+      }
+    },
+    "required": [
+      "section_key",
+      "act_code",
+      "section_no",
+      "authoritative_lang",
+      "version_label",
+      "is_current",
+      "source_url",
+      "related",
+      "corpus_release",
+      "disclaimer"
+    ]
+  }
+}

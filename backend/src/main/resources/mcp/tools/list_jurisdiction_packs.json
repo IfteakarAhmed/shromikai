@@ -1,0 +1,121 @@
+{
+  "name": "list_jurisdiction_packs",
+  "title": "List jurisdiction packs",
+  "description": "List the jurisdiction packs ShromikAI can answer for, with their coverage: ingested acts and section counts, ILO conventions and their ratification status, the number of active (human-reviewed) legal rules and of reviewed ILO mappings. Use it to learn which act codes get_law_section accepts. Takes no arguments. Example: {}.",
+  "example": {},
+  "input": {
+    "$schema": "https://json-schema.org/draft/2020-12/schema",
+    "type": "object",
+    "properties": {},
+    "required": [],
+    "additionalProperties": false
+  },
+  "output": {
+    "$schema": "https://json-schema.org/draft/2020-12/schema",
+    "type": "object",
+    "properties": {
+      "packs": {
+        "type": "array",
+        "items": {
+          "type": "object",
+          "properties": {
+            "code": {
+              "type": "string"
+            },
+            "name": {
+              "type": "string"
+            },
+            "acts": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "act_code": {
+                    "type": "string"
+                  },
+                  "title_en": {
+                    "type": "string"
+                  },
+                  "title_bn": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "section_count": {
+                    "type": "integer"
+                  },
+                  "authoritative_lang": {
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "act_code",
+                  "title_en",
+                  "section_count",
+                  "authoritative_lang"
+                ]
+              }
+            },
+            "ilo_conventions": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "code": {
+                    "type": "string"
+                  },
+                  "ratification_status": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  }
+                },
+                "required": [
+                  "code"
+                ]
+              }
+            },
+            "active_rules": {
+              "type": "integer"
+            },
+            "reviewed_ilo_mappings": {
+              "type": "integer"
+            },
+            "corpus_release": {
+              "type": [
+                "string",
+                "null"
+              ]
+            }
+          },
+          "required": [
+            "code",
+            "name",
+            "acts",
+            "ilo_conventions",
+            "active_rules",
+            "reviewed_ilo_mappings"
+          ]
+        }
+      },
+      "corpus_release": {
+        "type": [
+          "string",
+          "null"
+        ],
+        "description": "Label of the corpus release the answer was produced from."
+      },
+      "disclaimer": {
+        "type": "string",
+        "description": "Always states that this is not legal advice (এটা আইনি পরামর্শ নয়)."
+      }
+    },
+    "required": [
+      "packs",
+      "corpus_release",
+      "disclaimer"
+    ]
+  }
+}
