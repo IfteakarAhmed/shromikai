@@ -104,6 +104,7 @@ final class PipelineHarness {
             new FindingMerge(),
             findingVerifier,
             new ObligationsAgent(citationVerifier),
+            new MemoNarrator(),
             loop,
             new ReviewQueue(new ReviewItemFactory(Clock.systemUTC()), reviewStore),
             new CounterOfferAgent(facts, engine),
@@ -152,8 +153,12 @@ final class PipelineHarness {
   }
 
   AnalysisJob run() {
+    return run(AnalysisRequest.of(Side.WORKER));
+  }
+
+  AnalysisJob run(AnalysisRequest request) {
     AnalysisJob job = classifiedJob();
-    pipeline.run(job, AnalysisRequest.of(Side.WORKER), AnalysisSubject.dev());
+    pipeline.run(job, request, AnalysisSubject.dev());
     return job;
   }
 
@@ -178,6 +183,13 @@ final class PipelineHarness {
                  "claim":"An employer must give a worker written notice before dismissal."}],
                "confidence":0.8}]}
               """);
+      case "memo-bn", "memo-en" ->
+          TestGateways.json(
+              request.user().reveal().contains("reading_level: BASIC")
+                  ? "{\"status\":\"OK\",\"reason\":\"NONE\",\"summary\":\"One risk. Notice is short. Ask for more.\","
+                      + "\"next_steps\":[\"Ask for a copy.\"]}"
+                  : "{\"status\":\"OK\",\"reason\":\"NONE\",\"summary\":\"The contract has one serious risk about the notice that your employer must give before an employment ends, and you should read it first.\","
+                      + "\"next_steps\":[\"Ask for a copy.\"]}");
       case "obligations" ->
           TestGateways.json(
               """

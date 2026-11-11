@@ -32,3 +32,18 @@ no live call was made and no number below is a measurement of a live answer.
    cost too. This changes what is stored (§9 item 3): money per day, no contract data.
 4. **Obligations failure is not fatal.** A model failure leaves the checklist out with warning
    `obligations-unavailable`; an egress block or a spent budget still ends the job (R-03).
+5. **Memo narrative caps.** `memo-bn` and `memo-en` v1 are bounded in the schema (summary at most
+   600 characters, at most 5 steps of at most 140) with `max_output_tokens` 2,000 on Sonnet, effort
+   low, timeout 40 s. The audit's largest answer (Bangla) fits with the 15% margin. Architecture
+   §5.3 gave no cap for them.
+6. **`baseline` v1 cap is 4,000 tokens.** At most 4 findings and 2 citations each, short texts. The
+   audit first failed at a 3,500 cap (worst case 3,009 against 2,975 allowed), so the cap was
+   raised before any live call; this is the audit doing its job (ADR-0019).
+7. **The memo narrative is not fatal.** If `memo-*` cannot answer (invalid output, refusal,
+   outage), the memo uses a fixed summary and fixed next steps built from counts only, and the
+   result carries warning `memo-narrative-unavailable`. Architecture §5.5 listed these failures as
+   stopping the job; stopping after the analysis was paid for helps nobody. Egress blocks and a
+   spent budget still stop it.
+8. **Memo module takes its own input records** (`MemoInput`), so it does not depend on `analysis`
+   (AGENTS.md §4 matrix is unchanged). The composer refuses a finding that carries citation IDs
+   without being `VERIFIED`.

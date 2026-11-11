@@ -50,6 +50,22 @@ public final class P6Stubs {
     fake.respondWith("risk-citation-repair", P6Stubs::repair);
     fake.respondWith("counter-offer", P6Stubs::counterOffer);
     fake.respondWith(
+        "obligations",
+        request ->
+            TestGateways.json(
+                "{\"status\":\"OK\",\"reason\":\"NONE\",\"items\":[{\"party\":\"WORKER\","
+                    + "\"obligation\":\"Report for duty as agreed.\",\"trigger\":null,"
+                    + "\"deadline\":null,\"source\":\"CONTRACT\","
+                    + "\"status\":\"STATED_IN_CONTRACT\",\"clause_ids\":[],\"citations\":[]}]}"));
+    for (String memo : new String[] {"memo-bn", "memo-en"}) {
+      fake.respondWith(
+          memo,
+          request ->
+              TestGateways.json(
+                  "{\"status\":\"OK\",\"reason\":\"NONE\",\"summary\":\"Stand-in summary.\","
+                      + "\"next_steps\":[\"Stand-in step.\"]}"));
+    }
+    fake.respondWith(
         "verify-support",
         request ->
             TestGateways.json(

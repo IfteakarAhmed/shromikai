@@ -104,6 +104,36 @@ class PromptAnswerBoundAuditTest {
     return out;
   }
 
+  private static JsonNode memo(boolean bangla) {
+    ObjectNode out = obj();
+    out.put("status", "OK").put("reason", "NONE");
+    out.put("summary", bangla ? bn(600) : "a".repeat(600));
+    ArrayNode steps = out.putArray("next_steps");
+    for (int i = 0; i < 5; i++) {
+      steps.add(bangla ? bn(140) : "a".repeat(140));
+    }
+    return out;
+  }
+
+  private static JsonNode baseline() {
+    ObjectNode out = obj();
+    out.put("status", "OK").put("reason", "NONE");
+    ArrayNode list = out.putArray("findings");
+    for (int i = 0; i < 4; i++) {
+      ObjectNode f = list.addObject();
+      f.put("title", bn(50)).put("severity", "CRITICAL").put("explanation", bn(160));
+      ArrayNode cites = f.putArray("citations");
+      for (int c = 0; c < 2; c++) {
+        cites
+            .addObject()
+            .put("section_key", "A".repeat(40))
+            .put("quote", bn(120))
+            .put("claim", bn(100));
+      }
+    }
+    return out;
+  }
+
   private static JsonNode counterOffer() {
     return obj()
         .put("status", "OK")
@@ -208,7 +238,10 @@ class PromptAnswerBoundAuditTest {
         // Bounded by the prompt text (three queries of twelve words), not by the schema; the
         // margin is thin (254 of 255 tokens) only in this synthetic worst case.
         Map.entry("query-rewrite", queryRewrite()),
-        Map.entry("obligations", obligations()));
+        Map.entry("obligations", obligations()),
+        Map.entry("memo-bn", memo(true)),
+        Map.entry("memo-en", memo(false)),
+        Map.entry("baseline", baseline()));
   }
 
   /** Prompts that cannot be bounded, with what protects the analysis when the answer is cut. */

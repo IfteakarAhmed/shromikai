@@ -78,6 +78,7 @@ public class AnalysisPipeline {
   private final FindingMerge merge;
   private final FindingVerifier verifier;
   private final ObligationsAgent obligations;
+  private final MemoNarrator narrator;
   private final CorrectiveLoop corrective;
   private final ReviewQueue reviews;
   private final CounterOfferAgent counterOffers;
@@ -100,6 +101,7 @@ public class AnalysisPipeline {
       FindingMerge merge,
       FindingVerifier verifier,
       ObligationsAgent obligations,
+      MemoNarrator narrator,
       CorrectiveLoop corrective,
       ReviewQueue reviews,
       CounterOfferAgent counterOffers,
@@ -119,6 +121,7 @@ public class AnalysisPipeline {
     this.merge = merge;
     this.verifier = verifier;
     this.obligations = obligations;
+    this.narrator = narrator;
     this.corrective = corrective;
     this.reviews = reviews;
     this.counterOffers = counterOffers;
@@ -410,6 +413,14 @@ public class AnalysisPipeline {
       withRedlines.add(redline == null ? finding : finding.withRedline(redline));
     }
     findings = withRedlines;
+    List<Finding> toNarrate = findings;
+    MemoNarrator.Narrative narrative =
+        step(Stage.COMPOSE, d, () -> narrator.narrate(d.session, d.request, toNarrate));
+    if (!narrative.fromModel()) {
+      d.warnings.add(
+          new AnalysisJob.Warning(
+              "memo-narrative-unavailable", "The memo summary was written without a model."));
+    }
     record(
         d,
         Stage.COMPOSE,
@@ -458,7 +469,8 @@ public class AnalysisPipeline {
             d.session.costUsdMicros(),
             durationMs,
             d.verdicts,
-            checklist);
+            checklist,
+            narrative);
     d.job.analysed(outcome);
     record(
         d,

@@ -46,7 +46,8 @@ public final class AnalysisJob {
       long costUsdMicros,
       long durationMs,
       List<FindingVerifier.VerdictSummary> verdicts,
-      List<ObligationItem> obligations) {
+      List<ObligationItem> obligations,
+      MemoNarrator.Narrative narrative) {
 
     public Outcome {
       findings = List.copyOf(findings);

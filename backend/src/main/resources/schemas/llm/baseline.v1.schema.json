@@ -1,0 +1,40 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:shromikai:schema:llm:baseline:1",
+  "title": "baseline output (bounded)",
+  "type": "object",
+  "properties": {
+    "status": { "type": "string", "enum": ["OK", "ABSTAIN"] },
+    "reason": { "type": "string", "enum": ["NONE", "NOT_AN_EMPLOYMENT_CONTRACT", "UNREADABLE"] },
+    "findings": {
+      "type": "array",
+      "maxItems": 4,
+      "items": {
+        "type": "object",
+        "properties": {
+          "title": { "type": "string", "maxLength": 50 },
+          "severity": { "type": "string", "enum": ["CRITICAL", "HIGH", "MEDIUM", "LOW"] },
+          "explanation": { "type": "string", "maxLength": 160 },
+          "citations": {
+            "type": "array",
+            "maxItems": 2,
+            "items": {
+              "type": "object",
+              "properties": {
+                "section_key": { "type": "string", "maxLength": 40 },
+                "quote": { "type": "string", "maxLength": 120 },
+                "claim": { "type": "string", "maxLength": 100 }
+              },
+              "required": ["section_key", "quote", "claim"],
+              "additionalProperties": false
+            }
+          }
+        },
+        "required": ["title", "severity", "explanation", "citations"],
+        "additionalProperties": false
+      }
+    }
+  },
+  "required": ["status", "reason", "findings"],
+  "additionalProperties": false
+}

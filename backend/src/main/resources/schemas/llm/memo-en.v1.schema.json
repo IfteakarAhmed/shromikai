@@ -1,0 +1,18 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:shromikai:schema:llm:memo-en:1",
+  "title": "memo-en output (bounded)",
+  "type": "object",
+  "properties": {
+    "status": { "type": "string", "enum": ["OK", "ABSTAIN"] },
+    "reason": { "type": "string", "enum": ["NONE", "NOT_ENOUGH_INFORMATION"] },
+    "summary": { "type": "string", "maxLength": 600 },
+    "next_steps": {
+      "type": "array",
+      "maxItems": 5,
+      "items": { "type": "string", "maxLength": 140 }
+    }
+  },
+  "required": ["status", "reason", "summary", "next_steps"],
+  "additionalProperties": false
+}
