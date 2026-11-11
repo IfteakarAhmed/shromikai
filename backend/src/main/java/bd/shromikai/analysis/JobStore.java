@@ -1,5 +1,7 @@
 package bd.shromikai.analysis;
 
+import bd.shromikai.shared.problem.ProblemException;
+import bd.shromikai.shared.problem.ProblemType;
 import java.time.Clock;
 import java.time.Duration;
 import java.time.Instant;
@@ -7,6 +9,9 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
 /**
@@ -21,16 +26,30 @@ public final class JobStore {
 
   private final Map<UUID, AnalysisJob> jobs = new ConcurrentHashMap<>();
   private final Clock clock;
+  private final int maxJobs;
 
   public JobStore(Clock clock) {
+    this(clock, 200);
+  }
+
+  @Autowired
+  public JobStore(Clock clock, @Value("${shromikai.analysis.max-jobs}") int maxJobs) {
     this.clock = clock;
+    this.maxJobs = maxJobs;
   }
 
   AnalysisJob create() {
     purgeExpired();
-    AnalysisJob job = new AnalysisJob(UUID.randomUUID(), clock.instant());
-    jobs.put(job.id(), job);
-    return job;
+    // Reserve the slot atomically so concurrent creates cannot overshoot the cap.
+    synchronized (jobs) {
+      if (jobs.size() >= maxJobs) {
+        throw new ProblemException(
+            ProblemType.CAPACITY_EXHAUSTED, "Too many analyses are running. Try again shortly.");
+      }
+      AnalysisJob job = new AnalysisJob(UUID.randomUUID(), clock.instant());
+      jobs.put(job.id(), job);
+      return job;
+    }
   }
 
   public Optional<AnalysisJob> find(UUID id) {
@@ -51,6 +70,10 @@ public final class JobStore {
     return jobs.size();
   }
 
+  /**
+   * Drops expired jobs even when nobody is calling the store (R-02: bounded lifetime in memory).
+   */
+  @Scheduled(fixedDelayString = "${shromikai.analysis.job-sweep-interval:60s}")
   void purgeExpired() {
     Instant cutoff = clock.instant().minus(TTL);
     jobs.values()

@@ -24,6 +24,7 @@ public record IntakeProperties(
     @Min(0) double minOcrConfidence,
     @Min(1) int ocrParallel,
     @Min(1) int rasterDpi,
+    @Min(1) int maxConcurrent,
     @NotEmpty List<String> tesseractCommand) {
 
   public static IntakeProperties defaults() {
@@ -37,6 +38,7 @@ public record IntakeProperties(
         60.0,
         4,
         200,
+        4,
         List.of("tesseract", "stdin", "stdout", "-l", "ben+eng", "tsv"));
   }
 }

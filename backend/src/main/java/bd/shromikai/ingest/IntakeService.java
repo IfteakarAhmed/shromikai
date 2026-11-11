@@ -26,6 +26,7 @@ import java.util.concurrent.Future;
 import java.util.concurrent.Semaphore;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
+import java.util.function.Supplier;
 import javax.imageio.ImageIO;
 import org.springframework.stereotype.Service;
 
@@ -54,10 +55,12 @@ public final class IntakeService {
   private final IntakeProperties props;
   private final OcrEngine ocr;
   private final ExecutorService executor = Executors.newVirtualThreadPerTaskExecutor();
+  private final Semaphore intakeSlots;
 
   public IntakeService(IntakeProperties props, OcrEngine ocr) {
     this.props = props;
     this.ocr = ocr;
+    this.intakeSlots = new Semaphore(props.maxConcurrent());
   }
 
   /** Pasted text of 200 to 60,000 characters. */
@@ -82,8 +85,23 @@ public final class IntakeService {
         new TreeMap<>());
   }
 
-  /** One PDF, or 1 to 15 JPEG/PNG images, or one plain-text file. */
+  /**
+   * One PDF, or 1 to 15 JPEG/PNG images, or one plain-text file. At most {@code max-concurrent}
+   * uploads are read at once across the whole service; the rest are refused (NFR-20).
+   */
   public IntakeResult fromFiles(List<byte[]> files) {
+    if (!intakeSlots.tryAcquire()) {
+      throw new ProblemException(
+          ProblemType.CAPACITY_EXHAUSTED, "Too many documents are being read. Try again shortly.");
+    }
+    try {
+      return readFiles(files);
+    } finally {
+      intakeSlots.release();
+    }
+  }
+
+  private IntakeResult readFiles(List<byte[]> files) {
     if (files.isEmpty()) {
       throw new ProblemException(ProblemType.VALIDATION_FAILED, "No file was sent.");
     }
@@ -114,11 +132,13 @@ public final class IntakeService {
   }
 
   private IntakeResult fromImages(List<byte[]> files) {
-    List<BufferedImage> images = new ArrayList<>();
+    // Each image is decoded only when its OCR slot is free and is released right after OCR, so at
+    // most ocr-parallel decoded images exist at once.
+    List<Supplier<BufferedImage>> sources = new ArrayList<>();
     for (byte[] file : files) {
-      images.add(ImageDecoder.decode(file, props.maxImageSide(), props.maxPixels()));
+      sources.add(() -> ImageDecoder.decode(file, props.maxImageSide(), props.maxPixels()));
     }
-    List<OcrEngine.Page> read = ocrAll(images);
+    List<OcrEngine.Page> read = ocrAll(sources);
     TreeMap<Integer, Double> confidence = new TreeMap<>();
     List<Paragrapher.Line> lines = new ArrayList<>();
     List<List<String>> pages = new ArrayList<>();
@@ -192,11 +212,16 @@ public final class IntakeService {
       }
       TreeMap<Integer, Double> confidence = new TreeMap<>();
       if (!needOcr.isEmpty()) {
-        List<BufferedImage> images = new ArrayList<>();
+        List<Supplier<BufferedImage>> sources = new ArrayList<>();
         for (int index : needOcr) {
-          images.add(pdf.render(index, props.rasterDpi()));
+          sources.add(
+              () -> {
+                synchronized (pdf) { // PDFBox documents are not thread-safe
+                  return pdf.render(index, props.rasterDpi());
+                }
+              });
         }
-        List<OcrEngine.Page> read = ocrAll(images);
+        List<OcrEngine.Page> read = ocrAll(sources);
         for (int k = 0; k < needOcr.size(); k++) {
           int index = needOcr.get(k);
           confidence.put(index + 1, read.get(k).confidence());
@@ -249,26 +274,34 @@ public final class IntakeService {
     }
   }
 
-  private List<OcrEngine.Page> ocrAll(List<BufferedImage> images) {
+  private List<OcrEngine.Page> ocrAll(List<Supplier<BufferedImage>> sources) {
     Semaphore permits = new Semaphore(props.ocrParallel());
     List<Future<OcrEngine.Page>> futures = new ArrayList<>();
-    for (BufferedImage image : images) {
+    for (Supplier<BufferedImage> source : sources) {
       futures.add(
           executor.submit(
               () -> {
                 permits.acquire();
                 try {
-                  return ocr.read(image);
+                  return ocr.read(source.get());
                 } finally {
                   permits.release();
                 }
               }));
     }
+    int waves = (sources.size() + props.ocrParallel() - 1) / props.ocrParallel();
+    long deadline =
+        System.nanoTime() + props.ocrTimeout().toNanos() * (waves + 1L); // one wave of slack
     List<OcrEngine.Page> out = new ArrayList<>();
     try {
       for (Future<OcrEngine.Page> future : futures) {
-        out.add(future.get());
+        long left = Math.max(1, deadline - System.nanoTime());
+        out.add(future.get(left, TimeUnit.NANOSECONDS));
       }
+    } catch (TimeoutException e) {
+      futures.forEach(f -> f.cancel(true));
+      throw new ProblemException(
+          ProblemType.UNSUPPORTED_MEDIA_TYPE, "The document took too long to read.");
     } catch (InterruptedException e) {
       Thread.currentThread().interrupt();
       futures.forEach(f -> f.cancel(true));

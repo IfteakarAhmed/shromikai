@@ -96,6 +96,7 @@ class OcrIT {
                 60.0,
                 4,
                 200,
+                4,
                 COMMAND),
             engine());
 
@@ -125,6 +126,7 @@ class OcrIT {
                 60.0,
                 4,
                 200,
+                4,
                 COMMAND),
             engine());
 

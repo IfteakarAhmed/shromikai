@@ -10,7 +10,10 @@ import java.io.OutputStream;
 import java.nio.charset.StandardCharsets;
 import java.time.Duration;
 import java.util.List;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 import javax.imageio.ImageIO;
 
 /**
@@ -20,12 +23,21 @@ import javax.imageio.ImageIO;
  */
 public final class TesseractCliEngine implements OcrEngine {
 
+  /** Upper bound for Tesseract's TSV output of one page. */
+  static final int MAX_OUTPUT_BYTES = 8 * 1024 * 1024;
+
   private final List<String> command;
   private final Duration timeout;
+  private final int maxOutputBytes;
 
   public TesseractCliEngine(List<String> command, Duration timeout) {
+    this(command, timeout, MAX_OUTPUT_BYTES);
+  }
+
+  TesseractCliEngine(List<String> command, Duration timeout, int maxOutputBytes) {
     this.command = List.copyOf(command);
     this.timeout = timeout;
+    this.maxOutputBytes = maxOutputBytes;
   }
 
   @Override
@@ -38,36 +50,65 @@ public final class TesseractCliEngine implements OcrEngine {
       throw new ProblemException(
           ProblemType.INTERNAL_ERROR, "Local OCR engine could not be started.");
     }
+    // Stdin and stdout run on their own threads so the deadline below always applies, even if the
+    // child neither reads nor writes (a hung process).
+    Thread.startVirtualThread(
+        () -> {
+          try (OutputStream stdin = process.getOutputStream()) {
+            stdin.write(png);
+          } catch (IOException ignored) {
+            // The process ended early; the exit code below reports it.
+          }
+        });
+    CompletableFuture<byte[]> output = new CompletableFuture<>();
+    Thread.startVirtualThread(
+        () -> {
+          try (InputStream stdout = process.getInputStream()) {
+            output.complete(readCapped(stdout, maxOutputBytes));
+          } catch (IOException | RuntimeException e) {
+            output.completeExceptionally(e);
+          }
+        });
     try {
-      Thread writer =
-          Thread.startVirtualThread(
-              () -> {
-                try (OutputStream stdin = process.getOutputStream()) {
-                  stdin.write(png);
-                } catch (IOException ignored) {
-                  // The process ended early; the exit code below reports it.
-                }
-              });
-      byte[] output;
-      try (InputStream stdout = process.getInputStream()) {
-        output = readAll(stdout);
-      }
-      writer.join();
-      if (!process.waitFor(timeout.toMillis(), TimeUnit.MILLISECONDS)) {
-        process.destroyForcibly();
+      byte[] bytes = output.get(timeout.toMillis(), TimeUnit.MILLISECONDS);
+      long left = Math.max(1, timeout.toMillis());
+      if (!process.waitFor(left, TimeUnit.MILLISECONDS)) {
         throw new ProblemException(ProblemType.INTERNAL_ERROR, "Local OCR timed out.");
       }
       if (process.exitValue() != 0) {
         throw new ProblemException(ProblemType.INTERNAL_ERROR, "Local OCR failed.");
       }
-      return parse(new String(output, StandardCharsets.UTF_8));
-    } catch (IOException e) {
+      return parse(new String(bytes, StandardCharsets.UTF_8));
+    } catch (TimeoutException e) {
+      throw new ProblemException(ProblemType.INTERNAL_ERROR, "Local OCR timed out.");
+    } catch (ExecutionException e) {
+      if (e.getCause() instanceof OutputTooLarge) {
+        throw new ProblemException(ProblemType.INTERNAL_ERROR, "Local OCR output was too large.");
+      }
       throw new ProblemException(ProblemType.INTERNAL_ERROR, "Local OCR failed.");
     } catch (InterruptedException e) {
       Thread.currentThread().interrupt();
-      process.destroyForcibly();
       throw new ProblemException(ProblemType.INTERNAL_ERROR, "Local OCR was interrupted.");
+    } finally {
+      process.destroyForcibly();
     }
+  }
+
+  private static final class OutputTooLarge extends IOException {
+    private static final long serialVersionUID = 1L;
+  }
+
+  private static byte[] readCapped(InputStream in, int max) throws IOException {
+    ByteArrayOutputStream out = new ByteArrayOutputStream();
+    byte[] buffer = new byte[8192];
+    int n;
+    while ((n = in.read(buffer)) != -1) {
+      if (out.size() + n > max) {
+        throw new OutputTooLarge();
+      }
+      out.write(buffer, 0, n);
+    }
+    return out.toByteArray();
   }
 
   private static byte[] encode(BufferedImage image) {
@@ -77,10 +118,6 @@ public final class TesseractCliEngine implements OcrEngine {
     } catch (IOException e) {
       throw new ProblemException(ProblemType.INTERNAL_ERROR, "Image could not be encoded.");
     }
-  }
-
-  private static byte[] readAll(InputStream in) throws IOException {
-    return in.readAllBytes();
   }
 
   /** Parses Tesseract's TSV: words (level 5) grouped by block, paragraph and line. */
