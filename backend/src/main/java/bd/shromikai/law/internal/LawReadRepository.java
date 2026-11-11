@@ -58,8 +58,13 @@ public class LawReadRepository {
   /** One section version; the current one when {@code version} is {@code null}. */
   public Optional<Section> section(
       String code, String sectionNo, @Nullable String version, @Nullable String corpusRelease) {
-    return jdbc.sql(
-            """
+    // The related-sections query runs after this one has returned its row: running it inside the
+    // row mapper would hold a second connection while the first is still open, and parallel
+    // lookups (the verifier runs many) would then deadlock a small pool.
+    long[] id = new long[1];
+    Optional<Section> base =
+        jdbc.sql(
+                """
             select s.id, s.section_key, a.code, a.title_bn, a.title_en, s.section_no,
                    s.section_no_original, s.heading_bn, s.heading_en, a.authoritative_lang,
                    s.text_bn, s.text_en, s.version_label, s.effective_from, s.is_current,
@@ -71,41 +76,42 @@ public class LawReadRepository {
              order by s.is_current desc, s.id desc
              limit 1
             """)
-        .param("code", code)
-        .param("no", sectionNo)
-        .param("version", version)
-        .query(
-            (rs, row) -> {
-              boolean bn = "bn".equals(rs.getString("authoritative_lang"));
-              String own = bn ? rs.getString("text_bn") : rs.getString("text_en");
-              String other = bn ? rs.getString("text_en") : rs.getString("text_bn");
-              long id = rs.getLong("id");
-              return new Section(
-                  rs.getString("section_key"),
-                  rs.getString("code"),
-                  rs.getString("title_bn"),
-                  rs.getString("title_en"),
-                  rs.getString("section_no"),
-                  rs.getString("section_no_original"),
-                  rs.getString("heading_bn"),
-                  rs.getString("heading_en"),
-                  rs.getString("authoritative_lang"),
-                  own == null ? "" : own,
-                  other == null || other.isBlank()
-                      ? null
-                      : new Section.Translation(bn ? "en" : "bn", other, false),
-                  rs.getString("version_label"),
-                  rs.getDate("effective_from") == null
-                      ? null
-                      : rs.getDate("effective_from").toLocalDate(),
-                  rs.getBoolean("is_current"),
-                  rs.getString("source_url"),
-                  rs.getTimestamp("fetched_at").toInstant(),
-                  rs.getString("content_hash"),
-                  related(id),
-                  corpusRelease);
-            })
-        .optional();
+            .param("code", code)
+            .param("no", sectionNo)
+            .param("version", version)
+            .query(
+                (rs, row) -> {
+                  boolean bn = "bn".equals(rs.getString("authoritative_lang"));
+                  String own = bn ? rs.getString("text_bn") : rs.getString("text_en");
+                  String other = bn ? rs.getString("text_en") : rs.getString("text_bn");
+                  id[0] = rs.getLong("id");
+                  return new Section(
+                      rs.getString("section_key"),
+                      rs.getString("code"),
+                      rs.getString("title_bn"),
+                      rs.getString("title_en"),
+                      rs.getString("section_no"),
+                      rs.getString("section_no_original"),
+                      rs.getString("heading_bn"),
+                      rs.getString("heading_en"),
+                      rs.getString("authoritative_lang"),
+                      own == null ? "" : own,
+                      other == null || other.isBlank()
+                          ? null
+                          : new Section.Translation(bn ? "en" : "bn", other, false),
+                      rs.getString("version_label"),
+                      rs.getDate("effective_from") == null
+                          ? null
+                          : rs.getDate("effective_from").toLocalDate(),
+                      rs.getBoolean("is_current"),
+                      rs.getString("source_url"),
+                      rs.getTimestamp("fetched_at").toInstant(),
+                      rs.getString("content_hash"),
+                      List.of(),
+                      corpusRelease);
+                })
+            .optional();
+    return base.map(section -> section.withRelated(related(id[0])));
   }
 
   private List<Section.Related> related(long sectionId) {

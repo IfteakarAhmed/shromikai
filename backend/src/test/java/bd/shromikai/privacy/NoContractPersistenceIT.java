@@ -54,6 +54,7 @@ class NoContractPersistenceIT {
   private static final int WINDOW = 8;
 
   @Autowired AnalysisService analyses;
+  @Autowired bd.shromikai.analysis.AnalysisPipeline pipeline;
   @Autowired JobStore jobs;
   @Autowired JdbcClient jdbc;
   @Autowired FakeChatPort fake;
@@ -130,6 +131,90 @@ class NoContractPersistenceIT {
     assertThat(offenders).as("places where contract text or PII was found").isEmpty();
   }
 
+  /**
+   * P6 tables (architecture §14): after full pipeline runs where the scripted risk agent copies a
+   * clause into its explanation and its claim, a schema-invalid answer ends a job and an egress
+   * block stops another, no table (named: review_item.risk_summary, review_item.claimed_claim,
+   * review_item.facts, analysis_trace.detail) holds a canary or an 8-token window. The copied claim
+   * is stored in the facts-only form with claim_reduced = true.
+   */
+  @Test
+  void shouldFindNoCanaryInTheAnalysisTablesAfterFullPipelineRunsThatTryToLeak()
+      throws IOException {
+    bd.shromikai.testsupport.FictionalCorpus.load(jdbc);
+    try {
+      bd.shromikai.testsupport.P6Stubs.install(fake);
+      // The risk agent copies the clause text into its explanation and into the claim of a citation
+      // whose quote it invents, so the finding ends UNCERTAIN and a review item is opened.
+      fake.respondWith(
+          "risk-analysis",
+          request -> {
+            String user = request.user().reveal();
+            com.fasterxml.jackson.databind.JsonNode clauses =
+                bd.shromikai.testsupport.P6Stubs.clausesOf(request);
+            com.fasterxml.jackson.databind.JsonNode candidates =
+                bd.shromikai.testsupport.P6Stubs.candidatesOf(request);
+            com.fasterxml.jackson.databind.node.ObjectNode out =
+                new ObjectMapper().createObjectNode();
+            out.put("status", "OK").put("reason", "NONE");
+            com.fasterxml.jackson.databind.node.ArrayNode findings = out.putArray("findings");
+            if (!clauses.isEmpty() && !candidates.isEmpty()) {
+              String copied = clauses.get(0).path("text").asText();
+              com.fasterxml.jackson.databind.node.ObjectNode f = findings.addObject();
+              f.put("title", "Copied clause");
+              f.put("kind", "CONFLICT").put("severity", "HIGH").put("non_obvious", false);
+              f.put("clause_type", "OTHER");
+              f.putArray("clause_ids").add(clauses.get(0).path("id").asText());
+              f.put("explanation", copied);
+              f.put("why_it_matters", copied);
+              f.putArray("citations")
+                  .addObject()
+                  .put("section_key", candidates.get(0).path("sectionKey").asText())
+                  .put("quote", "an invented quote that the section does not contain at all")
+                  .put("claim", copied);
+              f.put("confidence", 0.5);
+            }
+            return out;
+          });
+      List<String> documents = new ArrayList<>();
+      List<String> secrets = new ArrayList<>();
+      for (String id : List.of("syn-en-01", "syn-en-02", "syn-bn-01")) {
+        String text = SyntheticContracts.text(id);
+        documents.add(text);
+        secrets.add(SyntheticContracts.marker(id));
+        SyntheticContracts.entities(id).forEach(e -> secrets.add(e.value()));
+        AnalysisJob job = analyses.analyseText(text);
+        pipeline.run(
+            job,
+            bd.shromikai.analysis.AnalysisRequest.of(bd.shromikai.analysis.Side.WORKER),
+            bd.shromikai.analysis.AnalysisSubject.dev());
+        assertThat(job.status()).isEqualTo(AnalysisJob.Status.ANALYSED);
+      }
+      assertThat(
+              jdbc.sql("select count(*) from review_item where claim_reduced")
+                  .query(Long.class)
+                  .single())
+          .as("the copied claim was reduced to the facts-only form")
+          .isPositive();
+      // A schema-invalid answer ends a job without leaving anything behind.
+      fake.respondWith(
+          "risk-analysis", request -> new ObjectMapper().createObjectNode().put("not", "valid"));
+      AnalysisJob broken = analyses.analyseText(SyntheticContracts.text("syn-en-01"));
+      pipeline.run(
+          broken,
+          bd.shromikai.analysis.AnalysisRequest.of(bd.shromikai.analysis.Side.WORKER),
+          bd.shromikai.analysis.AnalysisSubject.dev());
+      assertThat(broken.status()).isEqualTo(AnalysisJob.Status.FAILED);
+
+      List<String> offenders = new ArrayList<>();
+      scanDatabase(secrets, new Windows(documents), offenders);
+      assertThat(offenders).as("places where contract text or PII was found").isEmpty();
+    } finally {
+      jdbc.sql("delete from analysis_run").update();
+      bd.shromikai.testsupport.FictionalCorpus.clean(jdbc);
+    }
+  }
+
   @Test
   void shouldDropEverythingWhenAJobIsDeleted() {
     AnalysisJob job = analyses.analyseText(SyntheticContracts.text("syn-bn-01"));
@@ -174,7 +259,12 @@ class NoContractPersistenceIT {
             .listOfRows();
     assertThat(columns).as("text and jsonb columns scanned").isNotEmpty();
     assertThat(columns.stream().map(r -> r.get("table_name") + "." + r.get("column_name")).toList())
-        .contains("audit_event.detail");
+        .contains(
+            "audit_event.detail",
+            "analysis_trace.detail",
+            "review_item.risk_summary",
+            "review_item.claimed_claim",
+            "review_item.facts");
     for (Map<String, Object> column : columns) {
       String table = (String) column.get("table_name");
       String name = (String) column.get("column_name");

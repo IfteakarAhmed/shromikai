@@ -1,0 +1,130 @@
+{
+  "findings" : [ {
+    "id" : "f1",
+    "kind" : "CONFLICT",
+    "severity" : "HIGH",
+    "source" : "LLM_ANALYSIS",
+    "nonObvious" : false,
+    "clauseType" : "WAGES",
+    "clauseIds" : [ "c3" ],
+    "verificationStatus" : "VERIFIED",
+    "citations" : [ {
+      "sectionKey" : "XV-LAB:2@original",
+      "attempt" : 1,
+      "support" : "SUPPORTS"
+    } ],
+    "redline" : true,
+    "reviewItem" : false
+  }, {
+    "id" : "f2",
+    "kind" : "CONFLICT",
+    "severity" : "HIGH",
+    "source" : "LLM_ANALYSIS",
+    "nonObvious" : false,
+    "clauseType" : "WORKING_HOURS",
+    "clauseIds" : [ "c4" ],
+    "verificationStatus" : "VERIFIED",
+    "citations" : [ {
+      "sectionKey" : "XV-LAB:3@original",
+      "attempt" : 1,
+      "support" : "SUPPORTS"
+    } ],
+    "redline" : true,
+    "reviewItem" : false
+  }, {
+    "id" : "f3",
+    "kind" : "CONFLICT",
+    "severity" : "HIGH",
+    "source" : "LLM_ANALYSIS",
+    "nonObvious" : false,
+    "clauseType" : "PROBATION",
+    "clauseIds" : [ "c6" ],
+    "verificationStatus" : "VERIFIED",
+    "citations" : [ {
+      "sectionKey" : "XV-LAB:1@original",
+      "attempt" : 1,
+      "support" : "SUPPORTS"
+    } ],
+    "redline" : true,
+    "reviewItem" : false
+  }, {
+    "id" : "f4",
+    "kind" : "CONFLICT",
+    "severity" : "HIGH",
+    "source" : "LLM_ANALYSIS",
+    "nonObvious" : false,
+    "clauseType" : "WAGES",
+    "clauseIds" : [ "c7" ],
+    "verificationStatus" : "VERIFIED",
+    "citations" : [ {
+      "sectionKey" : "XV-LAB:2@original",
+      "attempt" : 1,
+      "support" : "SUPPORTS"
+    } ],
+    "redline" : true,
+    "reviewItem" : false
+  }, {
+    "id" : "f5",
+    "kind" : "CONFLICT",
+    "severity" : "HIGH",
+    "source" : "LLM_ANALYSIS",
+    "nonObvious" : false,
+    "clauseType" : "NOTICE_AND_RESIGNATION",
+    "clauseIds" : [ "c8" ],
+    "verificationStatus" : "VERIFIED",
+    "citations" : [ {
+      "sectionKey" : "XV-LAB:5@original",
+      "attempt" : 1,
+      "support" : "SUPPORTS"
+    } ],
+    "redline" : true,
+    "reviewItem" : false
+  }, {
+    "id" : "f6",
+    "kind" : "CONFLICT",
+    "severity" : "HIGH",
+    "source" : "LLM_ANALYSIS",
+    "nonObvious" : false,
+    "clauseType" : "NON_COMPETE",
+    "clauseIds" : [ "c9" ],
+    "verificationStatus" : "VERIFIED",
+    "citations" : [ {
+      "sectionKey" : "XV-LAB:6@original",
+      "attempt" : 1,
+      "support" : "SUPPORTS"
+    } ],
+    "redline" : true,
+    "reviewItem" : false
+  }, {
+    "id" : "f7",
+    "kind" : "CONFLICT",
+    "severity" : "HIGH",
+    "source" : "LLM_ANALYSIS",
+    "nonObvious" : false,
+    "clauseType" : "DISPUTE_RESOLUTION",
+    "clauseIds" : [ "c10" ],
+    "verificationStatus" : "UNCERTAIN",
+    "citations" : [ ],
+    "redline" : false,
+    "reviewItem" : true
+  }, {
+    "id" : "f8",
+    "kind" : "OMISSION",
+    "severity" : "MEDIUM",
+    "source" : "LLM_ANALYSIS",
+    "nonObvious" : true,
+    "clauseType" : "MATERNITY_BENEFIT",
+    "clauseIds" : [ ],
+    "verificationStatus" : "VERIFIED",
+    "citations" : [ {
+      "sectionKey" : "XV-LAB:7@original",
+      "attempt" : 2,
+      "support" : "SUPPORTS"
+    } ],
+    "redline" : true,
+    "reviewItem" : false
+  } ],
+  "warnings" : [ "verifier-same-family" ],
+  "reviewItems" : 1,
+  "stages" : [ "INTAKE", "REDACT", "CLASSIFY", "RETRIEVE", "RULES", "RISK", "VERIFY", "CORRECT", "COMPOSE", "COMPLETE" ]
+}

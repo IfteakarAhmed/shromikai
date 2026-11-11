@@ -27,6 +27,30 @@ public record Section(
     List<Related> related,
     @Nullable String corpusRelease) {
 
+  /** The same section with its related sections filled in. */
+  public Section withRelated(List<Related> newRelated) {
+    return new Section(
+        sectionKey,
+        actCode,
+        actTitleBn,
+        actTitleEn,
+        sectionNo,
+        sectionNoOriginal,
+        headingBn,
+        headingEn,
+        authoritativeLang,
+        authoritativeText,
+        translation,
+        versionLabel,
+        effectiveFrom,
+        isCurrent,
+        sourceUrl,
+        fetchedAt,
+        contentHash,
+        newRelated,
+        corpusRelease);
+  }
+
   /** The text in the act's other language, when the portal published one; never official. */
   public record Translation(String lang, String text, boolean official) {}
 

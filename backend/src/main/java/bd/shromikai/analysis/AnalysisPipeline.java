@@ -151,7 +151,11 @@ public class AnalysisPipeline {
     } catch (ProblemException problem) {
       fail(job, job.stage(), problem, session, started);
     } catch (RuntimeException unexpected) {
-      LOG.error("analysis step failed unexpectedly: {}", unexpected.getClass().getSimpleName());
+      LOG.error(
+          "analysis step failed unexpectedly: "
+              + unexpected.getClass().getSimpleName()
+              + " at "
+              + (unexpected.getStackTrace().length > 0 ? unexpected.getStackTrace()[0] : "?"));
       fail(job, job.stage(), new ProblemException(ProblemType.INTERNAL_ERROR), session, started);
     }
   }
@@ -483,7 +487,15 @@ public class AnalysisPipeline {
       if (cause instanceof ProblemException problem) {
         throw new StageFailure(stage, problem);
       }
-      LOG.error("analysis step {} failed: {}", stage, cause.getClass().getSimpleName());
+      // Class and first frame only: never a message, which could hold text (R-02). The log
+      // formatter prints the message string as built, so the details go into it.
+      LOG.error(
+          "analysis step "
+              + stage
+              + " failed: "
+              + cause.getClass().getSimpleName()
+              + " at "
+              + (cause.getStackTrace().length > 0 ? cause.getStackTrace()[0] : "?"));
       throw new StageFailure(stage, new ProblemException(ProblemType.INTERNAL_ERROR));
     }
   }
