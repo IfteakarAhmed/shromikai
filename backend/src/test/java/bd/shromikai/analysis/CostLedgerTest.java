@@ -69,4 +69,40 @@ class CostLedgerTest {
     assertThat(session.costUsdMicros()).isEqualTo(expected);
     assertThat(risk.costMicros()).isEqualTo(expected);
   }
+
+  /**
+   * NFR-13, NFR-19: two prompts in one stage (risk and obligations share RISK) are both recorded.
+   */
+  @Test
+  void provenanceKeepsEveryPromptOfAStageNotJustTheLastOne() {
+    ChatPort port =
+        new ChatPort() {
+          @Override
+          public String provider() {
+            return "fake";
+          }
+
+          @Override
+          public ChatResponse call(ChatRequest request) {
+            String json =
+                request.promptId().equals("clause-classify")
+                    ? "{\"status\":\"OK\",\"reason\":\"NONE\",\"document_type\":\"EMPLOYMENT_CONTRACT\",\"clauses\":[]}"
+                    : "{\"status\":\"OK\",\"reason\":\"NONE\",\"clauses\":[]}";
+            return new ChatResponse(
+                TestGateways.json(json),
+                "stub-" + request.modelId(),
+                new TokenUsage(10, 10, 0, 0),
+                true);
+          }
+        };
+    ModelSession session =
+        AnalysisFixtures.session(AnalysisFixtures.gatewayOver(port), EgressContext.NONE, 1.0);
+
+    session.call(Stage.RISK, "clause-classify", java.util.Map.of("clauses", java.util.List.of()));
+    session.call(Stage.RISK, "clause-facts", java.util.Map.of("clauses", java.util.List.of()));
+
+    assertThat(session.provenance()).containsOnlyKeys("clause-classify", "clause-facts");
+    assertThat(session.provenance().get("clause-classify").version()).isPositive();
+    assertThat(session.provenance().get("clause-classify").modelId()).startsWith("stub-");
+  }
 }

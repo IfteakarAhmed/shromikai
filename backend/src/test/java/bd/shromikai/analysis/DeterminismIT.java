@@ -61,6 +61,24 @@ class DeterminismIT extends ApiAnalysisIT {
     JsonNode first = postJson(token).getBody();
     JsonNode second = postJson(token).getBody();
 
-    assertThat(stable(second)).isEqualTo(stable(first));
+    java.util.List<String> differences = new java.util.ArrayList<>();
+    diff("", stable(first), stable(second), differences);
+    assertThat(differences).as("fields that differ between two runs").isEmpty();
+  }
+
+  /** Paths where two trees differ, so a failure names the field (never its text). */
+  private static void diff(String path, JsonNode a, JsonNode b, java.util.List<String> out) {
+    if (a.isObject() && b.isObject()) {
+      java.util.Set<String> names = new java.util.TreeSet<>();
+      a.fieldNames().forEachRemaining(names::add);
+      b.fieldNames().forEachRemaining(names::add);
+      names.forEach(n -> diff(path + "/" + n, a.path(n), b.path(n), out));
+    } else if (a.isArray() && b.isArray() && a.size() == b.size()) {
+      for (int i = 0; i < a.size(); i++) {
+        diff(path + "/" + i, a.get(i), b.get(i), out);
+      }
+    } else if (!a.equals(b)) {
+      out.add(path);
+    }
   }
 }

@@ -784,13 +784,13 @@ public class AnalysisPipeline {
   }
 
   private void collectProvenance(JobData d) {
-    for (Stage stage : Stage.values()) {
-      ModelSession.StageUsage usage = d.session.usage(stage);
-      if (usage.calls() > 0 && usage.promptId() != null && usage.promptVersion() > 0) {
-        d.promptVersions.put(usage.promptId(), usage.promptVersion());
-        d.models.put(usage.promptId(), usage.modelId());
-      }
-    }
+    d.session
+        .provenance()
+        .forEach(
+            (prompt, used) -> {
+              d.promptVersions.put(prompt, used.version());
+              d.models.put(prompt, used.modelId());
+            });
   }
 
   private static String independenceLabel(Set<VerifierIndependence> seen) {

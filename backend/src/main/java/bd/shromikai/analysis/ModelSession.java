@@ -92,6 +92,10 @@ public final class ModelSession {
   private final AtomicLong cacheRead = new AtomicLong();
   private final AtomicLong cacheWrite = new AtomicLong();
   private final Map<Stage, StageUsage> stages = new ConcurrentHashMap<>();
+  private final Map<String, Used> used = new ConcurrentHashMap<>();
+
+  /** The prompt version and model that served a prompt of this analysis. */
+  public record Used(int version, String modelId) {}
 
   public ModelSession(
       ModelGateway gateway,
@@ -126,6 +130,15 @@ public final class ModelSession {
     charge(stage, result.modelId(), result.usage(), result.promptId(), result.promptVersion());
     ensureWithinBudget();
     return result;
+  }
+
+  /**
+   * Every prompt this analysis called, with its version and model. A stage can call several prompts
+   * in parallel (RISK runs risk-analysis and obligations), so provenance is kept per prompt, not
+   * per stage (NFR-13).
+   */
+  public Map<String, Used> provenance() {
+    return Map.copyOf(used);
   }
 
   public EgressContext egress() {
@@ -163,6 +176,9 @@ public final class ModelSession {
     cacheRead.addAndGet(usage.cacheReadTokens());
     cacheWrite.addAndGet(usage.cacheWriteTokens());
     usage(stage).add(usage, cents, promptId, version, modelId);
+    if (version > 0) {
+      used.put(promptId, new Used(version, modelId));
+    }
   }
 
   private void ensureWithinBudget() {
