@@ -10,7 +10,7 @@ Which part of the build answers each section of the submission form. Tick a box 
 | --- | --- | --- | --- |
 | Prompt Usage | 10 | Versioned prompt files, JSON schemas, role + constraint prompts, citation-restricted prompting | 6–7 |
 | Token Optimization | 10 | Anthropic prompt caching, cheap-model routing, structured outputs, query cache, PII-redacted short context | 7 |
-| LLMs / Models Used | 15 | Claude (Sonnet + Haiku), Gemini (independent verifier), Qwen 2.5 (local PII), bge-m3 (embeddings), ChatGPT (plan review) | 4–6 |
+| LLMs / Models Used | 15 | Claude (Sonnet + Haiku, including the same-family verifier), Qwen 2.5 (local PII; not yet measured live), bge-m3 (embeddings), ChatGPT (plan review) | 4–6 |
 | How & why LLMs | 5 | Role of each model and why | 7 |
 | Retrieval & RAG | 12 | Vector DB (pgvector), Hybrid search, Knowledge graph, Corrective RAG, Query rewriting | 4, 6 |
 | RAG architecture | 5 | One section = one chunk, RRF fusion, graph expansion, current-version filter | 4 |

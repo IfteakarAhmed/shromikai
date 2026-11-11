@@ -90,7 +90,7 @@ checklist ticks a bonus only when its evidence exists (R-12).
 | --- | --- | --- | --- | --- |
 | Prompt Usage | Versioned XML-structured prompts with JSON schemas, citation-restricted prompting, abstention instructions | R-05, R-06; FR-37 | `backend/src/main/resources/prompts/`, `promptLint` | P6, P7 |
 | Token Optimization | Prompt caching, cheap-model routing, structured outputs, retrieval cache, short redacted context, cost ledger | FR-21, FR-62 | Trace cost and cache-read tokens; M-20 | P4, P7 |
-| LLMs / Models | Claude Sonnet 5.5 and Haiku 5.5, Gemini Flash, Qwen 2.5 7B (local), bge-m3 (local); ChatGPT for plan review | ADR-0005 | `docs/tooling-disclosure.md` | P4 to P6 |
+| LLMs / Models | Claude Sonnet 5.5 and Haiku 5.5 (Haiku is also the same-family verifier; Gemini Flash is planned, not run live, ADR-0018), Qwen 2.5 7B (local), bge-m3 (local); ChatGPT for plan review | ADR-0005 | `docs/tooling-disclosure.md` | P4 to P6 |
 | How and why LLMs | Role of each model and why | ADR-0005 | architecture §6; `/docs/architecture` | P7, P9 |
 | Retrieval and RAG | pgvector, hybrid search, knowledge graph, corrective RAG, query rewriting | FR-18 to FR-21, FR-46 | `retrieval.md` | P4, P6 |
 | RAG architecture | One section = one chunk, RRF fusion, graph expansion, current-version filter | FR-18 to FR-20 | architecture §8 | P4 |

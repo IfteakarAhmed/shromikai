@@ -24,7 +24,7 @@ Built by team **Cosmic Duo** for the International AI Builders Congress 2026 —
 | Backend | Java 21, Spring Boot 3.5.16, Spring AI 1.1.8 (Ollama), Anthropic Java SDK (Claude), Gradle 8.14 (Groovy DSL), YAML configuration |
 | Database | PostgreSQL 17 + pgvector, Flyway migrations |
 | Reasoning models | Claude Sonnet 5.5 and Claude Haiku 5.5 (Anthropic API) |
-| Independent verifier | Gemini Flash (optional key; falls back to a separate Claude prompt) |
+| Verifier | A separate Claude Haiku prompt (same model family, labelled `SAME_FAMILY`). A Gemini Flash adapter exists but has **not been run live** (no working key and model); cross-family verification is a known gap ([ADR-0018](docs/adr/0018-gemini-verifier-dropped-for-now.md), [known gaps](docs/known-gaps.md)) |
 | Local models | Ollama: bge-m3 (embeddings), qwen2.5:7b-instruct (personal-data detection) |
 | OCR | Tesseract 5 (Bangla + English), runs locally as a child process (stdin/stdout, no temp files); `docker build -t shromikai-tesseract docker/tesseract` for `./gradlew slowTest` |
 | Frontend | React 19, TypeScript (strict), Vite, Tailwind CSS, TanStack Query, i18next (Bangla first) |

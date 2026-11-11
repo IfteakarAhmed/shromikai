@@ -22,7 +22,7 @@ rules AI coding agents must follow are in [AGENTS.md](../AGENTS.md).
 | Tesseract 5 OCR (Bangla + English) | Our own server | Reading photos and scanned pages | Page images (never leave the server) |
 | Claude Haiku 5.5 (Anthropic API) | Cloud | Query rewriting, clause classification and fallback segmentation, clause facts, obligations checklist, fallback support check | Redacted text only |
 | Claude Sonnet 5.5 (Anthropic API) | Cloud | Risk analysis, citation repair, counter-offers, Bangla and English memos, the plain-LLM baseline in compare mode | Redacted text and statute sections |
-| Gemini Flash (Google Gemini API, optional) | Cloud | Independent check that a statute section supports a claim; clarity judge in evaluation (only after calibration) | The claim (redacted), the quote and the statute text; never contract clauses or search queries |
+| Gemini Flash (Google Gemini API, optional; **not used in any live run so far**, ADR-0018) | Cloud | Planned independent check that a statute section supports a claim; clarity judge in evaluation (only after calibration). Today the check is done by a separate Claude Haiku prompt | The claim (redacted), the quote and the statute text; never contract clauses or search queries |
 
 Model roles, versions and the reasons for each choice: [ADR-0005](adr/0005-model-routing.md).
 Runtime prompts: [prompts/README.md](prompts/README.md). Provider data-retention settings for
