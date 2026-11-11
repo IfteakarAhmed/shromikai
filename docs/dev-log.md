@@ -482,3 +482,72 @@ AGENTS.md §7 items 10 and 11 (human acceptance check, Prompt R in a fresh sessi
 - **Next phase prerequisites:** P5 (intake and privacy shield) replaces the fail-closed egress
   guard; P6 needs the retrieval API (`RetrievalService.search` with `SearchOptions.forClause`) and
   a decision on the text-list fix, because the candidate set feeds the risk agent.
+
+
+### P4 follow-up: text-list fix on a dev set (ADR-0013)
+
+The "proposed fix" of the P4 report was approved ("Start dev set + fix") and applied the way it was
+proposed: a separate dev set first, then one run on the test set. The earlier statement
+"`phase-4` not created because FR-23 is not met" now has a different reason (below).
+
+- **Dev set:** `eval/retrieval/dev-questions.jsonl`, 37 draft questions (16 Bangla, 21 English), written
+  from 37 sections that no test question expects (key sets disjoint). `RetrievalDevTuningIT`
+  evaluated eight text-query variants on it with a selection rule fixed before the run (highest
+  hybrid + graph hit@5, then MRR@10, then fewer knobs). Report: `eval/reports/retrieval-dev.md`
+  (git `aa1c970`):
+
+| Text query variant | Text only hit@5 | Hybrid hit@5 | Hybrid MRR@10 | Hybrid + graph hit@5 | Hybrid + graph MRR@10 | Hybrid + graph recall@8 |
+| --- | ---: | ---: | ---: | ---: | ---: | ---: |
+| untuned (P4 first run) | 0.216 (8/37) | 0.946 (35/37) | 0.709 | 0.946 (35/37) | 0.709 | 1.000 |
+| df ≤ 0.2 | 0.351 (13/37) | 0.946 (35/37) | 0.771 | 0.946 (35/37) | 0.771 | 1.000 |
+| df ≤ 0.1 | 0.514 (19/37) | 1.000 (37/37) | 0.830 | 1.000 (37/37) | 0.830 | 1.000 |
+| df ≤ 0.05 | 0.514 (19/37) | 1.000 (37/37) | 0.812 | 1.000 (37/37) | 0.812 | 1.000 |
+| language filter | 0.216 (8/37) | 0.946 (35/37) | 0.709 | 0.946 (35/37) | 0.709 | 1.000 |
+| df ≤ 0.2 + language filter | 0.351 (13/37) | 0.946 (35/37) | 0.771 | 0.946 (35/37) | 0.771 | 1.000 |
+| df ≤ 0.1 + language filter | 0.514 (19/37) | 1.000 (37/37) | 0.830 | 1.000 (37/37) | 0.830 | 1.000 |
+| df ≤ 0.05 + language filter | 0.514 (19/37) | 1.000 (37/37) | 0.825 | 1.000 (37/37) | 0.825 | 1.000 |
+
+  **Selected by the rule: df ≤ 0.1** (max doc freq 0.1, language filter false). The language filter changed no dev metric, so it ships off (the option stays, tested).
+- **Change:** `TextQueryBuilder` drops query words that occur in more than 10 % of the current
+  sections (floor of 20 sections; at least the 3 rarest words are kept); document frequencies
+  come from `ts_stat` and are cached 10 minutes. RRF and its constants are unchanged.
+- **Test set, run once after selection** (`eval/reports/retrieval.md`, git `aa1c970`, the same 40
+  draft questions as before; the last two rows re-measure the untuned query in the same run):
+
+| Method | hit@5 | MRR@10 | recall@8 | mean ms/query |
+| --- | ---: | ---: | ---: | ---: |
+| Vector only | 1.000 (40/40) | 0.963 | 1.000 | 151 |
+| Text only | 0.425 (17/40) | 0.349 | 0.488 | 12 |
+| Hybrid (RRF) | 1.000 (40/40) | 0.810 | 0.988 | 43 |
+| Hybrid + graph | 1.000 (40/40) | 0.810 | 1.000 | 42 |
+| Hybrid + graph + rewrite | not run | not run | not run | not run |
+| Text only, untuned text query (reference) | 0.150 (6/40) | 0.081 | 0.225 | 20 |
+| Hybrid + graph, untuned text query (reference) | 0.900 (36/40) | 0.725 | 0.963 | 53 |
+
+  By question language:
+
+| Method | Bangla hit@5 | Bangla MRR@10 | English hit@5 | English MRR@10 |
+| --- | ---: | ---: | ---: | ---: |
+| Vector only | 1.000 (19/19) | 0.947 | 1.000 (21/21) | 0.976 |
+| Text only | 0.737 (14/19) | 0.603 | 0.143 (3/21) | 0.119 |
+| Hybrid (RRF) | 1.000 (19/19) | 0.781 | 1.000 (21/21) | 0.837 |
+| Hybrid + graph | 1.000 (19/19) | 0.781 | 1.000 (21/21) | 0.837 |
+| Text only, untuned text query (reference) | 0.211 (4/19) | 0.101 | 0.095 (2/21) | 0.063 |
+| Hybrid + graph, untuned text query (reference) | 0.789 (15/19) | 0.549 | 1.000 (21/21) | 0.885 |
+
+- **Reading the result honestly:**
+  - The FR-23 clause is met: hybrid + graph hit@5 is 40/40, equal to vector only (40/40). Before the
+    change it was 36/40.
+  - It is a tie on hit@5, not a win. Vector only still has the better MRR@10 (0.963 against 0.810)
+    and the better English MRR: on this corpus, with these questions, the text list improves
+    recall of the candidate set (recall@8 1.000) but does not improve the ranking over vector
+    alone. Text only is still weak for English questions (3/21), as expected for a
+    mostly-Bangla corpus.
+  - The dev and test sets are small (37 and 40 questions) and both are drafts written by the
+    same author, so differences of one or two questions are not evidence of anything.
+  - Selection used only dev data. The test set was run once with the selected setting, plus the
+    untuned reference rows; no other variant was run on it.
+- **Still open:** the `Hybrid + graph + rewrite` row (no `ANTHROPIC_API_KEY`); review of both
+  question sets and the topic map; AGENTS.md §7 items 10 and 11 (human acceptance, Prompt R), so
+  `phase-4` is still **not** created. Whether to prefer vector-heavy fusion (higher MRR) is a
+  decision for P6, which will see real clauses rather than questions; it needs its own ADR.
