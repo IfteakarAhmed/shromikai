@@ -157,13 +157,15 @@ class OrchestratorStateMachineTest {
       String detail = event.detail().toString();
       assertThat(detail).doesNotContain(PipelineHarness.CLAUSE_1).doesNotContain("seven days");
     }
+    // RISK runs risk-analysis and obligations in parallel and records one event for the stage,
+    // so its promptId is whichever was charged last; the version is asserted on the job's
+    // provenance, which keeps one entry per prompt.
     TraceEvent risk =
-        job.trace().stream()
-            .filter(e -> "risk-analysis".equals(e.promptId()))
-            .findFirst()
-            .orElseThrow();
-    assertThat(risk.promptId()).isEqualTo("risk-analysis");
-    assertThat(risk.promptVersion()).as("risk-analysis v2 (ADR-0016)").isEqualTo(2);
+        job.trace().stream().filter(e -> e.stage() == Stage.RISK).findFirst().orElseThrow();
+    assertThat(risk.promptId()).isIn("risk-analysis", "obligations");
+    assertThat(job.outcome().promptVersions())
+        .as("risk-analysis v2 (ADR-0016)")
+        .containsEntry("risk-analysis", 2);
     assertThat(risk.tokensIn()).isPositive();
     assertThat(risk.costUsdMicros()).isPositive();
     assertThat(risk.detail().get("claimedSectionKeys").toString())
