@@ -2,7 +2,7 @@
 
 | Field | Value |
 | --- | --- |
-| Status | Accepted |
+| Status | Accepted (budget totals revised again by ADR-0017) |
 | Date | 2026-11-11 |
 | Deciders | Backend/Data Engineer (TODO: name), Team Leader (TODO: name) |
 | Related | ADR-0008 (decision 7 asks for an ADR when a measurement misses a budget), ADR-0015 decision 10 (thinking off); PRD NFR-01, FR-37; architecture §5.3, §8.5, §18.6 C38; evaluation M-19 |

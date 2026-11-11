@@ -14,6 +14,7 @@ import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -32,6 +33,13 @@ public class CorrectiveLoop {
 
   static final String PROMPT = "risk-citation-repair";
   static final String ENUM_PATH = "$.citations[*].section_key";
+
+  /**
+   * At most this many candidate sections go to one repair call (ADR-0017). A live run sent all 40
+   * (about 48,000 input tokens per call, US$0.1 each); the repair needs the sections found for this
+   * finding, not the whole analysis.
+   */
+  public static final int MAX_REPAIR_CANDIDATES = 12;
 
   private final CandidateSource retrieval;
   private final CandidateRetriever retriever;
@@ -118,6 +126,27 @@ public class CorrectiveLoop {
     return new Round(out, corrections);
   }
 
+  /**
+   * The candidates of one repair call, at most {@value #MAX_REPAIR_CANDIDATES}: the sections the
+   * new search just found (the reason for correcting), then the sections retrieved for the
+   * finding's own clauses, then the best of the analysis-level set to fill up.
+   */
+  static List<Candidate> repairCandidates(
+      Finding finding, CandidateSet candidates, List<String> added) {
+    Map<String, Candidate> shown = new LinkedHashMap<>();
+    Map<String, Candidate> all = new LinkedHashMap<>();
+    candidates.all().forEach(c -> all.put(c.sectionKey(), c));
+    for (String key : added) {
+      Candidate c = all.get(key);
+      if (c != null) {
+        shown.put(key, c);
+      }
+    }
+    candidates.forClauses(finding.clauseIds()).forEach(c -> shown.putIfAbsent(c.sectionKey(), c));
+    candidates.all().forEach(c -> shown.putIfAbsent(c.sectionKey(), c));
+    return shown.values().stream().limit(MAX_REPAIR_CANDIDATES).toList();
+  }
+
   private Object[] correctOne(
       ModelSession session,
       AnalysisRequest request,
@@ -140,7 +169,7 @@ public class CorrectiveLoop {
         finding.claims().isEmpty() ? "none" : finding.claims().getFirst().claim().reveal());
     variables.put("finding", summary);
     variables.put("reason_codes", finding.reasonCodes());
-    List<Candidate> all = candidates.all();
+    List<Candidate> all = repairCandidates(finding, candidates, added);
     variables.put("candidate_sections", all);
     List<Map<String, String>> clauseTexts = new ArrayList<>();
     for (String id : finding.clauseIds()) {
@@ -170,7 +199,8 @@ public class CorrectiveLoop {
             c.path("quote").asText(),
             SensitiveText.of(c.path("claim").asText()),
             request.outputLanguage());
-    VerificationContext second = context.forAttempt(2, candidates.keys());
+    // Attempt 2 may cite only what the agent was shown.
+    VerificationContext second = context.forAttempt(2, Set.copyOf(keys));
     Verdict verdict = verifier.verify(repaired, second);
     Finding updated;
     if (verdict.verified()) {

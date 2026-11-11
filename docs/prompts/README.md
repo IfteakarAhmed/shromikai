@@ -22,7 +22,7 @@ This page is the index for the team and for the submission form's "Prompt Librar
 | `clause-facts` | FAST | Claude Haiku 5.5 | Typed facts per clause, cross-checked by regex | `contracts`: M-22 | Experimental (P6) |
 | `risk-analysis` | REASONING | Claude Sonnet 5.5 | Risk agent (opposing counsel for the user's side; v2 bounded to 3 findings, ADR-0016), up to 4 clause batches in parallel: findings with severity, non-obvious flag and citations restricted to retrieved sections | `contracts`: M-06 to M-10 | Experimental (P6) |
 | `risk-citation-repair` | REASONING | Claude Sonnet 5.5 | One corrective attempt with new candidates for a citation that failed verification | `contracts`: M-11, M-12 | Experimental (P6) |
-| `counter-offer` | REASONING | Claude Sonnet 5.5 | Revised clause that resolves the risk and stays reasonable for both sides; runs after verification, one call per `VERIFIED` finding | `contracts`: M-27 | Experimental (P6) |
+| `counter-offer` | REASONING | Claude Sonnet 5.5 | Revised clause (v2 bounded: at most 600 characters, ADR-0017) that resolves the risk and stays reasonable for both sides; runs after verification, one call per `VERIFIED` finding | `contracts`: M-27 | Experimental (P6) |
 | `verify-support` | VERIFIER | Gemini Flash | Independent judgement: SUPPORTS, PARTIAL, CONTRADICTS or UNRELATED | `citations`: M-04, M-05 | Experimental (P6) |
 | `verify-support-claude` | VERIFIER_FALLBACK | Claude Haiku 5.5 | Same judgement when Gemini is unavailable (flagged `SAME_FAMILY`) | `citations`: M-04, M-05 | Experimental (P6) |
 | `obligations` | FAST | Claude Haiku 5.5 | Obligations checklist for employer and worker; runs in `RISK`, citations restricted to candidates | `contracts`: M-28 | Planned (P7) |

@@ -134,6 +134,25 @@ class PromptGoldenTest {
   }
 
   @Test
+  void shouldRenderTheGoldenPromptOfCounterOfferV2() {
+    Prompt prompt = registry.get("counter-offer", 2);
+    PromptRenderer.Rendered rendered = renderer.render(prompt, inputs("counter-offer"));
+    String actual =
+        "<system>\n"
+            + rendered.system()
+            + "\n</system>\n<user>\n"
+            + rendered.user().reveal()
+            + "\n</user>\n";
+
+    assertThat(actual).isEqualTo(Golden.expect("prompts/counter-offer.v2.txt", actual));
+    assertThat(prompt.maxOutputTokens()).isEqualTo(900);
+    assertThat(registry.latest("counter-offer").version()).isEqualTo(2);
+    assertThat(registry.get("counter-offer", 1).maxOutputTokens())
+        .as("v1 is kept as it was")
+        .isEqualTo(500);
+  }
+
+  @Test
   void shouldKeepTheSeverityRubricInV2AndTheBoundsInItsText() {
     String system = registry.get("risk-analysis", 2).system();
 

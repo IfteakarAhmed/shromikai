@@ -13,11 +13,12 @@ import org.junit.jupiter.api.Test;
 
 /**
  * The P6 prompts (and their output schemas) are frozen at the checkpoint before the live model
- * calls, 2026-11-11; {@code risk-analysis} v2 was frozen the same day after a live run showed v1's
- * 1,400-token cap failing (ADR-0016). A recorded fixture stores the hash of the request rendered
- * from a prompt, and money was spent recording it, so a silent edit would invalidate it (R-05).
- * Changing a frozen file needs a new prompt version, an update of this table with the reason, and a
- * new recording. The same hashes are in {@code prompts/LOCK}, which {@code promptLint} checks.
+ * calls, 2026-11-11; {@code risk-analysis} v2 and {@code counter-offer} v2 were frozen the same day
+ * after live runs showed the v1 caps failing (ADR-0016, ADR-0017). A recorded fixture stores the
+ * hash of the request rendered from a prompt, and money was spent recording it, so a silent edit
+ * would invalidate it (R-05). Changing a frozen file needs a new prompt version, an update of this
+ * table with the reason, and a new recording. The same hashes are in {@code prompts/LOCK}, which
+ * {@code promptLint} checks.
  */
 @Tag("unit")
 @Requirement("FR-37")
@@ -44,6 +45,11 @@ class PromptFreezeTest {
               2,
               "0c341cfd5d34cd3690dcf880d6978ec717c373f709750c3fd6d1eb2a3bf117d1",
               "2f6c2f15fd1d71e9dbd993edb9801f1cc1def77b49b6f40b331417c10baeb15b"),
+          new Frozen(
+              "counter-offer",
+              2,
+              "1c4f55905e1a7d700599bd3f0df4d4dfd7e6c8e8245a9db571ec16d635300360",
+              "869363197496dbea7c0ba153453ac74b87fde53ae25aa7e491257b7c4ab35fe3"),
           new Frozen(
               "risk-citation-repair",
               1,

@@ -1,0 +1,15 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:shromikai:schema:llm:counter-offer:2",
+  "title": "counter-offer output (v2: bounded)",
+  "type": "object",
+  "properties": {
+    "status": { "type": "string", "enum": ["OK", "ABSTAIN"] },
+    "reason": { "type": "string", "enum": ["NONE", "CANNOT_RESOLVE"] },
+    "action": { "type": "string", "enum": ["REPLACE", "INSERT"] },
+    "proposed_text": { "type": "string", "maxLength": 600 },
+    "rationale": { "type": "string", "maxLength": 140 }
+  },
+  "required": ["status", "reason", "action", "proposed_text", "rationale"],
+  "additionalProperties": false
+}
