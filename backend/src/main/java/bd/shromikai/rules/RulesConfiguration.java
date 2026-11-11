@@ -36,6 +36,13 @@ public class RulesConfiguration {
       problems.addAll(result.draftProblems());
     }
     RuleSet set = new RuleSet(rules, problems);
+    if (!release && !set.active().isEmpty()) {
+      // Active rules are verified against the corpus (R-10); without a release nothing was.
+      throw new RuleLoadException(
+          set.active().size()
+              + " rule(s) are active but no corpus release exists, so their quotes were not"
+              + " verified; ingest the statutes first or keep the rules in draft");
+    }
     LOG.info(
         "rules loaded: {} active, {} draft, {} draft problems",
         set.active().size(),

@@ -12,6 +12,7 @@ import bd.shromikai.shared.ai.ModelException;
 import bd.shromikai.shared.ai.ModelGateway;
 import bd.shromikai.shared.problem.ProblemException;
 import bd.shromikai.shared.problem.ProblemType;
+import bd.shromikai.shared.text.OverlapChecker;
 import bd.shromikai.trace.AnalysisTraceStore;
 import bd.shromikai.verify.VerificationContext;
 import bd.shromikai.verify.VerifiedCitation;
@@ -287,7 +288,9 @@ public class AnalysisPipeline {
             properties.analysis().jurisdictions(),
             d.release == null ? "none" : d.release,
             candidates.keys(),
-            1);
+            1,
+            d.session.egress(),
+            new OverlapChecker(clauses.stream().map(c -> c.text().reveal()).toList()));
     List<Finding> toVerify = findings;
     FindingVerifier.Round verified =
         step(Stage.VERIFY, d, () -> verifier.verify(toVerify, context));
@@ -376,6 +379,13 @@ public class AnalysisPipeline {
                 "counter-offer-dropped",
                 "A suggested revision was dropped: " + proposal.outcome().droppedBecause() + "."));
       }
+    }
+    if (proposals.stream().anyMatch(p -> p.outcome().unchecked())) {
+      d.warnings.add(
+          new AnalysisJob.Warning(
+              "counter-offer-unchecked",
+              "No active rule applied, so the suggested revisions were not checked against a"
+                  + " legal limit."));
     }
     List<Finding> withRedlines = new ArrayList<>();
     for (Finding finding : findings) {

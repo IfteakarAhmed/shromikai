@@ -120,6 +120,31 @@ class ReviewItemFactoryTest {
   }
 
   @Test
+  void shouldDropAClaimedQuoteThatCopiesEightTokensOfTheSource() {
+    Draft base = draft("No notice is required by the clause.", null);
+    Draft copied =
+        new Draft(
+            base.analysisId(),
+            base.findingId(),
+            base.clauseType(),
+            base.findingKind(),
+            base.severity(),
+            base.side(),
+            base.facts(),
+            base.paraphrase(),
+            base.claimedSectionKey(),
+            "may end the service of the worker at any time without giving",
+            null,
+            base.reasonCodes(),
+            base.candidateSectionKeys(),
+            base.sourceClauses());
+
+    ReviewItem item = factory.create(copied, Optional::empty);
+
+    assertThat(item.claimedQuote()).isNull();
+  }
+
+  @Test
   void shouldRejectTooLongTextsAndTruncateTheQuote() {
     ReviewItem item = factory.create(draft("x ".repeat(300), "y ".repeat(400)), Optional::empty);
 

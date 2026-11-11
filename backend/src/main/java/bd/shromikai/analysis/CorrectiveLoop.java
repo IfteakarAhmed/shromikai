@@ -4,6 +4,10 @@ import bd.shromikai.analysis.CandidateSet.Candidate;
 import bd.shromikai.shared.SensitiveText;
 import bd.shromikai.shared.ai.ModelGateway;
 import bd.shromikai.shared.ai.ModelOutputInvalidException;
+import bd.shromikai.shared.ai.ModelRefusedException;
+import bd.shromikai.shared.ai.ModelRequestRejectedException;
+import bd.shromikai.shared.ai.ModelTimeoutException;
+import bd.shromikai.shared.ai.UpstreamUnavailableException;
 import bd.shromikai.verify.CitationVerifier;
 import bd.shromikai.verify.ClaimedCitation;
 import bd.shromikai.verify.Verdict;
@@ -185,8 +189,13 @@ public class CorrectiveLoop {
       ModelGateway.Result result =
           session.call(Stage.CORRECT, PROMPT, variables, Map.of(ENUM_PATH, keys));
       output = result.output();
-    } catch (ModelOutputInvalidException e) {
-      // Treated as ABSTAIN (architecture §5.4): the finding stays UNCERTAIN.
+    } catch (ModelOutputInvalidException
+        | ModelRefusedException
+        | ModelTimeoutException
+        | UpstreamUnavailableException
+        | ModelRequestRejectedException e) {
+      // Treated as ABSTAIN (architecture §5.4): the finding stays UNCERTAIN. Repair is optional;
+      // an egress block or an exhausted budget still stops the job.
     }
     JsonNode citations = output == null ? null : output.path("citations");
     if (citations == null || !"OK".equals(output.path("status").asText()) || citations.isEmpty()) {

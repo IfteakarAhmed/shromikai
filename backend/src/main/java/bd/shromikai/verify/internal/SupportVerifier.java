@@ -1,6 +1,7 @@
 package bd.shromikai.verify.internal;
 
 import bd.shromikai.shared.SensitiveText;
+import bd.shromikai.shared.ai.EgressContext;
 import bd.shromikai.shared.ai.ModelException;
 import bd.shromikai.shared.ai.ModelGateway;
 import bd.shromikai.shared.ai.ModelOutputInvalidException;
@@ -10,6 +11,7 @@ import bd.shromikai.shared.ai.ModelTimeoutException;
 import bd.shromikai.shared.ai.TokenUsage;
 import bd.shromikai.shared.ai.UpstreamUnavailableException;
 import bd.shromikai.shared.config.ShromikaiProperties;
+import bd.shromikai.shared.text.OverlapChecker;
 import bd.shromikai.verify.SupportLabel;
 import bd.shromikai.verify.VerifierIndependence;
 import com.fasterxml.jackson.databind.JsonNode;
@@ -63,8 +65,23 @@ public final class SupportVerifier {
     this.models = models;
   }
 
+  /**
+   * @param egress the job's egress context; the claim is model-written and could hold a protected
+   *     value, so the guard must see it (R-03)
+   * @param document index of the redacted document; a claim sharing 8 tokens with it is contract
+   *     text and is not sent, the result is {@link Unavailable} and the finding stays {@code
+   *     UNCERTAIN} (R-02)
+   */
   public Outcome verify(
-      SensitiveText claim, String sectionText, @Nullable String translation, String quote) {
+      SensitiveText claim,
+      String sectionText,
+      @Nullable String translation,
+      String quote,
+      EgressContext egress,
+      OverlapChecker document) {
+    if (document.overlaps(claim.reveal())) {
+      return new Unavailable(TokenUsage.NONE);
+    }
     Map<String, String> variables =
         Map.of(
             "claim",
@@ -77,7 +94,8 @@ public final class SupportVerifier {
             translation == null || translation.isBlank() ? "none" : translation);
     if (models.verifierOrNull() != null) {
       try {
-        return judged(gateway.call(PRIMARY, variables), VerifierIndependence.DIFFERENT_FAMILY);
+        return judged(
+            gateway.call(PRIMARY, variables, egress), VerifierIndependence.DIFFERENT_FAMILY);
       } catch (ModelOutputInvalidException e) {
         return malformed(VerifierIndependence.DIFFERENT_FAMILY, models.verifierOrNull());
       } catch (UpstreamUnavailableException
@@ -88,7 +106,7 @@ public final class SupportVerifier {
       }
     }
     try {
-      return judged(gateway.call(FALLBACK, variables), VerifierIndependence.SAME_FAMILY);
+      return judged(gateway.call(FALLBACK, variables, egress), VerifierIndependence.SAME_FAMILY);
     } catch (ModelOutputInvalidException e) {
       return malformed(VerifierIndependence.SAME_FAMILY, models.verifierFallback());
     } catch (UpstreamUnavailableException

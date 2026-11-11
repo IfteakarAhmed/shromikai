@@ -229,6 +229,41 @@ class RuleLoaderFailFastTest {
             });
   }
 
+  @Test
+  void shouldStopTheApplicationContextFromStarting_whenARuleIsActiveAndNoCorpusReleaseExists() {
+    Path file =
+        RulesFixtures.write(
+            dir, "active.yaml", rule(GOOD_QUOTE, "active", "\"reviewer@example.test\""));
+    LawReadService law = mock(LawReadService.class);
+    when(law.corpusRelease()).thenReturn(null);
+
+    new ApplicationContextRunner()
+        .withUserConfiguration(RulesConfiguration.class)
+        .withBean(LawReadService.class, () -> law)
+        .withPropertyValues("shromikai.rules.files[0]=" + file)
+        .run(
+            context -> {
+              assertThat(context).hasFailed();
+              assertThat(
+                      context.getStartupFailure().getMessage()
+                          + rootMessage(context.getStartupFailure()))
+                  .contains("corpus release");
+            });
+  }
+
+  @Test
+  void shouldStartWithDraftRulesOnlyBeforeTheFirstCorpusRelease() {
+    Path file = RulesFixtures.write(dir, "draft.yaml", rule(GOOD_QUOTE, "draft", "null"));
+    LawReadService law = mock(LawReadService.class);
+    when(law.corpusRelease()).thenReturn(null);
+
+    new ApplicationContextRunner()
+        .withUserConfiguration(RulesConfiguration.class)
+        .withBean(LawReadService.class, () -> law)
+        .withPropertyValues("shromikai.rules.files[0]=" + file)
+        .run(context -> assertThat(context).hasNotFailed());
+  }
+
   private static String rootMessage(Throwable t) {
     Throwable root = t;
     while (root.getCause() != null) {

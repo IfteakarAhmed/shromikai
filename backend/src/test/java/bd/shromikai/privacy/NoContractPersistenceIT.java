@@ -215,6 +215,94 @@ class NoContractPersistenceIT {
   }
 
   @Test
+  void shouldNotStoreAQuoteCopiedFromAClause() throws IOException {
+    leakScenario(false, true);
+  }
+
+  @Test
+  void shouldNotStoreTextCopiedFromAnotherClauseByAnOmissionFinding() throws IOException {
+    leakScenario(true, false);
+  }
+
+  /**
+   * The risk agent answers with a finding whose invented citation copies clause text into its quote
+   * (and, for an omission, into the claim and explanation too, from a clause the finding does not
+   * name, because an omission names none). The review item must keep none of it.
+   */
+  private void leakScenario(boolean omission, boolean copyIntoQuote) throws IOException {
+    bd.shromikai.testsupport.FictionalCorpus.load(jdbc);
+    try {
+      bd.shromikai.testsupport.P6Stubs.install(fake);
+      fake.respondWith(
+          "risk-analysis",
+          request -> {
+            com.fasterxml.jackson.databind.JsonNode clauses =
+                bd.shromikai.testsupport.P6Stubs.clausesOf(request);
+            com.fasterxml.jackson.databind.JsonNode candidates =
+                bd.shromikai.testsupport.P6Stubs.candidatesOf(request);
+            com.fasterxml.jackson.databind.node.ObjectNode out =
+                new ObjectMapper().createObjectNode();
+            out.put("status", "OK").put("reason", "NONE");
+            com.fasterxml.jackson.databind.node.ArrayNode findings = out.putArray("findings");
+            if (!clauses.isEmpty() && !candidates.isEmpty()) {
+              String copied = clauses.get(clauses.size() - 1).path("text").asText();
+              // The v2 schema bounds: explanation 160, quote 120, claim 100 characters.
+              String longSpan = copied.substring(0, Math.min(copied.length(), 160));
+              String quoteSpan = copied.substring(0, Math.min(copied.length(), 120));
+              String claimSpan = copied.substring(0, Math.min(copied.length(), 100));
+              com.fasterxml.jackson.databind.node.ObjectNode f = findings.addObject();
+              f.put("title", "Copied clause");
+              f.put("kind", omission ? "OMISSION" : "CONFLICT")
+                  .put("severity", "HIGH")
+                  .put("non_obvious", false);
+              f.put("clause_type", "OTHER");
+              com.fasterxml.jackson.databind.node.ArrayNode ids = f.putArray("clause_ids");
+              if (!omission) {
+                ids.add(clauses.get(clauses.size() - 1).path("id").asText());
+              }
+              f.put("explanation", omission ? longSpan : "The clause is unfair to the worker.");
+              f.putArray("citations")
+                  .addObject()
+                  .put("section_key", candidates.get(0).path("sectionKey").asText())
+                  .put(
+                      "quote",
+                      copyIntoQuote
+                          ? quoteSpan
+                          : "an invented quote that the section does not contain")
+                  .put("claim", omission ? claimSpan : "The section is breached by the clause.");
+              f.put("confidence", 0.5);
+            }
+            return out;
+          });
+      List<String> documents = new ArrayList<>();
+      List<String> secrets = new ArrayList<>();
+      for (String id : List.of("syn-en-01", "syn-en-02")) {
+        String text = SyntheticContracts.text(id);
+        documents.add(text);
+        secrets.add(SyntheticContracts.marker(id));
+        SyntheticContracts.entities(id).forEach(e -> secrets.add(e.value()));
+        AnalysisJob job = analyses.analyseText(text);
+        pipeline.run(
+            job,
+            bd.shromikai.analysis.AnalysisRequest.of(bd.shromikai.analysis.Side.WORKER),
+            bd.shromikai.analysis.AnalysisSubject.dev());
+        assertThat(job.status())
+            .as(String.valueOf(job.failure()))
+            .isEqualTo(AnalysisJob.Status.ANALYSED);
+      }
+      assertThat(jdbc.sql("select count(*) from review_item").query(Long.class).single())
+          .as("an item was opened for each uncertain finding")
+          .isPositive();
+      List<String> offenders = new ArrayList<>();
+      scanDatabase(secrets, new Windows(documents), offenders);
+      assertThat(offenders).as("places where contract text or PII was found").isEmpty();
+    } finally {
+      jdbc.sql("delete from analysis_run").update();
+      bd.shromikai.testsupport.FictionalCorpus.clean(jdbc);
+    }
+  }
+
+  @Test
   void shouldDropEverythingWhenAJobIsDeleted() {
     AnalysisJob job = analyses.analyseText(SyntheticContracts.text("syn-bn-01"));
     assertThat(job.clauses()).isNotEmpty();

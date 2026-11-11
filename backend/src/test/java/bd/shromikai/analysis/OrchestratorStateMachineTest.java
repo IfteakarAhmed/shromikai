@@ -12,6 +12,7 @@ import static org.mockito.Mockito.verify;
 import bd.shromikai.rules.Severity;
 import bd.shromikai.shared.ai.EgressBlockedException;
 import bd.shromikai.shared.ai.ModelOutputInvalidException;
+import bd.shromikai.shared.ai.ModelTimeoutException;
 import bd.shromikai.shared.ai.UpstreamUnavailableException;
 import bd.shromikai.shared.problem.ProblemType;
 import bd.shromikai.testsupport.Requirement;
@@ -248,6 +249,96 @@ class OrchestratorStateMachineTest {
   }
 
   @Test
+  void shouldLeaveTheFindingUncertain_whenTheRepairCallTimesOut() {
+    PipelineHarness h =
+        new PipelineHarness(
+            request -> {
+              if (request.promptId().equals("risk-citation-repair")) {
+                throw new ModelTimeoutException("repair-timeout");
+              }
+              return unverifiableRiskAnswer(request);
+            },
+            new AnalysisFixtures.StubSource(q -> List.of(AnalysisFixtures.KEY_NOTICE)),
+            List.of(),
+            PipelineHarness.properties());
+
+    AnalysisJob job = h.run();
+
+    assertThat(job.status()).isEqualTo(AnalysisJob.Status.ANALYSED);
+    assertThat(h.calls("risk-citation-repair")).isEqualTo(1);
+    Finding finding = job.outcome().findings().getFirst();
+    assertThat(finding.verification()).isEqualTo(FindingVerification.UNCERTAIN);
+    assertThat(finding.citations()).isEmpty();
+    assertThat(h.reviewStore.items).hasSize(1);
+  }
+
+  @Test
+  void shouldDropTheRedlineWithAWarning_whenTheCounterOfferCallIsUnavailable() {
+    PipelineHarness h =
+        new PipelineHarness(
+            request -> {
+              if (request.promptId().equals("counter-offer")) {
+                throw new UpstreamUnavailableException("anthropic-http-503", 503, null);
+              }
+              return null;
+            },
+            new AnalysisFixtures.StubSource(q -> List.of(AnalysisFixtures.KEY_NOTICE)),
+            List.of(AnalysisFixtures.noticeMinRule()),
+            PipelineHarness.properties());
+
+    AnalysisJob job = h.run();
+
+    assertThat(job.status()).isEqualTo(AnalysisJob.Status.ANALYSED);
+    assertThat(job.outcome().findings().getFirst().verification())
+        .isEqualTo(FindingVerification.VERIFIED);
+    assertThat(job.outcome().redlines()).isEmpty();
+    assertThat(job.outcome().warnings()).anyMatch(w -> w.code().equals("counter-offer-dropped"));
+  }
+
+  @Test
+  void shouldWarnThatRedlinesWereUnchecked_whenNoRuleCouldCheckTheProposal() {
+    PipelineHarness h =
+        new PipelineHarness(
+            null,
+            new AnalysisFixtures.StubSource(q -> List.of(AnalysisFixtures.KEY_NOTICE)),
+            List.of(),
+            PipelineHarness.properties());
+
+    AnalysisJob job = h.run();
+
+    assertThat(job.outcome().redlines()).isNotEmpty();
+    assertThat(job.outcome().warnings())
+        .filteredOn(w -> w.code().equals("counter-offer-unchecked"))
+        .as("one warning, not one per redline")
+        .hasSize(1);
+  }
+
+  @Test
+  void shouldNotWarnThatRedlinesWereUnchecked_whenARuleCheckedThem() {
+    AnalysisJob job = PipelineHarness.standard().run();
+
+    assertThat(job.outcome().redlines()).isNotEmpty();
+    assertThat(job.outcome().warnings()).noneMatch(w -> w.code().equals("counter-offer-unchecked"));
+  }
+
+  private static com.fasterxml.jackson.databind.JsonNode unverifiableRiskAnswer(
+      bd.shromikai.shared.ai.ChatRequest request) {
+    return request.promptId().equals("risk-analysis")
+        ? TestGateways.json(
+            """
+            {"status":"OK","reason":"NONE","findings":[{"title":"Dismissal on short notice",
+             "kind":"CONFLICT","severity":"HIGH","non_obvious":false,
+             "clause_type":"NOTICE_AND_RESIGNATION","clause_ids":["c1"],
+             "explanation":"The clause gives only seven days notice of dismissal.",
+             "citations":[{"section_key":"XV-LAB:9@original",
+               "quote":"every worker is entitled to a company car after one year of service",
+               "claim":"A worker is entitled to a company car."}],
+             "confidence":0.8}]}
+            """)
+        : null;
+  }
+
+  @Test
   void shouldRunCorrectOnlyWhenACitationIsNotVerified_andLeaveOneReviewItem() {
     PipelineHarness h =
         new PipelineHarness(
@@ -343,11 +434,11 @@ class OrchestratorStateMachineTest {
                 Stage.RISK,
                 ProblemType.PRIVACY_GUARD_BLOCKED),
             new Case(
-                "counter-offer provider outage",
+                "counter-offer egress block (a policy failure still stops the job; an outage only drops the redline)",
                 new PipelineHarness(
                     r -> {
                       if (r.promptId().equals("counter-offer")) {
-                        throw new UpstreamUnavailableException("anthropic-http-503", 503, null);
+                        throw new EgressBlockedException("pii_detected");
                       }
                       return null;
                     },
@@ -355,7 +446,7 @@ class OrchestratorStateMachineTest {
                     List.of(),
                     PipelineHarness.properties()),
                 Stage.COMPOSE,
-                ProblemType.UPSTREAM_UNAVAILABLE));
+                ProblemType.PRIVACY_GUARD_BLOCKED));
 
     for (Case c : cases) {
       AnalysisJob job = c.harness().run();

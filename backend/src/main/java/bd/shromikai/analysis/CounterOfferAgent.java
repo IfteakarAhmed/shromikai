@@ -9,6 +9,9 @@ import bd.shromikai.shared.SensitiveText;
 import bd.shromikai.shared.ai.ModelGateway;
 import bd.shromikai.shared.ai.ModelOutputInvalidException;
 import bd.shromikai.shared.ai.ModelRefusedException;
+import bd.shromikai.shared.ai.ModelRequestRejectedException;
+import bd.shromikai.shared.ai.ModelTimeoutException;
+import bd.shromikai.shared.ai.UpstreamUnavailableException;
 import bd.shromikai.verify.VerifiedCitation;
 import com.fasterxml.jackson.databind.JsonNode;
 import java.util.ArrayList;
@@ -30,8 +33,18 @@ public final class CounterOfferAgent {
 
   static final String PROMPT = "counter-offer";
 
-  /** The redline, or {@code null} with the reason it was dropped. */
-  public record Outcome(@Nullable Redline redline, @Nullable String droppedBecause) {}
+  /**
+   * The redline, or {@code null} with the reason it was dropped. {@code unchecked} is true when a
+   * redline was kept although no active rule could check its facts (warning {@code
+   * counter-offer-unchecked}).
+   */
+  public record Outcome(
+      @Nullable Redline redline, @Nullable String droppedBecause, boolean unchecked) {
+
+    public Outcome(@Nullable Redline redline, @Nullable String droppedBecause) {
+      this(redline, droppedBecause, false);
+    }
+  }
 
   private final FactExtractor facts;
   private final RuleEngine engine;
@@ -131,6 +144,11 @@ public final class CounterOfferAgent {
         answer = result.output();
       } catch (ModelOutputInvalidException | ModelRefusedException e) {
         return new Outcome(null, "model-output");
+      } catch (ModelTimeoutException
+          | UpstreamUnavailableException
+          | ModelRequestRejectedException e) {
+        // A redline is optional: the finding stays, the warning says it was dropped.
+        return new Outcome(null, "model-unavailable");
       }
       if (!"OK".equals(answer.path("status").asText())
           || answer.path("proposed_text").asText().isBlank()) {
@@ -139,8 +157,16 @@ public final class CounterOfferAgent {
       String proposed = answer.path("proposed_text").asText();
       List<String> violated = List.of();
       if (!checkable.isEmpty()) {
-        List<ClauseFact> proposalFacts =
-            facts.extractOne(session, Stage.COMPOSE, "proposal", proposed);
+        List<ClauseFact> proposalFacts;
+        try {
+          proposalFacts = facts.extractOne(session, Stage.COMPOSE, "proposal", proposed);
+        } catch (ModelOutputInvalidException
+            | ModelRefusedException
+            | ModelTimeoutException
+            | UpstreamUnavailableException
+            | ModelRequestRejectedException e) {
+          return new Outcome(null, "model-unavailable");
+        }
         violated =
             engine
                 .evaluate(
@@ -166,7 +192,8 @@ public final class CounterOfferAgent {
                 checkable.stream().map(Rule::id).toList(),
                 attempt,
                 request.outputLanguage()),
-            null);
+            null,
+            checkable.isEmpty());
       }
       problem =
           "The proposal breaks: " + String.join("; ", violated) + ". Fix it and keep the rest.";

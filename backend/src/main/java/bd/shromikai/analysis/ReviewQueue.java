@@ -48,6 +48,9 @@ public final class ReviewQueue {
       java.util.Set<String> candidateKeys) {
     List<Finding> out = new ArrayList<>();
     List<ReviewItem> items = new ArrayList<>();
+    // Every clause of the document is a source for the overlap check: an OMISSION finding has no
+    // clauses of its own and a model can copy from any clause (R-02, FR-50).
+    List<SensitiveText> sources = clauses.values().stream().map(Clause::text).toList();
     for (Finding finding : findings) {
       boolean conflict = conflicts.stream().anyMatch(c -> c.findingId().equals(finding.id()));
       boolean uncertain = finding.verification() == FindingVerification.UNCERTAIN;
@@ -63,13 +66,8 @@ public final class ReviewQueue {
         reasons.add("NOT_VERIFIED");
       }
       ClaimedCitation failed = finding.claims().isEmpty() ? null : finding.claims().getFirst();
-      List<SensitiveText> sources = new ArrayList<>();
       List<FactView> factViews = new ArrayList<>();
       for (String clauseId : finding.clauseIds()) {
-        Clause clause = clauses.get(clauseId);
-        if (clause != null) {
-          sources.add(clause.text());
-        }
         for (ClauseFact fact : facts.getOrDefault(clauseId, List.of())) {
           factViews.add(new FactView(fact.parameter().name(), fact.value(), fact.unit().name()));
         }

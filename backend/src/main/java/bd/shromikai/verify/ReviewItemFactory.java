@@ -14,9 +14,10 @@ import org.springframework.stereotype.Component;
 
 /**
  * Builds review items that hold no contract text (FR-50, R-02). The paraphrase and the claim must
- * share no 8-token sequence with the clauses of the finding ({@link OverlapChecker}). A paraphrase
+ * share no 8-token sequence with the clauses of the document ({@link OverlapChecker}). A paraphrase
  * that does is regenerated once and, if it still does, replaced by the facts-only form; a claim
- * that does is replaced at once and the item says so with {@code claimReduced}.
+ * that does is replaced at once and the item says so with {@code claimReduced}; a claimed quote
+ * that does is dropped.
  */
 @Component
 public final class ReviewItemFactory {
@@ -33,7 +34,8 @@ public final class ReviewItemFactory {
    *
    * @param paraphrase the first redacted paraphrase, for example the finding's explanation
    * @param claimedSectionKey the section the failed citation named, or {@code null}
-   * @param sourceClauses redacted clause text of the finding, used only for the overlap check
+   * @param sourceClauses redacted text of every clause of the document, used only for the overlap
+   *     check (an omission finding has no clauses of its own, a model can copy from any)
    */
   public record Draft(
       UUID analysisId,
@@ -85,6 +87,9 @@ public final class ReviewItemFactory {
       }
     }
     String quote = draft.claimedQuote();
+    if (quote != null && overlap.overlaps(quote)) {
+      quote = null; // a quote copied from the document is contract text (R-02)
+    }
     if (quote != null && quote.length() > MAX_QUOTE) {
       quote = quote.substring(0, MAX_QUOTE);
     }

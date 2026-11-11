@@ -114,7 +114,9 @@ public class CitationVerifier {
                 claim.claim(),
                 section.authoritativeText(),
                 section.translation() == null ? null : section.translation().text(),
-                claim.quote());
+                claim.quote(),
+                context.egress(),
+                context.document());
         if (outcome instanceof Judged judged) {
           input = new SupportInput.Judged(judged.label(), judged.confidence());
           boolean pass =

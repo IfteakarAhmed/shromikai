@@ -108,7 +108,7 @@
     "redline" : true,
     "reviewItem" : false
   } ],
-  "warnings" : [ "verifier-same-family" ],
+  "warnings" : [ "counter-offer-unchecked", "verifier-same-family" ],
   "reviewItems" : 1,
   "stages" : [ "INTAKE", "REDACT", "CLASSIFY", "RETRIEVE", "RULES", "RISK", "VERIFY", "CORRECT", "COMPOSE", "COMPLETE" ]
 }
