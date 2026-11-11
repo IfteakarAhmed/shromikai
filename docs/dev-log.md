@@ -444,7 +444,7 @@ AGENTS.md §7 items 10 and 11 (human acceptance check, Prompt R in a fresh sessi
   script differs from the act's authoritative language, let the text list contribute less or not at
   all; (3) only if (1) and (2) are not enough, weighted RRF (a change to FR-19 and an ADR). I did
   not apply any of them: the 40 questions are the test split, and tuning on them would make the
-  next table a training result (evaluation.md §10). Needed first: a separate `dev` question set of
+  next table a training result (evaluation.md §11). Needed first: a separate `dev` question set of
   at least 30 questions, written and checked by a team member, to tune on; then one run on the
   test set.
 - **Key decisions and ADRs:** ADR-0012 (Caffeine; V5 columns; the gateway arrives now; OR text
