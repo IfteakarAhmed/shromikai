@@ -62,18 +62,34 @@ abstract class ApiAnalysisIT {
   @Autowired protected JobStore jobStore;
 
   /**
-   * Waits for background analyses a test left running before the corpus and runs are deleted.
-   * Cleaning under a running pipeline caused a NullPointerException in retrieval and starved the
-   * test pool of connections (the intermittent 30 s Hikari timeout seen in P7).
+   * Waits for background analyses a test left running before the corpus and runs are deleted: no
+   * job running and no run row still {@code RUNNING} (the run row is closed after the job is marked
+   * complete). Cleaning under a running pipeline caused a NullPointerException in retrieval and
+   * starved the test pool of connections (the intermittent 30 s Hikari timeout seen in P7).
    */
   @AfterEach
-  void cleanDatabase() throws InterruptedException {
-    for (int i = 0; i < 300 && jobStore.countRunning(j -> true) > 0; i++) {
-      Thread.sleep(100);
+  void cleanDatabase() {
+    try {
+      long deadline = System.nanoTime() + Duration.ofSeconds(30).toNanos();
+      while (!quiet()) {
+        if (System.nanoTime() > deadline) {
+          throw new AssertionError("background analyses did not finish within 30 s");
+        }
+        java.util.concurrent.locks.LockSupport.parkNanos(Duration.ofMillis(25).toNanos());
+      }
+    } finally {
+      MutableClockConfig.CLOCK.reset();
     }
-    Thread.sleep(300); // the last run-store writes follow the job's completion
     jdbc.sql("delete from analysis_run").update();
     FictionalCorpus.clean(jdbc);
+  }
+
+  private boolean quiet() {
+    return jobStore.countRunning(j -> true) == 0
+        && jdbc.sql("select count(*) from analysis_run where status in ('RUNNING', 'QUEUED')")
+                .query(Long.class)
+                .single()
+            == 0;
   }
 
   protected String worker() {

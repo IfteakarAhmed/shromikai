@@ -22,7 +22,13 @@ public class MutableClockConfig {
 
   /** A clock that moves only when told to. */
   public static final class MutableClock extends Clock {
-    private volatile Instant now = Instant.now();
+    private final Instant start = Instant.now();
+    private volatile Instant now = start;
+
+    /** Moves the clock back to where the JVM started, so no test inherits another's offset. */
+    public void reset() {
+      now = start;
+    }
 
     public void advance(Duration duration) {
       now = now.plus(duration);
