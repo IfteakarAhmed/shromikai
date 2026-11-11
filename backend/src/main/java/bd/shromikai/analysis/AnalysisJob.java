@@ -6,6 +6,7 @@ import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 import org.jspecify.annotations.Nullable;
 
@@ -15,11 +16,43 @@ import org.jspecify.annotations.Nullable;
  */
 public final class AnalysisJob {
 
-  /** P5 ends at {@code CLASSIFIED}; P6 continues from there. */
+  /**
+   * {@code CLASSIFIED} ends the P5 steps; P6 continues to {@code ANALYSED} (through {@code
+   * COMPOSE}); P7 adds the memo and the result handling.
+   */
   public enum Status {
     RUNNING,
     CLASSIFIED,
+    ANALYSED,
     FAILED
+  }
+
+  /** A warning shown with the result (api.md §5.12). */
+  public record Warning(String code, String message) {}
+
+  /**
+   * What the P6 pipeline produced. Findings and redlines are redacted (placeholders, not names);
+   * re-identification belongs to P7 ({@code AnalysisService.resultFor}).
+   */
+  public record Outcome(
+      List<Finding> findings,
+      List<Redline> redlines,
+      List<Warning> warnings,
+      int reviewItems,
+      Map<String, Integer> promptVersions,
+      Map<String, String> models,
+      String verifierIndependence,
+      String corpusRelease,
+      long costUsdMicros,
+      long durationMs) {
+
+    public Outcome {
+      findings = List.copyOf(findings);
+      redlines = List.copyOf(redlines);
+      warnings = List.copyOf(warnings);
+      promptVersions = Map.copyOf(promptVersions);
+      models = Map.copyOf(models);
+    }
   }
 
   private final UUID id;
@@ -30,6 +63,10 @@ public final class AnalysisJob {
   private volatile Stage stage = Stage.INTAKE;
   private volatile List<Clause> clauses = List.of();
   private volatile @Nullable ProblemException failure;
+  private volatile @Nullable Outcome outcome;
+  private volatile String inputKind = "TEXT";
+  private volatile int pageCount = 1;
+  private volatile @Nullable String language;
 
   AnalysisJob(UUID id, Instant createdAt) {
     this.id = id;
@@ -74,6 +111,35 @@ public final class AnalysisJob {
     return failure;
   }
 
+  /** The analysis result of the P6 pipeline, or {@code null} before {@code ANALYSED}. */
+  public @Nullable Outcome outcome() {
+    return outcome;
+  }
+
+  public String inputKind() {
+    return inputKind;
+  }
+
+  public int pageCount() {
+    return pageCount;
+  }
+
+  public @Nullable String language() {
+    return language;
+  }
+
+  void intake(String kind, int pages, @Nullable String detectedLanguage) {
+    this.inputKind = kind;
+    this.pageCount = Math.max(1, pages);
+    this.language = detectedLanguage;
+  }
+
+  void analysed(Outcome result) {
+    this.outcome = result;
+    this.status = Status.ANALYSED;
+    this.stage = Stage.COMPLETE;
+  }
+
   void enter(Stage next) {
     this.stage = next;
   }
@@ -91,6 +157,7 @@ public final class AnalysisJob {
     this.failure = problem;
     this.status = Status.FAILED;
     this.clauses = List.of();
+    this.outcome = null;
     this.placeholders.clear();
   }
 
@@ -98,6 +165,7 @@ public final class AnalysisJob {
   void purge() {
     placeholders.clear();
     clauses = List.of();
+    outcome = null;
     trace.clear();
   }
 }

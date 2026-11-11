@@ -71,6 +71,7 @@ public class AnalysisService {
     AnalysisJob job = jobs.create();
     try {
       IntakeResult read = timed(job, Stage.INTAKE, intakeStep::get, r -> intakeDetail(r));
+      job.intake(read.kind().name(), read.pageCount(), read.language());
       if (read.kind() == InputKind.PDF_SCAN || read.kind() == InputKind.IMAGE) {
         job.enter(Stage.OCR);
         job.record(

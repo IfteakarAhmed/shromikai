@@ -29,7 +29,65 @@ class ApplicationContextIT {
             .query(String.class)
             .list();
 
-    assertThat(versions).containsExactly("1", "2", "3", "4", "5");
+    assertThat(versions).containsExactly("1", "2", "3", "4", "5", "6");
+  }
+
+  @Test
+  @Requirement("FR-48")
+  @Requirement("FR-50")
+  void shouldCreateTheAnalysisTables_whenV6Applied() {
+    List<String> tables =
+        jdbc.sql(
+                """
+                select table_name from information_schema.tables
+                 where table_schema = 'public'
+                   and table_name in ('analysis_run', 'instance_registry', 'analysis_trace', 'review_item')
+                 order by table_name
+                """)
+            .query(String.class)
+            .list();
+    List<String> reviewColumns =
+        jdbc.sql(
+                "select column_name from information_schema.columns where table_name = 'review_item'")
+            .query(String.class)
+            .list();
+    List<String> traceColumns =
+        jdbc.sql(
+                "select column_name from information_schema.columns where table_name = 'analysis_trace'")
+            .query(String.class)
+            .list();
+    String reviewIdType =
+        jdbc.sql(
+                "select data_type from information_schema.columns"
+                    + " where table_name = 'review_item' and column_name = 'id'")
+            .query(String.class)
+            .single();
+
+    assertThat(tables)
+        .containsExactly("analysis_run", "analysis_trace", "instance_registry", "review_item");
+    assertThat(reviewIdType).isEqualTo("uuid");
+    assertThat(reviewColumns)
+        .contains(
+            "risk_summary",
+            "claimed_claim",
+            "claim_reduced",
+            "reason_codes",
+            "facts",
+            "expires_at");
+    assertThat(traceColumns)
+        .contains("prompt_id", "model_id", "tokens_in", "cost_usd_micros", "outcome", "detail");
+  }
+
+  @Test
+  @Requirement("FR-50")
+  void shouldRefuseAFindingReviewItemWithoutItsFindingFields() {
+    org.assertj.core.api.Assertions.assertThatThrownBy(
+            () ->
+                jdbc.sql(
+                        "insert into review_item (id, kind, reason_codes, expires_at)"
+                            + " values (gen_random_uuid(), 'FINDING', '{X}', now())")
+                    .update())
+        .hasMessageContaining("review_item_finding_fields");
   }
 
   @Test

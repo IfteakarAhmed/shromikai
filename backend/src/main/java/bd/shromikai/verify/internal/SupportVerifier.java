@@ -15,6 +15,7 @@ import bd.shromikai.verify.VerifierIndependence;
 import com.fasterxml.jackson.databind.JsonNode;
 import java.util.Map;
 import org.jspecify.annotations.Nullable;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 /**
@@ -52,6 +53,7 @@ public final class SupportVerifier {
   private final ModelGateway gateway;
   private final ShromikaiProperties.Models models;
 
+  @Autowired
   public SupportVerifier(ModelGateway gateway, ShromikaiProperties properties) {
     this(gateway, properties.models());
   }

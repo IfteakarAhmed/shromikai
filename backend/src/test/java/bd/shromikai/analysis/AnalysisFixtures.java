@@ -10,7 +10,6 @@ import bd.shromikai.rules.ClauseFact;
 import bd.shromikai.rules.FactParameter;
 import bd.shromikai.rules.Rule;
 import bd.shromikai.rules.RuleComparator;
-import bd.shromikai.rules.RulesFixtures;
 import bd.shromikai.rules.Unit;
 import bd.shromikai.shared.SensitiveText;
 import bd.shromikai.shared.ai.ChatPort;
@@ -180,13 +179,24 @@ public final class AnalysisFixtures {
     return sections().current(key).map(CandidateRetriever::toCandidate);
   }
 
+  /** An active, two-person-reviewed rule on the fictional notice section (xx, R-10). */
   public static Rule noticeMinRule() {
-    return RulesFixtures.rule(
+    return new Rule(
         "xx-notice-min",
+        "NOTICE_AND_RESIGNATION",
         FactParameter.NOTICE_BY_EMPLOYER,
         RuleComparator.MIN,
         14.0,
         Unit.DAYS,
-        Rule.Status.ACTIVE);
+        null,
+        new Rule.LegalBasis("XV-LAB", "9", VerifyFixtures.QUOTE_NOTICE),
+        bd.shromikai.rules.Severity.HIGH,
+        "কাল্পনিক নিয়ম: নোটিশ কমপক্ষে চৌদ্দ দিন (পরীক্ষার জন্য)।",
+        "Fictional rule: notice must be at least fourteen days (for tests only).",
+        "author@example.test",
+        "reviewer@example.test",
+        null,
+        Rule.Status.ACTIVE,
+        KEY_NOTICE);
   }
 }

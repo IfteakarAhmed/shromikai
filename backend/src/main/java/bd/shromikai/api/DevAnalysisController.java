@@ -1,12 +1,19 @@
 package bd.shromikai.api;
 
 import bd.shromikai.analysis.AnalysisJob;
+import bd.shromikai.analysis.AnalysisPipeline;
+import bd.shromikai.analysis.AnalysisRequest;
 import bd.shromikai.analysis.AnalysisService;
+import bd.shromikai.analysis.AnalysisSubject;
 import bd.shromikai.analysis.Clause;
+import bd.shromikai.analysis.Finding;
 import bd.shromikai.analysis.JobStore;
+import bd.shromikai.analysis.Redline;
+import bd.shromikai.analysis.Side;
 import bd.shromikai.analysis.TraceEvent;
 import bd.shromikai.shared.problem.ProblemException;
 import bd.shromikai.shared.problem.ProblemType;
+import bd.shromikai.verify.VerifiedCitation;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
@@ -31,9 +38,10 @@ import org.springframework.web.multipart.MultipartFile;
 
 /**
  * Debug endpoints of the {@code dev} profile only (E-45, FR-33): start the P5 pipeline (intake,
- * redaction, segmentation, classification) and look at the redacted clauses with their types, flags
- * and the content-free trace. Outside {@code dev} this bean does not exist, so every route is
- * {@code 404}. Admin only. The public analysis API arrives in P7.
+ * redaction, segmentation, classification), optionally continue it through the P6 pipeline ({@code
+ * full=true}), and look at the redacted clauses, the findings with their verified citations and the
+ * content-free trace. Outside {@code dev} this bean does not exist, so every route is {@code 404}.
+ * Admin only. The public analysis API arrives in P7; findings here are redacted, not re-identified.
  */
 @RestController
 @Profile("dev")
@@ -41,12 +49,55 @@ import org.springframework.web.multipart.MultipartFile;
 public class DevAnalysisController {
 
   private final AnalysisService analyses;
+  private final AnalysisPipeline pipeline;
   private final JobStore jobs;
 
-  public DevAnalysisController(AnalysisService analyses, JobStore jobs) {
+  public DevAnalysisController(AnalysisService analyses, AnalysisPipeline pipeline, JobStore jobs) {
     this.analyses = analyses;
+    this.pipeline = pipeline;
     this.jobs = jobs;
   }
+
+  /** A finding as the API shows it (api.md §5.8), without re-identification. */
+  public record FindingView(
+      String id,
+      String title,
+      String kind,
+      String severity,
+      boolean nonObvious,
+      String source,
+      String clauseType,
+      List<String> clauseIds,
+      String explanation,
+      String whyItMatters,
+      String verificationStatus,
+      List<VerifiedCitation> citations,
+      String ruleId,
+      String redlineId,
+      String reviewItemId,
+      double confidence) {}
+
+  public record RedlineView(
+      String id,
+      String findingId,
+      String clauseId,
+      String action,
+      String originalText,
+      String proposedText,
+      String rationale,
+      List<String> ruleIds,
+      int attempts) {}
+
+  public record WarningView(String code, String message) {}
+
+  public record Findings(
+      String status,
+      List<FindingView> findings,
+      List<RedlineView> redlines,
+      List<WarningView> warnings,
+      int reviewItems,
+      String verifierIndependence,
+      List<TraceView> trace) {}
 
   /** Text of 200 to 60,000 characters. */
   public record TextRequest(@NotNull @Size(min = 200, max = 60_000) String text) {}
@@ -74,18 +125,77 @@ public class DevAnalysisController {
 
   @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
   @ResponseStatus(HttpStatus.CREATED)
-  public Started upload(@RequestParam("file") List<MultipartFile> files) throws IOException {
+  public Started upload(
+      @RequestParam("file") List<MultipartFile> files,
+      @RequestParam(name = "full", defaultValue = "false") boolean full,
+      @RequestParam(name = "side", defaultValue = "WORKER") Side side)
+      throws IOException {
     List<byte[]> bytes = new ArrayList<>();
     for (MultipartFile file : files) {
       bytes.add(file.getBytes());
     }
-    return started(analyses.analyseFiles(bytes));
+    return started(analyses.analyseFiles(bytes), full, side);
   }
 
   @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
   @ResponseStatus(HttpStatus.CREATED)
-  public Started text(@Valid @RequestBody TextRequest request) {
-    return started(analyses.analyseText(request.text()));
+  public Started text(
+      @Valid @RequestBody TextRequest request,
+      @RequestParam(name = "full", defaultValue = "false") boolean full,
+      @RequestParam(name = "side", defaultValue = "WORKER") Side side) {
+    return started(analyses.analyseText(request.text()), full, side);
+  }
+
+  @GetMapping("/{id}/findings")
+  public Findings findings(@PathVariable UUID id) {
+    AnalysisJob job = jobs.find(id).orElseThrow(() -> new ProblemException(ProblemType.NOT_FOUND));
+    AnalysisJob.Outcome outcome = job.outcome();
+    if (outcome == null) {
+      throw new ProblemException(ProblemType.NOT_FOUND);
+    }
+    List<FindingView> findings = new ArrayList<>();
+    for (Finding f : outcome.findings()) {
+      findings.add(
+          new FindingView(
+              f.id(),
+              f.title().reveal(),
+              f.kind().name(),
+              f.severity().name(),
+              f.nonObvious(),
+              f.source().name(),
+              f.clauseType(),
+              f.clauseIds(),
+              f.explanation().reveal(),
+              f.whyItMatters().reveal(),
+              f.verification().name(),
+              f.citations(),
+              f.ruleId(),
+              f.redlineId(),
+              f.reviewItemId() == null ? null : f.reviewItemId().toString(),
+              f.confidence()));
+    }
+    List<RedlineView> redlines = new ArrayList<>();
+    for (Redline r : outcome.redlines()) {
+      redlines.add(
+          new RedlineView(
+              r.id(),
+              r.findingId(),
+              r.clauseId(),
+              r.action(),
+              r.originalText() == null ? null : r.originalText().reveal(),
+              r.proposedText().reveal(),
+              r.rationale().reveal(),
+              r.ruleIds(),
+              r.attempts()));
+    }
+    return new Findings(
+        job.status().name(),
+        findings,
+        redlines,
+        outcome.warnings().stream().map(w -> new WarningView(w.code(), w.message())).toList(),
+        outcome.reviewItems(),
+        outcome.verifierIndependence(),
+        traceViews(job));
   }
 
   @GetMapping("/{id}/redacted")
@@ -102,6 +212,10 @@ public class DevAnalysisController {
               clause.text().reveal(),
               clause.flags().stream().map(Enum::name).sorted().toList()));
     }
+    return new Redacted(clauses, traceViews(job));
+  }
+
+  private static List<TraceView> traceViews(AnalysisJob job) {
     List<TraceView> trace = new ArrayList<>();
     for (TraceEvent e : job.trace()) {
       trace.add(
@@ -114,13 +228,20 @@ public class DevAnalysisController {
               e.modelId(),
               e.detail()));
     }
-    return new Redacted(clauses, trace);
+    return trace;
   }
 
-  private Started started(AnalysisJob job) {
+  private Started started(AnalysisJob job, boolean full, Side side) {
     ProblemException failure = job.failure();
     if (failure != null) {
       throw failure;
+    }
+    if (full) {
+      pipeline.run(job, AnalysisRequest.of(side), AnalysisSubject.dev());
+      failure = job.failure();
+      if (failure != null) {
+        throw failure;
+      }
     }
     return new Started(job.id(), job.status().name(), job.stage().name());
   }

@@ -202,6 +202,15 @@ shromikai:
     max-concurrent: 4                     # uploads read at the same time, service-wide; more get capacity-exhausted
     tesseract-command: [tesseract, stdin, stdout, -l, ben+eng, tsv]   # stdin/stdout only, no temp files
   analysis:
+    hard-timeout: 120s                    # analysis-timeout (architecture §5.3)
+    jurisdictions: [BD]                   # jurisdictions of the active pack that citations may come from
+    step-timeouts:                        # per-step cancel limits, above the p95 budgets of §5.3
+      retrieve: 45s
+      rules: 45s
+      risk: 80s
+      verify: 40s
+      correct: 50s
+      compose: 70s
     max-jobs: 200                         # in-memory analysis jobs at once; more is refused (capacity-exhausted)
     job-sweep-interval: 60s               # expired jobs (30 min) are purged this often
   scraper:                                # statute ingestion (FR-12, architecture §12)
