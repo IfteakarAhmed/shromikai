@@ -233,6 +233,7 @@ shromikai:
   mcp:                                    # MCP server limits (ADR-0021)
     rate-limit-per-minute: 60             # per API key (FR-65)
     analyze-timeout: 120s                 # analyze_employment_contract waits this long (FR-66)
+    analyze-per-key-per-day: 10           # analyses one API key may start a day, per instance (NFR-06)
   ingest:
     pack-file: ${user.dir}/../data/packs/bd.yaml
     mapping-file: ${user.dir}/../data/mappings/bd-ilo.yaml
