@@ -1,0 +1,15 @@
+# Fictional topic map for the fictional pack xx (R-10). Not legal content.
+authored_by: "test author"
+reviewed_by: "test reviewer"
+topics:
+  OVERTIME:
+    sections:
+      - "XR-LAB:30@original"
+      - "XR-LAB:31@original"
+      - "XR-LAB:32@original"
+      - "XR-LAB:33@original"
+      - "XR-LAB:34@original"
+      - "XR-LAB:99@original"
+  WAGES:
+    sections:
+      - "XR-LAB:40@original"

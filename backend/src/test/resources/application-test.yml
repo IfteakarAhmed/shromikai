@@ -1,0 +1,5 @@
+# Test-only overrides loaded on top of application.yml for the test profile.
+shromikai:
+  retrieval:
+    # Fictional pack xx (R-10): topic map for fixture sections only.
+    topic-map-file: src/test/resources/fixtures/retrieval/xx-topics.yaml

@@ -131,6 +131,20 @@ shromikai:
   fake-models:
     fixtures: classpath:fixtures/llm
     default-case: default
+  api:
+    law-search-per-minute: 60             # api.md §8.1 rate limits, per subject
+  retrieval:                              # architecture §8, §12
+    vector-top-k: 20
+    text-top-k: 20
+    fused-top-k: 8
+    rrf-k: 60
+    graph-max: 4
+    topic-map-max: 4
+    ef-search: 100                        # pgvector hnsw.ef_search (architecture §8.1)
+    embed-batch-size: 16
+    cache: { max-entries: 10000, ttl: 1h }
+    topic-map-file: ${user.dir}/../data/mappings/bd-topics.yaml
+    cli: false                            # ./gradlew embedLaws sets this
   scraper:                                # statute ingestion (FR-12, architecture §12)
     user-agent: "ShromikAI-ingest/1.0 (+${SCRAPER_CONTACT:})"
     contact: ${SCRAPER_CONTACT:}          # required for a real run; never committed

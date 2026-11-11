@@ -1,0 +1,63 @@
+# Topic map: ClauseType -> candidate statute sections (architecture §8.1, ADR-0004, FR-20).
+# Retrieval adds at most 4 of a clause type's sections as origin TOPIC_MAP context. This file holds
+# only pointers into the ingested corpus; it states no legal rule (R-10). Keys were chosen from
+# the section headings of corpus release 2026.11.11-1 and resolve to the current version of each
+# section at query time, so a later version label does not break a row.
+#
+# Review status: DRAFT. authored_by is the drafter; a team member and the legal reviewer must read
+# each row against the section text and set reviewed_by before anything here is called verified.
+# Clause types without a clear section in the ingested acts are left out on purpose (empty is
+# honest; a guessed section would be invented law). expected_for stays empty until the corpus
+# carries worker-category terms (law_term WORKER_CATEGORY), which P6 omission detection needs.
+authored_by: "Claude (draft, phase P4)"
+reviewed_by: null
+status: draft
+topics:
+  APPOINTMENT_AND_ROLE:        # headings: terms of service; appointment letter and identity card; service book
+    expected_for: []
+    sections: ["BLA-2006:3@amend-2026", "BLA-2006:5@original", "BLA-2006:6@original"]
+  PROBATION:                   # heading: classes of workers and probation
+    expected_for: []
+    sections: ["BLA-2006:4@amend-2026", "BLA-2006:3@amend-2026"]
+  WAGES:                       # headings: special definition of wages; minimum wage provisions
+    expected_for: []
+    sections: ["BLA-2006:120@original", "BLA-2006:148@original", "BLA-2006:149@original", "BLA-2006:140@amend-2013"]
+  WAGE_PAYMENT_AND_DEDUCTIONS: # headings: time of payment; permitted deductions; deduction for absence or damage
+    expected_for: []
+    sections: ["BLA-2006:123@amend-2013", "BLA-2006:125@amend-2013", "BLA-2006:126@original", "BLA-2006:127@original"]
+  WORKING_HOURS:               # headings: daily and weekly hours; interval for rest or meals; extension of hours
+    expected_for: []
+    sections: ["BLA-2006:100@original", "BLA-2006:101@amend-2013", "BLA-2006:102@original", "BLA-2006:105@amend-2018"]
+  OVERTIME:                    # heading: allowance for overtime work, with the hour limits
+    expected_for: []
+    sections: ["BLA-2006:108@amend-2018", "BLA-2006:100@original", "BLA-2006:102@original", "BLA-2006:105@amend-2018"]
+  REST_AND_HOLIDAYS:           # headings: rest interval; weekly holiday; compensatory weekly holiday; festival holidays
+    expected_for: []
+    sections: ["BLA-2006:101@amend-2013", "BLA-2006:103@amend-2018", "BLA-2006:104@amend-2018", "BLA-2006:118@amend-2026"]
+  LEAVE:                       # headings: casual leave; sick leave; annual leave with wages; festival holidays
+    expected_for: []
+    sections: ["BLA-2006:115@original", "BLA-2006:116@original", "BLA-2006:117@amend-2026", "BLA-2006:118@amend-2026"]
+  MATERNITY_BENEFIT:           # headings: right to and liability for maternity benefit; amount; limits on ending service
+    expected_for: []
+    sections: ["BLA-2006:46@amend-2026", "BLA-2006:47@amend-2026", "BLA-2006:48@amend-2026", "BLA-2006:50@amend-2026"]
+  NOTICE_AND_RESIGNATION:      # headings: ending of service by employer; by worker; retirement; liquidated sum in contract law
+    expected_for: []
+    sections: ["BLA-2006:27@amend-2026", "BLA-2006:26@original", "BLA-2006:28@amend-2018", "CA-1872:74@amend-1973"]
+  TERMINATION:                 # headings: retrenchment; discharge; punishment for misconduct; ending of service
+    expected_for: []
+    sections: ["BLA-2006:26@original", "BLA-2006:20@original", "BLA-2006:22@original", "BLA-2006:23@amend-2026"]
+  DISCIPLINE_AND_MISCONDUCT:   # headings: misconduct and punishment; procedure; fines; grievance procedure
+    expected_for: []
+    sections: ["BLA-2006:23@amend-2026", "BLA-2006:24@amend-2013", "BLA-2006:25@original", "BLA-2006:33@amend-2013"]
+  SERVICE_BENEFITS:            # headings: provident fund; time for final dues; unused leave wages; group insurance
+    expected_for: []
+    sections: ["BLA-2006:29@amend-2018", "BLA-2006:30@original", "BLA-2006:11@original", "BLA-2006:99@amend-2018"]
+  NON_COMPETE:                 # heading: agreement in restraint of trade
+    expected_for: []
+    sections: ["CA-1872:27@original"]
+  HEALTH_AND_SAFETY:           # headings: cleanliness; safety of buildings and machinery; protective equipment; first aid
+    expected_for: []
+    sections: ["BLA-2006:51@original", "BLA-2006:61@amend-2013", "BLA-2006:78A@amend-2013", "BLA-2006:89@amend-2013"]
+  DISPUTE_RESOLUTION:          # headings: grievance procedure; agreements in restraint of legal proceedings
+    expected_for: []
+    sections: ["BLA-2006:33@amend-2013", "CA-1872:28@original"]

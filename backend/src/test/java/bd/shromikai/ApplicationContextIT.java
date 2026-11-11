@@ -30,7 +30,7 @@ class ApplicationContextIT {
             .query(String.class)
             .list();
 
-    assertThat(versions).containsExactly("1", "2", "3", "4");
+    assertThat(versions).containsExactly("1", "2", "3", "4", "5");
   }
 
   @Test

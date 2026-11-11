@@ -71,6 +71,9 @@ dependencies {
     // OpenAPI document for generated frontend types (AGENTS.md §6)
     implementation 'org.springdoc:springdoc-openapi-starter-webmvc-ui:2.8.17'
 
+    // In-memory retrieval cache (P4, ADR-0012); version managed by Spring Boot
+    implementation 'com.github.ben-manes.caffeine:caffeine'
+
     // Nullness annotations
     implementation 'org.jspecify:jspecify:1.0.1'
 
@@ -267,6 +270,59 @@ tasks.register('ingestLaws', JavaExec) {
             throw new GradleException('SCRAPER_CONTACT is empty: set it in .env (contact address for the scraper User-Agent, FR-12).')
         }
     }
+}
+
+// ---------------------------------------------------------------------------------------------
+// Retrieval evaluation (FR-23): ./gradlew evalRetrieval
+// Runs the ablation over eval/retrieval/questions.jsonl against the development database (real
+// corpus, real bge-m3 on local Ollama) and writes eval/reports/retrieval.{md,json}. Loads ../.env;
+// the rewrite row needs ANTHROPIC_API_KEY and is reported as not run without it. Run
+// ./gradlew embedLaws first.
+// ---------------------------------------------------------------------------------------------
+tasks.register('evalRetrieval', Test) { Test t ->
+    description = "Runs tests tagged 'eval' (retrieval ablation, writes eval/reports/retrieval.md)."
+    group = 'verification'
+    configureTestTask(t)
+    useJUnitPlatform { includeTags 'eval' }
+    systemProperty 'shromikai.test.blockExternalHosts', 'false'
+    outputs.upToDateWhen { false }
+    def envFile = new File(repoRoot, '.env')
+    if (envFile.exists()) {
+        envFile.eachLine { line ->
+            def m = line =~ /^\s*([A-Za-z_][A-Za-z0-9_]*)=(.*)$/
+            if (m && !line.trim().startsWith('#') && m[0][2]) {
+                t.environment m[0][1], m[0][2]
+            }
+        }
+    }
+}
+
+// ---------------------------------------------------------------------------------------------
+// Embedding backfill (FR-18): ./gradlew embedLaws
+// Embeds every section version without an up-to-date bge-m3 embedding (needs Ollama). Safe to
+// re-run: sections with an unchanged content hash are skipped.
+// ---------------------------------------------------------------------------------------------
+def loadDotEnv = { JavaExec task ->
+    def envFile = new File(repoRoot, '.env')
+    if (envFile.exists()) {
+        envFile.eachLine { line ->
+            def m = line =~ /^\s*([A-Za-z_][A-Za-z0-9_]*)=(.*)$/
+            if (m && !line.trim().startsWith('#') && m[0][2]) {
+                task.environment m[0][1], m[0][2]
+            }
+        }
+    }
+}
+
+tasks.register('embedLaws', JavaExec) {
+    description = 'Embeds statute sections that have no up-to-date embedding (bge-m3 on Ollama).'
+    group = 'application'
+    dependsOn tasks.named('classes')
+    classpath = sourceSets.main.runtimeClasspath
+    mainClass = 'bd.shromikai.ShromikAiApplication'
+    javaLauncher = javaToolchains.launcherFor { languageVersion = JavaLanguageVersion.of(21) }
+    loadDotEnv(delegate)
+    args '--shromikai.retrieval.cli=true', '--server.port=0', '--spring.main.banner-mode=off'
 }
 
 tasks.named('check') {
