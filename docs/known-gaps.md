@@ -3,6 +3,21 @@
 A running list of what is not done, not measured or not proven, so nothing is claimed by accident
 (R-07, R-12). Each phase report in `docs/dev-log.md` links here. Newest first.
 
+## P7 and P8 review (Prompt R, PASS WITH FIXES; fixes applied 2026-11-12, these remain open)
+
+Item numbers are those of the review report.
+
+| Gap | Where it matters | Detail |
+| --- | --- | --- |
+| Keys with scope `laws` do not open the REST law endpoints; REST calls write no usage events (#7) | FR-65, NFR-20, ADR-0021 | Scope `laws` authenticates `/mcp` only. `API_CALL`, `ANALYSIS`, `COMPARE` and `MEMO_RENDER` usage events are written for no REST request (user, guest or key), so the admin usage views would be empty for REST traffic. Includes the old "`MEMO_RENDER` is not written" row. |
+| A review ticket answers 410 after retention, not its decision (#10) | FR-50 | When the retention job expires an item, the ticket endpoint answers `410` and the user cannot read the decision of a ticket decided before expiry. |
+| The signed result envelope is not bound to the subject (#15) | FR-52, R-12 | The envelope signs the result, not who it was issued to, so a result copied to another person still verifies. Authenticity of the content is unaffected. |
+| `MemoPdfIT` does not run in CI (#16) | FR-55 | It needs a Gotenberg container and is excluded from the default CI task; PDF rendering is covered only when run by hand. |
+| Weak assertions in `ObligationsAgentTest` and `CompareApiIT` (#17) | R-08 | Several cases assert counts or presence and not content (which citation, which status); a wrong item would pass. |
+| MCP `Origin` header is not checked; the prompt template is outside R-05 (#20) | FR-64, R-05, T-12 | The `/mcp` endpoint relies on the Bearer key and does not validate `Origin` (DNS-rebinding hardening for browser clients). The `review-employment-contract` prompt template lives in `mcp/prompts/` and not in `prompts/{id}/v{n}.md`, so `promptLint`, `LOCK` and the R-05 mirror rule do not cover it. |
+| Daily cap of `analyze_employment_contract` is per instance and in memory | FR-66, NFR-06 | `shromikai.mcp.analyze-per-key-per-day` (default 10) is counted in a Bucket4j bucket per key, like the per-minute limit, so it resets on restart and is not shared between instances. |
+| Compare baseline claims are the one R-01 exemption | R-01, ADR-0022 | AGENTS.md R-01 does not yet name the exemption; ADR-0022 records it. A `docs(spec)` edit of R-01 is pending the team's decision. |
+
 ## P8 (MCP server)
 
 | Gap | Where it matters | Detail |
@@ -21,7 +36,6 @@ A running list of what is not done, not measured or not proven, so nothing is cl
 
 | Gap | Where it matters | Detail |
 | --- | --- | --- |
-| **Review ticket (FR-50) is not delivered** | FR-50, E-52..E-54 | Review items are opened and stored (content-free), but there is no review ticket for the user: no `ReviewTicketStatus` endpoint, no claim or decision flow, no per-finding ticket link in the result. P7 builds it. Until then an `UNCERTAIN` finding says it is routed to review, and nothing a person can act on exists. |
 | `expected_topics_missing` is always empty | FR-37, `risk-analysis` input, ADR-0015 | The pipeline passes an empty list. Filling it needs a list of topics a contract of the worker's category is expected to cover, which does not exist: `data/mappings/bd-topics.yaml` maps clause type to sections, not category to expected topics, `TopicMap` is internal to `retrieval`, and no worker category is applied (no category terms in the corpus). Omission findings therefore come only from the model's own reading of the clause outline. Needs a topic-expectation data file with author and reviewer, a public read API on `retrieval`, and an eval of the effect. |
 | Finding merge matching and dedupe key | FR-49 | `FindingMerge` matches a rule finding with a model finding by section key and clause overlap and dedupes on a key that can merge two distinct risks on one section, or keep a duplicate when the model cites a different section. Not yet measured. Review item #7. |
 | Repair query reason codes; repair runs for `VERIFIER_UNAVAILABLE` | FR-47, cost | The repair query is built from the finding's title and explanation without the failed reason code, and repair is attempted when the verifier itself was unavailable, which spends a call that cannot succeed. It should skip repair for `VERIFIER_UNAVAILABLE`. Review item #8. |
@@ -36,7 +50,6 @@ A running list of what is not done, not measured or not proven, so nothing is cl
 | **Cross-family verification was not run live** | FR-44, §7.6, M-04, M-05, any claim of "independent verification" | Gemini is dropped for now (ADR-0018). Every verified citation is `SAME_FAMILY` (Claude Haiku). Do not describe results as verified by an independent or different-family model. |
 | Local PII model too slow on the development Mac | R-03, M-16, M-25, §5.3 REDACT budget | `qwen2.5:7b-instruct` in Docker without a GPU loads in about 31 s and runs at about 7 tokens a second, so `pii-extract` times out at 30 s and the job fails closed. The live recordings stand in the contract's ground-truth entity list for this step only. PII recall on the real model is unmeasured. |
 | M-19 latency per stage not measured as a distribution | NFR-01, ADR-0016, ADR-0017 | One live run (36 s) is a sample. The budgets are planning numbers. |
-| FR-58 synchronous window is 45 s, not 60 s | FR-58, NFR-01, ADR-0020 item 14 | Decided in P7: the endpoint waits at most 45 s for JSON text of up to 8,000 characters and otherwise answers `202`. The PRD text still says 60 s. The stage budgets add up to 84 s, so a typical analysis is answered `202`. |
 | Three findings per risk request | M-06, M-09 | `risk-analysis` v2 reports at most three findings per batch and four batches per contract; the live run did not report the non-compete clause. Recall loss is unmeasured. |
 | Only one contract recorded live | M-01 to M-14 | `syn-en-02`, worker side. No side-swap run, no Bangla contract, no `test` split. |
 | Rules are drafts | FR-36, R-10 | All eight rules in `data/rules/bd-labour.yaml` are `draft`; none is evaluated until a team member reviews it (`docs/rules-review-checklist.md`). No worker-category terms exist in the corpus, so exemptions are not applied. |
@@ -50,7 +63,6 @@ A running list of what is not done, not measured or not proven, so nothing is cl
 | `clauses[].facts` is empty in the result | FR-33, api.md §5.3 | The job does not keep the typed facts after the pipeline; the result's clauses show `facts: []`. |
 | SSE sends only `COMPLETED` stage events | FR-58 | No `STARTED` or `SKIPPED` states; the stream polls the job every 100 ms. |
 | Memo clarity is not measured | FR-51, M-21 | `PlainLanguageLintTest` checks average sentence length only; the clarity judge is P10. |
-| `MEMO_RENDER` is not written | FR-55, NFR-20 | `POST /memos/render` writes no usage event yet (the `usage_event` table arrives in V8, P8; only MCP calls write to it so far). |
 | Per-user concurrency limit is a P7 choice | NFR-20 | Signed-in users without an organisation may run 2 analyses at once; the PRD names only guests and organisations. |
 | Compare baseline runs after the analysis | FR-59 | The baseline starts when the analysis has finished, so `GET /compare/{id}` stays `202` for one more model call. Compare events are the analysis events (no baseline stage); the compare ID is the analysis ID. `baseline` v1 has no dev-split report. |
 | Stored profile covers wording only and is read per request | FR-56 | `PATCH /auth/me` validates and stores the profile; an analysis uses it only when the request sends none. `side` of the profile is not applied to the analysis. |
