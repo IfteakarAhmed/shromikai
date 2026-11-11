@@ -75,6 +75,7 @@ public final class AnalysisJob {
   private volatile List<Clause> clauses = List.of();
   private volatile @Nullable ProblemException failure;
   private volatile @Nullable Outcome outcome;
+  private volatile @Nullable Baseline baseline;
   private volatile String inputKind = "TEXT";
   private volatile int pageCount = 1;
   private volatile @Nullable String language;
@@ -147,6 +148,15 @@ public final class AnalysisJob {
     return outcome;
   }
 
+  /** The compare-mode baseline, or {@code null} until it has run (or when not asked for). */
+  public @Nullable Baseline baseline() {
+    return baseline;
+  }
+
+  void baseline(Baseline result) {
+    this.baseline = result;
+  }
+
   public String inputKind() {
     return inputKind;
   }
@@ -199,6 +209,7 @@ public final class AnalysisJob {
     placeholders.clear();
     clauses = List.of();
     outcome = null;
+    baseline = null;
     trace.clear();
   }
 }

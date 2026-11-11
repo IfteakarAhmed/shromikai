@@ -36,6 +36,7 @@ public class AnalysisRunner {
 
   private final AnalysisService service;
   private final AnalysisPipeline pipeline;
+  private final BaselineAgent baselines;
   private final JobStore jobs;
   private final AnalysisProperties properties;
   private final ExecutorService executor = Executors.newVirtualThreadPerTaskExecutor();
@@ -44,10 +45,12 @@ public class AnalysisRunner {
   public AnalysisRunner(
       AnalysisService service,
       AnalysisPipeline pipeline,
+      BaselineAgent baselines,
       JobStore jobs,
       AnalysisProperties properties) {
     this.service = service;
     this.pipeline = pipeline;
+    this.baselines = baselines;
     this.jobs = jobs;
     this.properties = properties;
   }
@@ -69,11 +72,33 @@ public class AnalysisRunner {
     return start(subject, request, job -> service.executeFiles(job, files), onFinished);
   }
 
+  /** Compare mode (FR-59): the analysis, then the plain-LLM baseline on the same redacted text. */
+  public AnalysisJob compareText(
+      AnalysisSubject subject, AnalysisRequest request, String text, Runnable onFinished) {
+    return start(
+        subject, request, job -> service.executeText(job, text), onFinished, baselines::run);
+  }
+
+  public AnalysisJob compareFiles(
+      AnalysisSubject subject, AnalysisRequest request, List<byte[]> files, Runnable onFinished) {
+    return start(
+        subject, request, job -> service.executeFiles(job, files), onFinished, baselines::run);
+  }
+
   private AnalysisJob start(
       AnalysisSubject subject,
       AnalysisRequest request,
       java.util.function.Consumer<AnalysisJob> intake,
       Runnable onFinished) {
+    return start(subject, request, intake, onFinished, job -> {});
+  }
+
+  private AnalysisJob start(
+      AnalysisSubject subject,
+      AnalysisRequest request,
+      java.util.function.Consumer<AnalysisJob> intake,
+      Runnable onFinished,
+      java.util.function.Consumer<AnalysisJob> afterAnalysis) {
     checkConcurrency(subject);
     AnalysisJob job = service.open(subject, request);
     CompletableFuture<Void> future =
@@ -84,6 +109,7 @@ public class AnalysisRunner {
                 if (job.status() == AnalysisJob.Status.CLASSIFIED) {
                   pipeline.run(job, request, subject);
                 }
+                afterAnalysis.accept(job);
               } catch (RuntimeException unexpected) {
                 LOG.error(
                     "analysis failed unexpectedly: {}", unexpected.getClass().getSimpleName());

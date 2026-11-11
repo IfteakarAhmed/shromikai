@@ -150,6 +150,16 @@ public class AnalysesController {
       @Valid @RequestBody TextRequest body,
       @RequestHeader(value = "Idempotency-Key", required = false) @Nullable String idempotencyKey,
       HttpServletRequest http) {
+    return doStartText(caller, body, idempotencyKey, http, false);
+  }
+
+  /** Shared by {@code /analyses} and {@code /compare}; compare is always {@code 202}. */
+  ResponseEntity<Object> doStartText(
+      AuthenticatedSubject caller,
+      TextRequest body,
+      @Nullable String idempotencyKey,
+      HttpServletRequest http,
+      boolean compare) {
     AnalysisSubject subject = AnalysisSubjects.of(caller, "API");
     String bodyHash =
         Hashing.sha256Hex(
@@ -169,8 +179,18 @@ public class AnalysesController {
     AnalysisRequest request =
         request(caller, body.side(), body.outputLanguage(), body.profile(), body.playbookId());
     AnalysisJob job =
-        begin(caller, http, release -> runner.startText(subject, request, body.text(), release));
+        begin(
+            caller,
+            http,
+            compare ? 2 : 1,
+            release ->
+                compare
+                    ? runner.compareText(subject, request, body.text(), release)
+                    : runner.startText(subject, request, body.text(), release));
     remember(subject, idempotencyKey, bodyHash, job);
+    if (compare) {
+      return accepted(job, "/api/v1/compare/");
+    }
     if (body.text().length() <= SYNC_TEXT_LIMIT && runner.awaitFinished(job)) {
       return ResponseEntity.ok(finished(job, subject));
     }
@@ -226,6 +246,7 @@ public class AnalysesController {
         begin(
             caller,
             http,
+            1,
             release ->
                 text != null
                     ? runner.startText(subject, request, text, release)
@@ -347,7 +368,18 @@ public class AnalysesController {
   }
 
   private ResponseEntity<Object> accepted(AnalysisJob job) {
-    String base = "/api/v1/analyses/" + job.id();
+    return accepted(job, "/api/v1/analyses/");
+  }
+
+  @Schema(name = "CompareAccepted")
+  public record CompareAccepted(UUID compareId, String eventsUrl, String resultUrl) {}
+
+  private ResponseEntity<Object> accepted(AnalysisJob job, String prefix) {
+    String base = prefix + job.id();
+    if (prefix.contains("compare")) {
+      return ResponseEntity.status(HttpStatus.ACCEPTED)
+          .body(new CompareAccepted(job.id(), base + "/events", base));
+    }
     return ResponseEntity.status(HttpStatus.ACCEPTED)
         .body(
             new Accepted(
@@ -388,8 +420,10 @@ public class AnalysesController {
   private AnalysisJob begin(
       AuthenticatedSubject caller,
       HttpServletRequest http,
+      int weight,
       java.util.function.Function<Runnable, AnalysisJob> start) {
-    GuestQuotaService.Reservation reservation = quotas.reserve(caller, http.getRemoteAddr());
+    GuestQuotaService.Reservation reservation =
+        quotas.reserve(caller, http.getRemoteAddr(), weight);
     try {
       return start.apply(reservation::close);
     } catch (RuntimeException e) {

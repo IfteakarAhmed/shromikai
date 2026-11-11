@@ -27,10 +27,7 @@ class OpenApiContractTest {
   /** Catalogue entries without an implementation yet (compare is P7, the rest later phases). */
   private static final Set<String> NOT_YET =
       Set.of(
-          // P7, not done: compare (FR-59) and the account profile (FR-56, PATCH /auth/me)
-          "POST /api/v1/compare",
-          "GET /api/v1/compare/{id}",
-          "GET /api/v1/compare/{id}/events",
+          // P7, not done: the account profile (FR-56, PATCH /auth/me)
           "PATCH /api/v1/auth/me",
           // later phases (admin console, API keys, usage: P8/P9; account deletion FR-78)
           "DELETE /api/v1/auth/me",

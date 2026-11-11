@@ -7,6 +7,7 @@ import bd.shromikai.shared.problem.ProblemException;
 import bd.shromikai.shared.problem.ProblemType;
 import bd.shromikai.verify.SignedResultCodec;
 import bd.shromikai.verify.VerifiedCitation;
+import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
@@ -77,6 +78,70 @@ public class AnalysisResults {
       throw new ProblemException(ProblemType.NOT_FOUND);
     }
     return job;
+  }
+
+  /**
+   * The compare result (E-19, FR-59): the plain-LLM baseline with every citation marked by the
+   * verifier, beside the ShromikAI result. Empty while the baseline is still running.
+   */
+  public java.util.Optional<ObjectNode> compareFor(UUID id, AnalysisSubject caller) {
+    AnalysisJob job = jobFor(id, caller);
+    if (job.status() == AnalysisJob.Status.FAILED && job.failure() != null) {
+      throw job.failure();
+    }
+    Baseline baseline = job.baseline();
+    if (job.status() != AnalysisJob.Status.ANALYSED || baseline == null) {
+      return java.util.Optional.empty();
+    }
+    UnaryOperator<String> restore = text -> job.placeholders().restore(text);
+    ObjectNode out = mapper.createObjectNode();
+    out.put("compareId", id.toString());
+    ObjectNode base = out.putObject("baseline");
+    base.put("status", baseline.status());
+    base.set("reason", mapper.valueToTree(baseline.reason()));
+    base.set("modelId", mapper.valueToTree(baseline.modelId()));
+    ArrayNode findings = base.putArray("findings");
+    int total = 0;
+    int rejected = 0;
+    int uncertain = 0;
+    int verified = 0;
+    for (Baseline.Finding f : baseline.findings()) {
+      ObjectNode node = findings.addObject();
+      node.put("title", restore.apply(f.title().reveal()));
+      node.put("severity", f.severity());
+      node.put("explanation", restore.apply(f.explanation().reveal()));
+      ArrayNode citations = node.putArray("citations");
+      for (Baseline.Checked c : f.citations()) {
+        ObjectNode cite = citations.addObject();
+        ObjectNode claimed = cite.putObject("claimed");
+        claimed.put("sectionKey", c.claimed().sectionKey());
+        claimed.put("quote", c.claimed().quote());
+        claimed.put("claim", restore.apply(c.claimed().claim().reveal()));
+        ObjectNode verification = cite.putObject("verification");
+        verification.put("status", c.status().name());
+        verification.set("reasonCodes", mapper.valueToTree(c.reasonCodes()));
+        total++;
+        switch (c.status()) {
+          case REJECTED -> rejected++;
+          case UNCERTAIN -> uncertain++;
+          case VERIFIED -> verified++;
+        }
+      }
+    }
+    ObjectNode shromikai = resultFor(id, caller);
+    out.set("shromikai", shromikai);
+    ObjectNode summary = out.putObject("summary");
+    summary.put("baselineCitations", total);
+    summary.put("baselineRejected", rejected);
+    summary.put("baselineUncertain", uncertain);
+    summary.put("baselineVerified", verified);
+    int shown = 0;
+    for (JsonNode f : shromikai.path("findings")) {
+      shown += f.path("citations").size();
+    }
+    summary.put("shromikaiShownCitations", shown);
+    out.put("disclaimer", shromikai.path("disclaimer").asText());
+    return java.util.Optional.of(out);
   }
 
   /** Removes the job now (FR-54); the owner may delete again or after expiry, others get 404. */
