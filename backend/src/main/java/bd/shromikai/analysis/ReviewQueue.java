@@ -1,6 +1,7 @@
 package bd.shromikai.analysis;
 
 import bd.shromikai.rules.ClauseFact;
+import bd.shromikai.shared.Hashing;
 import bd.shromikai.shared.SensitiveText;
 import bd.shromikai.verify.ClaimedCitation;
 import bd.shromikai.verify.FactView;
@@ -13,6 +14,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
+import org.jspecify.annotations.Nullable;
 import org.springframework.stereotype.Component;
 
 /**
@@ -36,7 +38,13 @@ public final class ReviewQueue {
   }
 
   /** The findings with {@code reviewItemId} set where an item was opened, and the items. */
-  public record Opened(List<Finding> findings, List<ReviewItem> items) {}
+  public record Opened(List<Finding> findings, List<ReviewItem> items, @Nullable Ticket ticket) {}
+
+  /**
+   * The ticket a worker follows to see the human decision (FR-61): its ID, the secret token (shown
+   * to the owner only; the database keeps its SHA-256) and when the last item expires.
+   */
+  public record Ticket(UUID ticketId, String token, java.time.Instant expiresAt) {}
 
   public Opened open(
       UUID analysisId,
@@ -99,6 +107,22 @@ public final class ReviewQueue {
       items.add(item);
       out.add(finding.withReviewItem(item.id()));
     }
-    return new Opened(out, items);
+    Ticket ticket = null;
+    if (!items.isEmpty()) {
+      byte[] secret = new byte[32];
+      new java.security.SecureRandom().nextBytes(secret);
+      String token = java.util.Base64.getUrlEncoder().withoutPadding().encodeToString(secret);
+      UUID ticketId = UUID.randomUUID();
+      store.attachTicket(analysisId, ticketId, Hashing.sha256Hex(token));
+      ticket =
+          new Ticket(
+              ticketId,
+              token,
+              items.stream()
+                  .map(ReviewItem::expiresAt)
+                  .max(java.time.Instant::compareTo)
+                  .orElseThrow());
+    }
+    return new Opened(out, items, ticket);
   }
 }

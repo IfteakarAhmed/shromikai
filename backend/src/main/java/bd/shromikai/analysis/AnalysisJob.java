@@ -48,7 +48,8 @@ public final class AnalysisJob {
       long durationMs,
       List<FindingVerifier.VerdictSummary> verdicts,
       List<ObligationItem> obligations,
-      MemoNarrator.Narrative narrative) {
+      MemoNarrator.Narrative narrative,
+      ReviewQueue.@Nullable Ticket ticket) {
 
     public Outcome {
       findings = List.copyOf(findings);

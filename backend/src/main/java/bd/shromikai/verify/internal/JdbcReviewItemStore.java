@@ -57,6 +57,19 @@ class JdbcReviewItemStore implements ReviewItemStore {
         .update();
   }
 
+  @Override
+  public void attachTicket(java.util.UUID analysisId, java.util.UUID ticketId, String tokenSha256) {
+    jdbc.sql(
+            """
+            update review_item set ticket_id = :ticket, ticket_token_sha256 = :hash
+             where analysis_id = :analysis and kind = 'FINDING'
+            """)
+        .param("ticket", ticketId)
+        .param("hash", tokenSha256)
+        .param("analysis", analysisId)
+        .update();
+  }
+
   private String facts(List<FactView> facts) {
     List<Map<String, Object>> rows = new ArrayList<>();
     for (FactView fact : facts) {

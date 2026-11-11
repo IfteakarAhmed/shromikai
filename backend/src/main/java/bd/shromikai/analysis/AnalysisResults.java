@@ -207,7 +207,14 @@ public class AnalysisResults {
     MemoNarrator.Narrative narrative = outcome.narrative();
     ObjectNode summary = summary(outcome);
     result.set("summary", summary);
-    result.putNull("reviewTicket");
+    if (outcome.ticket() == null) {
+      result.putNull("reviewTicket");
+    } else {
+      ObjectNode ticket = result.putObject("reviewTicket");
+      ticket.put("ticketId", outcome.ticket().ticketId().toString());
+      ticket.put("token", outcome.ticket().token());
+      ticket.put("expiresAt", outcome.ticket().expiresAt().toString());
+    }
     ArrayNode warnings = result.putArray("warnings");
     outcome
         .warnings()

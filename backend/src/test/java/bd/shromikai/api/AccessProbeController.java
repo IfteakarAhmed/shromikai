@@ -25,12 +25,7 @@ class AccessProbeController {
   }
 
   @RequestMapping(
-      path = {
-        "/api/v1/admin/probe",
-        "/api/v1/dev/probe",
-        "/api/v1/review-items",
-        "/api/v1/compare/probe"
-      },
+      path = {"/api/v1/admin/probe", "/api/v1/dev/probe", "/api/v1/compare/probe"},
       method = {RequestMethod.GET, RequestMethod.POST})
   Map<String, Boolean> ok() {
     return Map.of("ok", true);

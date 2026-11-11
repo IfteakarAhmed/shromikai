@@ -486,7 +486,8 @@ public class AnalysisPipeline {
             durationMs,
             d.verdicts,
             checklist,
-            narrative);
+            narrative,
+            opened.ticket());
     d.job.analysed(outcome);
     record(
         d,

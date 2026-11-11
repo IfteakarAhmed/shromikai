@@ -78,6 +78,14 @@ public class GuestQuotaService {
    * next midnight in Dhaka) or {@code concurrency-limit}. Does nothing for signed-in users.
    */
   public Reservation reserve(AuthenticatedSubject subject, String clientIp) {
+    return reserve(subject, clientIp, 1);
+  }
+
+  /**
+   * As {@link #reserve(AuthenticatedSubject, String)}, counting {@code weight} analyses against the
+   * daily limits (a compare counts 2, FR-59) but occupying one concurrent slot.
+   */
+  public Reservation reserve(AuthenticatedSubject subject, String clientIp, int weight) {
     if (!subject.guest() || subject.deviceHash() == null) {
       return new Reservation(null);
     }
@@ -90,8 +98,8 @@ public class GuestQuotaService {
         deviceCounts.clear();
         ipCounts.clear();
       }
-      if (deviceCounts.getOrDefault(device, 0) >= perDevice
-          || ipCounts.getOrDefault(ip, 0) >= perIp) {
+      if (deviceCounts.getOrDefault(device, 0) + weight > perDevice
+          || ipCounts.getOrDefault(ip, 0) + weight > perIp) {
         long retry =
             Duration.between(now, now.toLocalDate().plusDays(1).atStartOfDay(zone)).toSeconds();
         throw new ProblemException(ProblemType.QUOTA_EXCEEDED, null, (int) Math.max(1, retry));
@@ -99,8 +107,8 @@ public class GuestQuotaService {
       if (running.getOrDefault(device, 0) >= concurrency) {
         throw new ProblemException(ProblemType.CONCURRENCY_LIMIT, null, 5);
       }
-      deviceCounts.merge(device, 1, Integer::sum);
-      ipCounts.merge(ip, 1, Integer::sum);
+      deviceCounts.merge(device, weight, Integer::sum);
+      ipCounts.merge(ip, weight, Integer::sum);
       running.merge(device, 1, Integer::sum);
     }
     return new Reservation(device);

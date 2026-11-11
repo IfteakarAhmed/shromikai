@@ -203,4 +203,48 @@ class AnalysesApiIT extends ApiAnalysisIT {
     assertThat(risk.path("tokensIn").isNumber()).isTrue();
     assertThat(trace.toString()).doesNotContain(SyntheticContracts.marker("syn-en-01"));
   }
+
+  /** FR-61: an analysis with a finding no verified citation backs hands the worker a ticket. */
+  @Test
+  void anUncertainFindingGivesTheWorkerAReviewTicketTheyCanFollow() {
+    String token = worker();
+    JsonNode result = null;
+    for (String contract : SyntheticContracts.IDS) {
+      JsonNode candidate =
+          postJson(
+                  token,
+                  Map.of(
+                      "text",
+                      SyntheticContracts.text(contract),
+                      "side",
+                      "WORKER",
+                      "outputLanguage",
+                      contract.startsWith("syn-bn") ? "bn" : "en"))
+              .getBody();
+      if (candidate.path("reviewTicket").isObject()) {
+        result = candidate;
+        break;
+      }
+    }
+    assertThat(result).as("a synthetic contract with an uncertain finding").isNotNull();
+    JsonNode ticket = result.path("reviewTicket");
+    HttpHeaders headers = bearer(token);
+    headers.set("X-Ticket-Token", ticket.path("token").asText());
+
+    ResponseEntity<JsonNode> status =
+        http.exchange(
+            "/api/v1/review-tickets/" + ticket.path("ticketId").asText(),
+            HttpMethod.GET,
+            new HttpEntity<>(headers),
+            JsonNode.class);
+
+    assertThat(status.getStatusCode()).isEqualTo(HttpStatus.OK);
+    assertThat(status.getBody().path("items")).isNotEmpty();
+    assertThat(status.getBody().path("items").get(0).path("status").asText()).isEqualTo("OPEN");
+    long uncertain =
+        java.util.stream.StreamSupport.stream(result.path("findings").spliterator(), false)
+            .filter(f -> f.path("verificationStatus").asText().equals("UNCERTAIN"))
+            .count();
+    assertThat((long) status.getBody().path("items").size()).isGreaterThanOrEqualTo(uncertain);
+  }
 }
