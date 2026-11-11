@@ -38,7 +38,7 @@ class HealthIndicatorsIT {
   void shouldReportDbAndOllamaUp_whenOllamaHasBothModels() {
     stubOllama("{\"models\":[{\"name\":\"bge-m3:latest\"},{\"name\":\"qwen2.5:7b-instruct\"}]}");
 
-    JsonNode health = http.getForObject("/actuator/health", JsonNode.class);
+    JsonNode health = http.getForObject("/actuator/health/dependencies", JsonNode.class);
 
     assertThat(health.at("/components/db/status").asText()).isEqualTo("UP");
     assertThat(health.at("/components/ollama/status").asText()).isEqualTo("UP");
@@ -49,18 +49,21 @@ class HealthIndicatorsIT {
   void shouldReportOllamaDown_whenOllamaFails() {
     ollama.stubFor(get("/api/version").willReturn(aResponse().withStatus(500)));
 
-    JsonNode health = http.getForObject("/actuator/health", JsonNode.class);
+    JsonNode health = http.getForObject("/actuator/health/dependencies", JsonNode.class);
 
     assertThat(health.at("/components/db/status").asText()).isEqualTo("UP");
     assertThat(health.at("/components/ollama/status").asText()).isEqualTo("DOWN");
     assertThat(health.at("/status").asText()).isEqualTo("DOWN");
+    // the public liveness check is unaffected (FR-04)
+    assertThat(http.getForObject("/actuator/health", JsonNode.class).at("/status").asText())
+        .isEqualTo("UP");
   }
 
   @Test
   void shouldReportOllamaDown_whenAModelIsMissing() {
     stubOllama("{\"models\":[{\"name\":\"bge-m3:latest\"}]}");
 
-    JsonNode health = http.getForObject("/actuator/health", JsonNode.class);
+    JsonNode health = http.getForObject("/actuator/health/dependencies", JsonNode.class);
 
     assertThat(health.at("/components/ollama/status").asText()).isEqualTo("DOWN");
   }

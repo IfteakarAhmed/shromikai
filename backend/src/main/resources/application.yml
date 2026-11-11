@@ -80,6 +80,9 @@ management:
     health:
       show-components: always
       show-details: never
+      group:
+        dependencies:                     # local models; not part of the public liveness check
+          include: db
 
 springdoc:
   api-docs:
@@ -261,3 +264,16 @@ spring:
   config:
     activate:
       on-profile: mcp
+
+---
+# Ollama exists only outside fake-models (OllamaHealthIndicator); keep it visible in the group.
+spring:
+  config:
+    activate:
+      on-profile: "!fake-models"
+management:
+  endpoint:
+    health:
+      group:
+        dependencies:
+          include: db,ollama
