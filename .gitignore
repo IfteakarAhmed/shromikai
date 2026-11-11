@@ -27,3 +27,6 @@ data/raw/
 
 .DS_Store
 *.tsbuildinfo
+
+# jqwik property-test database
+.jqwik-database

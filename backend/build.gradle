@@ -74,7 +74,9 @@ dependencies {
     // Nullness annotations
     implementation 'org.jspecify:jspecify:1.0.1'
 
-    // jsoup (statute ingestion) and PDFBox (contract intake) arrive with P3 and P5, which use them.
+    // Statute ingestion (P3, ADR-0011): HTML parsing and polite client; PDF fallback
+    implementation 'org.jsoup:jsoup:1.24.1'
+    implementation 'org.apache.pdfbox:pdfbox:3.0.8'
 
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
     testImplementation 'org.springframework.boot:spring-boot-testcontainers'
@@ -83,6 +85,7 @@ dependencies {
     testImplementation 'org.testcontainers:postgresql'
     testImplementation 'com.tngtech.archunit:archunit-junit5:1.4.1'
     testImplementation 'org.wiremock:wiremock-standalone:3.13.2'
+    testImplementation 'net.jqwik:jqwik:1.9.3'
     testImplementation 'org.junit.platform:junit-platform-launcher'
 }
 
@@ -228,6 +231,43 @@ toolTask('requirementsReport', 'bd.shromikai.tooling.RequirementsReport',
         new File(repoRoot, 'frontend/src').absolutePath,
         layout.buildDirectory.file('reports/requirements.md').get().asFile.absolutePath,
 ])
+
+
+// ---------------------------------------------------------------------------------------------
+// Statute ingestion (FR-15, ADR-0011): ./gradlew ingestLaws [-Pacts=BLA-2006,CA-1872]
+// Reads ../.env (SCRAPER_CONTACT, DB_*, JWT_SECRET, ...), fetches politely, writes
+// ../eval/reports/corpus-quality.{md,json} and creates a corpus release.
+// ---------------------------------------------------------------------------------------------
+tasks.register('ingestLaws', JavaExec) {
+    description = 'Ingests the statute corpus of the Bangladesh pack and writes the quality report.'
+    group = 'application'
+    dependsOn tasks.named('classes')
+    classpath = sourceSets.main.runtimeClasspath
+    mainClass = 'bd.shromikai.ShromikAiApplication'
+    javaLauncher = javaToolchains.launcherFor { languageVersion = JavaLanguageVersion.of(21) }
+    def envFile = new File(repoRoot, '.env')
+    if (envFile.exists()) {
+        envFile.eachLine { line ->
+            def m = line =~ /^\s*([A-Za-z_][A-Za-z0-9_]*)=(.*)$/
+            if (m && !line.trim().startsWith('#') && m[0][2]) {
+                environment m[0][1], m[0][2]
+            }
+        }
+    }
+    def cliArgs = ['--shromikai.ingest.cli=true', '--server.port=0', '--spring.main.banner-mode=off']
+    if (project.hasProperty('acts')) {
+        cliArgs << "--shromikai.ingest.acts=${project.property('acts')}".toString()
+    }
+    if (project.hasProperty('seed')) {
+        cliArgs << "--shromikai.ingest.sample-seed=${project.property('seed')}".toString()
+    }
+    args cliArgs
+    doFirst {
+        if (!(environment['SCRAPER_CONTACT'] ?: System.getenv('SCRAPER_CONTACT'))) {
+            throw new GradleException('SCRAPER_CONTACT is empty: set it in .env (contact address for the scraper User-Agent, FR-12).')
+        }
+    }
+}
 
 tasks.named('check') {
     dependsOn tasks.named('integrationTest'),

@@ -12,10 +12,13 @@ public final class Hashing {
 
   /** Lower-case hex SHA-256 of the UTF-8 bytes of {@code value}. */
   public static String sha256Hex(String value) {
+    return sha256Hex(value.getBytes(StandardCharsets.UTF_8));
+  }
+
+  /** Lower-case hex SHA-256 of {@code bytes}. */
+  public static String sha256Hex(byte[] bytes) {
     try {
-      return HexFormat.of()
-          .formatHex(
-              MessageDigest.getInstance("SHA-256").digest(value.getBytes(StandardCharsets.UTF_8)));
+      return HexFormat.of().formatHex(MessageDigest.getInstance("SHA-256").digest(bytes));
     } catch (NoSuchAlgorithmException e) {
       throw new IllegalStateException("SHA-256 is required by the Java platform", e);
     }

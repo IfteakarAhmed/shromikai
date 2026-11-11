@@ -9,6 +9,7 @@ import com.tngtech.archunit.core.importer.ImportOption;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -34,7 +35,8 @@ class TestTaggingRulesTest {
           "org.junit.jupiter.params.ParameterizedTest",
           "org.junit.jupiter.api.RepeatedTest",
           "org.junit.jupiter.api.TestFactory",
-          "org.junit.jupiter.api.TestTemplate");
+          "org.junit.jupiter.api.TestTemplate",
+          "net.jqwik.api.Property");
 
   @Test
   void shouldTagEveryTestClassCorrectly() {
@@ -70,10 +72,13 @@ class TestTaggingRulesTest {
       if (type.isMemberClass() || type.isAnonymousClass() || type.isLocalClass()) {
         continue;
       }
-      Set<String> tags =
-          AnnotationSupport.findRepeatableAnnotations(type, Tag.class).stream()
-              .map(Tag::value)
-              .collect(Collectors.toSet());
+      Set<String> tags = new HashSet<>();
+      AnnotationSupport.findRepeatableAnnotations(type, Tag.class)
+          .forEach(tag -> tags.add(tag.value()));
+      // jqwik ignores JUnit's @Tag; its property classes carry jqwik's own tag annotation.
+      for (net.jqwik.api.Tag tag : type.getAnnotationsByType(net.jqwik.api.Tag.class)) {
+        tags.add(tag.value());
+      }
       String name = type.getSimpleName();
       Set<String> integration =
           tags.stream().filter(INTEGRATION_TAGS::contains).collect(Collectors.toSet());
