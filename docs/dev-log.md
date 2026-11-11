@@ -246,3 +246,85 @@ Key prompts given to AI tools while building ShromikAI, and what they produced. 
   2. Should the HR demo land on `/app` until the playbook page exists in P9 (current behaviour)?
   3. A process (probably the IDE run configuration) holds port 8080 with the old code; restart it so it picks up V3 and the new `JWT_SECRET` requirement.
 - **Next phase prerequisites:** `JWT_SECRET` (and `DEMO_PASSWORD` for demo) in `.env` and the IntelliJ run configuration. P3 needs the decision on automated fetching (P0 question 4).
+
+## Phase report - P3 (statute corpus, knowledge graph, quality report)
+
+Status: code, tests and documentation done; the **real ingestion run, the ILO conventions and the
+acceptance check are still open** (see Known gaps). The tag `phase-3` is therefore **not** created.
+
+- **Summary:**
+  - A versioned, hash-tracked statute corpus pipeline for the Bangladesh pack: polite scraper,
+    parsers for the bdlaws index and print view, amendment footnotes turned into version labels,
+    a section graph (`REFERS_TO`, `USES_DEFINITION`, `AMENDED_BY`, `ALIGNS_WITH`), idempotent
+    upsert with one corpus release per run and a quality report that fails the run on a missing
+    source URL.
+  - `GET /api/v1/meta` now shows the latest release, counts and refresh time.
+- **Files created or changed:**
+  - Backend `shared.text` (`BanglaNormalizer`, `NormalisedText`, `QuoteMatcher`), `shared.Hashing`
+    (byte overload); `law` (`SectionKey`, `SectionNumbers`, `IloMappingLoader`, `IngestOutcome`,
+    `LawIngestService`) and `law.internal` (scraper: `PoliteFetcher`, `RobotsPolicy`, `RawCache`,
+    `ActAcquirer`, `PdfActParser`; parsing: `ActParser`, `AmendmentParser`, `SubsectionSplitter`,
+    `BanglaDates`; graph: `CrossReferenceExtractor`, `DefinitionExtractor`; storage:
+    `LawRepository`, `VersionPlanner`, `IngestOrchestrator`, `QualityReport`; wiring:
+    `PackManifest`, properties, CLI runner, ILO mapping startup check); `api.AdminLawController`.
+  - `V4__corpus.sql`; `application.yml` (`shromikai.scraper.*`, `shromikai.ingest.*`);
+    `data/packs/bd.yaml`, `data/mappings/bd-ilo.yaml` (no rows yet); Gradle task `ingestLaws`.
+  - Fixtures: `backend/src/test/resources/fixtures/law/` (saved rows of the real pages, provenance in
+    `PROVENANCE.md`). Regenerated OpenAPI snapshot and frontend types.
+  - Docs: ADR-0011, ADR-0001 version log, architecture §11.2 and §18.4, api.md E-41, README.
+- **Tests added and passing:**
+  - Unit 299/299 (139 new), integration 134/134 (7 new), `./gradlew check requirementsReport`
+    BUILD SUCCESSFUL, `promptLint: OK`, `checkFixtures: OK`; frontend lint, typecheck, tests and
+    build pass.
+  - New: `BanglaNormalizerPropertyTest` (7 jqwik properties), `BanglaNormalizerTest` (9),
+    `QuoteMatcherTest` (8), `SectionNumbersTest`, `SectionParserGoldenTest` (13),
+    `AmendmentParserTest` (11), `CrossReferenceExtractorTest` (31), `DefinitionExtractorTest` (4),
+    `ScraperPolicyTest` (15, WireMock), `PackManifestTest` (3), `QualityReportTest` (10),
+    `IloMappingLoaderTest` (12), `IngestionIdempotencyIT` (7).
+  - Updated: `ApplicationContextIT` (V4), `MetaControllerIT` (`section_key`), `TestTaggingRulesTest`
+    (reads jqwik's `@Tag` and `@Property`).
+- **Coverage of touched packages (JaCoCo line):** `shared.text` 100 % (85/85, gate 80 %), `law` 90 %
+  (137/153), `law.internal` 88 % (1366/1544), `api` 94 %, whole backend 91 % (3120/3438).
+- **Acceptance commands with output:**
+  - `cd backend && ./gradlew check requirementsReport`: `BUILD SUCCESSFUL`.
+  - Not yet run: `./gradlew ingestLaws` against the live portal, because `SCRAPER_CONTACT` is empty
+    in `.env` (the contact goes into the User-Agent, so it must be the team's choice).
+  - Informal check, not the acceptance run: the pages saved during reconnaissance were replayed
+    through the real ingestion code with WireMock in a throwaway test (not committed). The Labour
+    Act parsed to 369 sections and the Contract Act to 197 (11 unnumbered rows merged into the
+    previous section), 2 unresolved references, quality report PASSED. These figures are replaced by
+    `eval/reports/corpus-quality.md` once the real run exists (R-07).
+- **Quality report summary:** none yet from the live run; the report file does not exist until then.
+- **Key decisions and ADRs:** ADR-0011 (corpus acquisition, versioning and section keys).
+  Highlights: print view plus index instead of ~370 section requests; amending acts read from
+  footnote citations; versions are never reconstructed; omitted sections stored non-current;
+  Bangla suffix letters mapped to Latin letters for keys; NORMLEX saved by hand because of the
+  Cloudflare challenge (no bypass); one run at a time through a PostgreSQL advisory lock; the whole
+  run commits or rolls back, so a failed quality check leaves the corpus unchanged.
+- **Known gaps:**
+  - No live ingestion yet; ILO conventions are not ingested: the pack lists C001, C029, C095 and
+    C132 as proposed (by the playbook), none has a `reviewed_by`, and no NORMLEX page has been
+    saved. The NORMLEX parser is not written because the page structure has not been seen;
+    Bangladesh's ratification status is therefore not recorded yet.
+  - `data/mappings/bd-ilo.yaml` has no rows. Drafting rows needs the ILO texts in the corpus
+    (quotes are copied from it, never from memory).
+  - Older versions of amended sections do not exist: the portal publishes only current text. Only
+    re-ingestion over time creates non-current versions. `effective_from` is set for original text
+    only (act publication date); amended versions have none.
+  - Sub-sections are parsed (for references) but not stored as rows. `USES_DEFINITION` matches
+    terms by word start, so it is generous (almost every section links to the definitions section).
+  - The Labour Rules 2015 were not in the portal's alphabetical index on 2026-11-11; the pack records
+    them as optional and the run reports them as missing.
+  - The PDF fallback has a test but no real PDF source configured (the pack has no `pdf_url`).
+  - Tests and code were written in the same batches, not strictly red-first; the golden
+    expectations were checked against the saved pages by hand.
+  - AGENTS.md §7 items 10 and 11 are open (human acceptance check, Prompt R in a fresh session).
+- **Open questions for the team:**
+  1. Set `SCRAPER_CONTACT` in `.env` (a monitored address is polite), then run
+     `cd backend && ./gradlew ingestLaws`.
+  2. Save the four NORMLEX pages (text and Bangladesh ratification) under `data/raw/ilo/` and name
+     the legal reviewer who sets `reviewed_by` in `data/packs/bd.yaml`.
+  3. Compare the 5 sampled sections of the generated report with the official site.
+  4. Run Prompt R in a fresh session, then tag `phase-3` on the commit that passes.
+- **Next phase prerequisites:** P4 needs the corpus ingested (this phase's real run) and Ollama
+  with `bge-m3` pulled for the embedding backfill.
