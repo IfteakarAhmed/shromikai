@@ -155,7 +155,6 @@ final class PipelineHarness {
                "kind":"CONFLICT","severity":"HIGH","non_obvious":false,
                "clause_type":"NOTICE_AND_RESIGNATION","clause_ids":["c1"],
                "explanation":"The clause gives only seven days notice of dismissal.",
-               "why_it_matters":"A worker may lose pay with little warning.",
                "citations":[{"section_key":"XV-LAB:9@original",
                  "quote":"shall give a worker written notice of dismissal at least fourteen days",
                  "claim":"An employer must give a worker written notice before dismissal."}],

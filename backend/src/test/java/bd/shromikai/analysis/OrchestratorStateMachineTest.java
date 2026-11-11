@@ -102,7 +102,7 @@ class OrchestratorStateMachineTest {
     TraceEvent risk =
         job.trace().stream().filter(e -> e.stage() == Stage.RISK).findFirst().orElseThrow();
     assertThat(risk.promptId()).isEqualTo("risk-analysis");
-    assertThat(risk.promptVersion()).isEqualTo(1);
+    assertThat(risk.promptVersion()).as("risk-analysis v2 (ADR-0016)").isEqualTo(2);
     assertThat(risk.tokensIn()).isPositive();
     assertThat(risk.costUsdMicros()).isPositive();
     assertThat(risk.detail().get("claimedSectionKeys").toString())
@@ -259,7 +259,6 @@ class OrchestratorStateMachineTest {
                          "kind":"CONFLICT","severity":"HIGH","non_obvious":false,
                          "clause_type":"NOTICE_AND_RESIGNATION","clause_ids":["c1"],
                          "explanation":"The clause gives only seven days notice of dismissal.",
-                         "why_it_matters":"A worker may lose pay with little warning.",
                          "citations":[{"section_key":"XV-LAB:9@original",
                            "quote":"every worker is entitled to a company car after one year of service",
                            "claim":"A worker is entitled to a company car."}],

@@ -64,6 +64,14 @@ abstract class LiveBase {
     static volatile int maxCalls = 3;
     static volatile boolean record = false;
 
+    /** At most this many live calls of a prompt in one run (for example risk-analysis: 1). */
+    static volatile java.util.Map<String, Integer> perPromptLimits = java.util.Map.of();
+
+    /** Ledger purpose prefix of the contract and its own cap (US$1.20 for the first recording). */
+    static volatile String contractPrefix = "live";
+
+    static volatile long contractCapMicros = Long.MAX_VALUE;
+
     /** The synthetic contract whose ground-truth entities stand in for the local PII model. */
     static volatile String localPiiStandInFor = null;
 
@@ -112,9 +120,6 @@ abstract class LiveBase {
           }
         };
       }
-      if (Run.record) {
-        wrapped = new RecordingChatPort(wrapped, FIXTURES, Run.caseId);
-      }
       boolean cloud = port.provider().equals("anthropic") || port.provider().equals("gemini");
       if (cloud) {
         PricingProperties pricing =
@@ -125,7 +130,14 @@ abstract class LiveBase {
                 new LiveSpendLedger(),
                 new CostCalculator(pricing),
                 Run.purpose,
-                Run.maxCalls);
+                Run.maxCalls,
+                Run.perPromptLimits,
+                Run.contractPrefix,
+                Run.contractCapMicros);
+      }
+      if (Run.record) {
+        // Outside the cap: a call already recorded is replayed and costs nothing.
+        wrapped = new RecordingChatPort(wrapped, FIXTURES, Run.caseId, true);
       }
       return wrapped;
     }

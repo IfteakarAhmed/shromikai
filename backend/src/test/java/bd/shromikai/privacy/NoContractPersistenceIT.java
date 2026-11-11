@@ -165,13 +165,12 @@ class NoContractPersistenceIT {
               f.put("kind", "CONFLICT").put("severity", "HIGH").put("non_obvious", false);
               f.put("clause_type", "OTHER");
               f.putArray("clause_ids").add(clauses.get(0).path("id").asText());
-              f.put("explanation", copied);
-              f.put("why_it_matters", copied);
+              f.put("explanation", copied.substring(0, Math.min(copied.length(), 160)));
               f.putArray("citations")
                   .addObject()
                   .put("section_key", candidates.get(0).path("sectionKey").asText())
                   .put("quote", "an invented quote that the section does not contain at all")
-                  .put("claim", copied);
+                  .put("claim", copied.substring(0, Math.min(copied.length(), 100)));
               f.put("confidence", 0.5);
             }
             return out;

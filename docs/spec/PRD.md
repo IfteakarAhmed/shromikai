@@ -318,7 +318,7 @@ with a p95 target of 120 seconds.
 
 | ID | Category | Requirement | Measurement |
 | --- | --- | --- | --- |
-| NFR-01 | Latency | p95 end-to-end for contracts up to 10 pages on the reference deployment: ≤ 60 s for text input and text-layer PDFs; ≤ 70 s for scanned PDFs and photos (OCR adds up to 8 s). Stage and token budgets in architecture §5.3 rest on a stated output-speed assumption that P6 measures; a miss is resolved through an ADR, never by silently changing the target. | `202` to the `COMPLETE` event; M-19 per input kind and per stage; first measured on the `dev` split in P6, then on the `test` split in P10. |
+| NFR-01 | Latency | p95 end-to-end for contracts up to 10 pages on the reference deployment: ≤ 80 s for text input and text-layer PDFs; ≤ 90 s for scanned PDFs and photos (OCR adds up to 8 s). Raised from 60 s and 70 s by ADR-0016 (the risk answer cap); to be re-measured in P10. Stage and token budgets in architecture §5.3 rest on a stated output-speed assumption that P6 measures; a miss is resolved through an ADR, never by silently changing the target. | `202` to the `COMPLETE` event; M-19 per input kind and per stage; first measured on the `dev` split in P6, then on the `test` split in P10. |
 | NFR-02 | Responsiveness | p95 time from `202` to the first SSE event ≤ 2 s; `/api/v1/laws/search` p95 ≤ 500 ms with 20 concurrent users. | k6 (FR-87). |
 | NFR-03 | Cost | Model cost per analysis up to 10 pages: median ≤ US$0.40, p95 ≤ US$0.75; hard cap US$1.00 per analysis; daily cap configurable. The §9.1 uncached estimate (≈ US$0.34) sits below the median target, leaving room for Gemini pricing, repairs and longer contracts. | Cost ledger (FR-62) including cache-write, cache-read and long-context tiers; M-20; estimate in §9.1. |
 | NFR-04 | Availability | ≥ 99.5 % monthly availability of `/actuator/health` and `POST /api/v1/analyses` from 19 November 2026 to the end of the final round. If Anthropic is unavailable, return `503` `upstream-unavailable` with `Retry-After`; never fall back to an unverified path. | External uptime probe every 60 s (n8n `uptime-probe` workflow or the hosting provider's monitor). |
@@ -393,7 +393,7 @@ reported as evaluation results.
 | KPI-05 | Risk recall [M-06] | gold risks matched ÷ gold risks | ≥ 0.80 |
 | KPI-06 | Three-risk coverage [M-08] | contracts with ≥ 3 valid findings ÷ contracts | ≥ 0.90 |
 | KPI-07 | Privacy leaks [M-16 + M-17] | PII canaries in cloud payloads + content canaries at rest | 0 |
-| KPI-08 | Latency [M-19] | p95 of (`COMPLETE` − `202`), per input kind | ≤ 60 s text and text-layer PDF; ≤ 70 s scans and photos |
+| KPI-08 | Latency [M-19] | p95 of (`COMPLETE` − `202`), per input kind | ≤ 80 s text and text-layer PDF; ≤ 90 s scans and photos (ADR-0016) |
 | KPI-09 | Cost [M-20] | median Σ model-call cost per analysis | ≤ US$0.40 |
 | KPI-10 | Fairness [M-13, M-14] | bilingual consistency; side balance | ≥ 0.80; ≥ 0.90 |
 | KPI-11 | Bangla clarity [M-21] | mean clarity rating (1 to 5) | ≥ 4.0 |

@@ -29,7 +29,7 @@ public record AnalysisProperties(Analysis analysis, Budget budget) {
 
   public AnalysisProperties {
     if (analysis == null) {
-      analysis = new Analysis(Duration.ofSeconds(120), Map.of(), Set.of("BD"));
+      analysis = new Analysis(Duration.ofSeconds(150), Map.of(), Set.of("BD"));
     }
     if (analysis.jurisdictions() == null || analysis.jurisdictions().isEmpty()) {
       analysis = new Analysis(analysis.hardTimeout(), analysis.stepTimeouts(), Set.of("BD"));

@@ -100,7 +100,12 @@ public final class AnthropicChatAdapter implements ChatPort {
     if (message.stopReason().map(StopReason.MAX_TOKENS::equals).orElse(false)) {
       throw new ModelOutputInvalidException("anthropic-max-tokens", usage(message));
     }
-    return new ChatResponse(parse(message), message.model().asString(), usage(message), false);
+    return new ChatResponse(
+        parse(message),
+        message.model().asString(),
+        usage(message),
+        false,
+        message.stopReason().map(StopReason::asString).orElse(null));
   }
 
   private static TokenUsage usage(Message message) {
@@ -118,7 +123,9 @@ public final class AnthropicChatAdapter implements ChatPort {
                 JsonOutputFormat.builder()
                     .schema(
                         JsonOutputFormat.Schema.builder()
-                            .additionalProperties(schemaProperties(request.outputSchema()))
+                            .additionalProperties(
+                                schemaProperties(
+                                    AnthropicSchemaSubset.reduce(request.outputSchema())))
                             .build())
                     .build());
     if (request.effort() != null) {

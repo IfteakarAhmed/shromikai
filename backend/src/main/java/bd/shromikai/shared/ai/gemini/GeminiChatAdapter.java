@@ -193,6 +193,7 @@ public final class GeminiChatAdapter implements ChatPort {
             // Thinking tokens are billed as output tokens.
             usage.path("candidatesTokenCount").asLong() + usage.path("thoughtsTokenCount").asLong(),
             usage.path("cachedContentTokenCount").asLong()),
-        false);
+        false,
+        finishReason.isEmpty() ? null : finishReason);
   }
 }

@@ -85,22 +85,6 @@
     "severity" : "HIGH",
     "source" : "LLM_ANALYSIS",
     "nonObvious" : false,
-    "clauseType" : "NON_COMPETE",
-    "clauseIds" : [ "c9" ],
-    "verificationStatus" : "VERIFIED",
-    "citations" : [ {
-      "sectionKey" : "XV-LAB:6@original",
-      "attempt" : 1,
-      "support" : "SUPPORTS"
-    } ],
-    "redline" : true,
-    "reviewItem" : false
-  }, {
-    "id" : "f7",
-    "kind" : "CONFLICT",
-    "severity" : "HIGH",
-    "source" : "LLM_ANALYSIS",
-    "nonObvious" : false,
     "clauseType" : "DISPUTE_RESOLUTION",
     "clauseIds" : [ "c10" ],
     "verificationStatus" : "UNCERTAIN",
@@ -108,7 +92,7 @@
     "redline" : false,
     "reviewItem" : true
   }, {
-    "id" : "f8",
+    "id" : "f7",
     "kind" : "OMISSION",
     "severity" : "MEDIUM",
     "source" : "LLM_ANALYSIS",

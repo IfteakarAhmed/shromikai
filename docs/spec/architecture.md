@@ -343,14 +343,14 @@ stops at the cap counts as schema-invalid output, and its one repair splits the 
 | `REDACT` | 6 s | `pii-extract` (local) | 400 | Detectors first (< 200 ms); chunks of ≤ 1,500 characters, 4 in parallel (`OLLAMA_NUM_PARALLEL=4`) |
 | `CLASSIFY` | 5 s | `clause-classify`, 2 batches in parallel | 450 | 2 s + 450 ÷ 150 = 5 s |
 | `RETRIEVE` ∥ `RULES` | 6 s | `query-rewrite` (2 batches) ∥ `clause-facts` (3 batches) | 600 | 2 s + 600 ÷ 150 = 6 s; one batched embedding call; rule engine < 50 ms |
-| `RISK` | 20 s | `risk-analysis`, up to 4 clause batches in parallel (effort `medium`); `obligations` in parallel | 1,400 (`risk-analysis`), 1,500 (`obligations`) | 2 s + 1,400 ÷ 80 = 19.5 s; obligations 2 s + 1,500 ÷ 150 = 12 s, off the critical path |
+| `RISK` | 40 s (ADR-0016; was 20 s) | `risk-analysis` v2, up to 4 clause batches in parallel (effort `medium`, thinking off); `obligations` in parallel | 3,000 (`risk-analysis` v2: at most 3 findings per request), 1,500 (`obligations`) | 2 s + 3,000 ÷ 80 = 39.5 s on the planning assumption (ADR-0016); one live run suggested about 150 tokens per second including prefill, which would be about 20 s (not a measurement of the p95); obligations 2 s + 1,500 ÷ 150 = 12 s, off the critical path |
 | `VERIFY` | 4 s | `verify-support`, 8 in parallel, about 12 citations | 150 | 2 waves × (1 s + 150 ÷ 150) = 4 s; existence and quote checks < 50 ms each |
 | `CORRECT` | 5 s (only when needed) | `query-rewrite` then `risk-citation-repair`, repairs in parallel | 200 / 300 | 2 s + 200 ÷ 150 ≈ 3.5 s, then re-verification ≈ 1.5 s; the repair call overlaps re-retrieval of other findings |
 | `COMPOSE` | 12 s | `memo-bn` ∥ `counter-offer` (one call per `VERIFIED` finding, up to 8 in parallel) | 800 (memo), 500 (counter-offer) | memo 2 s + 800 ÷ 80 = 12 s; counter-offers 2 s + 500 ÷ 80 ≈ 8.5 s plus a re-check ≤ 3 s; counter-offers for findings verified at attempt 1 start during `CORRECT` |
-| **Total** | **≤ 59 s** text input and text-layer PDFs; **≤ 67 s** scanned PDFs and photos | | | Sum of the stage budgets with `CORRECT`; hard timeout 120 s → `analysis-timeout` |
+| **Total** | **≤ 79 s** text input and text-layer PDFs; **≤ 87 s** scanned PDFs and photos (ADR-0016; was 59 s and 67 s) | | | Sum of the stage budgets with `CORRECT`; hard timeout 150 s (was 120 s) → `analysis-timeout` |
 
-NFR-01 sets its p95 targets from this table: 60 s for text input and text-layer PDFs, 70 s for
-scanned PDFs and photos.
+NFR-01 sets its p95 targets from this table: 80 s for text input and text-layer PDFs, 90 s for
+scanned PDFs and photos (ADR-0016; they were 60 s and 70 s before the risk answer cap changed).
 
 ### 5.4 Failure handling
 
@@ -1191,4 +1191,5 @@ where the specification needed a decision. None changes a requirement ID.
 | C37 | §16 and FR-46 say the demo script runs in the `fake-models` profile, but that profile replays fixtures that exist only after live recording | `scripts/demo-fake-citation.sh` runs `./gradlew demoFakeCitation`: the real verifier, retrieval seam and corrective loop over the local corpus with scripted stand-ins, offline and free; the output says the models are stand-ins | P6 |
 | C38 | ADR-0005 and §6 say Claude runs with adaptive thinking, but thinking tokens count against `max_tokens`. A live run showed `clause-classify` (cap 700) answering a five-clause batch with about 550 hidden tokens and failing at the cap, and a 150-token verdict using 90 to 230 | The adapter sends `thinking: {type: disabled}` on every Claude call; the prompts' output caps then mean visible JSON only. `effort` stays. Whether some role should think again, with a cap that allows it, is an ADR for after the evaluation (ADR-0015 decision 10) | P6 |
 | C39 | The local `qwen2.5:7b-instruct` in Docker on the development Mac (no GPU) needs about 31 s to load and then runs at about 7 tokens a second, so `pii-extract` (timeout 30 s) fails, the job fails closed as designed and nothing reaches the cloud. §5.3's REDACT budget (6 s) assumes a GPU | Not changed in P6. The live recording stands in the contract's ground-truth entity list for this step only (stated in its report). A GPU host, a longer timeout or a smaller model is a decision for the team (M-16 and M-25 are still unmeasured on the real model) | P6 |
+| C40 | ADR-0008 asks for an ADR when a measurement misses a budget: the live run showed the 1,400-token `risk-analysis` v1 cap was cut on every call | `risk-analysis` v2 with a bounded answer and a 3,000-token cap; `RISK` budget 40 s, NFR-01 targets 80 s and 90 s, step timeout 110 s, hard timeout 150 s (ADR-0016) | P6 |
 

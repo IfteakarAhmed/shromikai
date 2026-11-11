@@ -115,6 +115,39 @@ class PromptGoldenTest {
   }
 
   @Test
+  void shouldRenderTheGoldenPromptOfRiskAnalysisV2() {
+    Prompt prompt = registry.get("risk-analysis", 2);
+    PromptRenderer.Rendered rendered = renderer.render(prompt, inputs("risk-analysis"));
+    String actual =
+        "<system>\n"
+            + rendered.system()
+            + "\n</system>\n<user>\n"
+            + rendered.user().reveal()
+            + "\n</user>\n";
+
+    assertThat(actual).isEqualTo(Golden.expect("prompts/risk-analysis.v2.txt", actual));
+    assertThat(prompt.maxOutputTokens()).isEqualTo(3000);
+    assertThat(registry.latest("risk-analysis").version()).isEqualTo(2);
+    assertThat(registry.get("risk-analysis", 1).maxOutputTokens())
+        .as("v1 is kept as it was")
+        .isEqualTo(1400);
+  }
+
+  @Test
+  void shouldKeepTheSeverityRubricInV2AndTheBoundsInItsText() {
+    String system = registry.get("risk-analysis", 2).system();
+
+    assertThat(system)
+        .contains(
+            "CRITICAL: conflicts with a mandatory statutory provision with loss of wages, benefits or\n  employment protection.")
+        .contains(
+            "LOW: deviation from an ILO convention or drafting practice without a statutory conflict.")
+        .contains("at most 3 findings per request")
+        .contains("at most 2 citations per finding")
+        .contains("at most 160 characters");
+  }
+
+  @Test
   void shouldEmbedTheSeverityRubricVerbatim() {
     String system = registry.get("risk-analysis", 1).system();
 

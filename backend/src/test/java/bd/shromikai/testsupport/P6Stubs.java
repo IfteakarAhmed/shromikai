@@ -187,6 +187,9 @@ public final class P6Stubs {
     out.put("status", "OK").put("reason", "NONE");
     ArrayNode findings = out.putArray("findings");
     for (JsonNode clause : clauses(request)) {
+      if (findings.size() >= 2) {
+        break; // v2 allows 3 findings per request; the last slot is the omission below
+      }
       String type = clause.path("type").asText();
       String keyword = keywordOf(type);
       if (keyword == null) {
@@ -207,7 +210,6 @@ public final class P6Stubs {
       finding.putArray("clause_ids").add(clause.path("id").asText());
       finding.put(
           "explanation", "For the " + side + ": the clause may conflict with the cited section.");
-      finding.put("why_it_matters", "A statutory right may not be honoured.");
       ArrayNode citations = finding.putArray("citations");
       if (section != null) {
         String text = section.path("authoritativeText").asText();
@@ -239,7 +241,6 @@ public final class P6Stubs {
     omission.putArray("clause_ids");
     omission.put(
         "explanation", "For the " + side + ": the contract says nothing about maternity leave.");
-    omission.put("why_it_matters", "A woman worker may not get the leave the law gives.");
     omission.putArray("citations");
     omission.put("confidence", 0.7);
     return out;

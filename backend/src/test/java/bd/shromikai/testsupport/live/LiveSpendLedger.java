@@ -75,6 +75,30 @@ public final class LiveSpendLedger {
     }
   }
 
+  /**
+   * As {@link #reserve}, and also refuses when everything spent on one purpose (for example one
+   * contract) plus this call could pass that purpose's own cap.
+   */
+  public synchronized void reserve(
+      String what, long worstCaseMicros, String purposePrefix, long purposeCapMicros) {
+    reserve(what, worstCaseMicros);
+    long spentOnPurpose = spentOn(purposePrefix);
+    if (spentOnPurpose + worstCaseMicros > purposeCapMicros) {
+      throw new SpendCapException(
+          "The cap of US$"
+              + purposeCapMicros / 1_000_000.0
+              + " for "
+              + purposePrefix
+              + " would be exceeded by "
+              + what
+              + ": spent US$"
+              + spentOnPurpose / 1_000_000.0
+              + ", this call could cost up to US$"
+              + worstCaseMicros / 1_000_000.0
+              + ". Ask the owner before spending more.");
+    }
+  }
+
   /** Adds a finished call. */
   public synchronized void record(
       String purpose, String modelId, long tokensIn, long tokensOut, long costMicros) {

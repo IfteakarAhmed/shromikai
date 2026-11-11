@@ -53,22 +53,6 @@
     "severity" : "HIGH",
     "source" : "LLM_ANALYSIS",
     "nonObvious" : false,
-    "clauseType" : "OVERTIME",
-    "clauseIds" : [ "c6" ],
-    "verificationStatus" : "VERIFIED",
-    "citations" : [ {
-      "sectionKey" : "XV-LAB:4@original",
-      "attempt" : 1,
-      "support" : "SUPPORTS"
-    } ],
-    "redline" : true,
-    "reviewItem" : false
-  }, {
-    "id" : "f5",
-    "kind" : "CONFLICT",
-    "severity" : "HIGH",
-    "source" : "LLM_ANALYSIS",
-    "nonObvious" : false,
     "clauseType" : "NOTICE_AND_RESIGNATION",
     "clauseIds" : [ "c8" ],
     "verificationStatus" : "VERIFIED",
@@ -80,7 +64,7 @@
     "redline" : true,
     "reviewItem" : false
   }, {
-    "id" : "f6",
+    "id" : "f5",
     "kind" : "CONFLICT",
     "severity" : "HIGH",
     "source" : "LLM_ANALYSIS",
@@ -96,7 +80,7 @@
     "redline" : true,
     "reviewItem" : false
   }, {
-    "id" : "f7",
+    "id" : "f6",
     "kind" : "CONFLICT",
     "severity" : "HIGH",
     "source" : "LLM_ANALYSIS",
@@ -108,7 +92,7 @@
     "redline" : false,
     "reviewItem" : true
   }, {
-    "id" : "f8",
+    "id" : "f7",
     "kind" : "OMISSION",
     "severity" : "MEDIUM",
     "source" : "LLM_ANALYSIS",

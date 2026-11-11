@@ -202,12 +202,12 @@ shromikai:
     max-concurrent: 4                     # uploads read at the same time, service-wide; more get capacity-exhausted
     tesseract-command: [tesseract, stdin, stdout, -l, ben+eng, tsv]   # stdin/stdout only, no temp files
   analysis:
-    hard-timeout: 120s                    # analysis-timeout (architecture §5.3)
+    hard-timeout: 150s                    # analysis-timeout (architecture §5.3, ADR-0016; was 120s)
     jurisdictions: [BD]                   # jurisdictions of the active pack that citations may come from
     step-timeouts:                        # per-step cancel limits, above the p95 budgets of §5.3
       retrieve: 45s
       rules: 45s
-      risk: 80s
+      risk: 110s                          # ADR-0016 (was 80s): 3,000-token risk answers
       verify: 40s
       correct: 50s
       compose: 70s

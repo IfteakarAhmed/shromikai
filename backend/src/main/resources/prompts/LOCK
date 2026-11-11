@@ -1,2 +1,9 @@
 # Released prompt versions: {id} v{n} {sha256 of prompts/{id}/v{n}.md}. promptLint fails if a
 # listed file changes; a change creates v{n+1} (AGENTS.md §5.1, R-05).
+clause-facts v1 d97c02bbc78cb95911f7a1acf33e77e479d046e6d29746e3df4d5fce8cb3b0ce
+risk-analysis v1 146938b152b6e5dedb7bd7a87288bb1f13755256e98cf5bdc75b18212a4aa18e
+risk-citation-repair v1 c87a8a6a7147cf1cbe70b91c2456e942c1b93f25a81a7326f988fe7ea574443e
+counter-offer v1 7783820311c0190cdb44e09de3341790ab0b00f73fdd273f9bccb8ff95113331
+verify-support v1 97dc9603e26f3a161abc96472596d230e0a36f7af88b9868929e5cf2b4698d1e
+verify-support-claude v1 851105d32a9b61b7ec126b49a598abf65216fc71496775d30210521613546cab
+risk-analysis v2 0c341cfd5d34cd3690dcf880d6978ec717c373f709750c3fd6d1eb2a3bf117d1

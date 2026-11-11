@@ -72,7 +72,8 @@ public class ModelGateway {
       int promptVersion,
       String modelId,
       TokenUsage usage,
-      long latencyMs) {}
+      long latencyMs,
+      @Nullable String stopReason) {}
 
   /** Calls the latest version of the prompt. */
   public Result call(String promptId, Map<String, ?> variables) {
@@ -198,7 +199,13 @@ public class ModelGateway {
       Prompt prompt, ChatResponse response, TokenUsage usage, long startNanos, boolean recorded) {
     long latencyMs = report(prompt, response.modelId(), usage, startNanos, recorded);
     return new Result(
-        response.output(), prompt.id(), prompt.version(), response.modelId(), usage, latencyMs);
+        response.output(),
+        prompt.id(),
+        prompt.version(),
+        response.modelId(),
+        usage,
+        latencyMs,
+        response.stopReason());
   }
 
   private long report(

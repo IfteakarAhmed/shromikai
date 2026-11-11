@@ -88,16 +88,38 @@ public final class RiskAgent {
     return new Result(all, batches.size(), splits[0]);
   }
 
-  private List<Finding> runBatch(
-      ModelSession session,
+  /** One call of the risk agent: its variables, the clauses it covers and the keys it may cite. */
+  public record Batch(
+      List<String> clauseIds, Map<String, Object> variables, List<String> candidateKeys) {
+
+    /** The per-request enums of the gateway call (architecture §8.3). */
+    public Map<String, List<String>> enums() {
+      return Map.of(ENUM_PATH, candidateKeys);
+    }
+  }
+
+  /** The batches of {@link #run}, without calling a model (used by the live one-batch check). */
+  public List<Batch> plan(
+      AnalysisRequest request,
+      List<ClauseView> clauses,
+      CandidateSet candidates,
+      List<Map<String, Object>> ruleFindings,
+      List<Map<String, Object>> expectedTopicsMissing) {
+    List<Map<String, Object>> outline = outline(clauses);
+    List<Batch> out = new ArrayList<>();
+    for (List<ClauseView> batch : batches(clauses, MAX_BATCHES)) {
+      out.add(batch(request, batch, outline, candidates, ruleFindings, expectedTopicsMissing));
+    }
+    return out;
+  }
+
+  private static Batch batch(
       AnalysisRequest request,
       List<ClauseView> batch,
       List<Map<String, Object>> outline,
       CandidateSet candidates,
       List<Map<String, Object>> ruleFindings,
-      List<Map<String, Object>> expectedTopicsMissing,
-      int[] splits,
-      boolean mayFallBackToSplit) {
+      List<Map<String, Object>> expectedTopicsMissing) {
     List<String> ids = batch.stream().map(v -> v.clause().id()).toList();
     List<Candidate> forBatch = candidates.forClauses(ids);
     if (forBatch.isEmpty()) {
@@ -117,9 +139,23 @@ public final class RiskAgent {
     variables.put("expected_topics_missing", expectedTopicsMissing);
     variables.put("candidate_sections", forBatch);
     variables.put("clauses", clauseJson(batch));
+    return new Batch(ids, variables, keys);
+  }
+
+  private List<Finding> runBatch(
+      ModelSession session,
+      AnalysisRequest request,
+      List<ClauseView> batch,
+      List<Map<String, Object>> outline,
+      CandidateSet candidates,
+      List<Map<String, Object>> ruleFindings,
+      List<Map<String, Object>> expectedTopicsMissing,
+      int[] splits,
+      boolean mayFallBackToSplit) {
+    Batch planned = batch(request, batch, outline, candidates, ruleFindings, expectedTopicsMissing);
     ModelGateway.Result result;
     try {
-      result = session.call(Stage.RISK, PROMPT, variables, Map.of(ENUM_PATH, keys));
+      result = session.call(Stage.RISK, PROMPT, planned.variables(), planned.enums());
     } catch (ModelOutputInvalidException e) {
       if (!mayFallBackToSplit || batch.size() < 2) {
         throw e;
@@ -153,7 +189,7 @@ public final class RiskAgent {
               false));
       return out;
     }
-    return parse(result.output(), ids, request.outputLanguage());
+    return parse(result.output(), planned.clauseIds(), request.outputLanguage());
   }
 
   static List<Finding> parse(JsonNode output, List<String> batchClauseIds, String language) {

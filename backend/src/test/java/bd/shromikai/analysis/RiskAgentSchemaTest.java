@@ -38,7 +38,6 @@ class RiskAgentSchemaTest {
         {"title":"Dismissal without notice","kind":"%s","severity":"HIGH","non_obvious":false,
          "clause_type":"TERMINATION","clause_ids":["%s"],
          "explanation":"The clause lets the employer end the job without notice.",
-         "why_it_matters":"A worker could lose pay.",
          "citations":[{"section_key":"%s","quote":"shall give a worker written notice of dismissal",
                        "claim":"An employer must give written notice before dismissal."}],
          "confidence":0.8}
@@ -138,7 +137,7 @@ class RiskAgentSchemaTest {
         """
         {"title":"No annual leave clause","kind":"OMISSION","severity":"MEDIUM","non_obvious":false,
          "clause_type":"LEAVE","clause_ids":[],"explanation":"The contract has no leave clause at all.",
-         "why_it_matters":"Leave may not be given.","citations":[],"confidence":0.7}
+         "citations":[],"confidence":0.7}
         """;
     ModelSession session =
         AnalysisFixtures.session(
