@@ -131,6 +131,18 @@ shromikai:
   fake-models:
     fixtures: classpath:fixtures/llm
     default-case: default
+  scraper:                                # statute ingestion (FR-12, architecture §12)
+    user-agent: "ShromikAI-ingest/1.0 (+${SCRAPER_CONTACT:})"
+    contact: ${SCRAPER_CONTACT:}          # required for a real run; never committed
+    min-interval: 1s                      # at most 1 request per second (startup refuses less)
+    timeout: 30s
+    raw-dir: ${user.dir}/../data/raw      # git-ignored cache with SHA-256 sidecars
+    cache-policy: REFRESH                 # PREFER_CACHE only while developing the parser
+  ingest:
+    pack-file: ${user.dir}/../data/packs/bd.yaml
+    mapping-file: ${user.dir}/../data/mappings/bd-ilo.yaml
+    report-dir: ${user.dir}/../eval/reports
+    cli: false                            # ./gradlew ingestLaws sets this
 
 ---
 spring:

@@ -4,6 +4,22 @@
  */
 
 export interface paths {
+  '/api/v1/admin/laws/ingest': {
+    parameters: {
+      query?: never
+      header?: never
+      path?: never
+      cookie?: never
+    }
+    get?: never
+    put?: never
+    post: operations['ingest']
+    delete?: never
+    options?: never
+    head?: never
+    patch?: never
+    trace?: never
+  }
   '/api/v1/auth/guest': {
     parameters: {
       query?: never
@@ -123,6 +139,15 @@ export interface components {
     /** @default null */
     GuestRequest: {
       deviceToken: string
+    }
+    /** @default null */
+    IngestAccepted: {
+      /** Format: uuid */
+      ingestRunId: string
+    }
+    /** @default null */
+    IngestRequest: {
+      acts: string[] | null
     }
     /** @default null */
     LoginRequest: {
@@ -249,6 +274,39 @@ export interface components {
 }
 export type $defs = Record<string, never>
 export interface operations {
+  ingest: {
+    parameters: {
+      query?: never
+      header?: never
+      path?: never
+      cookie?: never
+    }
+    requestBody?: {
+      content: {
+        'application/json': components['schemas']['IngestRequest']
+      }
+    }
+    responses: {
+      /** @description Accepted */
+      202: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          '*/*': components['schemas']['IngestAccepted']
+        }
+      }
+      /** @description Problem document */
+      default: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/problem+json': components['schemas']['Problem']
+        }
+      }
+    }
+  }
   guest: {
     parameters: {
       query?: never

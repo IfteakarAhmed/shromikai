@@ -4,8 +4,8 @@ import java.time.Instant;
 import org.jspecify.annotations.Nullable;
 
 /**
- * Size of the statute corpus. {@code release} and {@code lastRefreshAt} stay {@code null} until
- * corpus releases exist (V4, P3).
+ * Size of the statute corpus. {@code release} and {@code lastRefreshAt} come from the latest corpus
+ * release and stay {@code null} until the first ingestion has run (V4, P3).
  */
 public record CorpusStats(
     @Nullable String release,

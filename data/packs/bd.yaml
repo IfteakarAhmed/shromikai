@@ -1,0 +1,62 @@
+# Jurisdiction pack: Bangladesh (architecture §11.4). Data, not code: acts, sources and the
+# conventions proposed for the ILO alignment. Titles below are labels written by the team (the
+# statute titles themselves come from the source at ingestion); no legal rule lives here (R-10).
+code: BD
+name_en: Bangladesh
+name_bn: বাংলাদেশ
+locale: bn
+timezone: Asia/Dhaka
+
+sources:
+  bdlaws:
+    base_url: http://bdlaws.minlaw.gov.bd   # Laws of Bangladesh portal (official)
+
+acts:
+  - code: BLA-2006
+    jurisdiction: BD
+    portal_act_id: 952                      # /act-952.html (index), /act-print-952.html (text)
+    authoritative_lang: bn
+    title_en: "Bangladesh Labour Act, 2006"
+    definitions_section: "2"
+  - code: CA-1872
+    jurisdiction: BD
+    portal_act_id: 26
+    authoritative_lang: en
+    title_en: "Contract Act, 1872"
+    definitions_section: "2"
+  - code: BLR-2015
+    jurisdiction: BD
+    # No portal act id: the portal's alphabetical index listed no Bangladesh Labour Rules 2015 on
+    # 2026-11-11. The run records it as missing. Add portal_act_id (or pdf_url) if it is published.
+    authoritative_lang: bn
+    title_en: "Bangladesh Labour Rules, 2015"
+    required: false
+    note: "Not listed on bdlaws on 2026-11-11 (FR-12: ingest only if published there)."
+
+# ILO conventions proposed by the playbook (P3). Unreviewed entries are not ingested: a legal
+# reviewer other than the proposer must set reviewed_by. Save the NORMLEX pages by hand under
+# data/raw/ilo/ (NORMLEX refuses automated clients) as {code}.text.html and
+# {code}.ratification.html.
+ilo_conventions:
+  - code: C001
+    title_label: "hours of work"
+    normlex_url: "https://normlex.ilo.org/dyn/nrmlx_en/f?p=NORMLEXPUB:12100:0::NO::P12100_ILO_CODE:C001"
+    proposed_by: "Claude (draft from playbook P3)"
+    reviewed_by: null
+  - code: C029
+    title_label: "forced labour"
+    normlex_url: "https://normlex.ilo.org/dyn/nrmlx_en/f?p=NORMLEXPUB:12100:0::NO::P12100_ILO_CODE:C029"
+    proposed_by: "Claude (draft from playbook P3)"
+    reviewed_by: null
+  - code: C095
+    title_label: "protection of wages"
+    normlex_url: "https://normlex.ilo.org/dyn/nrmlx_en/f?p=NORMLEXPUB:12100:0::NO::P12100_ILO_CODE:C095"
+    proposed_by: "Claude (draft from playbook P3)"
+    reviewed_by: null
+  - code: C132
+    title_label: "holidays with pay"
+    normlex_url: "https://normlex.ilo.org/dyn/nrmlx_en/f?p=NORMLEXPUB:12100:0::NO::P12100_ILO_CODE:C132"
+    proposed_by: "Claude (draft from playbook P3)"
+    reviewed_by: null
+
+ilo_mapping_file: data/mappings/bd-ilo.yaml

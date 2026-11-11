@@ -123,6 +123,24 @@ cd frontend && npm run gen:api
 The full list of commands, including tests and evaluation, is in
 [AGENTS.md §11](AGENTS.md#11-how-to-run-everything).
 
+### Statute corpus (P3)
+
+Put a contact address in `SCRAPER_CONTACT` in `.env`: the scraper sends it in its User-Agent so
+the portal can reach you (it never leaves your machine otherwise). Then, with the services from
+step 1 running:
+
+```bash
+cd backend && ./gradlew ingestLaws
+```
+
+This fetches the acts listed in `data/packs/bd.yaml` from the official Laws of Bangladesh portal
+(at most 1 request per second, `robots.txt` honoured, raw pages cached in the git-ignored
+`data/raw/`), parses them, creates a corpus release and writes `eval/reports/corpus-quality.md`
+and `.json`. Use `-Pacts=BLA-2006` to ingest one act. NORMLEX refuses automated clients, so save
+the ILO convention pages by hand under `data/raw/ilo/` (see `data/packs/bd.yaml`) and have a
+legal reviewer other than the proposer set `reviewed_by` before they are ingested. Details and
+decisions: [ADR-0011](docs/adr/0011-statute-corpus-acquisition.md).
+
 ## Repository layout
 
 ```

@@ -40,10 +40,11 @@ class MetaControllerIT {
             .single();
     jdbc.sql(
             """
-            insert into law_section (act_id, section_no, text_en, version_label, is_current, source_url, embedding)
-            values (:act, '1', 'Fictional text one.', 'original', false, 'https://example.invalid/xx/1', null),
+            insert into law_section (act_id, section_no, text_en, version_label, is_current, source_url, embedding, section_key)
+            values (:act, '1', 'Fictional text one.', 'original', false, 'https://example.invalid/xx/1', null,
+                    'XX-ACT-1:1@original'),
                    (:act, '1', 'Fictional text one, amended.', 'amend-1', true, 'https://example.invalid/xx/1',
-                    array_fill(0.01::real, array[1024])::vector)
+                    array_fill(0.01::real, array[1024])::vector, 'XX-ACT-1:1@amend-1')
             """)
         .param("act", actId)
         .update();

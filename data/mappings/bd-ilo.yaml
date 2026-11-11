@@ -1,0 +1,16 @@
+# ALIGNS_WITH rows between Bangladeshi sections and ILO articles (FR-16, architecture §7.8).
+#
+# Every row starts `reviewed: false` and is never used for an ILO reference until a person other
+# than `authored_by` sets `reviewed: true` and records `reviewed_by`. Quotes are copied
+# character for character from the ingested corpus, never from memory (R-10). When a reviewed
+# row's `ilo_quote` is missing from the corpus the application refuses to start.
+#
+# Row shape:
+#   - bd_section_key: BLA-2006:100@original      # {actCode}:{sectionNo}@{versionLabel}
+#     ilo_section_key: ILO-C001:2@original
+#     ilo_quote: "verbatim text of the ILO article (20 to 300 characters)"
+#     claim: "what the alignment says, in one sentence"
+#     authored_by: "name of the author"
+#     reviewed: false
+#     reviewed_by: null                          # must differ from authored_by when reviewed
+rows: []
