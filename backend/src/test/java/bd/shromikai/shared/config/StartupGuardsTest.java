@@ -31,6 +31,16 @@ class StartupGuardsTest {
   }
 
   @Test
+  void shouldRefuseToStart_whenProdAndDevAreActive() {
+    MockEnvironment environment = new MockEnvironment();
+    environment.setActiveProfiles("prod", "dev");
+
+    assertThatThrownBy(() -> StartupGuards.check(environment, properties(false)))
+        .isInstanceOf(IllegalStateException.class)
+        .hasMessageContaining("dev");
+  }
+
+  @Test
   void shouldStart_whenConfigurationIsSafe() {
     MockEnvironment environment = new MockEnvironment();
     environment.setActiveProfiles("prod");

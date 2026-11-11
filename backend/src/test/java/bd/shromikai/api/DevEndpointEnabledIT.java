@@ -183,4 +183,28 @@ class DevEndpointEnabledIT {
 
     assertThat(response.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
   }
+
+  @Test
+  void shouldRejectMissingTooShortAndTooLongTextWith400BeforeTheService() {
+    HttpHeaders headers = bearer(admin);
+    headers.setContentType(MediaType.APPLICATION_JSON);
+    for (String body :
+        List.of(
+            "{}",
+            "{\"text\":null}",
+            "{\"text\":\"too short\"}",
+            "{\"text\":\"" + "a".repeat(60_001) + "\"}")) {
+      ResponseEntity<JsonNode> response =
+          http.exchange(
+              "/api/v1/dev/analyses",
+              HttpMethod.POST,
+              new HttpEntity<>(body, headers),
+              JsonNode.class);
+
+      assertThat(response.getStatusCode())
+          .as(body.substring(0, Math.min(20, body.length())))
+          .isEqualTo(HttpStatus.BAD_REQUEST);
+      assertThat(response.getBody().get("code").asText()).isEqualTo("validation-failed");
+    }
+  }
 }

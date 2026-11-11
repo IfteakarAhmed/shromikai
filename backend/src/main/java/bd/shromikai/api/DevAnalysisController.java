@@ -8,6 +8,9 @@ import bd.shromikai.analysis.TraceEvent;
 import bd.shromikai.shared.problem.ProblemException;
 import bd.shromikai.shared.problem.ProblemType;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -46,7 +49,7 @@ public class DevAnalysisController {
   }
 
   /** Text of 200 to 60,000 characters. */
-  public record TextRequest(String text) {}
+  public record TextRequest(@NotNull @Size(min = 200, max = 60_000) String text) {}
 
   public record Started(@JsonProperty("analysisId") UUID analysisId, String status, String stage) {}
 
@@ -81,7 +84,7 @@ public class DevAnalysisController {
 
   @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
   @ResponseStatus(HttpStatus.CREATED)
-  public Started text(@RequestBody TextRequest request) {
+  public Started text(@Valid @RequestBody TextRequest request) {
     return started(analyses.analyseText(request.text()));
   }
 
