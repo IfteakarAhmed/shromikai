@@ -62,6 +62,8 @@ public class AnalysisRunStore {
       long costMicros,
       long tokensIn,
       long tokensOut,
+      long cacheReadTokens,
+      long cacheWriteTokens,
       long durationMs,
       Instant completedAt) {
     jdbc.sql(
@@ -71,6 +73,7 @@ public class AnalysisRunStore {
                    verified_citation_count = :citations, uncertain_finding_count = :uncertain,
                    prompt_versions = cast(:prompts as jsonb), model_ids = cast(:models as jsonb),
                    cost_usd_micros = :cost, tokens_in = :in, tokens_out = :out,
+                   cache_read_tokens = :cacheRead, cache_write_tokens = :cacheWrite,
                    duration_ms = :duration, completed_at = :completed
              where id = :id
             """)
@@ -83,6 +86,8 @@ public class AnalysisRunStore {
         .param("cost", costMicros)
         .param("in", tokensIn)
         .param("out", tokensOut)
+        .param("cacheRead", cacheReadTokens)
+        .param("cacheWrite", cacheWriteTokens)
         .param("duration", durationMs)
         .param("completed", Timestamp.from(completedAt))
         .update();

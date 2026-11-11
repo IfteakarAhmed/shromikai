@@ -25,6 +25,8 @@ public final class ModelSession {
   public static final class StageUsage {
     private long tokensIn;
     private long tokensOut;
+    private long cacheRead;
+    private long cacheWrite;
     private long costMicros;
     private int calls;
     private String promptId;
@@ -34,6 +36,8 @@ public final class ModelSession {
     synchronized void add(TokenUsage usage, long cost, String prompt, int version, String model) {
       tokensIn += usage.totalInputTokens();
       tokensOut += usage.outputTokens();
+      cacheRead += usage.cacheReadTokens();
+      cacheWrite += usage.cacheWriteTokens();
       costMicros += cost;
       calls++;
       promptId = prompt;
@@ -47,6 +51,14 @@ public final class ModelSession {
 
     public synchronized long tokensOut() {
       return tokensOut;
+    }
+
+    public synchronized long cacheReadTokens() {
+      return cacheRead;
+    }
+
+    public synchronized long cacheWriteTokens() {
+      return cacheWrite;
     }
 
     public synchronized long costMicros() {
@@ -77,6 +89,8 @@ public final class ModelSession {
   private final long maxTokens;
   private final AtomicLong micros = new AtomicLong();
   private final AtomicLong tokens = new AtomicLong();
+  private final AtomicLong cacheRead = new AtomicLong();
+  private final AtomicLong cacheWrite = new AtomicLong();
   private final Map<Stage, StageUsage> stages = new ConcurrentHashMap<>();
 
   public ModelSession(
@@ -126,6 +140,14 @@ public final class ModelSession {
     return micros.get();
   }
 
+  public long cacheReadTokens() {
+    return cacheRead.get();
+  }
+
+  public long cacheWriteTokens() {
+    return cacheWrite.get();
+  }
+
   public long totalTokens() {
     return tokens.get();
   }
@@ -138,6 +160,8 @@ public final class ModelSession {
     long cents = cost.usdMicros(modelId, usage);
     micros.addAndGet(cents);
     tokens.addAndGet(usage.totalInputTokens() + usage.outputTokens());
+    cacheRead.addAndGet(usage.cacheReadTokens());
+    cacheWrite.addAndGet(usage.cacheWriteTokens());
     usage(stage).add(usage, cents, promptId, version, modelId);
   }
 

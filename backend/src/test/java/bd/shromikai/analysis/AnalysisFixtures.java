@@ -88,6 +88,15 @@ public final class AnalysisFixtures {
         models);
   }
 
+  /** A model gateway over one hand-written port. */
+  public static ModelGateway gatewayOver(ChatPort port) {
+    return new ModelGateway(
+        new bd.shromikai.shared.ai.PromptRegistry(TestGateways.MAPPER),
+        new bd.shromikai.shared.ai.PromptRenderer(TestGateways.MAPPER),
+        List.of(port),
+        models());
+  }
+
   public static ShromikaiProperties.Models models() {
     return new ShromikaiProperties.Models(
         "claude-sonnet-5-5",

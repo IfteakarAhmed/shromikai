@@ -41,6 +41,22 @@ final class PipelineHarness {
   final AnalysisFixtures.StubSource source;
   final AnalysisFixtures.MemoryReviewStore reviewStore = new AnalysisFixtures.MemoryReviewStore();
   final AnalysisRunStore runs = mock(AnalysisRunStore.class);
+  final java.util.Map<java.time.LocalDate, Long> spent = new java.util.HashMap<>();
+  final DailyBudget dailyBudget =
+      new DailyBudget(
+          new DailySpendStore() {
+            @Override
+            public long add(java.time.LocalDate day, long micros) {
+              return spent.merge(day, micros, Long::sum);
+            }
+
+            @Override
+            public long spentOn(java.time.LocalDate day) {
+              return spent.getOrDefault(day, 0L);
+            }
+          },
+          Clock.systemUTC(),
+          properties().budget().dailyUsdMicros());
   final AnalysisTraceStore traces = mock(AnalysisTraceStore.class);
   final JobStore jobs = new JobStore(Clock.systemUTC());
   final AnalysisPipeline pipeline;
@@ -96,6 +112,7 @@ final class PipelineHarness {
             runs,
             traces,
             properties,
+            dailyBudget,
             Clock.systemUTC());
   }
 

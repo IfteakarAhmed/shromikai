@@ -85,6 +85,7 @@ public class AnalysisPipeline {
   private final AnalysisRunStore runs;
   private final AnalysisTraceStore traces;
   private final AnalysisProperties properties;
+  private final DailyBudget dailyBudget;
   private final Clock clock;
   private final ExecutorService executor = Executors.newVirtualThreadPerTaskExecutor();
 
@@ -105,6 +106,7 @@ public class AnalysisPipeline {
       AnalysisRunStore runs,
       AnalysisTraceStore traces,
       AnalysisProperties properties,
+      DailyBudget dailyBudget,
       Clock clock) {
     this.facts = facts;
     this.engine = engine;
@@ -122,6 +124,7 @@ public class AnalysisPipeline {
     this.runs = runs;
     this.traces = traces;
     this.properties = properties;
+    this.dailyBudget = dailyBudget;
     this.clock = clock;
   }
 
@@ -145,6 +148,7 @@ public class AnalysisPipeline {
             properties.budget().perAnalysisTokens());
     Deadline deadline = new Deadline(started + properties.analysis().hardTimeout().toMillis());
     try {
+      dailyBudget.admit();
       JobData data = new JobData(job, request, session, deadline, release);
       pipeline(data);
     } catch (StageFailure failure) {
@@ -447,12 +451,22 @@ public class AnalysisPipeline {
         Stage.COMPLETE,
         0,
         detail(
-            "findings", findings.size(),
-            "verifiedFindings", verifiedFindings,
-            "uncertainFindings", uncertain,
-            "verifiedCitations", verifiedCitations,
-            "costUsdMicros", d.session.costUsdMicros(),
-            "durationMs", durationMs));
+            "findings",
+            findings.size(),
+            "verifiedFindings",
+            verifiedFindings,
+            "uncertainFindings",
+            uncertain,
+            "verifiedCitations",
+            verifiedCitations,
+            "costUsdMicros",
+            d.session.costUsdMicros(),
+            "cacheReadTokens",
+            d.session.cacheReadTokens(),
+            "cacheWriteTokens",
+            d.session.cacheWriteTokens(),
+            "durationMs",
+            durationMs));
     long tokensIn = 0;
     long tokensOut = 0;
     for (Stage stage : Stage.values()) {
@@ -469,8 +483,11 @@ public class AnalysisPipeline {
         d.session.costUsdMicros(),
         tokensIn,
         tokensOut,
+        d.session.cacheReadTokens(),
+        d.session.cacheWriteTokens(),
         durationMs,
         clock.instant());
+    dailyBudget.record(d.session.costUsdMicros());
   }
 
   // ------------------------------------------------------------------ helpers
@@ -579,6 +596,7 @@ public class AnalysisPipeline {
           session.costUsdMicros(),
           clock.millis() - started,
           clock.instant());
+      dailyBudget.record(session.costUsdMicros());
     } catch (RuntimeException storeFailure) {
       LOG.error("could not store the failed run: {}", storeFailure.getClass().getSimpleName());
     }

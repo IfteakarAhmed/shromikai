@@ -73,7 +73,7 @@ class OrchestratorStateMachineTest {
     verify(h.runs)
         .succeeded(
             any(), anyInt(), anyInt(), anyInt(), any(), any(), anyLong(), anyLong(), anyLong(),
-            anyLong(), any());
+            anyLong(), anyLong(), anyLong(), any());
     verify(h.traces, atLeastOnce())
         .append(
             eq(job.id()),
@@ -88,6 +88,29 @@ class OrchestratorStateMachineTest {
             any(),
             any(),
             any());
+  }
+
+  /** FR-62: a spent daily cap fails the job with budget-exceeded before any model call. */
+  @Test
+  void shouldFailWithBudgetExceededWhenTheDailyCapIsSpent() {
+    PipelineHarness h = PipelineHarness.standard();
+    h.dailyBudget.record(h.dailyBudget.remainingMicros());
+
+    AnalysisJob job = h.run();
+
+    assertThat(job.status()).isEqualTo(AnalysisJob.Status.FAILED);
+    assertThat(job.failure().type()).isEqualTo(ProblemType.BUDGET_EXCEEDED);
+  }
+
+  @Test
+  void shouldAddTheCostOfAFinishedRunToTheDailySpend() {
+    PipelineHarness h = PipelineHarness.standard();
+    long before = h.dailyBudget.remainingMicros();
+
+    AnalysisJob job = h.run();
+
+    assertThat(job.status()).isEqualTo(AnalysisJob.Status.ANALYSED);
+    assertThat(h.dailyBudget.remainingMicros()).isEqualTo(before - job.outcome().costUsdMicros());
   }
 
   @Test
@@ -181,7 +204,7 @@ class OrchestratorStateMachineTest {
     verify(h.runs, never())
         .succeeded(
             any(), anyInt(), anyInt(), anyInt(), any(), any(), anyLong(), anyLong(), anyLong(),
-            anyLong(), any());
+            anyLong(), anyLong(), anyLong(), any());
   }
 
   @Test

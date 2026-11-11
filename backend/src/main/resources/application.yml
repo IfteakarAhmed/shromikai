@@ -138,6 +138,7 @@ shromikai:
   budget:
     per-analysis-usd: 1.00                # budget-exceeded above this (architecture §5.3)
     per-analysis-tokens: 400000           # total input + output tokens of one analysis
+    daily-usd: 50                         # all analyses of one Dhaka day; budget-exceeded above it (FR-62)
   privacy:
     store-contracts: false                # startup fails if true (R-02)
     redact-money: false                   # ADR-0003

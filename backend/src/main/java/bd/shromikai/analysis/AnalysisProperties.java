@@ -20,7 +20,15 @@ public record AnalysisProperties(Analysis analysis, Budget budget) {
   public record Analysis(
       Duration hardTimeout, Map<String, Duration> stepTimeouts, Set<String> jurisdictions) {}
 
-  public record Budget(double perAnalysisUsd, long perAnalysisTokens) {
+  public record Budget(double perAnalysisUsd, long perAnalysisTokens, double dailyUsd) {
+
+    public Budget(double perAnalysisUsd, long perAnalysisTokens) {
+      this(perAnalysisUsd, perAnalysisTokens, 50.0);
+    }
+
+    public long dailyUsdMicros() {
+      return Math.round(dailyUsd * 1_000_000);
+    }
 
     public long perAnalysisUsdMicros() {
       return Math.round(perAnalysisUsd * 1_000_000);
@@ -35,7 +43,7 @@ public record AnalysisProperties(Analysis analysis, Budget budget) {
       analysis = new Analysis(analysis.hardTimeout(), analysis.stepTimeouts(), Set.of("BD"));
     }
     if (budget == null) {
-      budget = new Budget(1.0, 400_000);
+      budget = new Budget(1.0, 400_000, 50.0);
     }
   }
 
