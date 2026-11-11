@@ -59,3 +59,12 @@ no live call was made and no number below is a measurement of a live answer.
     canonical payload, the key ID and the expiry. Numbers are canonicalised as shortest plain
     decimals, which equals the RFC form for the integers and values like 0.8 the result holds; a
     payload with exponent-form doubles is not supported (documented limit).
+11. **New container: Gotenberg 8.21.1** (`gotenberg/gotenberg`, pinned tag) renders the memo PDF
+    from the HTML of `MemoHtmlRenderer` (FR-55, ADR-0001). It is started with JavaScript off and a
+    deny-list that blocks every URL except `data:`, keeps its work on `tmpfs`, and only the backend
+    reaches it (port bound to 127.0.0.1 in development, internal network in production). The memo
+    HTML has no script, link, font or image URL; `MemoTemplateTest` proves it. `MemoPdfIT` (tag
+    `slow`, Testcontainers, the same image) checks that 20 Bangla conjunct words are extractable,
+    that a Bengali font is embedded and that the raster differs from a Chromium screenshot of the
+    same HTML by at most 1% of the pixels. The test does not prove the PDF looks right on a
+    phone; it proves the server's shaping matches Chromium's on one layout.

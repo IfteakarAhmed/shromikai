@@ -142,6 +142,8 @@ shromikai:
   memo:
     envelope-key: ${ENVELOPE_KEY:}       # blank: derived from JWT_SECRET (SignedResultCodec)
     key-id: k1
+    gotenberg-url: ${GOTENBERG_URL:http://localhost:3000}
+    render-timeout: 30s
     envelope-ttl: 24h                    # how long a signed result can be rendered as a memo (FR-55)
   privacy:
     store-contracts: false                # startup fails if true (R-02)
