@@ -1,0 +1,16 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:shromikai:schema:llm:pii-extract:1",
+  "title": "pii-extract output",
+  "type": "object",
+  "properties": {
+    "status": { "type": "string", "enum": ["OK", "ABSTAIN"] },
+    "reason": { "type": "string", "enum": ["NONE", "NOT_A_CONTRACT_CLAUSE", "UNREADABLE"] },
+    "persons": { "type": "array", "items": { "type": "string" } },
+    "organisations": { "type": "array", "items": { "type": "string" } },
+    "addresses": { "type": "array", "items": { "type": "string" } },
+    "employee_ids": { "type": "array", "items": { "type": "string" } }
+  },
+  "required": ["status", "reason", "persons", "organisations", "addresses", "employee_ids"],
+  "additionalProperties": false
+}

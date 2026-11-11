@@ -1,0 +1,9 @@
+# Bilingual keyword lists for the deterministic PII detectors (architecture §10.2). A keyword
+# "near" a number means within 40 characters before it. Latin keywords match whole words only.
+nid: ["nid", "national id", "national identity", "national identification", "জাতীয় পরিচয়", "এনআইডি", "এন আই ডি"]
+birth_registration: ["birth registration", "birth reg", "জন্ম নিবন্ধন", "জন্মনিবন্ধন"]
+passport: ["passport", "পাসপোর্ট"]
+tin: ["tin", "tax identification", "টিআইএন", "করদাতা শনাক্তকরণ"]
+account: ["account", "a/c", "acc no", "iban", "অ্যাকাউন্ট", "একাউন্ট", "হিসাব নম্বর", "হিসাব নং", "হিসাবের নম্বর"]
+wallet: ["bkash", "nagad", "rocket", "upay", "mobile wallet", "mobile banking", "বিকাশ", "নগদ", "রকেট", "মোবাইল ব্যাংকিং"]
+birth: ["date of birth", "dob", "d.o.b", "born", "birth date", "birthdate", "জন্ম তারিখ", "জন্মতারিখ", "জন্মের তারিখ", "জন্ম"]
