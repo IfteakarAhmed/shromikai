@@ -101,6 +101,33 @@ shromikai:
     judge: ${GEMINI_MODEL:}
     local-pii: qwen2.5:7b-instruct
     embedding: bge-m3
+  pricing:                                # US$ per million tokens (architecture §6); prices are
+                                          # configuration, never code. Team model reference 2026-11-03.
+    claude-sonnet-5-5:
+      input: 2.00
+      output: 10.00
+      cache-write-5m: 2.50
+      cache-write-1h: 4.00
+      cache-read: 0.10
+    claude-haiku-5-5:
+      input: 0.10
+      output: 0.50
+      cache-write-5m: 0.125
+      cache-write-1h: 0.20
+      cache-read: 0.01
+      long-context:
+        above-input-tokens: 100000
+        input: 0.50
+        output: 2.50
+        cache-write-5m: 0.625
+        cache-write-1h: 1.00
+        cache-read: 0.05
+    gemini:                               # prices the configured GEMINI_MODEL; set the real list
+      input: ${GEMINI_PRICE_IN:1.00}      # price in .env. The defaults are deliberately high so the
+      output: ${GEMINI_PRICE_OUT:5.00}    # budget guard over-counts rather than under-counts.
+  budget:
+    per-analysis-usd: 1.00                # budget-exceeded above this (architecture §5.3)
+    per-analysis-tokens: 400000           # total input + output tokens of one analysis
   privacy:
     store-contracts: false                # startup fails if true (R-02)
     redact-money: false                   # ADR-0003

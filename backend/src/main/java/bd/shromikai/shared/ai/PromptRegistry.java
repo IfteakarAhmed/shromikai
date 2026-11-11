@@ -102,6 +102,14 @@ public final class PromptRegistry {
               "json".equals(variable.get("type")),
               "untrusted".equals(variable.get("trust"))));
     }
+    List<DynamicEnum> dynamicEnums = new ArrayList<>();
+    if (front.get("dynamic_enums") instanceof List<?> declared) {
+      for (Object entry : declared) {
+        Map<?, ?> item = (Map<?, ?>) entry;
+        dynamicEnums.add(
+            new DynamicEnum(String.valueOf(item.get("path")), String.valueOf(item.get("source"))));
+      }
+    }
     Object temperature = front.get("temperature");
     Object effort = front.get("effort");
     return new Prompt(
@@ -117,7 +125,8 @@ public final class PromptRegistry {
         schemaLocation,
         schema,
         section(SYSTEM, body, "system").strip(),
-        section(USER, body, "user").strip());
+        section(USER, body, "user").strip(),
+        List.copyOf(dynamicEnums));
   }
 
   private static String section(Pattern pattern, String body, String name) {

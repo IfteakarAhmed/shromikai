@@ -11,7 +11,7 @@ import net.jqwik.api.Combinators;
 import net.jqwik.api.ForAll;
 import net.jqwik.api.Property;
 import net.jqwik.api.Provide;
-import org.junit.jupiter.api.Tag;
+import net.jqwik.api.Tag;
 
 /** FR-28: jqwik generators for phone numbers and NIDs. */
 @Tag("unit")

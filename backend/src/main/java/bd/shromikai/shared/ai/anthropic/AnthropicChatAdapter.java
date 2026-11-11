@@ -19,6 +19,7 @@ import com.anthropic.core.JsonValue;
 import com.anthropic.core.RequestOptions;
 import com.anthropic.errors.AnthropicIoException;
 import com.anthropic.errors.AnthropicServiceException;
+import com.anthropic.models.messages.CacheControlEphemeral;
 import com.anthropic.models.messages.ContentBlock;
 import com.anthropic.models.messages.JsonOutputFormat;
 import com.anthropic.models.messages.Message;
@@ -26,11 +27,13 @@ import com.anthropic.models.messages.MessageCreateParams;
 import com.anthropic.models.messages.OutputConfig;
 import com.anthropic.models.messages.StopReason;
 import com.anthropic.models.messages.TextBlock;
+import com.anthropic.models.messages.TextBlockParam;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.io.InterruptedIOException;
 import java.time.Instant;
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.stream.Collectors;
@@ -103,7 +106,8 @@ public final class AnthropicChatAdapter implements ChatPort {
         new TokenUsage(
             message.usage().inputTokens(),
             message.usage().outputTokens(),
-            message.usage().cacheReadInputTokens().orElse(0L)),
+            message.usage().cacheReadInputTokens().orElse(0L),
+            message.usage().cacheCreationInputTokens().orElse(0L)),
         false);
   }
 
@@ -124,7 +128,15 @@ public final class AnthropicChatAdapter implements ChatPort {
         MessageCreateParams.builder()
             .model(request.modelId())
             .maxTokens(request.maxOutputTokens())
-            .system(request.system())
+            // The stable system prompt (rubric, rules, few-shot examples) is cacheable with the
+            // 5-minute TTL (architecture §6 adapter rule 3); the API ignores it below the model's
+            // minimum cacheable length, so short prompts are unaffected.
+            .systemOfTextBlockParams(
+                List.of(
+                    TextBlockParam.builder()
+                        .text(request.system())
+                        .cacheControl(CacheControlEphemeral.builder().build())
+                        .build()))
             .addUserMessage(request.user().reveal())
             .outputConfig(outputConfig.build());
     if (request.role() == ModelRole.REASONING) {

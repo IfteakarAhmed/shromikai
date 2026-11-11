@@ -8,7 +8,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.core.env.Environment;
 
 @Configuration(proxyBeanMethods = false)
-@EnableConfigurationProperties(ShromikaiProperties.class)
+@EnableConfigurationProperties({ShromikaiProperties.class, PricingProperties.class})
 public class SharedConfiguration {
 
   /** The one clock; tests replace it to move time (architecture §4). */

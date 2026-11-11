@@ -6,10 +6,12 @@ import bd.shromikai.shared.config.ShromikaiProperties;
 import bd.shromikai.shared.json.JsonSchemas;
 import com.fasterxml.jackson.databind.JsonNode;
 import java.time.Duration;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import org.jspecify.annotations.Nullable;
+import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -27,14 +29,16 @@ public class ModelGateway {
   private final PromptRenderer renderer;
   private final Map<String, ChatPort> ports = new HashMap<>();
   private final ShromikaiProperties.Models models;
+  private final List<LlmCallListener> listeners;
 
   @Autowired
   public ModelGateway(
       PromptRegistry registry,
       PromptRenderer renderer,
       List<ChatPort> chatPorts,
-      ShromikaiProperties properties) {
-    this(registry, renderer, chatPorts, properties.models());
+      ShromikaiProperties properties,
+      ObjectProvider<LlmCallListener> listeners) {
+    this(registry, renderer, chatPorts, properties.models(), listeners.orderedStream().toList());
   }
 
   public ModelGateway(
@@ -42,14 +46,33 @@ public class ModelGateway {
       PromptRenderer renderer,
       List<ChatPort> chatPorts,
       ShromikaiProperties.Models models) {
+    this(registry, renderer, chatPorts, models, List.of());
+  }
+
+  public ModelGateway(
+      PromptRegistry registry,
+      PromptRenderer renderer,
+      List<ChatPort> chatPorts,
+      ShromikaiProperties.Models models,
+      List<LlmCallListener> listeners) {
     this.registry = registry;
     this.renderer = renderer;
     this.models = models;
+    this.listeners = List.copyOf(listeners);
     chatPorts.forEach(port -> ports.put(port.provider(), port));
   }
 
-  /** A validated model output and the prompt version that produced it. */
-  public record Result(JsonNode output, String promptId, int promptVersion, String modelId) {}
+  /**
+   * A validated model output, the prompt version that produced it and what the call cost in tokens
+   * and time (a repair attempt is included).
+   */
+  public record Result(
+      JsonNode output,
+      String promptId,
+      int promptVersion,
+      String modelId,
+      TokenUsage usage,
+      long latencyMs) {}
 
   /** Calls the latest version of the prompt. */
   public Result call(String promptId, Map<String, ?> variables) {
@@ -66,16 +89,47 @@ public class ModelGateway {
   }
 
   public Result call(Prompt prompt, Map<String, ?> variables, @Nullable EgressContext context) {
-    Rendered rendered = renderer.render(prompt, variables);
-    ChatPort port = port(prompt.role());
-    String modelId = modelId(prompt.role());
+    return call(prompt, variables, context, Map.of());
+  }
+
+  /**
+   * Calls the latest version of a prompt with per-request enums (architecture §8.3): for every
+   * {@code dynamic_enums} path of the prompt, {@code enums} holds the allowed values; the output
+   * schema is restricted to them before the call and the answer is validated against the restricted
+   * schema.
+   */
+  public Result call(
+      String promptId,
+      Map<String, ?> variables,
+      @Nullable EgressContext context,
+      Map<String, ? extends Collection<String>> enums) {
+    return call(registry.latest(promptId), variables, context, enums);
+  }
+
+  public Result call(
+      Prompt prompt,
+      Map<String, ?> variables,
+      @Nullable EgressContext context,
+      Map<String, ? extends Collection<String>> enums) {
+    long start = System.nanoTime();
+    Prompt effective = restricted(prompt, enums);
+    Rendered rendered = renderer.render(effective, variables);
+    ChatPort port = port(effective.role());
+    String modelId = modelId(effective.role());
+    TokenUsage usage = TokenUsage.NONE;
+    boolean recorded = false;
+    String answeredBy = modelId;
     ChatResponse response = null;
     List<String> errors;
     try {
-      response = port.call(request(prompt, modelId, rendered.system(), rendered.user(), context));
-      errors = JsonSchemas.validate(prompt.outputSchema(), response.output());
+      response =
+          port.call(request(effective, modelId, rendered.system(), rendered.user(), context));
+      usage = usage.plus(response.usage());
+      recorded = response.recorded();
+      answeredBy = response.modelId();
+      errors = JsonSchemas.validate(effective.outputSchema(), response.output());
       if (errors.isEmpty()) {
-        return result(prompt, response);
+        return finish(effective, response, usage, start, recorded);
       }
     } catch (ModelOutputInvalidException e) {
       errors = List.of(e.reasonCode());
@@ -89,18 +143,70 @@ public class ModelGateway {
     ChatResponse second;
     try {
       second =
-          port.call(request(prompt, modelId, rendered.system(), SensitiveText.of(repair), context));
+          port.call(
+              request(effective, modelId, rendered.system(), SensitiveText.of(repair), context));
     } catch (ModelOutputInvalidException e) {
+      report(effective, answeredBy, usage, start, recorded);
       throw new ModelOutputInvalidException("schema-invalid-after-repair");
     }
-    if (!JsonSchemas.validate(prompt.outputSchema(), second.output()).isEmpty()) {
+    usage = usage.plus(second.usage());
+    if (!JsonSchemas.validate(effective.outputSchema(), second.output()).isEmpty()) {
+      report(effective, second.modelId(), usage, start, second.recorded());
       throw new ModelOutputInvalidException("schema-invalid-after-repair");
     }
-    return result(prompt, second);
+    return finish(effective, second, usage, start, second.recorded());
   }
 
-  private static Result result(Prompt prompt, ChatResponse response) {
-    return new Result(response.output(), prompt.id(), prompt.version(), response.modelId());
+  private Prompt restricted(Prompt prompt, Map<String, ? extends Collection<String>> enums) {
+    if (prompt.dynamicEnums().isEmpty()) {
+      return prompt;
+    }
+    JsonNode schema = prompt.outputSchema();
+    for (DynamicEnum declared : prompt.dynamicEnums()) {
+      Collection<String> values = enums.get(declared.path());
+      if (values == null) {
+        throw new IllegalArgumentException("Missing dynamic enum values for " + declared.path());
+      }
+      schema = SchemaEnums.restrict(schema, declared.path(), values);
+    }
+    return new Prompt(
+        prompt.id(),
+        prompt.version(),
+        prompt.status(),
+        prompt.role(),
+        prompt.temperature(),
+        prompt.effort(),
+        prompt.maxOutputTokens(),
+        prompt.timeoutSeconds(),
+        prompt.variables(),
+        prompt.outputSchemaLocation(),
+        schema,
+        prompt.system(),
+        prompt.user(),
+        prompt.dynamicEnums());
+  }
+
+  private Result finish(
+      Prompt prompt, ChatResponse response, TokenUsage usage, long startNanos, boolean recorded) {
+    long latencyMs = report(prompt, response.modelId(), usage, startNanos, recorded);
+    return new Result(
+        response.output(), prompt.id(), prompt.version(), response.modelId(), usage, latencyMs);
+  }
+
+  private long report(
+      Prompt prompt, String modelId, TokenUsage usage, long startNanos, boolean recorded) {
+    long latencyMs = (System.nanoTime() - startNanos) / 1_000_000;
+    LlmCall call =
+        new LlmCall(
+            prompt.id(), prompt.version(), prompt.role(), modelId, usage, latencyMs, recorded);
+    for (LlmCallListener listener : listeners) {
+      try {
+        listener.onCall(call);
+      } catch (RuntimeException ignored) {
+        // A listener must never break an analysis.
+      }
+    }
+    return latencyMs;
   }
 
   private static ChatRequest request(

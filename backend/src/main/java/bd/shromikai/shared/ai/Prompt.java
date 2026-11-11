@@ -11,6 +11,7 @@ import org.jspecify.annotations.Nullable;
  * @param outputSchema the parsed JSON Schema 2020-12 of the output
  * @param system trusted text of the {@code <system>} element
  * @param user template of the {@code <user>} element with {@code {{variable}}} placeholders
+ * @param dynamicEnums schema paths whose {@code enum} the caller fills per request
  */
 public record Prompt(
     String id,
@@ -25,7 +26,13 @@ public record Prompt(
     String outputSchemaLocation,
     com.fasterxml.jackson.databind.JsonNode outputSchema,
     String system,
-    String user) {
+    String user,
+    List<DynamicEnum> dynamicEnums) {
+
+  public Prompt {
+    variables = List.copyOf(variables);
+    dynamicEnums = List.copyOf(dynamicEnums);
+  }
 
   /** A declared input variable; {@code json} values are serialised, untrusted ones escaped. */
   public record Variable(String name, boolean json, boolean untrusted) {}

@@ -35,7 +35,8 @@ class PromptRendererTest {
         "schemas/x.json",
         mapper.createObjectNode(),
         "System text.",
-        "<task_context>{{side}}</task_context>\n<contract_clause>\n{{clause}}\n{{facts}}\n</contract_clause>");
+        "<task_context>{{side}}</task_context>\n<contract_clause>\n{{clause}}\n{{facts}}\n</contract_clause>",
+        List.of());
   }
 
   @Test
