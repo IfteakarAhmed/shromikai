@@ -368,6 +368,10 @@ and with a proposed fix below), the **query-rewrite row was not run** (no `ANTHR
 AGENTS.md §7 items 10 and 11 (human acceptance check, Prompt R in a fresh session) are open. The tag
 `phase-4` is therefore **not** created, as for P3.
 
+> **Update (P4 follow-up, ADR-0013):** the FR-23 comparison is now met (hybrid + graph hit@5 40/40);
+> see the follow-up section below. The rewrite row is deliberately left "not run" until an
+> `ANTHROPIC_API_KEY` is available, and `phase-4` is still not created (human acceptance and Prompt R open).
+
 - **Summary:**
   - Embedding backfill (bge-m3, skips unchanged sections, V5 tracking columns), hybrid search
     (pgvector top 20 + full-text top 20, RRF k = 60, top 8), one-hop graph context (at most 4),
