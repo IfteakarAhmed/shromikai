@@ -16,12 +16,29 @@ public record TraceEvent(
     @Nullable String promptId,
     @Nullable Integer promptVersion,
     @Nullable String modelId,
-    Map<String, Object> detail) {
+    Map<String, Object> detail,
+    @Nullable Long tokensIn,
+    @Nullable Long tokensOut,
+    @Nullable Long costUsdMicros) {
 
   public static final String OK = "OK";
   public static final String FAILED = "FAILED";
 
   public TraceEvent {
     detail = Map.copyOf(detail);
+  }
+
+  /** An event without model usage (a local step). */
+  public TraceEvent(
+      Stage stage,
+      Instant at,
+      long durationMs,
+      String outcome,
+      @Nullable String promptId,
+      @Nullable Integer promptVersion,
+      @Nullable String modelId,
+      Map<String, Object> detail) {
+    this(
+        stage, at, durationMs, outcome, promptId, promptVersion, modelId, detail, null, null, null);
   }
 }

@@ -160,4 +160,51 @@ class ModelGatewayDynamicEnumTest {
         .isInstanceOf(IllegalArgumentException.class)
         .hasMessageContaining(PATH);
   }
+
+  @Test
+  void shouldNotRepairACallThatStoppedAtItsOutputCap_andKeepItsUsage() throws Exception {
+    AtomicInteger calls = new AtomicInteger();
+    ChatPort capped =
+        new ChatPort() {
+          @Override
+          public String provider() {
+            return "anthropic";
+          }
+
+          @Override
+          public ChatResponse call(ChatRequest request) {
+            calls.incrementAndGet();
+            throw new ModelOutputInvalidException(
+                "anthropic-max-tokens", new TokenUsage(500, 150, 0, 0));
+          }
+        };
+    List<LlmCall> seen = new ArrayList<>();
+    var models =
+        new ShromikaiProperties.Models(
+            "claude-sonnet-5-5", "claude-haiku-5-5", null, "claude-haiku-5-5", null, "q", "b");
+    ModelGateway gateway =
+        new ModelGateway(
+            new PromptRegistry(MAPPER),
+            new PromptRenderer(MAPPER),
+            List.of(capped),
+            models,
+            List.of(seen::add));
+
+    assertThatThrownBy(
+            () ->
+                gateway.call(
+                    prompt(),
+                    Map.of("candidates", List.of("XA:1@original")),
+                    null,
+                    Map.of(PATH, List.of("XA:1@original"))))
+        .isInstanceOfSatisfying(
+            ModelOutputInvalidException.class,
+            e -> {
+              assertThat(e.stoppedAtCap()).isTrue();
+              assertThat(e.usage().outputTokens()).isEqualTo(150);
+            });
+
+    assertThat(calls).as("no wasted repair call").hasValue(1);
+    assertThat(seen).hasSize(1);
+  }
 }

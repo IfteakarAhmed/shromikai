@@ -1,0 +1,25 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:shromikai:schema:llm:risk-citation-repair:1",
+  "title": "risk-citation-repair output",
+  "type": "object",
+  "properties": {
+    "status": { "type": "string", "enum": ["OK", "ABSTAIN"] },
+    "reason": { "type": "string", "enum": ["NONE", "NO_SUPPORTING_SECTION"] },
+    "citations": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "section_key": { "type": "string" },
+          "quote": { "type": "string" },
+          "claim": { "type": "string" }
+        },
+        "required": ["section_key", "quote", "claim"],
+        "additionalProperties": false
+      }
+    }
+  },
+  "required": ["status", "reason", "citations"],
+  "additionalProperties": false
+}

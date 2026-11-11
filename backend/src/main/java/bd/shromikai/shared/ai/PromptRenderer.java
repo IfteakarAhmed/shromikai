@@ -3,6 +3,7 @@ package bd.shromikai.shared.ai;
 import bd.shromikai.shared.SensitiveText;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -25,7 +26,9 @@ public final class PromptRenderer {
   private final ObjectMapper mapper;
 
   public PromptRenderer(ObjectMapper mapper) {
-    this.mapper = mapper;
+    // Map entries in key order: Map.of iterates in a per-JVM order, and a rendered request must be
+    // the same text on every run so recorded fixtures (which store its hash) keep matching.
+    this.mapper = mapper.copy().enable(SerializationFeature.ORDER_MAP_ENTRIES_BY_KEYS);
   }
 
   public Rendered render(Prompt prompt, Map<String, ?> values) {

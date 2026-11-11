@@ -1,0 +1,57 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:shromikai:schema:llm:risk-analysis:1",
+  "title": "risk-analysis output",
+  "type": "object",
+  "properties": {
+    "status": { "type": "string", "enum": ["OK", "ABSTAIN"] },
+    "reason": { "type": "string", "enum": ["NONE", "NOT_AN_EMPLOYMENT_CONTRACT", "UNREADABLE"] },
+    "findings": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "title": { "type": "string" },
+          "kind": { "type": "string", "enum": ["CONFLICT", "OMISSION", "AMBIGUITY", "INTERACTION"] },
+          "severity": { "type": "string", "enum": ["CRITICAL", "HIGH", "MEDIUM", "LOW"] },
+          "non_obvious": { "type": "boolean" },
+          "clause_type": {
+            "type": "string",
+            "enum": [
+              "APPOINTMENT_AND_ROLE", "PROBATION", "WAGES", "WAGE_PAYMENT_AND_DEDUCTIONS",
+              "WORKING_HOURS", "OVERTIME", "REST_AND_HOLIDAYS", "LEAVE", "MATERNITY_BENEFIT",
+              "NOTICE_AND_RESIGNATION", "TERMINATION", "DISCIPLINE_AND_MISCONDUCT",
+              "SERVICE_BENEFITS", "TRANSFER_AND_DEPLOYMENT", "CONFIDENTIALITY", "NON_COMPETE",
+              "INTELLECTUAL_PROPERTY", "HEALTH_AND_SAFETY", "DISPUTE_RESOLUTION", "GOVERNING_LAW",
+              "GENERAL_PROVISIONS", "OTHER"
+            ]
+          },
+          "clause_ids": { "type": "array", "items": { "type": "string" } },
+          "explanation": { "type": "string" },
+          "why_it_matters": { "type": "string" },
+          "citations": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "section_key": { "type": "string" },
+                "quote": { "type": "string" },
+                "claim": { "type": "string" }
+              },
+              "required": ["section_key", "quote", "claim"],
+              "additionalProperties": false
+            }
+          },
+          "confidence": { "type": "number" }
+        },
+        "required": [
+          "title", "kind", "severity", "non_obvious", "clause_type", "clause_ids", "explanation",
+          "why_it_matters", "citations", "confidence"
+        ],
+        "additionalProperties": false
+      }
+    }
+  },
+  "required": ["status", "reason", "findings"],
+  "additionalProperties": false
+}

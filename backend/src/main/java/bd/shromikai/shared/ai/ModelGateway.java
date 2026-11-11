@@ -132,6 +132,12 @@ public class ModelGateway {
         return finish(effective, response, usage, start, recorded);
       }
     } catch (ModelOutputInvalidException e) {
+      usage = usage.plus(e.usage());
+      if (e.stoppedAtCap()) {
+        // The same request would stop at the same cap; the caller splits the batch instead.
+        report(effective, modelId, usage, start, false);
+        throw new ModelOutputInvalidException(e.reasonCode(), usage);
+      }
       errors = List.of(e.reasonCode());
     }
     String repair =
@@ -146,13 +152,15 @@ public class ModelGateway {
           port.call(
               request(effective, modelId, rendered.system(), SensitiveText.of(repair), context));
     } catch (ModelOutputInvalidException e) {
+      usage = usage.plus(e.usage());
       report(effective, answeredBy, usage, start, recorded);
-      throw new ModelOutputInvalidException("schema-invalid-after-repair");
+      throw new ModelOutputInvalidException(
+          e.stoppedAtCap() ? e.reasonCode() : "schema-invalid-after-repair", usage);
     }
     usage = usage.plus(second.usage());
     if (!JsonSchemas.validate(effective.outputSchema(), second.output()).isEmpty()) {
       report(effective, second.modelId(), usage, start, second.recorded());
-      throw new ModelOutputInvalidException("schema-invalid-after-repair");
+      throw new ModelOutputInvalidException("schema-invalid-after-repair", usage);
     }
     return finish(effective, second, usage, start, second.recorded());
   }
@@ -228,6 +236,11 @@ public class ModelGateway {
         prompt.temperature(),
         prompt.effort(),
         context);
+  }
+
+  /** The model that serves the latest version of a prompt, for accounting a failed call. */
+  public String modelIdFor(String promptId) {
+    return modelId(registry.latest(promptId).role());
   }
 
   private ChatPort port(ModelRole role) {

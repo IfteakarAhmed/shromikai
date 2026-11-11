@@ -122,6 +122,9 @@ tasks.named('test', Test) { Test t ->
     configureTestTask(t)
     useJUnitPlatform { includeTags 'unit' }
     systemProperty 'shromikai.test.blockExternalHosts', 'true'
+    // Golden files change only through ./gradlew test -PupdateGolden=true (test-strategy.md §7).
+    systemProperty 'updateGolden', project.hasProperty('updateGolden').toString()
+    inputs.property 'updateGolden', project.hasProperty('updateGolden')
 }
 
 def taggedTask = { String name, String tag, boolean blockExternal ->
@@ -137,6 +140,7 @@ def taggedTask = { String name, String tag, boolean blockExternal ->
 
 taggedTask('integrationTest', 'it', true)
 tasks.named('integrationTest', Test) {
+    systemProperty 'updateGolden', project.hasProperty('updateGolden').toString()
     systemProperty 'shromikai.updateOpenApi', project.hasProperty('updateOpenApi').toString()
 }
 taggedTask('slowTest', 'slow', true)

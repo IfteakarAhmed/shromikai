@@ -98,17 +98,17 @@ public final class AnthropicChatAdapter implements ChatPort {
       throw new ModelRefusedException("anthropic-refusal");
     }
     if (message.stopReason().map(StopReason.MAX_TOKENS::equals).orElse(false)) {
-      throw new ModelOutputInvalidException("anthropic-max-tokens");
+      throw new ModelOutputInvalidException("anthropic-max-tokens", usage(message));
     }
-    return new ChatResponse(
-        parse(message),
-        message.model().asString(),
-        new TokenUsage(
-            message.usage().inputTokens(),
-            message.usage().outputTokens(),
-            message.usage().cacheReadInputTokens().orElse(0L),
-            message.usage().cacheCreationInputTokens().orElse(0L)),
-        false);
+    return new ChatResponse(parse(message), message.model().asString(), usage(message), false);
+  }
+
+  private static TokenUsage usage(Message message) {
+    return new TokenUsage(
+        message.usage().inputTokens(),
+        message.usage().outputTokens(),
+        message.usage().cacheReadInputTokens().orElse(0L),
+        message.usage().cacheCreationInputTokens().orElse(0L));
   }
 
   MessageCreateParams params(ChatRequest request) {

@@ -82,4 +82,23 @@ class PromptRendererTest {
         .isInstanceOf(IllegalArgumentException.class)
         .hasMessageContaining("Undeclared");
   }
+
+  @Test
+  void shouldRenderJsonMapsInKeyOrder_soTheSameInputAlwaysGivesTheSameText() {
+    java.util.Map<String, Object> shuffled = new java.util.LinkedHashMap<>();
+    shuffled.put("text", "t");
+    shuffled.put("id", "c1");
+    shuffled.put("a", 1);
+
+    String rendered =
+        renderer
+            .render(
+                prompt(),
+                java.util.Map.of(
+                    "clause", "x", "side", "WORKER", "facts", java.util.List.of(shuffled)))
+            .user()
+            .reveal();
+
+    assertThat(rendered).contains("[{\"a\":1,\"id\":\"c1\",\"text\":\"t\"}]");
+  }
 }
