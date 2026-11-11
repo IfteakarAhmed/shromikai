@@ -805,7 +805,7 @@ in "Honest limits" below and in [`docs/known-gaps.md`](known-gaps.md).
     about US$0.18 to re-record. `clause-segment` and `pii-extract` are also unbounded, with a safe
     failure each (ADR-0019).
   - **Weak relevance can pass.** The support check judges the claim against the section, not
-    whether the section bears on the clause: the transfer finding f9 (confidence 0.55) was verified
+    whether the section bears on the clause: the transfer finding f9 (the risk agent's own confidence 0.55 in the finding, not the verifier's) was verified
     against `BLA-2006:3`. One finding (f7, resignation needs permission) stays `UNCERTAIN` after
     one repair, which is the intended outcome.
   - **The local PII model was a stand-in for the live runs.** `qwen2.5:7b-instruct` in Docker
@@ -832,3 +832,27 @@ in "Honest limits" below and in [`docs/known-gaps.md`](known-gaps.md).
   and signing, and the `CostCalculator`/`LlmCallListener` for the cost ledger (FR-62). It must decide
   the FR-58 window, add the persistent cost ledger and daily cap, and keep the prompts' output
   bounds (`PromptAnswerBoundAuditTest` fails for any new prompt that is not bounded or listed).
+
+## Fix report - Prompt R review of P6 (PASS WITH FIXES), offline
+
+- **Fixed, each with a failing test first (items 1 to 3 shown red before the fix):**
+  1. R-02/FR-50: review items now overlap-check against every clause of the document (an OMISSION
+     finding names none), and a claimed quote that copies 8 tokens is dropped. New
+     `NoContractPersistenceIT` cases (copied quote; omission copying from another clause) and a
+     `ReviewItemFactoryTest` case.
+  2. R-03/FR-44: `VerificationContext` carries the job's `EgressContext` and a document overlap
+     index; `SupportVerifier` passes the context to the gateway and does not send a claim that
+     copies the document (result `Unavailable`, finding stays `UNCERTAIN`). `SupportVerifierEgressTest`.
+  3. A timeout or outage in the repair call leaves the finding `UNCERTAIN`; in the counter-offer or
+     its fact check it becomes a `counter-offer-dropped` warning. Egress blocks still fail the job.
+     The old "counter-offer provider outage -> FAILED" case now uses an egress block.
+  4. `expected_topics_missing` stays empty: no category-to-topics data exists. Documented in
+     `docs/known-gaps.md` and ADR-0015.
+  5. `counter-offer-unchecked` warning when no rule could check a redline; `SideSymmetryIT` runs
+     with the active fictional xx rules and asserts a rule finding. Golden snapshots gained the new
+     warning (only that line changed).
+  6. Startup fails when a rule is active and no corpus release exists (`RuleLoaderFailFastTest`).
+  7. Docs: review-ticket gap (P7), api.md E-45b, 0.55 clarified as the finding's own confidence.
+  8. Recorded, not fixed: merge key, repair reason codes, budget race, clean-up (known-gaps).
+- **No prompt, prompt hash or live recording was touched; no live call was made.**
+- `./gradlew check` and the frontend suite pass. `phase-6` is not tagged.

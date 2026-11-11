@@ -65,6 +65,14 @@ phase order, and the team has only a small API balance, so live spend needs its 
 - Findings with rule-origin citations appear only after rules are reviewed; until then the
   Bangladesh pack produces LLM findings only. Tests use the fictional pack `xx`.
 - The per-job budget uses configured prices, so a price change is a configuration change.
+- Known gap: `expected_topics_missing` is passed to `risk-analysis` as an empty list. No data says
+  which topics a contract of a worker category should cover (the topic map is clause type to
+  sections), so omission findings come from the model's reading alone. Tracked in
+  `docs/known-gaps.md` (P7 and later).
+- Review-fix decisions: a failed repair or redline call (timeout, outage) degrades to `UNCERTAIN`
+  or to a `counter-offer-dropped` warning; an egress block or budget stop still fails the job. A
+  redline kept with no active rule to check it carries `counter-offer-unchecked`. Startup fails
+  when a rule is active and no corpus release exists, since its quote was then never verified.
 
 ## Alternatives
 
