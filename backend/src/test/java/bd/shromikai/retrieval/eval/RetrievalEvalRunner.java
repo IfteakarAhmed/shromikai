@@ -376,6 +376,38 @@ public final class RetrievalEvalRunner {
                 + ". See the questions below and the phase report.";
     md.append(verdict).append("\n\n");
 
+    Row hybrid = row(rows, Strategy.HYBRID);
+    if (hybrid.all().mrrAt10() < best.all().mrrAt10()) {
+      md.append("**MRR@10 regression**: ")
+          .append(hybrid.strategy().label)
+          .append(" = ")
+          .append(fmt(hybrid.all().mrrAt10()))
+          .append(" against ")
+          .append(best.strategy().label)
+          .append(" = ")
+          .append(fmt(best.all().mrrAt10()))
+          .append(
+              ". Fusion keeps every expected section in the top 5 but ranks them lower than the"
+                  + " better single method does, so the hit@5 verdict above hides a loss in rank"
+                  + " quality.\n\n");
+    }
+    if (graph.all().hitsAt5() == graph.all().questions()
+        && best.all().hitsAt5() == best.all().questions()) {
+      md.append(
+          "**The question set is saturated**: hit@5 is at its ceiling for hybrid + graph and for"
+              + " the best single method, so hit@5 cannot tell the methods apart on these"
+              + " questions; only MRR@10 and recall@8 differ.\n\n");
+    }
+    if (checked < questions.size()) {
+      md.append("**Draft questions**: ")
+          .append(questions.size() - checked)
+          .append(" of ")
+          .append(questions.size())
+          .append(
+              " questions are still `draft` (not reviewed by a team member), so this acceptance"
+                  + " result is over draft questions and is not a reviewed result.\n\n");
+    }
+
     md.append("## Questions where hybrid + graph misses the top 5\n\n");
     List<String> misses = new ArrayList<>();
     for (int i = 0; i < questions.size(); i++) {

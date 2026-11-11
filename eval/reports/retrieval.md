@@ -41,6 +41,12 @@ No question is `checked` yet (0 of 40), so there is nothing to report here.
 
 **Met**: hybrid + graph hit@5 = 40/40, best single method (Vector only) = 40/40.
 
+**MRR@10 regression**: Hybrid (RRF) = 0.810 against Vector only = 0.963. Fusion keeps every expected section in the top 5 but ranks them lower than the better single method does, so the hit@5 verdict above hides a loss in rank quality.
+
+**The question set is saturated**: hit@5 is at its ceiling for hybrid + graph and for the best single method, so hit@5 cannot tell the methods apart on these questions; only MRR@10 and recall@8 differ.
+
+**Draft questions**: 40 of 40 questions are still `draft` (not reviewed by a team member), so this acceptance result is over draft questions and is not a reviewed result.
+
 ## Questions where hybrid + graph misses the top 5
 
 None.

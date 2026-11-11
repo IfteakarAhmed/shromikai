@@ -653,3 +653,43 @@ created, as for P3 and P4 (`phase-4` is also still untagged).
 - **Next phase prerequisites:** P6 creates `V6__analysis.sql` (not V5, C26), consumes `Clause`,
   `AnalysisJob` and `JobStore`, and calls `ModelGateway` with the job's `EgressContext` for every
   cloud prompt (`clause-facts`, `risk-analysis`, …).
+
+## Fix report - review of phases 3 to 5 (01359f9..HEAD, PASS WITH FIXES)
+- **Fixed** (review item number in brackets):
+  - #1 `TesseractCliEngine` read stdout to the end before `waitFor`, so a hung child blocked the
+    thread forever. Stdin and stdout now run on their own threads, one deadline covers the child,
+    output is capped at 8 MiB. `TesseractCliEngineTest`: sleeping child, endless output, failing child.
+  - #2 `IntakeService` decoded every image up front. Images and PDF pages are now decoded inside
+    their OCR slot (at most `ocr-parallel` live), OCR has a deadline on the image path too, and a
+    service-wide `max-concurrent` semaphore answers `capacity-exhausted`. `AbuseLimitsIT`: 10 MB+1
+    upload, 16-page PDF, 20,000 x 20,000 PNG bomb, decoded-image peak, hung OCR, global limit.
+  - #4 `Redactor` matched exact UTF-16 text. It now matches case-insensitively on NFC with an offset
+    map back to the original, at word boundaries, also on each name part (surname alone), minimum 3
+    characters. `RedactorMatchingTest`: case, NFD/NFC, split Bangla vowel sign, surname only,
+    "Ali" inside "Alibaba", short parts.
+  - #5 `QueryRewriter.rewrite(clause, EgressContext)` passes the job context to `ModelGateway`;
+    `RetrievalService.search` has an overload with the context (the old signature uses
+    `EgressContext.NONE`, for public law questions and the eval). Test shows the guard's known-value
+    stage blocks a clause the detectors cannot see.
+  - #3 `NoPiiLeavesTheBoxIT` renamed `EgressPlumbingIT` (name, comment and every doc reference
+    except history in this log): it proves wiring with an extractor that is handed the labelled
+    entities. New negative test: an extractor that returns no person lets the name reach the cloud payload.
+  - #6 `JobStore` now has a scheduled sweep (60 s) and `max-jobs` (200, `capacity-exhausted`);
+    `JobStoreTest` with a fake clock.
+  - #9 `PoliteFetcher`: https when the host answers on it (one probe per host, http fallback),
+    redirects followed only within the request's host (`REDIRECT_OFF_HOST`), body capped at 32 MiB
+    (`BODY_TOO_LARGE`, never truncated). Tests for off-host redirect, same-host redirect, cap, http fallback.
+  - #10, #11 `TextRequest` validated (`@NotNull @Size(200..60000)`, `@Valid`); `StartupGuards`
+    refuses `prod` together with `dev`. Tests: `DevEndpointEnabledIT`, `StartupGuardsTest`.
+  - #12 `RetrievalCache` key is the SHA-256 of the normalised query.
+  - #7 `RetrievalEvalRunner` now writes the MRR@10 regression, saturation and draft
+    notices into the acceptance section; `eval/reports/retrieval.md` carries the same paragraphs
+    (hand-applied, measured numbers untouched, to be regenerated on the next `evalRetrieval`).
+  - #19 Gradle 8.14 cannot run on JDK 25 (class file 69), so `gradle/gradle-daemon-jvm.properties`
+    pins the daemon to JDK 21 (the compile toolchain was already 21); `./gradlew check` and
+    `spotlessApply` work from a JDK 25 shell. This replaces the earlier "use a JDK 21" workaround.
+- **Known gaps (not fixed here, by decision):** ILO mapping review; weighted RRF (hybrid MRR@10 is
+  below vector only); harder retrieval questions (set is saturated) and review of the 40 draft
+  questions; real-Ollama `slow` test for PII recall (M-16/M-25), the plumbing test is not that;
+  README details; ADR deciders; the https path of the scraper has no positive test (WireMock serves
+  plain http only), only the fallback.
