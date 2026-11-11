@@ -553,4 +553,64 @@ class ScraperPolicyTest {
       return out.toByteArray();
     }
   }
+
+  @Test
+  void shouldRefuseARedirectToAnotherHost() {
+    portal.stubFor(get(urlEqualTo("/robots.txt")).willReturn(aResponse().withStatus(404)));
+    portal.stubFor(
+        get(urlEqualTo("/moved.html"))
+            .willReturn(
+                aResponse().withStatus(302).withHeader("Location", "http://evil.example/x.html")));
+
+    assertThatThrownBy(
+            () -> fetcher(Duration.ZERO, Duration.ofMillis(10)).fetch(url("/moved.html")))
+        .isInstanceOfSatisfying(
+            FetchException.class,
+            e -> assertThat(e.reason()).isEqualTo(FetchException.Reason.REDIRECT_OFF_HOST));
+  }
+
+  @Test
+  void shouldFollowARedirectOnTheSameHost() {
+    portal.stubFor(get(urlEqualTo("/robots.txt")).willReturn(aResponse().withStatus(404)));
+    portal.stubFor(
+        get(urlEqualTo("/old.html"))
+            .willReturn(aResponse().withStatus(301).withHeader("Location", "/new.html")));
+    page("/new.html", "moved here");
+
+    assertThat(fetcher(Duration.ZERO, Duration.ofMillis(10)).fetch(url("/old.html")).text())
+        .isEqualTo("moved here");
+  }
+
+  @Test
+  void shouldRefuseABodyOverTheSizeCapInsteadOfTruncatingIt() {
+    portal.stubFor(get(urlEqualTo("/robots.txt")).willReturn(aResponse().withStatus(404)));
+    page("/big.html", "x".repeat(2_000));
+    var small =
+        new PoliteFetcher(
+            new ScraperSettings(
+                AGENT,
+                Duration.ZERO,
+                Duration.ofSeconds(5),
+                2,
+                Duration.ofMillis(10),
+                raw,
+                ScraperSettings.CachePolicy.REFRESH),
+            new RawCache(raw),
+            d -> {},
+            1_000);
+
+    assertThatThrownBy(() -> small.fetch(url("/big.html")))
+        .isInstanceOfSatisfying(
+            FetchException.class,
+            e -> assertThat(e.reason()).isEqualTo(FetchException.Reason.BODY_TOO_LARGE));
+  }
+
+  @Test
+  void shouldFallBackToHttpWhenTheHostDoesNotServeHttps() {
+    portal.stubFor(get(urlEqualTo("/robots.txt")).willReturn(aResponse().withStatus(404)));
+    page("/plain.html", "over http");
+
+    assertThat(fetcher(Duration.ZERO, Duration.ofMillis(10)).fetch(url("/plain.html")).text())
+        .isEqualTo("over http");
+  }
 }

@@ -30,6 +30,11 @@ final class PoliteFetcher {
 
   private static final Logger LOG = LoggerFactory.getLogger(PoliteFetcher.class);
 
+  /** Largest response body accepted; a bigger one is refused, never truncated. */
+  static final int MAX_BODY_BYTES = 32 * 1024 * 1024;
+
+  private static final int MAX_REDIRECTS = 5;
+
   /** Slept between attempts and requests; replaced in tests. */
   interface Sleeper {
     void sleep(Duration duration) throws InterruptedException;
@@ -40,6 +45,8 @@ final class PoliteFetcher {
   private final Sleeper sleeper;
   private final Map<String, RobotsPolicy> robots = new HashMap<>();
   private final String productToken;
+  private final int maxBodyBytes;
+  private final Map<String, Boolean> https = new HashMap<>();
   private long lastRequestNanos = Long.MIN_VALUE;
 
   PoliteFetcher(ScraperSettings settings, RawCache cache) {
@@ -47,6 +54,11 @@ final class PoliteFetcher {
   }
 
   PoliteFetcher(ScraperSettings settings, RawCache cache, Sleeper sleeper) {
+    this(settings, cache, sleeper, MAX_BODY_BYTES);
+  }
+
+  PoliteFetcher(ScraperSettings settings, RawCache cache, Sleeper sleeper, int maxBodyBytes) {
+    this.maxBodyBytes = maxBodyBytes;
     this.settings = settings;
     this.cache = cache;
     this.sleeper = sleeper;
@@ -64,11 +76,36 @@ final class PoliteFetcher {
         return page(url, cached.get(), Instant.now(), true);
       }
     }
-    checkRobots(url);
-    byte[] bytes = get(url, true);
+    String transport = preferHttps(url);
+    checkRobots(transport);
+    byte[] bytes = get(transport, true);
     String sha = Hashing.sha256Hex(bytes);
     cache.store(url, bytes, sha);
     return page(url, bytes, Instant.now(), false);
+  }
+
+  /**
+   * Uses https for a host that serves it, even if the pack lists an {@code http} URL: one probe of
+   * {@code /robots.txt} per host, then the answer is remembered. The cache stays keyed by the URL
+   * the caller used.
+   */
+  private String preferHttps(String url) {
+    URI uri = URI.create(url);
+    if (!"http".equalsIgnoreCase(uri.getScheme())) {
+      return url;
+    }
+    boolean secure =
+        https.computeIfAbsent(
+            uri.getAuthority(),
+            authority -> {
+              try {
+                request("https://" + authority + "/robots.txt");
+                return true;
+              } catch (IOException | FetchException e) {
+                return false;
+              }
+            });
+    return secure ? "https" + url.substring(4) : url;
   }
 
   private FetchedPage page(String url, byte[] bytes, Instant at, boolean fromCache) {
@@ -169,24 +206,55 @@ final class PoliteFetcher {
    * any other connection failure.
    */
   private Reply request(String url) throws IOException {
-    waitForTurn();
+    String host = URI.create(url).getHost();
+    String current = url;
     try {
-      Connection.Response response =
-          Jsoup.connect(url)
-              .method(Connection.Method.GET)
-              .userAgent(settings.userAgent())
-              .timeout((int) settings.timeout().toMillis())
-              .ignoreContentType(true)
-              .ignoreHttpErrors(true)
-              .maxBodySize(0)
-              .followRedirects(true)
-              .execute();
-      return new Reply(response.statusCode(), response.contentType(), response.bodyAsBytes());
+      for (int hop = 0; hop <= MAX_REDIRECTS; hop++) {
+        waitForTurn();
+        Connection.Response response;
+        try {
+          response =
+              Jsoup.connect(current)
+                  .method(Connection.Method.GET)
+                  .userAgent(settings.userAgent())
+                  .timeout((int) settings.timeout().toMillis())
+                  .ignoreContentType(true)
+                  .ignoreHttpErrors(true)
+                  .maxBodySize(maxBodyBytes + 1)
+                  .followRedirects(false)
+                  .execute();
+        } finally {
+          lastRequestNanos = System.nanoTime();
+        }
+        int status = response.statusCode();
+        String location = response.header("Location");
+        if (status >= 300 && status < 400 && location != null) {
+          URI next = URI.create(current).resolve(location);
+          if (next.getHost() == null || !next.getHost().equalsIgnoreCase(host)) {
+            throw new FetchException(
+                FetchException.Reason.REDIRECT_OFF_HOST,
+                "GET " + current + " redirected to another host",
+                status,
+                null);
+          }
+          current = next.toString();
+          continue;
+        }
+        byte[] body = response.bodyAsBytes();
+        if (body.length > maxBodyBytes) {
+          throw new FetchException(
+              FetchException.Reason.BODY_TOO_LARGE,
+              "GET " + current + " body exceeds " + maxBodyBytes + " bytes",
+              status,
+              null);
+        }
+        return new Reply(status, response.contentType(), body);
+      }
     } catch (UncheckedIOException e) {
       throw e.getCause();
-    } finally {
-      lastRequestNanos = System.nanoTime();
     }
+    throw new FetchException(
+        FetchException.Reason.HTTP_ERROR, "GET " + url + " redirected too often", 0, null);
   }
 
   private void waitForTurn() {

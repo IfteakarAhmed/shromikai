@@ -10,7 +10,9 @@ final class FetchException extends RuntimeException {
     ROBOTS_UNAVAILABLE,
     HTTP_ERROR,
     UNREACHABLE,
-    NOT_CACHED
+    NOT_CACHED,
+    REDIRECT_OFF_HOST,
+    BODY_TOO_LARGE
   }
 
   private final Reason reason;
