@@ -29,7 +29,7 @@ class ApplicationContextIT {
             .query(String.class)
             .list();
 
-    assertThat(versions).containsExactly("1", "2", "3", "4", "5", "6", "7", "8");
+    assertThat(versions).containsExactly("1", "2", "3", "4", "5", "6", "7", "8", "9");
   }
 
   @Test
@@ -53,6 +53,52 @@ class ApplicationContextIT {
     assertThat(keyColumns)
         .contains("key_sha256", "prefix", "scopes", "revoked_at")
         .doesNotContain("key", "secret");
+  }
+
+  @Test
+  @Requirement("FR-65")
+  void shouldAllowTwoKeysWithTheSamePrefixAndLimitTheNameTo60_whenV9Applied() {
+    java.util.UUID owner =
+        jdbc.sql(
+                "insert into organisation (name, kind, plan) values ('V9 org', 'NGO', 'API')"
+                    + " returning id")
+            .query(java.util.UUID.class)
+            .single();
+    try {
+      for (String hash : List.of("a".repeat(64), "b".repeat(64))) {
+        jdbc.sql(
+                "insert into api_key (org_id, prefix, key_sha256, name, scopes)"
+                    + " values (:o, 'shk_AAAA', :h, 'same prefix', array['mcp'])")
+            .param("o", owner)
+            .param("h", hash)
+            .update();
+      }
+      assertThat(
+              jdbc.sql("select count(*) from api_key where org_id = :o")
+                  .param("o", owner)
+                  .query(Long.class)
+                  .single())
+          .isEqualTo(2);
+      org.assertj.core.api.Assertions.assertThatThrownBy(
+              () ->
+                  jdbc.sql(
+                          "insert into api_key (org_id, prefix, key_sha256, name, scopes)"
+                              + " values (:o, 'shk_BBBB', :h, :n, array['mcp'])")
+                      .param("o", owner)
+                      .param("h", "c".repeat(64))
+                      .param("n", "n".repeat(61))
+                      .update())
+          .isInstanceOf(org.springframework.dao.DataIntegrityViolationException.class);
+      jdbc.sql(
+              "insert into api_key (org_id, prefix, key_sha256, name, scopes)"
+                  + " values (:o, 'shk_CCCC', :h, :n, array['mcp'])")
+          .param("o", owner)
+          .param("h", "d".repeat(64))
+          .param("n", "n".repeat(60))
+          .update();
+    } finally {
+      jdbc.sql("delete from organisation where id = :o").param("o", owner).update();
+    }
   }
 
   @Test
