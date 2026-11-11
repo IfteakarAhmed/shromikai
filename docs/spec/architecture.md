@@ -652,7 +652,7 @@ regeneration; a second violation drops the proposal and adds warning `counter-of
 | Multipart uploads spill to temp files (Spring's default threshold is 0 bytes) | `spring.servlet.multipart.file-size-threshold: 11MB`, above `max-file-size` |
 | PDFBox scratch files | Every `Loader.loadPDF` call passes a memory-only stream cache (`IOUtils.createMemoryOnlyStreamCache()`) |
 | `ImageIO` disk cache | `ImageIO.setUseCache(false)` at startup |
-| Tesseract temp files | tess4j with in-memory `BufferedImage`s; `NoContractPersistenceIT` checks the temp directory |
+| Tesseract temp files | Tesseract runs as a child process fed PNG on stdin with the result on stdout, so no file is written (ADR-0014); `NoContractPersistenceIT` checks the temp directory |
 | Heap or core dumps | `-XX:-HeapDumpOnOutOfMemoryError`; container `ulimit -c 0` |
 | Logs | Key allowlist (§15); log redaction filter masks NID, phone, email and free text > 200 characters; `SensitiveText.toString()` returns `[REDACTED len=n]` |
 | Traces | Trace events validated against a schema without free-text fields |
@@ -786,9 +786,10 @@ Every table: **contract text = No**.
 | `V2__foundation.sql` | P1 | `law_section.content_hash`, `parser_version`; `audit_event` |
 | `V3__identity.sql` | P2 | `organisation`, `app_user`, `refresh_token`; `CREATE EXTENSION citext`; demo seed only through the `demo` profile at runtime, never in a migration |
 | `V4__corpus.sql` | P3 | `law_act`, `law_section` and `section_edge` changes; `law_term`, `corpus_release` |
-| `V5__analysis.sql` | P6 | `instance_registry`, `analysis_run`; `analysis_trace` changes (empty-table assertion, FK, `Stage` check, new columns); `review_item` replaced (empty-table assertion, drop, create; conflicts C13 and C14 in §18.1) |
-| `V6__playbooks_usage.sql` | P7 | `playbook`, `playbook_rule`, `usage_counter`, `usage_event` |
-| `V7__api_keys.sql` | P8 | `api_key` |
+| `V5__embedding_tracking.sql` | P4 (applied) | `law_section.embedded_hash`, `embedded_model`, `embedding_truncated` (ADR-0012) |
+| `V6__analysis.sql` (was `V5__analysis.sql`, C26) | P6 | `instance_registry`, `analysis_run`; `analysis_trace` changes (empty-table assertion, FK, `Stage` check, new columns); `review_item` replaced (empty-table assertion, drop, create; conflicts C13 and C14 in §18.1) |
+| `V7__playbooks_usage.sql` (was V6, C26) | P7 | `playbook`, `playbook_rule`, `usage_counter`, `usage_event` |
+| `V8__api_keys.sql` (was V7, C26) | P8 | `api_key` |
 
 ### 11.4 Jurisdiction packs as data
 
@@ -1164,3 +1165,12 @@ where the specification needed a decision. None changes a requirement ID.
 | C21 | Section numbers carry Bangla letter suffixes (`৩ক`) and ranges (`76-123`); some English Contract Act rows have no number | Deterministic Latin key mapping (`ক`→`A`); an unnumbered row is appended to the previous section, never numbered | P3 |
 | C22 | `law_section` needs the footnotes for audit; the spec lists sub-section rows | `amendment_notes jsonb`; sub-sections are parsed only to resolve references, not stored as rows | P3 |
 | C23 | The print view's footnotes carry no link to the amending act | The amending act is read from the citation in the footnote text, for example "(২০২৬ সনের ৪৩ নং আইন)"; `effective_from` is set only for the original text, from the act's publication date | P3 |
+
+### 18.5 Phase 5 findings (contract intake and privacy shield, ADR-0014)
+
+| # | Finding | Resolution | Phase |
+| --- | --- | --- | --- |
+| C24 | §10.1 names `tess4j` for OCR; it needs native libraries inside the JVM image and adds a runtime dependency | Tesseract runs as a child process (PNG on stdin, `tsv` on stdout, no file); the command is configuration (`shromikai.intake.tesseract-command`) | P5 |
+| C25 | The egress guard must know the placeholder map of the job a request belongs to, but `EgressGuard.check(ChatRequest)` carried no job | `ChatRequest` gains an optional `EgressContext` (§10.5); `ModelGateway.call` takes it; no thread-local state | P5 |
+| C26 | P4 already created `V5__embedding_tracking.sql`, so the §11.3 name `V5__analysis.sql` is taken | P6 creates `V6__analysis.sql`; the P7 and P8 migrations move to `V7` and `V8`. Table contents are unchanged. The P5 persistence scan names `audit_event.detail` and covers every text and jsonb column, so the P6 tables are picked up when they exist | P5 |
+| C27 | E-45 only reads a job, but no public API exists before P7 to create one | The `dev` profile also exposes `POST /api/v1/dev/analyses` (E-45a) | P5 |

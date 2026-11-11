@@ -16,9 +16,9 @@ This page is the index for the team and for the submission form's "Prompt Librar
 | Prompt | Model role | Model | Purpose | Eval set and metrics | Status |
 | --- | --- | --- | --- | --- | --- |
 | `query-rewrite` | FAST | Claude Haiku 5.5 | 1 to 3 short legal search queries in Bangla and English per redacted clause or failed finding (never for free-text law search) | `retrieval`: M-15 | Experimental v1 (P4); lock after its dev-split report |
-| `pii-extract` | LOCAL_PII | qwen2.5:7b-instruct (local) | Persons, organisations, addresses and employee IDs in a text chunk | `pii`: M-25 | Planned (P5) |
-| `clause-segment` | FAST | Claude Haiku 5.5 | Fallback segmentation for unnumbered text | `contracts`: M-23 | Planned (P5) |
-| `clause-classify` | FAST | Claude Haiku 5.5 | Document-type gate; clause type with confidence | `contracts`: M-23 | Planned (P5) |
+| `pii-extract` | LOCAL_PII | qwen2.5:7b-instruct (local) | Persons, organisations, addresses and employee IDs in a text chunk | `pii`: M-25 | Experimental v1 (P5); lock after its dev-split report |
+| `clause-segment` | FAST | Claude Haiku 5.5 | Fallback segmentation for unnumbered text | `contracts`: M-23 | Experimental v1 (P5); lock after its dev-split report |
+| `clause-classify` | FAST | Claude Haiku 5.5 | Document-type gate; clause type with confidence | `contracts`: M-23 | Experimental v1 (P5); lock after its dev-split report |
 | `clause-facts` | FAST | Claude Haiku 5.5 | Typed facts per clause, cross-checked by regex | `contracts`: M-22 | Planned (P6) |
 | `risk-analysis` | REASONING | Claude Sonnet 5.5 | Risk agent (opposing counsel for the user's side), up to 4 clause batches in parallel: findings with severity, non-obvious flag and citations restricted to retrieved sections | `contracts`: M-06 to M-10 | Planned (P6) |
 | `risk-citation-repair` | REASONING | Claude Sonnet 5.5 | One corrective attempt with new candidates for a citation that failed verification | `contracts`: M-11, M-12 | Planned (P6) |

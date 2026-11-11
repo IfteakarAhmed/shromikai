@@ -127,7 +127,8 @@ Demo accounts receive `403` `demo-account-restricted` on password change and del
 | E-42 | `POST /api/v1/admin/laws/check-hashes` | `{ pages: [{ url, sha256 }] }` | `200` `{ changed: [{ url, storedSha256, newSha256 }], unchanged: int }` | `400` | FR-84 |
 | E-43 | `POST /api/v1/admin/laws/retrieval-smoke` | none | `200` `{ hitAt5, mrrAt10, recallAt8, questions, corpusRelease }` from `RetrievalSmokeService` (architecture §8.6); smoke numbers only, never written to `eval/reports/` | `503` (`smoke-questions` resource missing or empty) | FR-84 |
 | E-44 | `POST /api/v1/admin/review-items` | `{ kind: CORPUS_CHANGE, sourceUrl, storedSha256, newSha256, ingestRunId }` | `201` `ReviewItem` | `400` | FR-84 |
-| E-45 | `GET /api/v1/dev/analyses/{id}/redacted` (profile `dev` only) | none | `200` `{ clauses: [{ id, type, confidence, redactedText, flags }] }` | `404` outside `dev` | FR-33 |
+| E-45 | `GET /api/v1/dev/analyses/{id}/redacted` (profile `dev` only, admin) | none | `200` `{ clauses: [{ id, label, type, confidence, redactedText, flags }], trace: [{ stage, durationMs, outcome, promptId, promptVersion, modelId, detail }] }` | `404` outside `dev` | FR-33 |
+| E-45a | `POST /api/v1/dev/analyses` (profile `dev` only, admin; ADR-0014) | multipart `file` (one PDF, one text file or 1 to 15 images) or JSON `{ text }` | `201` `{ analysisId, status: CLASSIFIED, stage }` | `404` outside `dev`; `413`, `415`, `422` (`too-many-pages`, `unreadable-document` with `pages[]`, `not-an-employment-contract`), `502`/`503` as problem documents (`local-model-unavailable`, `privacy-guard-blocked`, `model-output-invalid`) | FR-24, FR-33 |
 
 Request and response objects without a full schema in §5:
 
