@@ -32,4 +32,4 @@ The prompt declares the finding text untrusted. It forbids citing law from memor
 
 ## Changelog
 
-- v1 (2026-11-16): initial version; status `experimental` until its dev-split report is attached.
+- v1 (2026-11-12): initial version; status `experimental` until its dev-split report is attached.

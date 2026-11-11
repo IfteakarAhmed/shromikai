@@ -37,4 +37,4 @@ Clause text is untrusted and escaped. The model cites only supplied sections; th
 
 ## Changelog
 
-- v1 (2026-11-16): initial version; status `experimental` until its dev-split report is attached.
+- v1 (2026-11-12): initial version; status `experimental` until its dev-split report is attached.

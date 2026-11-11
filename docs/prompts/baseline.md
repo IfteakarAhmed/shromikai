@@ -36,4 +36,4 @@ Document text is untrusted and escaped. Citations are claims only (origin `BASEL
 
 ## Changelog
 
-- v1 (2026-11-16): initial version; status `experimental` until its dev-split report is attached.
+- v1 (2026-11-12): initial version; status `experimental` until its dev-split report is attached.
