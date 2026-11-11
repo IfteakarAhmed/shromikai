@@ -332,6 +332,11 @@ tasks.named('check') {
             tasks.named('checkFixtures')
 }
 
+// No heap dump on out-of-memory: a dump would hold contract text (R-02, architecture §10.1).
+tasks.named('bootRun') {
+    jvmArgs '-XX:-HeapDumpOnOutOfMemoryError', '-Dfile.encoding=UTF-8'
+}
+
 tasks.named('bootJar') {
     archiveFileName = 'shromikai-backend.jar'
 }

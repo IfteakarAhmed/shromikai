@@ -555,3 +555,101 @@ proposed: a separate dev set first, then one run on the test set. The earlier st
   question sets and the topic map; AGENTS.md §7 items 10 and 11 (human acceptance, Prompt R), so
   `phase-4` is still **not** created. Whether to prefer vector-heavy fusion (higher MRR) is a
   decision for P6, which will see real clauses rather than questions; it needs its own ADR.
+
+## Phase report - P5 (contract intake and local privacy shield)
+
+Status: code, tests, documentation and ADR-0014 are done and `./gradlew check slowTest` is green on
+this machine. **Not done:** the live acceptance run against real Claude and real `qwen2.5:7b-instruct`
+(no `ANTHROPIC_API_KEY` here), the PII recall measurement (M-25), AGENTS.md §7 items 10 and 11
+(human acceptance check, Prompt R in a fresh session). The tag `phase-5` is therefore **not**
+created, as for P3 and P4 (`phase-4` is also still untagged).
+
+- **Summary:**
+  - Intake (`ingest`): magic-byte validation, PDFBox text with a memory-only stream cache, scanned
+    pages and images through local Tesseract (`ben+eng`, stdin/stdout, no files), legacy-font Bangla
+    conversion with OCR fallback, repeated header/footer removal, hyphenation repair, numbered
+    paragraphs, language detection, per-page OCR confidence.
+  - Privacy shield (`privacy`): deterministic detectors for 11 PII types, local `pii-extract`
+    (two attempts, then fail closed), typed placeholders held only in the job's memory, the real
+    egress guard in every cloud adapter (detectors plus Aho–Corasick over the job's values, audit
+    event, metric), instruction-like-text detector.
+  - Segmentation and classification (`analysis`): rule-based splitter with a `clause-segment`
+    fallback, `clause-classify` with the document-type gate, in-memory `JobStore` (30 minutes),
+    pipeline `INTAKE`→`OCR`→`REDACT`→`CLASSIFY` with content-free trace events, `dev`-profile
+    debug endpoints, five synthetic contracts.
+- **Files created or changed:**
+  - `ingest/`: `IntakeService`, `IntakeProperties`, `IntakeConfiguration`, `IntakeResult`,
+    `IntakeParagraph`, `PageQuality`, `InputKind`, `UnreadableDocumentException`; `ingest/internal/`:
+    `MagicBytes`, `FileType`, `PdfDocument`, `ImageDecoder`, `BijoyConverter`,
+    `HeaderFooterRemover`, `HyphenationRepair`, `Paragrapher`, `OcrEngine`, `TesseractCliEngine`.
+  - `privacy/`: `PiiType`, `PiiMatch`, `PiiDetector`, `PlaceholderMap`, `Redactor`, `Reidentifier`,
+    `LocalEntities`, `LocalEntityExtractor`, `PrivacyShield`, `RedactedParagraph`,
+    `PrivacyEgressGuard`, `InjectionDetector`; `privacy/internal/`: `Keywords` (+ `keywords.yml`),
+    `AhoCorasick`.
+  - `analysis/`: `AnalysisService`, `AnalysisJob`, `JobStore`, `Clause`, `ClauseType`,
+    `ClauseFlag`, `ClauseSegmenter`, `ClauseClassifier`, `Para`, `Stage`, `TraceEvent`.
+  - `api/`: `DevAnalysisController` (profile `dev`); `GlobalProblemHandler` adds `pages` to problem
+    documents. `shared/`: `EgressContext`, `ChatRequest` (optional context), `ModelGateway`
+    (context overloads), `AiConfiguration` (fail-closed stand-in removed), `ProblemException`
+    (`pages`). `trace/AuditService` constructor made public.
+  - Prompts: `pii-extract`, `clause-segment`, `clause-classify` (v1, experimental) with schemas and
+    `docs/prompts/*.md`. Config: `shromikai.intake.*`, `server.tomcat.max-swallow-size`.
+  - `eval/contracts/synthetic/` (5 contracts with meta and entities files), `docker/tesseract/`,
+    OCR fixtures `fixtures/ocr/`, rental-agreement fixture, `canaries.yml` filled.
+  - Docs: ADR-0014, architecture §10.1 and §18.5 (C24 to C27, migration renumbering), api.md E-45
+    and E-45a, prompts README, README.
+- **Tests added and passing:** `./gradlew test` 476 unit tests, `integrationTest` 199, `slowTest` 3 (`OcrIT`), 0 failures, 0 skipped, in the last run. New in P5: detector table (24 positive and 9 negative rows) and 3 jqwik properties, round-trip, guard, extractor, injection, Aho–Corasick, magic bytes, Bijoy, header/footer, segmenter (5 contracts), PDF/OCR intake, pipeline ITs and the persistence scan.
+  - Named tests of test-strategy §16 for P5: `MagicBytesTest`, `PdfTextExtractorIT`,
+    `BijoyConverterTest`, `OcrIT` (slow), `PiiDetectorTest` (+ `PiiDetectorPropertyTest`, jqwik),
+    `RedactionRoundTripTest`, `EgressGuardTest`, `NoPiiLeavesTheBoxIT`, `FailClosedIT`,
+    `NoContractPersistenceIT`, `ClauseSegmenterTest`, `DocumentGateIT`, `DevEndpointIT`,
+    `PromptInjectionTest`, `PromptRendererTest` (existing; covers the escaped closing tag).
+  - Also: `AhoCorasickTest`, `InjectionDetectorTest`, `LocalEntityExtractorTest`,
+    `HeaderFooterAndHyphenationTest`, `SyntheticContractsTest`, `DevEndpointEnabledIT`.
+- **Coverage of touched packages (JaCoCo line, unit + integration):** `privacy` 97.2 % (342/352), `privacy.internal` 94.7 % (72/76), `analysis` 91.2 % (353/387), `ingest` 84.8 % (168/198), `ingest.internal` 74.4 % (293/394).
+  The 80 % gate for `privacy` passes.
+- **Acceptance commands with output:**
+  - `./gradlew check` → `BUILD SUCCESSFUL` (tests, integration tests, JaCoCo gates, `promptLint: OK`, `checkFixtures: OK`, Spotless).
+  - `./gradlew slowTest` → `OcrIT` 3 tests green on `shromikai-tesseract`: mean confidence 92.0,
+    character accuracy 0.963 on the synthetic Bangla and English image (one image, so read it as a
+    smoke result, not a rate); the blurred copy yields no words and fails with
+    `unreadable-document`, `pages: [2]`.
+  - Debug endpoint, per synthetic contract (`DevEndpointEnabledIT`, `dev` + `test` profiles): redacted
+    clauses with types and confidence, expected clause counts 11, 9, 10, 11, 10, no original value in
+    the response, `PRIVACY_BLOCK` count unchanged. `NoPiiLeavesTheBoxIT` (real Claude adapter and real
+    guard against WireMock): zero blocked calls and no identifier in any captured request for all five
+    contracts, also with the local model returning nothing for NID, phone, e-mail, passport, DOB.
+  - **Not run:** the same flow against real Claude and real Ollama.
+- **Key decisions and ADRs:** ADR-0014 (money, durations and employment dates stay, restating
+  ADR-0003; Tesseract as a child process instead of `tess4j`; per-job `EgressContext` on
+  `ChatRequest`; `CLASSIFIED` as the end state of P5; E-45a). Spec findings C24 to C27.
+- **Known gaps:**
+  - No live run with a real model: the `pii-extract`, `clause-segment` and `clause-classify` prompts
+    were exercised against stubs and WireMock only. Their dev-split reports and M-25 (recall per PII
+    type) need the evaluation runner (P10) and a key; the prompts stay `experimental` and are not
+    in `LOCK`.
+  - A person's name that the local model does not return is not caught by the value search (RK-02);
+    detectors only catch identifiers with a pattern. The guard cannot close that gap, M-25 will measure it.
+  - `BijoyConverter` maps letters, vowel signs, reph, ya-phala, ra-phala and `ক্ষ`; rarer conjunct
+    glyphs are not mapped. It was tested on hand-written word pairs, not on a real Bijoy PDF; pages
+    below 0.90 Bengali letters after conversion go to OCR.
+  - PDF text-layer tests use English text (the test PDF builder has no Bangla font); a Bangla
+    text-layer PDF was not tested. OCR was measured on one synthetic image, not on phone photos.
+  - The PDF time limit is one budget (10 s plus four OCR timeouts) around the whole read, not a
+    separate 10 s parse limit. There is no `AbuseLimitsIT`; the decompression-bomb PNG and the
+    11 MB and 16-page cases are in `PdfTextExtractorIT` and `DevEndpointEnabledIT`.
+  - `NoContractPersistenceIT` runs the pipeline on the fake model port inside Spring; the real
+    cloud adapter path is covered by `NoPiiLeavesTheBoxIT`. `review_item.*` and `analysis_trace.detail`
+    do not exist yet; the scan reads every text and jsonb column, so it covers them once P6 creates
+    them, and it names `audit_event.detail` explicitly.
+  - The temp-directory scan looks 4 levels deep at files up to 8 MB.
+  - Spotless needs a JDK 21 here (Gradle on JDK 25 fails with google-java-format 1.28.0); I ran
+    `JAVA_HOME=…/jdk-21.jdk ./gradlew spotlessApply check`.
+  - `slowTest` needs Docker and builds the `shromikai-tesseract` image on first use (apt over the network).
+- **Open questions for the team:**
+  - Provide an `ANTHROPIC_API_KEY` for a live run of the dev endpoint, or accept the WireMock proof for P5?
+  - Run the human acceptance check and Prompt R, then tag `phase-5` (and `phase-4`).
+  - Production image: install `tesseract-ocr`, `tesseract-ocr-ben`, `tesseract-ocr-eng` (P11).
+- **Next phase prerequisites:** P6 creates `V6__analysis.sql` (not V5, C26), consumes `Clause`,
+  `AnalysisJob` and `JobStore`, and calls `ModelGateway` with the job's `EgressContext` for every
+  cloud prompt (`clause-facts`, `risk-analysis`, …).

@@ -4,6 +4,8 @@
 
 server:
   port: 8080
+  tomcat:
+    max-swallow-size: 16MB                # read an oversized upload to its end so the client gets the 413 (FR-24)
   error:
     include-stacktrace: never
     include-message: never
@@ -147,6 +149,17 @@ shromikai:
     cli: false                            # ./gradlew embedLaws sets this
     text-max-doc-freq: 0.10               # full-text query: drop words in more than this share of sections (ADR-0013)
     text-language-filter: false           # full-text query: match only sections in the query's language (ADR-0013)
+  intake:                                 # contract intake (FR-24, FR-27, NFR-20); ADR-0014
+    max-bytes: 10485760                   # 10 MB in total
+    max-pages: 15
+    max-pixels: 36000000                  # decoded pixels per image or rendered page
+    max-image-side: 6000
+    pdf-timeout: 10s
+    ocr-timeout: 60s
+    min-ocr-confidence: 60
+    ocr-parallel: 4
+    raster-dpi: 200
+    tesseract-command: [tesseract, stdin, stdout, -l, ben+eng, tsv]   # stdin/stdout only, no temp files
   scraper:                                # statute ingestion (FR-12, architecture §12)
     user-agent: "ShromikAI-ingest/1.0 (+${SCRAPER_CONTACT:})"
     contact: ${SCRAPER_CONTACT:}          # required for a real run; never committed

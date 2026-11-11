@@ -26,7 +26,7 @@ Built by team **Cosmic Duo** for the International AI Builders Congress 2026 —
 | Reasoning models | Claude Sonnet 5.5 and Claude Haiku 5.5 (Anthropic API) |
 | Independent verifier | Gemini Flash (optional key; falls back to a separate Claude prompt) |
 | Local models | Ollama: bge-m3 (embeddings), qwen2.5:7b-instruct (personal-data detection) |
-| OCR | Tesseract 5 (Bangla + English), runs locally |
+| OCR | Tesseract 5 (Bangla + English), runs locally as a child process (stdin/stdout, no temp files); `docker build -t shromikai-tesseract docker/tesseract` for `./gradlew slowTest` |
 | Frontend | React 19, TypeScript (strict), Vite, Tailwind CSS, TanStack Query, i18next (Bangla first) |
 | Deploy | Docker Compose; Gotenberg (memo PDF), n8n (automation) |
 
