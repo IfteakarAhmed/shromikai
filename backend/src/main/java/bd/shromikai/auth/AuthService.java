@@ -207,45 +207,62 @@ public class AuthService {
       errors.add(error("/locale", "must be bn or en"));
     }
     if (profile != null) {
-      for (Map.Entry<String, Object> e : profile.entrySet()) {
-        String key = e.getKey();
-        Object value = e.getValue();
-        String at = "/profile/" + key;
-        switch (key) {
-          case "side" -> {
-            if (!java.util.List.of("WORKER", "EMPLOYER").contains(value)) {
-              errors.add(error(at, "must be WORKER or EMPLOYER"));
-            }
-          }
-          case "sector" -> {
-            if (!(value instanceof String v) || !SECTORS.contains(v)) {
-              errors.add(error(at, "is not a sector"));
-            }
-          }
-          case "jobRole" -> {
-            if (value != null && (!(value instanceof String v) || v.length() > 60)) {
-              errors.add(error(at, "must be at most 60 characters"));
-            }
-          }
-          case "preferredLanguage" -> {
-            if (!java.util.List.of("bn", "en").contains(value)) {
-              errors.add(error(at, "must be bn or en"));
-            }
-          }
-          case "readingLevel" -> {
-            if (!java.util.List.of("BASIC", "STANDARD").contains(value)) {
-              errors.add(error(at, "must be BASIC or STANDARD"));
-            }
-          }
-          default -> errors.add(error(at, "is not a profile field"));
-        }
-      }
+      validateProfile(profile, "/profile/", true, errors);
     }
     if (!errors.isEmpty()) {
       throw new bd.shromikai.shared.problem.ValidationProblemException(errors);
     }
     users.updateProfile(subject.userId(), locale, profile);
     return me(subject);
+  }
+
+  /**
+   * Checks the fields of a personalisation profile; shared by the stored profile (E-09) and the
+   * per-request profile of an analysis (FR-56) so both accept the same values. A {@code null} value
+   * is a validation error for the stored profile ({@code nullIsError}) and is skipped for a request
+   * that simply left the field out.
+   */
+  public static void validateProfile(
+      Map<String, Object> profile,
+      String pointerPrefix,
+      boolean nullIsError,
+      java.util.List<bd.shromikai.shared.problem.ValidationProblemException.Error> errors) {
+    for (Map.Entry<String, Object> e : profile.entrySet()) {
+      String key = e.getKey();
+      Object value = e.getValue();
+      String at = pointerPrefix + key;
+      if (value == null && !nullIsError) {
+        continue;
+      }
+      switch (key) {
+        case "side" -> {
+          if (!"WORKER".equals(value) && !"EMPLOYER".equals(value)) {
+            errors.add(error(at, "must be WORKER or EMPLOYER"));
+          }
+        }
+        case "sector" -> {
+          if (!(value instanceof String v) || !SECTORS.contains(v)) {
+            errors.add(error(at, "is not a sector"));
+          }
+        }
+        case "jobRole" -> {
+          if (value != null && (!(value instanceof String v) || v.length() > 60)) {
+            errors.add(error(at, "must be at most 60 characters"));
+          }
+        }
+        case "preferredLanguage" -> {
+          if (!"bn".equals(value) && !"en".equals(value)) {
+            errors.add(error(at, "must be bn or en"));
+          }
+        }
+        case "readingLevel" -> {
+          if (!"BASIC".equals(value) && !"STANDARD".equals(value)) {
+            errors.add(error(at, "must be BASIC or STANDARD"));
+          }
+        }
+        default -> errors.add(error(at, "is not a profile field"));
+      }
+    }
   }
 
   private static bd.shromikai.shared.problem.ValidationProblemException.Error error(

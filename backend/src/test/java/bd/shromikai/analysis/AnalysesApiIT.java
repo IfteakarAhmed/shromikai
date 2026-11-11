@@ -247,4 +247,50 @@ class AnalysesApiIT extends ApiAnalysisIT {
             .count();
     assertThat((long) status.getBody().path("items").size()).isGreaterThanOrEqualTo(uncertain);
   }
+
+  @org.junit.jupiter.params.ParameterizedTest(name = "{0}")
+  @org.junit.jupiter.params.provider.ValueSource(
+      strings = {
+        "{\"sector\":\"NOT_A_SECTOR\"}",
+        "{\"preferredLanguage\":\"fr\"}",
+        "{\"readingLevel\":\"EXPERT\"}"
+      })
+  void aPerRequestProfileIsValidatedLikeTheStoredOne(String profileJson) throws Exception {
+    JsonNode profile = new com.fasterxml.jackson.databind.ObjectMapper().readTree(profileJson);
+
+    ResponseEntity<JsonNode> response =
+        postJson(
+            worker(),
+            Map.of(
+                "text",
+                text(),
+                "side",
+                "WORKER",
+                "outputLanguage",
+                "en",
+                "profile",
+                new com.fasterxml.jackson.databind.ObjectMapper()
+                    .convertValue(profile, Map.class)));
+
+    assertThat(response.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
+    assertThat(response.getBody().path("errors").toString()).contains("/profile/");
+  }
+
+  @Test
+  void aValidPerRequestProfileIsAccepted() {
+    ResponseEntity<JsonNode> response =
+        postJson(
+            worker(),
+            Map.of(
+                "text",
+                text(),
+                "side",
+                "WORKER",
+                "outputLanguage",
+                "en",
+                "profile",
+                Map.of("sector", "READY_MADE_GARMENTS", "readingLevel", "BASIC")));
+
+    assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
+  }
 }

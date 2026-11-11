@@ -130,4 +130,20 @@ class ProfileUpdateIT {
                 .getStatusCode())
         .isEqualTo(HttpStatus.UNAUTHORIZED);
   }
+
+  @org.junit.jupiter.params.ParameterizedTest(name = "{0}")
+  @org.junit.jupiter.params.provider.ValueSource(
+      strings = {
+        "{\"profile\":{\"side\":null}}",
+        "{\"profile\":{\"preferredLanguage\":null}}",
+        "{\"profile\":{\"readingLevel\":null}}",
+        "{\"profile\":{\"sector\":null}}",
+        "{\"locale\":\"en\",\"profile\":{\"side\":null}}",
+        "null"
+      })
+  void aNullValueOrBodyIs400NotAServerError(String body) {
+    ResponseEntity<JsonNode> response = patch(token, body);
+
+    assertThat(response.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
+  }
 }

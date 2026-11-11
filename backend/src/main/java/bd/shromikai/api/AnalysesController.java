@@ -10,6 +10,7 @@ import bd.shromikai.analysis.AnalysisSubject;
 import bd.shromikai.analysis.Side;
 import bd.shromikai.api.internal.AnalysisSubjects;
 import bd.shromikai.api.internal.IdempotencyCache;
+import bd.shromikai.auth.AuthService;
 import bd.shromikai.auth.AuthenticatedSubject;
 import bd.shromikai.auth.GuestQuotaService;
 import bd.shromikai.auth.Role;
@@ -228,12 +229,7 @@ public class AnalysesController {
         files.add(image.getBytes());
       }
     }
-    String bodyHash =
-        Hashing.sha256Hex(
-            (text != null ? text : "")
-                + files.stream().mapToInt(b -> b.length).sum()
-                + "|"
-                + options);
+    String bodyHash = multipartHash(text, files, options);
     Optional<ResponseEntity<Object>> replay = replay(subject, idempotencyKey, bodyHash);
     if (replay.isPresent()) {
       return replay.get();
@@ -435,6 +431,17 @@ public class AnalysesController {
     }
   }
 
+  /** Hash of a multipart request: the text, the bytes of every file in order, and the options. */
+  static String multipartHash(@Nullable String text, List<byte[]> files, Options options) {
+    StringBuilder sb = new StringBuilder();
+    sb.append(text == null ? "-" : "t:" + Hashing.sha256Hex(text));
+    for (byte[] file : files) {
+      sb.append("|f:").append(Hashing.sha256Hex(file));
+    }
+    sb.append('|').append(options);
+    return Hashing.sha256Hex(sb.toString());
+  }
+
   private AnalysisRequest request(
       AuthenticatedSubject caller,
       Side side,
@@ -443,6 +450,20 @@ public class AnalysesController {
       @Nullable UUID playbookId) {
     if (!"bn".equals(outputLanguage) && !"en".equals(outputLanguage)) {
       throw new ProblemException(ProblemType.VALIDATION_FAILED, "outputLanguage must be bn or en");
+    }
+    if (profile != null) {
+      // the same rules as the stored profile (FR-56)
+      Map<String, Object> given = new LinkedHashMap<>();
+      putGiven(given, "sector", profile.sector());
+      putGiven(given, "jobRole", profile.jobRole());
+      putGiven(given, "preferredLanguage", profile.preferredLanguage());
+      putGiven(given, "readingLevel", profile.readingLevel());
+      java.util.List<bd.shromikai.shared.problem.ValidationProblemException.Error> errors =
+          new ArrayList<>();
+      AuthService.validateProfile(given, "/profile/", false, errors);
+      if (!errors.isEmpty()) {
+        throw new bd.shromikai.shared.problem.ValidationProblemException(errors);
+      }
     }
     Map<String, String> map = new LinkedHashMap<>();
     if (profile == null && !caller.guest()) {
@@ -484,6 +505,12 @@ public class AnalysesController {
 
   private static @Nullable String asText(@Nullable Object value) {
     return value instanceof String text ? text : null;
+  }
+
+  private static void putGiven(Map<String, Object> map, String key, @Nullable String value) {
+    if (value != null) {
+      map.put(key, value);
+    }
   }
 
   private static void putIfPresent(Map<String, String> map, String key, @Nullable String value) {

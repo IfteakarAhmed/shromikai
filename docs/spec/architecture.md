@@ -764,7 +764,7 @@ Every table: **contract text = No**.
 | `organisation` (V3) | `id` uuid, `name`, `kind` (`SME`, `HR`, `NGO`, `LAW_FIRM`, `JOB_PORTAL`, `PLATFORM`), `plan` (`FREE`, `TEAM`, `API`, `LEGAL_AID`), `created_at`, `deleted_at` |
 | `app_user` (V3) | `id` uuid, `org_id` null, `email citext unique`, `password_hash` (BCrypt), `role` (`WORKER`, `HR`, `ADMIN`), `locale` (`bn`, `en`; default `bn`), `profile jsonb` (side, sector, job role, language, reading level), `is_demo boolean`, `failed_logins int`, `locked_until`, `created_at`, `disabled_at` |
 | `refresh_token` (V3) | `id` uuid, `user_id`, `family_id` uuid, `token_sha256 char(64) unique`, `expires_at`, `revoked_at`, `replaced_by` uuid null |
-| `api_key` (V8) | `id` uuid, `org_id`, `prefix char(8) unique`, `key_sha256 char(64) unique`, `name`, `scopes text[]`, `created_by`, `created_at`, `last_used_at`, `revoked_at` |
+| `api_key` (V8) | `id` uuid, `org_id`, `prefix char(8)` (plain index, not unique: V9), `key_sha256 char(64) unique`, `name`, `scopes text[]`, `created_by`, `created_at`, `last_used_at`, `revoked_at` |
 | `usage_counter` (guest quotas) | `subject_hash char(64)`, `day date`, `analyses int`; PK (`subject_hash`, `day`) |
 | `usage_event` (V8; no earlier migration created it, ADR-0021) | `id`, `org_id` null, `api_key_id` null, `user_id` null, `kind` (`ANALYSIS`, `COMPARE`, `MEMO_RENDER`, `API_CALL`, `MCP_CALL`), `units`, `cost_usd_micros`, `occurred_at` |
 

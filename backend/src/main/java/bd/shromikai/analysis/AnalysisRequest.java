@@ -21,7 +21,25 @@ public record AnalysisRequest(
     if (!"bn".equals(outputLanguage) && !"en".equals(outputLanguage)) {
       throw new IllegalArgumentException("outputLanguage must be bn or en");
     }
-    profile = Map.copyOf(profile);
+    profile = sanitised(profile);
+  }
+
+  /**
+   * Profile values reach prompts as trusted text (FR-56), so free text cannot carry markup, line
+   * breaks or control characters, and is at most 60 characters (R-06). Enumerated values (sector,
+   * language, reading level) are validated at the API and are not changed by this.
+   */
+  private static Map<String, String> sanitised(Map<String, String> profile) {
+    Map<String, String> out = new java.util.LinkedHashMap<>();
+    profile.forEach(
+        (key, value) -> {
+          String clean = value.replaceAll("[<>&\\p{Cntrl}]+", " ").replaceAll("\\s+", " ").strip();
+          if (clean.length() > 60) {
+            clean = clean.substring(0, 60).strip();
+          }
+          out.put(key, clean);
+        });
+    return Map.copyOf(out);
   }
 
   public static AnalysisRequest of(Side side) {
