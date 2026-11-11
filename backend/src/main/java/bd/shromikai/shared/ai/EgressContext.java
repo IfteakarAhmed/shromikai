@@ -10,6 +10,20 @@ import org.jspecify.annotations.Nullable;
  */
 public interface EgressContext {
 
+  /** For text that belongs to no job and holds no job values (public law questions, evaluation). */
+  EgressContext NONE =
+      new EgressContext() {
+        @Override
+        public Set<String> protectedValues() {
+          return Set.of();
+        }
+
+        @Override
+        public @Nullable String analysisId() {
+          return null;
+        }
+      };
+
   /** Every original PII value of the job. The guard blocks a payload that contains any of them. */
   Set<String> protectedValues();
 

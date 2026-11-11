@@ -1,6 +1,7 @@
 package bd.shromikai.retrieval.internal;
 
 import bd.shromikai.retrieval.QueryRewriter;
+import bd.shromikai.shared.ai.EgressContext;
 import bd.shromikai.shared.ai.ModelException;
 import bd.shromikai.shared.ai.ModelGateway;
 import bd.shromikai.shared.logging.LogKeys;
@@ -33,10 +34,10 @@ final class ModelGatewayQueryRewriter implements QueryRewriter {
   }
 
   @Override
-  public Optional<List<String>> rewrite(String redactedClause) {
+  public Optional<List<String>> rewrite(String redactedClause, EgressContext context) {
     JsonNode output;
     try {
-      output = gateway.call(PROMPT_ID, Map.of("clause", redactedClause)).output();
+      output = gateway.call(PROMPT_ID, Map.of("clause", redactedClause), context).output();
     } catch (ModelException e) {
       LOG.atWarn()
           .addKeyValue(LogKeys.REASON_CODE, e.reasonCode())

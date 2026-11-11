@@ -84,6 +84,15 @@ class RetrievalCacheTest {
   }
 
   @Test
+  void shouldKeyTheCacheByAHashNeverByTheQueryText() {
+    String key = RetrievalCache.key("Karim Uddin   overtime");
+
+    assertThat(key).matches("[0-9a-f]{64}").doesNotContainIgnoringCase("karim");
+    assertThat(key).isEqualTo(RetrievalCache.key("karim uddin overtime"));
+    assertThat(key).isNotEqualTo(RetrievalCache.key("karim uddin leave"));
+  }
+
+  @Test
   void shouldEmbedDifferentQueriesSeparately() {
     RetrievalCache cache = cache();
 

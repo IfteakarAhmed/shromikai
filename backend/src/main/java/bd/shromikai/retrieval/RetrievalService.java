@@ -9,6 +9,7 @@ import bd.shromikai.retrieval.internal.SectionRow;
 import bd.shromikai.retrieval.internal.SectionSearchRepository;
 import bd.shromikai.retrieval.internal.TextQueryBuilder;
 import bd.shromikai.retrieval.internal.TopicMap;
+import bd.shromikai.shared.ai.EgressContext;
 import bd.shromikai.shared.ai.LocalModelUnavailableException;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -59,12 +60,17 @@ public class RetrievalService {
   }
 
   public Retrieval search(String query, SearchOptions options) {
+    return search(query, options, EgressContext.NONE);
+  }
+
+  /** As above; {@code context} is the job whose values the egress guard protects (R-03). */
+  public Retrieval search(String query, SearchOptions options, EgressContext context) {
     List<String> queries = List.of(query);
     boolean rewritten = false;
     if (options.rewrite()) {
       QueryRewriter active = rewriter.getIfAvailable();
       Optional<List<String>> rewrittenQueries =
-          active == null ? Optional.empty() : active.rewrite(query);
+          active == null ? Optional.empty() : active.rewrite(query, context);
       if (rewrittenQueries.isPresent() && !rewrittenQueries.get().isEmpty()) {
         queries = rewrittenQueries.get();
         rewritten = true;

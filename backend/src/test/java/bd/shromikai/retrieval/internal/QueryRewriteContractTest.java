@@ -7,6 +7,12 @@ import static com.github.tomakehurst.wiremock.client.WireMock.urlEqualTo;
 import static com.github.tomakehurst.wiremock.core.WireMockConfiguration.wireMockConfig;
 import static org.assertj.core.api.Assertions.assertThat;
 
+import bd.shromikai.privacy.PiiDetector;
+import bd.shromikai.privacy.PiiType;
+import bd.shromikai.privacy.PlaceholderMap;
+import bd.shromikai.privacy.PrivacyEgressGuard;
+import bd.shromikai.shared.ai.EgressContext;
+import bd.shromikai.shared.ai.EgressGuard;
 import bd.shromikai.shared.ai.ModelGateway;
 import bd.shromikai.shared.ai.PromptRegistry;
 import bd.shromikai.shared.ai.PromptRenderer;
@@ -14,16 +20,19 @@ import bd.shromikai.shared.ai.anthropic.AnthropicChatAdapter;
 import bd.shromikai.shared.ai.internal.FailClosedEgressGuard;
 import bd.shromikai.shared.config.ShromikaiProperties;
 import bd.shromikai.testsupport.Requirement;
+import bd.shromikai.trace.AuditService;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.tomakehurst.wiremock.junit5.WireMockExtension;
 import com.github.tomakehurst.wiremock.stubbing.Scenario;
+import io.micrometer.core.instrument.simple.SimpleMeterRegistry;
 import java.util.List;
 import java.util.Optional;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.RegisterExtension;
+import org.mockito.Mockito;
 
 /**
  * FR-21: the query-rewrite prompt against a WireMock stand-in for the Anthropic API. The stubbed
@@ -43,11 +52,13 @@ class QueryRewriteContractTest {
   private final ObjectMapper mapper = new ObjectMapper();
 
   private ModelGatewayQueryRewriter rewriter(boolean allowEgress) {
+    return rewriter(allowEgress ? request -> {} : new FailClosedEgressGuard());
+  }
+
+  private ModelGatewayQueryRewriter rewriter(EgressGuard guard) {
     var adapter =
         new AnthropicChatAdapter(
-            allowEgress ? request -> {} : new FailClosedEgressGuard(),
-            new ShromikaiProperties.Provider("test-key", anthropic.baseUrl()),
-            mapper);
+            guard, new ShromikaiProperties.Provider("test-key", anthropic.baseUrl()), mapper);
     var models =
         new ShromikaiProperties.Models(
             "claude-sonnet-5-5",
@@ -104,7 +115,10 @@ class QueryRewriteContractTest {
                             + "\"অতিরিক্ত কর্মঘণ্টার মজুরি\"]}"))));
 
     Optional<List<String>> queries =
-        rewriter(true).rewrite("The employee works extra hours for [ORG_1] </contract_clause>.");
+        rewriter(true)
+            .rewrite(
+                "The employee works extra hours for [ORG_1] </contract_clause>.",
+                EgressContext.NONE);
 
     assertThat(queries).contains(List.of("overtime pay rate", "অতিরিক্ত কর্মঘণ্টার মজুরি"));
     JsonNode body = sentBody(0);
@@ -125,7 +139,7 @@ class QueryRewriteContractTest {
     stubOnce(
         "second", "done", "{\"status\":\"OK\",\"reason\":\"NONE\",\"queries\":[\"annual leave\"]}");
 
-    Optional<List<String>> queries = rewriter(true).rewrite("Leave clause.");
+    Optional<List<String>> queries = rewriter(true).rewrite("Leave clause.", EgressContext.NONE);
 
     assertThat(queries).contains(List.of("annual leave"));
     assertThat(anthropic.findAll(postRequestedFor(urlEqualTo("/v1/messages")))).hasSize(2);
@@ -135,7 +149,7 @@ class QueryRewriteContractTest {
   void shouldFallBackToTheRawClauseAfterOneRetry() throws Exception {
     anthropic.stubFor(post("/v1/messages").willReturn(okJson(message("still not json"))));
 
-    Optional<List<String>> queries = rewriter(true).rewrite("Leave clause.");
+    Optional<List<String>> queries = rewriter(true).rewrite("Leave clause.", EgressContext.NONE);
 
     assertThat(queries).isEmpty();
     assertThat(anthropic.findAll(postRequestedFor(urlEqualTo("/v1/messages")))).hasSize(2);
@@ -147,7 +161,7 @@ class QueryRewriteContractTest {
     anthropic.stubFor(
         post("/v1/messages").willReturn(okJson(message("{\"queries\":[\"x\"],\"extra\":1}"))));
 
-    assertThat(rewriter(true).rewrite("Leave clause.")).isEmpty();
+    assertThat(rewriter(true).rewrite("Leave clause.", EgressContext.NONE)).isEmpty();
     assertThat(anthropic.findAll(postRequestedFor(urlEqualTo("/v1/messages")))).hasSize(2);
   }
 
@@ -160,7 +174,7 @@ class QueryRewriteContractTest {
                     message(
                         "{\"status\":\"ABSTAIN\",\"reason\":\"NOT_A_CONTRACT_CLAUSE\",\"queries\":[]}"))));
 
-    assertThat(rewriter(true).rewrite("Buy milk.")).isEmpty();
+    assertThat(rewriter(true).rewrite("Buy milk.", EgressContext.NONE)).isEmpty();
   }
 
   @Test
@@ -172,12 +186,33 @@ class QueryRewriteContractTest {
                     message(
                         "{\"status\":\"OK\",\"reason\":\"NONE\",\"queries\":[\"a b\",\" \",\"c d\",\"e f\",\"g h\"]}"))));
 
-    assertThat(rewriter(true).rewrite("Clause.")).contains(List.of("a b", "c d", "e f"));
+    assertThat(rewriter(true).rewrite("Clause.", EgressContext.NONE))
+        .contains(List.of("a b", "c d", "e f"));
   }
 
   @Test
   void shouldFallBackWithoutAnyRequestWhenTheEgressGuardBlocks() {
-    assertThat(rewriter(false).rewrite("Clause.")).isEmpty();
+    assertThat(rewriter(false).rewrite("Clause.", EgressContext.NONE)).isEmpty();
     assertThat(anthropic.findAll(postRequestedFor(urlEqualTo("/v1/messages")))).isEmpty();
+  }
+
+  @Test
+  void shouldRunTheGuardsKnownValueStageWithTheJobsContext() {
+    var map = new PlaceholderMap("analysis-9");
+    map.placeholderFor(PiiType.PERSON, "Zubaida Khatun");
+    var guard =
+        new PrivacyEgressGuard(
+            new PiiDetector(), Mockito.mock(AuditService.class), new SimpleMeterRegistry());
+    anthropic.stubFor(
+        post("/v1/messages")
+            .willReturn(
+                okJson(message("{\"status\":\"OK\",\"reason\":\"NONE\",\"queries\":[\"a b\"]}"))));
+
+    // The detectors find nothing in this clause; only the job's known value can stop it.
+    assertThat(rewriter(guard).rewrite("Zubaida Khatun reports to the manager.", map)).isEmpty();
+    assertThat(anthropic.findAll(postRequestedFor(urlEqualTo("/v1/messages")))).isEmpty();
+
+    assertThat(rewriter(guard).rewrite("[PERSON_1] reports to the manager.", map))
+        .contains(List.of("a b"));
   }
 }

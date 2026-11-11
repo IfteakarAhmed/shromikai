@@ -1,5 +1,6 @@
 package bd.shromikai.retrieval;
 
+import bd.shromikai.shared.ai.EgressContext;
 import java.util.List;
 import java.util.Optional;
 
@@ -10,7 +11,8 @@ import java.util.Optional;
 public interface QueryRewriter {
 
   /**
+   * @param context the job the clause belongs to; its original values reach the egress guard (R-03)
    * @return the queries, or empty when rewriting failed and the raw clause must be used
    */
-  Optional<List<String>> rewrite(String redactedClause);
+  Optional<List<String>> rewrite(String redactedClause, EgressContext context);
 }

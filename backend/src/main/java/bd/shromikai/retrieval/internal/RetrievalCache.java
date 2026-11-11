@@ -1,5 +1,6 @@
 package bd.shromikai.retrieval.internal;
 
+import bd.shromikai.shared.Hashing;
 import bd.shromikai.shared.ai.EmbeddingPort;
 import bd.shromikai.shared.text.BanglaNormalizer;
 import com.github.benmanes.caffeine.cache.Cache;
@@ -11,9 +12,9 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import org.springframework.stereotype.Component;
 
 /**
- * Caffeine cache of query embeddings keyed by the normalised query (FR-21): the same question asked
- * twice calls {@link EmbeddingPort} once. Memory only; the keys may be user queries, so the cache
- * never reaches disk or a log (architecture §10.7).
+ * Caffeine cache of query embeddings keyed by the SHA-256 of the normalised query (FR-21): the same
+ * question asked twice calls {@link EmbeddingPort} once. Memory only; the keys may be user queries,
+ * so the cache never reaches disk or a log (architecture §10.7).
  */
 @Component
 public class RetrievalCache {
@@ -37,9 +38,12 @@ public class RetrievalCache {
         Counter.builder("shromikai_retrieval_cache_total").tag("result", "miss").register(registry);
   }
 
-  /** The cache key of a query: its {@link BanglaNormalizer#matchingForm matching form}. */
+  /**
+   * The cache key of a query: the SHA-256 of its {@link BanglaNormalizer#matchingForm matching
+   * form}, so the cache never holds the query text itself.
+   */
   public static String key(String query) {
-    return BanglaNormalizer.matchingForm(query);
+    return Hashing.sha256Hex(BanglaNormalizer.matchingForm(query));
   }
 
   /** The embedding of the query, from the cache when the normalised query was seen recently. */
