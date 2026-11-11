@@ -59,8 +59,19 @@ abstract class ApiAnalysisIT {
     P6Stubs.install(fake);
   }
 
+  @Autowired protected JobStore jobStore;
+
+  /**
+   * Waits for background analyses a test left running before the corpus and runs are deleted.
+   * Cleaning under a running pipeline caused a NullPointerException in retrieval and starved the
+   * test pool of connections (the intermittent 30 s Hikari timeout seen in P7).
+   */
   @AfterEach
-  void cleanDatabase() {
+  void cleanDatabase() throws InterruptedException {
+    for (int i = 0; i < 300 && jobStore.countRunning(j -> true) > 0; i++) {
+      Thread.sleep(100);
+    }
+    Thread.sleep(300); // the last run-store writes follow the job's completion
     jdbc.sql("delete from analysis_run").update();
     FictionalCorpus.clean(jdbc);
   }

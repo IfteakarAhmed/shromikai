@@ -43,7 +43,7 @@ export interface paths {
       path?: never
       cookie?: never
     }
-    get: operations['get_1']
+    get: operations['get_3']
     put?: never
     post?: never
     delete: operations['delete']
@@ -324,6 +324,54 @@ export interface paths {
     patch?: never
     trace?: never
   }
+  '/api/v1/review-items': {
+    parameters: {
+      query?: never
+      header?: never
+      path?: never
+      cookie?: never
+    }
+    get: operations['list_1']
+    put?: never
+    post?: never
+    delete?: never
+    options?: never
+    head?: never
+    patch?: never
+    trace?: never
+  }
+  '/api/v1/review-items/{id}': {
+    parameters: {
+      query?: never
+      header?: never
+      path?: never
+      cookie?: never
+    }
+    get: operations['get_1']
+    put?: never
+    post?: never
+    delete?: never
+    options?: never
+    head?: never
+    patch: operations['patch']
+    trace?: never
+  }
+  '/api/v1/review-tickets/{ticketId}': {
+    parameters: {
+      query?: never
+      header?: never
+      path?: never
+      cookie?: never
+    }
+    get: operations['get_2']
+    put?: never
+    post?: never
+    delete?: never
+    options?: never
+    head?: never
+    patch?: never
+    trace?: never
+  }
 }
 export type webhooks = Record<string, never>
 export interface components {
@@ -489,6 +537,14 @@ export interface components {
     PasswordChangeRequest: {
       currentPassword: string
       newPassword: string
+    }
+    Patch: {
+      claim: string
+      decision: string
+      note: string
+      quote: string
+      sectionKey: string
+      status: string
     }
     Playbook: {
       /** Format: date-time */
@@ -764,7 +820,7 @@ export interface operations {
       }
     }
   }
-  get_1: {
+  get_3: {
     parameters: {
       query?: never
       header?: never
@@ -1449,6 +1505,141 @@ export interface operations {
           [name: string]: unknown
         }
         content?: never
+      }
+      /** @description Problem document */
+      default: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/problem+json': components['schemas']['Problem']
+        }
+      }
+    }
+  }
+  list_1: {
+    parameters: {
+      query?: {
+        status?: string
+        kind?: string
+        clauseType?: string
+        severity?: string
+        page?: number
+        size?: number
+      }
+      header?: never
+      path?: never
+      cookie?: never
+    }
+    requestBody?: never
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          '*/*': Record<string, never>
+        }
+      }
+      /** @description Problem document */
+      default: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/problem+json': components['schemas']['Problem']
+        }
+      }
+    }
+  }
+  get_1: {
+    parameters: {
+      query?: never
+      header?: never
+      path: {
+        id: string
+      }
+      cookie?: never
+    }
+    requestBody?: never
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          '*/*': Record<string, never>
+        }
+      }
+      /** @description Problem document */
+      default: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/problem+json': components['schemas']['Problem']
+        }
+      }
+    }
+  }
+  patch: {
+    parameters: {
+      query?: never
+      header?: never
+      path: {
+        id: string
+      }
+      cookie?: never
+    }
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['Patch']
+      }
+    }
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          '*/*': Record<string, never>
+        }
+      }
+      /** @description Problem document */
+      default: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/problem+json': components['schemas']['Problem']
+        }
+      }
+    }
+  }
+  get_2: {
+    parameters: {
+      query?: never
+      header?: {
+        'X-Ticket-Token'?: string
+      }
+      path: {
+        ticketId: string
+      }
+      cookie?: never
+    }
+    requestBody?: never
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          '*/*': Record<string, never>
+        }
       }
       /** @description Problem document */
       default: {
