@@ -1,0 +1,11 @@
+# Every personal identifier in syn-bn-01.md (all invented). Used by the privacy tests (FR-30, M-16).
+contractId: syn-bn-01
+entities:
+  - { type: PERSON, value: "মোছাঃ নমুনা বেগম" }
+  - { type: PERSON, value: "রহিম নমুনা সরকার" }
+  - { type: PERSON, value: "করিমা নমুনা খাতুন" }
+  - { type: ORG, value: "উদাহরণ গার্মেন্টস লিমিটেড" }
+  - { type: ADDRESS, value: "প্লট ১২, কাল্পনিক শিল্প এলাকা, কাল্পনিকপুর" }
+  - { type: NID, value: "১২৩৪৫৬৭৮৯০১২৩" }
+  - { type: PHONE, value: "০১৭০০-০০০১০১" }
+  - { type: EMAIL, value: "namuna@example.org" }

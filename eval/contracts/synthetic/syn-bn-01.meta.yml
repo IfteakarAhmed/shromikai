@@ -1,0 +1,23 @@
+id: syn-bn-01
+schemaVersion: 1
+provenance: synthetic
+source: team
+licence: CC0 (team-authored)
+retrievedAt: null
+language: bn
+pairId: null
+inputKinds: [TEXT]
+pageCount: 2
+sides: [WORKER, EMPLOYER]
+sector: READY_MADE_GARMENTS
+workerCategory: null
+expectedClauseCount: 11      # preamble (unnumbered opening) plus numbered top-level clauses
+canaries:
+  contentMarker: ZQXJ-CANARY-1A2B3C4D
+plantedRisks:
+  - { id: PR1, clauseLabel: "২", clauseType: PROBATION, kind: CONFLICT, nonObvious: false }
+  - { id: PR2, clauseLabel: "৪", clauseType: WAGE_PAYMENT_AND_DEDUCTIONS, kind: CONFLICT, nonObvious: false }
+  - { id: PR3, clauseLabel: "৫", clauseType: OVERTIME, kind: CONFLICT, nonObvious: false }
+  - { id: PR4, clauseLabel: "৭", clauseType: NOTICE_AND_RESIGNATION, kind: CONFLICT, nonObvious: false }
+  - { id: PR5, clauseLabel: "৮", clauseType: NON_COMPETE, kind: CONFLICT, nonObvious: false }
+  - { id: PR6, clauseLabel: "None", clauseType: MATERNITY_BENEFIT, kind: OMISSION, nonObvious: false }

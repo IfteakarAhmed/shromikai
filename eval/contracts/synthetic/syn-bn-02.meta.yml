@@ -1,0 +1,22 @@
+id: syn-bn-02
+schemaVersion: 1
+provenance: synthetic
+source: team
+licence: CC0 (team-authored)
+retrievedAt: null
+language: bn
+pairId: null
+inputKinds: [TEXT]
+pageCount: 1
+sides: [WORKER, EMPLOYER]
+sector: RETAIL
+workerCategory: null
+expectedClauseCount: 9      # preamble (unnumbered opening) plus numbered top-level clauses
+canaries:
+  contentMarker: ZQXJ-CANARY-5E6F7A8B
+plantedRisks:
+  - { id: PR1, clauseLabel: "৩", clauseType: WORKING_HOURS, kind: CONFLICT, nonObvious: false }
+  - { id: PR2, clauseLabel: "৪", clauseType: REST_AND_HOLIDAYS, kind: CONFLICT, nonObvious: false }
+  - { id: PR3, clauseLabel: "৫", clauseType: MATERNITY_BENEFIT, kind: CONFLICT, nonObvious: false }
+  - { id: PR4, clauseLabel: "৬", clauseType: WAGE_PAYMENT_AND_DEDUCTIONS, kind: CONFLICT, nonObvious: false }
+  - { id: PR5, clauseLabel: "৭", clauseType: TERMINATION, kind: CONFLICT, nonObvious: false }

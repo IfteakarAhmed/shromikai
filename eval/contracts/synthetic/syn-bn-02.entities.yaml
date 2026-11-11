@@ -1,0 +1,9 @@
+# Every personal identifier in syn-bn-02.md (all invented). Used by the privacy tests (FR-30, M-16).
+contractId: syn-bn-02
+entities:
+  - { type: PERSON, value: "আবদুল নকল মিয়া" }
+  - { type: PERSON, value: "সালমা নকল চৌধুরী" }
+  - { type: ORG, value: "নমুনা সুপারশপ" }
+  - { type: ADDRESS, value: "দোকান ৭, কাল্পনিক বাজার, নকলগঞ্জ" }
+  - { type: NID, value: "১২৩৪৫৬৭৮৯০" }
+  - { type: PHONE, value: "০১৮০০-০০০২০২" }

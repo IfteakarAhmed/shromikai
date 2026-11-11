@@ -1,0 +1,9 @@
+# Every personal identifier in syn-bn-03.md (all invented). Used by the privacy tests (FR-30, M-16).
+contractId: syn-bn-03
+entities:
+  - { type: PERSON, value: "সাদিয়া ডামি আহমেদ" }
+  - { type: ORG, value: "ডেমো টেক সলিউশনস" }
+  - { type: ADDRESS, value: "বাড়ি ৩, সড়ক ৫, ডামিনগর" }
+  - { type: PASSPORT, value: "AB১২৩৪৫৬৭" }
+  - { type: DOB, value: "১২/০৫/১৯৯২" }
+  - { type: EMAIL, value: "sadia.dummy@example.org" }

@@ -1,0 +1,11 @@
+# Every personal identifier in syn-en-02.md (all invented). Used by the privacy tests (FR-30, M-16).
+contractId: syn-en-02
+entities:
+  - { type: PERSON, value: "Karim Demo Hossain" }
+  - { type: PERSON, value: "Nasrin Demo Akter" }
+  - { type: PERSON, value: "Faruk Demo Mia" }
+  - { type: ORG, value: "Demo Guard Services" }
+  - { type: ADDRESS, value: "House 9, Road 2, Mockpara" }
+  - { type: NID, value: "98765432109876543" }
+  - { type: PHONE, value: "+8801400000404" }
+  - { type: EMAIL, value: "karim.demo@example.org" }

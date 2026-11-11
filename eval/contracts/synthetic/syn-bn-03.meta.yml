@@ -1,0 +1,22 @@
+id: syn-bn-03
+schemaVersion: 1
+provenance: synthetic
+source: team
+licence: CC0 (team-authored)
+retrievedAt: null
+language: bn
+pairId: null
+inputKinds: [TEXT]
+pageCount: 1
+sides: [WORKER, EMPLOYER]
+sector: INFORMATION_TECHNOLOGY
+workerCategory: null
+expectedClauseCount: 10      # preamble (unnumbered opening) plus numbered top-level clauses
+canaries:
+  contentMarker: ZQXJ-CANARY-9C0D1E2F
+plantedRisks:
+  - { id: PR1, clauseLabel: "৩", clauseType: WORKING_HOURS, kind: CONFLICT, nonObvious: false }
+  - { id: PR2, clauseLabel: "৪", clauseType: PROBATION, kind: CONFLICT, nonObvious: false }
+  - { id: PR3, clauseLabel: "৫", clauseType: NOTICE_AND_RESIGNATION, kind: CONFLICT, nonObvious: false }
+  - { id: PR4, clauseLabel: "৬", clauseType: INTELLECTUAL_PROPERTY, kind: AMBIGUITY, nonObvious: false }
+  - { id: PR5, clauseLabel: "৮", clauseType: NON_COMPETE, kind: CONFLICT, nonObvious: false }

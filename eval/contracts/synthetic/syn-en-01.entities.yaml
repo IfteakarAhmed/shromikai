@@ -1,0 +1,11 @@
+# Every personal identifier in syn-en-01.md (all invented). Used by the privacy tests (FR-30, M-16).
+contractId: syn-en-01
+entities:
+  - { type: PERSON, value: "Tania Sample Rahman" }
+  - { type: PERSON, value: "Imran Sample Khan" }
+  - { type: PERSON, value: "Laila Sample Begum" }
+  - { type: ORG, value: "Sample Knitwear Ltd." }
+  - { type: ADDRESS, value: "Plot 4, Fictional EPZ, Fakeville" }
+  - { type: NID, value: "1234567890123" }
+  - { type: PHONE, value: "01900-000303" }
+  - { type: EMAIL, value: "tania.sample@example.org" }

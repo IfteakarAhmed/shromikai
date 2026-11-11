@@ -1,0 +1,23 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:shromikai:schema:llm:clause-segment:1",
+  "title": "clause-segment output",
+  "type": "object",
+  "properties": {
+    "status": { "type": "string", "enum": ["OK", "ABSTAIN"] },
+    "reason": { "type": "string", "enum": ["NONE", "NOT_A_CONTRACT_CLAUSE", "UNREADABLE"] },
+    "clauses": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "paragraph_ids": { "type": "array", "items": { "type": "string" } }
+        },
+        "required": ["paragraph_ids"],
+        "additionalProperties": false
+      }
+    }
+  },
+  "required": ["status", "reason", "clauses"],
+  "additionalProperties": false
+}

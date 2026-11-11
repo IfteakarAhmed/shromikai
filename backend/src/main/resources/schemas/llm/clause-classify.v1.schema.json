@@ -1,0 +1,36 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:shromikai:schema:llm:clause-classify:1",
+  "title": "clause-classify output",
+  "type": "object",
+  "properties": {
+    "status": { "type": "string", "enum": ["OK", "ABSTAIN"] },
+    "reason": { "type": "string", "enum": ["NONE", "NOT_A_CONTRACT_CLAUSE", "UNREADABLE"] },
+    "document_type": { "type": "string", "enum": ["EMPLOYMENT_CONTRACT", "OTHER_AGREEMENT", "NOT_AN_AGREEMENT"] },
+    "clauses": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "id": { "type": "string" },
+          "type": {
+            "type": "string",
+            "enum": [
+              "APPOINTMENT_AND_ROLE", "PROBATION", "WAGES", "WAGE_PAYMENT_AND_DEDUCTIONS",
+              "WORKING_HOURS", "OVERTIME", "REST_AND_HOLIDAYS", "LEAVE", "MATERNITY_BENEFIT",
+              "NOTICE_AND_RESIGNATION", "TERMINATION", "DISCIPLINE_AND_MISCONDUCT",
+              "SERVICE_BENEFITS", "TRANSFER_AND_DEPLOYMENT", "CONFIDENTIALITY", "NON_COMPETE",
+              "INTELLECTUAL_PROPERTY", "HEALTH_AND_SAFETY", "DISPUTE_RESOLUTION", "GOVERNING_LAW",
+              "GENERAL_PROVISIONS", "OTHER"
+            ]
+          },
+          "confidence": { "type": "number" }
+        },
+        "required": ["id", "type", "confidence"],
+        "additionalProperties": false
+      }
+    }
+  },
+  "required": ["status", "reason", "document_type", "clauses"],
+  "additionalProperties": false
+}

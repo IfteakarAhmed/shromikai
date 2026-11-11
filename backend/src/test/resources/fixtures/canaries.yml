@@ -1,9 +1,34 @@
 # Synthetic PII values that fixtures may contain (test-strategy.md §10, §13). Every value is
 # invented. The fixture scanner rejects any NID, phone or e-mail match in fixtures that is not
-# listed here. Contract fixtures (P5) repeat the marker in 3 clauses.
+# listed here. The five contracts under eval/contracts/synthetic/ repeat their own marker in 3
+# clauses; SyntheticContractsTest checks that this file lists every value of theirs.
 marker_prefix: ZQXJ-CANARY-
 values:
-  persons: []
-  nids: []
-  phones: []
-  emails: []
+  persons:
+    - "মোছাঃ নমুনা বেগম"
+    - "রহিম নমুনা সরকার"
+    - "করিমা নমুনা খাতুন"
+    - "আবদুল নকল মিয়া"
+    - "সালমা নকল চৌধুরী"
+    - "সাদিয়া ডামি আহমেদ"
+    - "Tania Sample Rahman"
+    - "Imran Sample Khan"
+    - "Laila Sample Begum"
+    - "Karim Demo Hossain"
+    - "Nasrin Demo Akter"
+    - "Faruk Demo Mia"
+  nids:
+    - "১২৩৪৫৬৭৮৯০১২৩"
+    - "১২৩৪৫৬৭৮৯০"
+    - "1234567890123"
+    - "98765432109876543"
+  phones:
+    - "০১৭০০-০০০১০১"
+    - "০১৮০০-০০০২০২"
+    - "01900-000303"
+    - "+8801400000404"
+  emails:
+    - "namuna@example.org"
+    - "sadia.dummy@example.org"
+    - "tania.sample@example.org"
+    - "karim.demo@example.org"

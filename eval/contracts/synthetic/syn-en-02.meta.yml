@@ -1,0 +1,23 @@
+id: syn-en-02
+schemaVersion: 1
+provenance: synthetic
+source: team
+licence: CC0 (team-authored)
+retrievedAt: null
+language: en
+pairId: null
+inputKinds: [TEXT]
+pageCount: 1
+sides: [WORKER, EMPLOYER]
+sector: SECURITY_SERVICES
+workerCategory: null
+expectedClauseCount: 10      # preamble (unnumbered opening) plus numbered top-level clauses
+canaries:
+  contentMarker: ZQXJ-CANARY-7B8C9D0E
+plantedRisks:
+  - { id: PR1, clauseLabel: "2", clauseType: WAGE_PAYMENT_AND_DEDUCTIONS, kind: CONFLICT, nonObvious: false }
+  - { id: PR2, clauseLabel: "3", clauseType: WORKING_HOURS, kind: CONFLICT, nonObvious: false }
+  - { id: PR3, clauseLabel: "4", clauseType: REST_AND_HOLIDAYS, kind: CONFLICT, nonObvious: false }
+  - { id: PR4, clauseLabel: "5", clauseType: PROBATION, kind: CONFLICT, nonObvious: false }
+  - { id: PR5, clauseLabel: "6", clauseType: HEALTH_AND_SAFETY, kind: CONFLICT, nonObvious: false }
+  - { id: PR6, clauseLabel: "7", clauseType: NOTICE_AND_RESIGNATION, kind: CONFLICT, nonObvious: false }
