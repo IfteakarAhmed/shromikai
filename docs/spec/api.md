@@ -123,7 +123,7 @@ Demo accounts receive `403` `demo-account-restricted` on password change and del
 | E-38 | `DELETE /api/v1/admin/api-keys/{id}` | none | `204` (revokes) | `404` | FR-65 |
 | E-39 | `GET /api/v1/admin/usage` | `from`, `to` (dates, max 92 days), `orgId` | `200` `UsageReport` | `400` | FR-73 |
 | E-40 | `GET /api/v1/admin/traces/{analysisId}` | none | `200` `AnalysisTrace` | `404` | FR-73, FR-82 |
-| E-41 | `POST /api/v1/admin/laws/ingest` | `{ acts?: string[] }` | `202` `{ ingestRunId }`; result in the quality report | `409` `ingest-running` | FR-15, FR-84 |
+| E-41 | `POST /api/v1/admin/laws/ingest` | `{ acts?: string[] }` (act codes of the pack, each matching `^[A-Za-z][A-Za-z0-9-]{1,31}$`, at most 20; all acts when absent) | `202` `{ ingestRunId }`; the run continues on the server and its result is `eval/reports/corpus-quality.{md,json}` | `400`, `409` `ingest-running` (one run at a time per database) | FR-15, FR-84 |
 | E-42 | `POST /api/v1/admin/laws/check-hashes` | `{ pages: [{ url, sha256 }] }` | `200` `{ changed: [{ url, storedSha256, newSha256 }], unchanged: int }` | `400` | FR-84 |
 | E-43 | `POST /api/v1/admin/laws/retrieval-smoke` | none | `200` `{ hitAt5, mrrAt10, recallAt8, questions, corpusRelease }` from `RetrievalSmokeService` (architecture §8.6); smoke numbers only, never written to `eval/reports/` | `503` (`smoke-questions` resource missing or empty) | FR-84 |
 | E-44 | `POST /api/v1/admin/review-items` | `{ kind: CORPUS_CHANGE, sourceUrl, storedSha256, newSha256, ingestRunId }` | `201` `ReviewItem` | `400` | FR-84 |

@@ -749,7 +749,7 @@ Every table: **contract text = No**.
 | Table | Columns |
 | --- | --- |
 | `law_act` (V1 + V4) | V1: `id`, `code` unique, `title_en`, `title_bn`, `year`, `jurisdiction`, `source_url`, `fetched_at`. V4: `authoritative_lang` (`bn`, `en`), `status` (`IN_FORCE`, `REPEALED`), `source_sha256`, `ratification_status` (ILO acts: text as published by NORMLEX, else null) |
-| `law_section` (V1 + V2 + V4) | V1: `id`, `act_id`, `section_no`, headings and texts in both languages, `version_label`, `effective_from`, `is_current`, `source_url`, `embedding vector(1024)`, `search_tsv`. V2 (P1): `content_hash char(64)`, `parser_version text`. V4 (P3): `section_no_original` (Bangla form), `chapter`, `parent_section_id`, `fetched_at not null`, `normalised_text` with a GIN `tsvector` index, `section_key text not null unique` (a stored column written by the ingestor from the act code, Latin section number and version label, with a `CHECK` on the api.md §5.4 pattern; a generated column cannot read `law_act.code`) |
+| `law_section` (V1 + V2 + V4) | V1: `id`, `act_id`, `section_no`, headings and texts in both languages, `version_label`, `effective_from`, `is_current`, `source_url`, `embedding vector(1024)`, `search_tsv`. V2 (P1): `content_hash char(64)`, `parser_version text`. V4 (P3): `section_no_original` (Bangla form), `chapter`, `parent_section_id`, `fetched_at not null`, `normalised_text` with a GIN `tsvector` index, `section_key text not null unique` (a stored column written by the ingestor from the act code, Latin section number and version label, with a `CHECK` on the api.md §5.4 pattern; a generated column cannot read `law_act.code`); `amendment_notes jsonb not null default '[]'` keeps the footnote text and kind the parser read for the version (ADR-0011); sub-sections are not stored as rows, `parent_section_id` stays unused in P3 |
 | `section_edge` (V1 + V4) | V1: `from_section_id`, `to_section_id`, `kind`. V4: kind adds `ALIGNS_WITH`; `reviewed boolean default false`; `reviewed_by text`; `source` (`PARSER`, `MAPPING`) |
 | `law_term` (V4) | `id`, `section_id`, `kind` (`DEFINED_TERM`, `WORKER_CATEGORY`), `code`, `term_bn`, `term_en`; unique (`kind`, `code`) |
 | `corpus_release` (V4) | `id`, `label` unique (`YYYY.MM.DD-n`), `sha256`, `act_count`, `section_count`, `created_at` |
@@ -1149,3 +1149,17 @@ The Prompt R review of `spec-v1` returned PASS WITH FIXES. Each fix and where it
 | 12 | Playbook disclaimer and wording out of line with the spec; outdated PDF | Playbook v1.2 aligned; PDF deleted | none |
 | 13 | Minor fixes | NFR-03 vs PRD §9.1; cache and long-context pricing (§12); NFR-01 phase; KPI-12 to KPI-14 sources; FR-48; failure transitions (§5.1); counter-offers after `VERIFY`; MCP claim length and `EXTERNAL` origin (§7.1); n8n key scopes; `Meta.models.judge`; stored `section_key`; sample wording; ILO-reference path (§7.8); ticket and review-item retention (§14); M-04 gate; ILO convention list in `data/packs/bd.yaml` | ADR-0006 (retention), ADR-0007 (origins) |
 | 14 | Traceability gaps | Team-bonus rows, development MCP servers row, "Proof test" column (traceability.md) | none |
+
+### 18.4 Phase 3 findings (statute corpus, ADR-0011)
+
+Reconnaissance of the official sources on 2026-11-11 and the implementation showed these points
+where the specification needed a decision. None changes a requirement ID.
+
+| # | Finding | Resolution | Phase |
+| --- | --- | --- | --- |
+| C18 | bdlaws serves many pages as UTF-16BE with a byte-order mark under a UTF-8 header, and answers `robots.txt` with an HTML "404" page and status 200 | Decode by byte-order mark; a non-text `robots.txt` answer imposes no restriction; `ScraperPolicyTest` covers both | P3 |
+| C19 | NORMLEX answers automated clients with a Cloudflare challenge (403, including `robots.txt`) | No bypass. A person saves the NORMLEX pages under `data/raw/ilo/`; the ingestor reads them like fetched pages | P3 |
+| C20 | The portal shows only the current text of an amended section, never its previous text | Old versions exist only when this corpus ingested them earlier; nothing is reconstructed. The version label is the latest amending act found in the footnotes (`amend-{year}`) | P3 |
+| C21 | Section numbers carry Bangla letter suffixes (`৩ক`) and ranges (`76-123`); some English Contract Act rows have no number | Deterministic Latin key mapping (`ক`→`A`); an unnumbered row is appended to the previous section, never numbered | P3 |
+| C22 | `law_section` needs the footnotes for audit; the spec lists sub-section rows | `amendment_notes jsonb`; sub-sections are parsed only to resolve references, not stored as rows | P3 |
+| C23 | The print view's footnotes carry no link to the amending act | The amending act is read from the citation in the footnote text, for example "(২০২৬ সনের ৪৩ নং আইন)"; `effective_from` is set only for the original text, from the act's publication date | P3 |

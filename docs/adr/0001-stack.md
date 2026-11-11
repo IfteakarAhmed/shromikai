@@ -83,6 +83,7 @@ is not offered, so there is exactly one transport to test (`McpServerIT`) and do
 | 2026-11-10 | Test libraries | ArchUnit 1.4.1, WireMock 3.13.2, Testcontainers 1.21.4 (Boot-managed), JaCoCo 0.8.13 | P1 |
 | 2026-11-10 | Container images | `pgvector/pgvector:0.8.7-pg17`, `ollama/ollama:0.40.16` | P1: pinned tags (C8); Testcontainers uses the same pgvector tag |
 | 2026-11-11 | jsoup, PDFBox | removed from `build.gradle` | P1 review fix 8: no P1 code uses them; P3 adds jsoup and P5 adds PDFBox, each at its latest patch, with the code that needs them. The table above is unchanged |
+| 2026-11-11 | jsoup, PDFBox, jqwik | 1.24.1, 3.0.8, 1.9.3 | P3 (ADR-0011): latest on Maven Central; PDFBox arrives at P3 because FR-12 requires the PDF fallback |
 | 2026-11-10 | Frontend | TypeScript 5.9 (MSW 3 needs ≥ 5.9), Vitest 5, MSW 3, ESLint 10 with typescript-eslint strict, Prettier 3, i18next 27, TanStack Query 5, openapi-typescript 7, Node 24 | P1 |
 
 ## Consequences
