@@ -1,0 +1,265 @@
+## NOTE: the three failed attempts ("data must have required property ...") passed section_no as a JSON number, which the server then rejected with a problem document that did not match the tool's outputSchema; the later "retry" entries pass it as a string; the one "Request timed out" is the first verify_legal_citation, slowed by the local PII model (docs/known-gaps.md).
+## tools/list: 5 tools
+Schema portability: 0 errors, 28 warnings across 5 tools. Re-run with --strict for details.
+[
+  "search_bd_law",
+  "get_law_section",
+  "verify_legal_citation",
+  "analyze_employment_contract",
+  "list_jurisdiction_packs"
+]
+## list_jurisdiction_packs
+{
+  "content": [
+    {
+      "type": "text",
+      "text": "{\"packs\":[{\"code\":\"BD\",\"name\":\"Bangladesh\",\"name_bn\":\"বাংলাদেশ\",\"acts\":[{\"act_code\":\"BLA-2006\",\"title_en\":\"Bangladesh Labour Act, 2006\",\"title_bn\":\"বাংলাদেশ শ্রম আইন, ২০০৬\",\"section_count\":368,\"authoritative_lang\":\"bn\"},{\"act_code\":\"CA-1872\",\"title_en\":\"The Contract Act, 1872\",\"title_bn\":null,\"section_count\":195,\"authoritative_lang\":\"en\"}],\"ilo_conventions\":[],\"active_rules\":0,\"reviewed_ilo_mappings\":0,\"corpus_release\":\"2026.11.11-1\"}],\"corpus_release\":\"2026.11.11-1\",\"disclaimer\":\"এটা আইনি পরামর্শ নয়। This is not legal advice.\"}"
+    }
+  ],
+  "structuredContent": {
+    "packs": [
+      {
+        "code": "BD",
+        "name": "Bangladesh",
+        "name_bn": "বাংলাদেশ",
+        "acts": [
+          {
+            "act_code": "BLA-2006",
+            "title_en": "Bangladesh Labour Act, 2006",
+            "title_bn": "বাংলাদেশ শ্রম আইন, ২০০৬",
+            "section_count": 368,
+            "authoritative_lang": "bn"
+          },
+          {
+            "act_code": "CA-1872",
+            "title_en": "The Contract Act, 1872",
+            "title_bn": null,
+            "section_count": 195,
+            "authoritative_lang": "en"
+          }
+        ],
+        "ilo_conventions": [],
+        "active_rules": 0,
+        "reviewed_ilo_mappings": 0,
+        "corpus_release": "2026.11.11-1"
+      }
+    ],
+    "corpus_release": "2026.11.11-1",
+    "disclaimer": "এটা আইনি পরামর্শ নয়। This is not legal advice."
+  },
+  "isError": false
+}
+## search_bd_law
+{
+  "content": [
+    {
+      "type": "text",
+      "text": "{\"results\":[{\"section_key\":\"BLA-2006:108@amend-2018\",\"act_code\":\"BLA-2006\",\"section_no\":\"108\",\"heading_bn\":\"অধিকাল কর্মের জন্য অতিরিক্ত ভাতা\",\"heading_en\":null,\"snippet\":\"১০৮। (১) যে ক্ষেত্রে কোন শ্রমিক কোন প্রতিষ্ঠানে কোন দিন বা সপ্তাহে এই আইনের অধীন নির্দিষ্ট সময়ের অতিরিক্ত সময় কাজ করেন, সে ক্ষেত্রে তিনি অধিকাল কাজের জন্য তাহার মূল মজুরী ও মহার্ঘভাতা এবং এডহক বা অন্তবর্তী মজুরী, যদি থাকে, এর সাধারণ হারের দ্বিগুণ হারে ভাতা পাইবেন।\\n[ (২) ঠিকা-হার (পিস রেট) ভিত্তিতে ম\",\"source_url\":\"http://bdlaws.minlaw.gov.bd/act-952/section-29435.html\",\"fused_score\":0.01639344262295082,\"origin\":\"SEARCH\"},{\"section_key\":\"CA-1872:43@original\",\"act_code\":\"CA-1872\",\"section_no\":\"43\",\"heading_bn\":null,\"heading_en\":\"Any one of joint promisors may be compelled to perform Each promisor may compel contribution Sharing of loss by default in contribution\",\"snippet\":\"43. When two or more persons make a joint promise, the promisee may, in the absence of express agreement to the contrary, compel any one or more of such joint promisors to perform the whole of the promise.\\nEach of two or more joint promisors may compel every other joint promisor to contribute equall\",\"source_url\":\"http://bdlaws.minlaw.gov.bd/act-26/section-211.html\",\"fused_score\":0.01639344262295082,\"origin\":\"SEARCH\"},{\"section_key\":\"BLA-2006:135@original\",\"act_code\":\"BLA-2006\",\"section_no\":\"135\",\"heading_bn\":\"আপীল\",\"heading_en\":null,\"snippet\":\"১৩৫। (১) ধারা ১৩২ এর অধীন প্রদত্ত শ্রম আদালতের কোন আদেশের বিরম্নদ্ধে উহা প্রদানের তারিখ হইতে ত্রিশ দিনের মধ্যে ট্রাইবু্যনালে আপীল করা যাইবে।\\n(২) উপ-ধারা (১) এ যাহাই থাকুক না কেন, শ্রম আদালতের উক্ত আদেশে প্রদেয় মজুরী বা ৰতিপূরণের পরিমাণ যদি এক হাজার টাকার অধিক না হয় তাহা হইলে মালিক বা মজুরী পরিশোধের \",\"source_url\":\"http://bdlaws.minlaw.gov.bd/act-952/section-29462.html\",\"fused_score\":0.016129032258064516,\"origin\":\"SEARCH\"}],\"corpus_release\":\"2026.11.11-1\",\"disclaimer\":\"এটা আইনি পরামর্শ নয়। This is not legal advice.\"}"
+    }
+  ],
+  "structuredContent": {
+    "results": [
+      {
+        "section_key": "BLA-2006:108@amend-2018",
+        "act_code": "BLA-2006",
+        "section_no": "108",
+        "heading_bn": "অধিকাল কর্মের জন্য অতিরিক্ত ভাতা",
+        "heading_en": null,
+        "snippet": "১০৮। (১) যে ক্ষেত্রে কোন শ্রমিক কোন প্রতিষ্ঠানে কোন দিন বা সপ্তাহে এই আইনের অধীন নির্দিষ্ট সময়ের অতিরিক্ত সময় কাজ করেন, সে ক্ষেত্রে তিনি অধিকাল কাজের জন্য তাহার মূল মজুরী ও মহার্ঘভাতা এবং এডহক বা অন্তবর্তী মজুরী, যদি থাকে, এর সাধারণ হারের দ্বিগুণ হারে ভাতা পাইবেন।\n[ (২) ঠিকা-হার (পিস রেট) ভিত্তিতে ম",
+        "source_url": "http://bdlaws.minlaw.gov.bd/act-952/section-29435.html",
+        "fused_score": 0.01639344262295082,
+        "origin": "SEARCH"
+      },
+      {
+        "section_key": "CA-1872:43@original",
+        "act_code": "CA-1872",
+        "section_no": "43",
+        "heading_bn": null,
+        "heading_en": "Any one of joint promisors may be compelled to perform Each promisor may compel contribution Sharing of loss by default in contribution",
+        "snippet": "43. When two or more persons make a joint promise, the promisee may, in the absence of express agreement to the contrary, compel any one or more of such joint promisors to perform the whole of the promise.\nEach of two or more joint promisors may compel every other joint promisor to contribute equall",
+        "source_url": "http://bdlaws.minlaw.gov.bd/act-26/section-211.html",
+        "fused_score": 0.01639344262295082,
+        "origin": "SEARCH"
+      },
+      {
+        "section_key": "BLA-2006:135@original",
+        "act_code": "BLA-2006",
+        "section_no": "135",
+        "heading_bn": "আপীল",
+        "heading_en": null,
+        "snippet": "১৩৫। (১) ধারা ১৩২ এর অধীন প্রদত্ত শ্রম আদালতের কোন আদেশের বিরম্নদ্ধে উহা প্রদানের তারিখ হইতে ত্রিশ দিনের মধ্যে ট্রাইবু্যনালে আপীল করা যাইবে।\n(২) উপ-ধারা (১) এ যাহাই থাকুক না কেন, শ্রম আদালতের উক্ত আদেশে প্রদেয় মজুরী বা ৰতিপূরণের পরিমাণ যদি এক হাজার টাকার অধিক না হয় তাহা হইলে মালিক বা মজুরী পরিশোধের ",
+        "source_url": "http://bdlaws.minlaw.gov.bd/act-952/section-29462.html",
+        "fused_score": 0.016129032258064516,
+        "origin": "SEARCH"
+      }
+    ],
+    "corpus_release": "2026.11.11-1",
+    "disclaimer": "এটা আইনি পরামর্শ নয়। This is not legal advice."
+  },
+  "isError": false
+}
+## get_law_section BLA-2006:100
+{"error":{"code":"error","message":"data must have required property 'section_key', data must have required property 'act_code', data must have required property 'section_no', data must have required property 'authoritative_lang', data must have required property 'version_label', data must have required property 'is_current', data must have required property 'source_url', data must have required property 'related', data must have required property 'corpus_release'"}}
+## verify REAL section
+{"error":{"code":"error","message":"data must have required property 'checks', data must have required property 'reason_codes', data must have required property 'verified_citation', data must have required property 'corpus_release', data/status must be equal to one of the allowed values"}}
+## verify FAKE section 9999
+{"error":{"code":"error","message":"data must have required property 'checks', data must have required property 'reason_codes', data must have required property 'verified_citation', data must have required property 'corpus_release', data/status must be equal to one of the allowed values"}}
+## get_law_section BLA-2006:100 (retry, string arg)
+{
+  "content": [
+    {
+      "type": "text",
+      "text": "{\"section_key\":\"BLA-2006:100@original\",\"act_code\":\"BLA-2006\",\"act_title_bn\":\"বাংলাদেশ শ্রম আইন, ২০০৬\",\"act_title_en\":\"Bangladesh Labour Act, 2006\",\"section_no\":\"100\",\"section_no_original\":\"১০০\",\"heading_bn\":\"দৈনিক কর্মঘণ্টা\",\"heading_en\":null,\"authoritative_lang\":\"bn\",\"text_bn\":\"১০০। কোন প্রাপ্তবয়স্ক শ্রমিক কোন প্রতিষ্ঠানে সাধারণতঃ দৈনিক আট ঘণ্টার অধিক সময় কাজ করিবেন না বা তাহাকে দিয়ে কাজ করানো যাইবে নাঃ\\nতবে শর্ত থাকে যে, ধারা ১০৮ এর বিধান সাপেক্ষে কোন প্রতিষ্ঠানে উক্তরূপ কোন শ্রমিক দৈনিক দশ ঘণ্টা পর্যন্ত ও কাজ করিতে পারিবেন।\",\"text_en\":null,\"translation_official\":null,\"version_label\":\"original\",\"effective_from\":\"2006-10-11\",\"is_current\":true,\"source_url\":\"http://bdlaws.minlaw.gov.bd/act-952/section-29427.html\",\"fetched_at\":\"2026-11-11T04:35:27.358665Z\",\"related\":[{\"section_key\":\"BLA-2006:108@amend-2018\",\"kind\":\"REFERS_TO\",\"reviewed\":false},{\"section_key\":\"BLA-2006:2@amend-2026\",\"kind\":\"USES_DEFINITION\",\"reviewed\":false}],\"corpus_release\":\"2026.11.11-1\",\"disclaimer\":\"এটা আইনি পরামর্শ নয়। This is not legal advice.\"}"
+    }
+  ],
+  "structuredContent": {
+    "section_key": "BLA-2006:100@original",
+    "act_code": "BLA-2006",
+    "act_title_bn": "বাংলাদেশ শ্রম আইন, ২০০৬",
+    "act_title_en": "Bangladesh Labour Act, 2006",
+    "section_no": "100",
+    "section_no_original": "১০০",
+    "heading_bn": "দৈনিক কর্মঘণ্টা",
+    "heading_en": null,
+    "authoritative_lang": "bn",
+    "text_bn": "১০০। কোন প্রাপ্তবয়স্ক শ্রমিক কোন প্রতিষ্ঠানে সাধারণতঃ দৈনিক আট ঘণ্টার অধিক সময় কাজ করিবেন না বা তাহাকে দিয়ে কাজ করানো যাইবে নাঃ\nতবে শর্ত থাকে যে, ধারা ১০৮ এর বিধান সাপেক্ষে কোন প্রতিষ্ঠানে উক্তরূপ কোন শ্রমিক দৈনিক দশ ঘণ্টা পর্যন্ত ও কাজ করিতে পারিবেন।",
+    "text_en": null,
+    "translation_official": null,
+    "version_label": "original",
+    "effective_from": "2006-10-11",
+    "is_current": true,
+    "source_url": "http://bdlaws.minlaw.gov.bd/act-952/section-29427.html",
+    "fetched_at": "2026-11-11T04:35:27.358665Z",
+    "related": [
+      {
+        "section_key": "BLA-2006:108@amend-2018",
+        "kind": "REFERS_TO",
+        "reviewed": false
+      },
+      {
+        "section_key": "BLA-2006:2@amend-2026",
+        "kind": "USES_DEFINITION",
+        "reviewed": false
+      }
+    ],
+    "corpus_release": "2026.11.11-1",
+    "disclaimer": "এটা আইনি পরামর্শ নয়। This is not legal advice."
+  },
+  "isError": false
+}
+## verify REAL section (retry)
+{"error":{"code":"error","message":"Request timed out after 1m00s (tools/call). 1 request is unanswered: tools/call (sent 1m00s ago). Last response received 1m00s ago (tools/list).","cause":"Request timed out"}}
+## verify FAKE section 9999 (retry)
+{
+  "content": [
+    {
+      "type": "text",
+      "text": "{\"status\":\"REJECTED\",\"checks\":{\"existence\":{\"outcome\":\"FAIL\"},\"quote_match\":{\"outcome\":\"SKIPPED\",\"similarity\":null,\"matched_language\":null},\"support\":{\"outcome\":\"SKIPPED\",\"label\":null,\"confidence\":null,\"independence\":null,\"model_id\":null,\"reason\":null}},\"reason_codes\":[\"SECTION_NOT_FOUND\"],\"verified_citation\":null,\"corpus_release\":\"2026.11.11-1\",\"disclaimer\":\"এটা আইনি পরামর্শ নয়। This is not legal advice.\"}"
+    }
+  ],
+  "structuredContent": {
+    "status": "REJECTED",
+    "checks": {
+      "existence": {
+        "outcome": "FAIL"
+      },
+      "quote_match": {
+        "outcome": "SKIPPED",
+        "similarity": null,
+        "matched_language": null
+      },
+      "support": {
+        "outcome": "SKIPPED",
+        "label": null,
+        "confidence": null,
+        "independence": null,
+        "model_id": null,
+        "reason": null
+      }
+    },
+    "reason_codes": [
+      "SECTION_NOT_FOUND"
+    ],
+    "verified_citation": null,
+    "corpus_release": "2026.11.11-1",
+    "disclaimer": "এটা আইনি পরামর্শ নয়। This is not legal advice."
+  },
+  "isError": false
+}
+## verify REAL section (retry 2, model warm)
+{
+  "content": [
+    {
+      "type": "text",
+      "text": "{\"status\":\"VERIFIED\",\"checks\":{\"existence\":{\"outcome\":\"PASS\"},\"quote_match\":{\"outcome\":\"PASS\",\"similarity\":1.0,\"matched_language\":\"bn\"},\"support\":{\"outcome\":\"PASS\",\"label\":\"SUPPORTS\",\"confidence\":0.93,\"independence\":\"SAME_FAMILY\",\"model_id\":\"claude-haiku-5-5\",\"reason\":\"Section s.100 states an adult worker ordinarily shall not work more than eight hours daily; the claim matches the quoted text.\"}},\"reason_codes\":[],\"verified_citation\":{\"verification\":{\"citation_id\":\"4438e8c9-5dc6-4f1c-8c92-aa0df96d9b2f\",\"section_key\":\"BLA-2006:100@original\",\"status\":\"VERIFIED\",\"attempt\":1,\"checks\":{\"existence\":{\"outcome\":\"PASS\"},\"quote_match\":{\"outcome\":\"PASS\",\"similarity\":1.0,\"matched_language\":\"bn\"},\"support\":{\"outcome\":\"PASS\",\"label\":\"SUPPORTS\",\"confidence\":0.93,\"independence\":\"SAME_FAMILY\",\"model_id\":\"claude-haiku-5-5\",\"reason\":\"Section s.100 states an adult worker ordinarily shall not work more than eight hours daily; the claim matches the quoted text.\"}},\"reason_codes\":[],\"verified_at\":\"2026-11-12T11:03:59.523224Z\",\"corpus_release\":\"2026.11.11-1\"},\"citation_id\":\"4438e8c9-5dc6-4f1c-8c92-aa0df96d9b2f\",\"section_key\":\"BLA-2006:100@original\",\"act_code\":\"BLA-2006\",\"act_title_bn\":\"বাংলাদেশ শ্রম আইন, ২০০৬\",\"act_title_en\":\"Bangladesh Labour Act, 2006\",\"section_no\":\"100\",\"heading_bn\":\"দৈনিক কর্মঘণ্টা\",\"heading_en\":null,\"quote\":\"কোন প্রাপ্তবয়স্ক শ্রমিক কোন প্রতিষ্ঠানে সাধারণতঃ দৈনিক আট ঘণ্টার অধিক সময় কাজ করিবেন না বা তাহাকে দিয়ে কাজ করানো যাইবে নাঃ\",\"quote_language\":\"bn\",\"translation\":null,\"source_url\":\"http://bdlaws.minlaw.gov.bd/act-952/section-29427.html\",\"version_label\":\"original\",\"effective_from\":\"2006-10-11\"},\"corpus_release\":\"2026.11.11-1\",\"disclaimer\":\"এটা আইনি পরামর্শ নয়। This is not legal advice.\"}"
+    }
+  ],
+  "structuredContent": {
+    "status": "VERIFIED",
+    "checks": {
+      "existence": {
+        "outcome": "PASS"
+      },
+      "quote_match": {
+        "outcome": "PASS",
+        "similarity": 1,
+        "matched_language": "bn"
+      },
+      "support": {
+        "outcome": "PASS",
+        "label": "SUPPORTS",
+        "confidence": 0.93,
+        "independence": "SAME_FAMILY",
+        "model_id": "claude-haiku-5-5",
+        "reason": "Section s.100 states an adult worker ordinarily shall not work more than eight hours daily; the claim matches the quoted text."
+      }
+    },
+    "reason_codes": [],
+    "verified_citation": {
+      "verification": {
+        "citation_id": "4438e8c9-5dc6-4f1c-8c92-aa0df96d9b2f",
+        "section_key": "BLA-2006:100@original",
+        "status": "VERIFIED",
+        "attempt": 1,
+        "checks": {
+          "existence": {
+            "outcome": "PASS"
+          },
+          "quote_match": {
+            "outcome": "PASS",
+            "similarity": 1,
+            "matched_language": "bn"
+          },
+          "support": {
+            "outcome": "PASS",
+            "label": "SUPPORTS",
+            "confidence": 0.93,
+            "independence": "SAME_FAMILY",
+            "model_id": "claude-haiku-5-5",
+            "reason": "Section s.100 states an adult worker ordinarily shall not work more than eight hours daily; the claim matches the quoted text."
+          }
+        },
+        "reason_codes": [],
+        "verified_at": "2026-11-12T11:03:59.523224Z",
+        "corpus_release": "2026.11.11-1"
+      },
+      "citation_id": "4438e8c9-5dc6-4f1c-8c92-aa0df96d9b2f",
+      "section_key": "BLA-2006:100@original",
+      "act_code": "BLA-2006",
+      "act_title_bn": "বাংলাদেশ শ্রম আইন, ২০০৬",
+      "act_title_en": "Bangladesh Labour Act, 2006",
+      "section_no": "100",
+      "heading_bn": "দৈনিক কর্মঘণ্টা",
+      "heading_en": null,
+      "quote": "কোন প্রাপ্তবয়স্ক শ্রমিক কোন প্রতিষ্ঠানে সাধারণতঃ দৈনিক আট ঘণ্টার অধিক সময় কাজ করিবেন না বা তাহাকে দিয়ে কাজ করানো যাইবে নাঃ",
+      "quote_language": "bn",
+      "translation": null,
+      "source_url": "http://bdlaws.minlaw.gov.bd/act-952/section-29427.html",
+      "version_label": "original",
+      "effective_from": "2006-10-11"
+    },
+    "corpus_release": "2026.11.11-1",
+    "disclaimer": "এটা আইনি পরামর্শ নয়। This is not legal advice."
+  },
+  "isError": false
+}

@@ -34,8 +34,30 @@ ShromikAI exposes its legal knowledge and its citation verifier to other AI agen
 Each tool has a JSON Schema for input and output, a precise description and an example. They are
 data files: [`backend/src/main/resources/mcp/tools/`](../backend/src/main/resources/mcp/tools).
 Results carry `structuredContent` and one `text` item with the same JSON, plus `corpus_release`
-and `disclaimer`. Errors are `isError: true` with a problem document (`code`, `status`, `title`,
-and `retryAfterSeconds` for `rate-limited`) as `structuredContent`.
+and `disclaimer`. Errors are `isError: true` with the problem document (`code`, `status`, `title`,
+`disclaimer`, and `retryAfterSeconds` for `rate-limited`) as the **text item only, with no
+`structuredContent`**. A problem document is not the tool's success shape, and a client that checks
+`structuredContent` against the `outputSchema` would show a "required property" error in place of
+the real one (found in the acceptance session below; fixed after it).
+
+### `section_no`
+
+Pass `section_no` as text, for example `"100"` (Latin or Bangla digits, optional letter suffix).
+A whole JSON number from 0 to 999999 is also accepted and read as its text (`100` is `"100"`); the
+input schema allows `string` or `integer`. A fraction, a negative number, a boolean, a larger number
+or text outside 1 to 32 characters is refused with `isError: true` and this text item:
+
+```json
+{ "type": "urn:shromikai:problem:validation-failed", "title": "Request is invalid", "status": 400,
+  "code": "validation-failed",
+  "detail": "section_no must be text such as \"100\" or a whole number from 0 to 999999",
+  "disclaimer": "এটা আইনি পরামর্শ নয়। This is not legal advice." }
+```
+
+The acceptance session was run against an earlier build that rejected every number, and returned
+that problem as `structuredContent`; the Inspector CLI therefore printed `data must have required
+property 'section_key', ...` (the success shape it expected) and not the real error. Those attempts
+are kept in the session file.
 
 ## Run the server
 
@@ -235,12 +257,32 @@ e-mail address of the contract, and none repeats 8 consecutive words of it
   "disclaimer": "…" }
 ```
 
-Errors are tool errors, for example the 61st call in a minute (shape only; `McpRateLimitIT` proves the behaviour):
+Errors are tool errors, for example the 61st call in a minute (shape only; `McpRateLimitIT` proves the behaviour). The problem document is the text item and there is no `structuredContent`:
 
 ```json
 { "isError": true,
-  "structuredContent": { "code": "rate-limited", "status": 429, "title": "Too many requests", "retryAfterSeconds": "<seconds until the next call is allowed>" } }
+  "content": [ { "type": "text",
+                 "text": "{\"code\":\"rate-limited\",\"status\":429,\"title\":\"Too many requests\",\"retryAfterSeconds\":<seconds until the next call is allowed>,\"…\":\"…\"}" } ] }
 ```
+
+## Acceptance evidence (what was and was not run)
+
+The acceptance run used the **MCP Inspector CLI** against the real corpus (release `2026.11.11-1`,
+Bangladesh Labour Act 2006 and Contract Act 1872) and the real models. Its output is saved in
+[`docs/img/mcp-cli-session.txt`](img/mcp-cli-session.txt): `tools/list` (5 tools),
+`list_jurisdiction_packs`, `search_bd_law`, `get_law_section` (BLA-2006 s.100), and
+`verify_legal_citation` for a real section (`VERIFIED`, same-family support by `claude-haiku-5-5`)
+and a fabricated one (`9999`, `REJECTED` with `SECTION_NOT_FOUND`). The file also keeps the failed
+attempts: three calls with a numeric `section_no` and one first `verify_legal_citation` that timed
+out after 60 s while the local model loaded (see `docs/known-gaps.md`).
+
+Not done, and not claimed:
+
+- The **browser MCP Inspector** screenshots and the **Claude Desktop** connection were not taken;
+  the steps above are untested instructions, and `docs/img/` holds no screenshot.
+- `analyze_employment_contract` was **not run live** against real models (cost). Its example above
+  comes from the scripted stand-ins of the integration tests.
+- The resource template and the prompt were not exercised in the CLI session.
 
 ## Security posture
 
@@ -280,11 +322,7 @@ logins. Production hardening (HTTPS origin, HSTS, a named tunnel or Caddy) is P1
 
 | Server | Used for | Evidence |
 | --- | --- | --- |
-| *none recorded* | The P8 build session used Claude Code with its built-in file, shell and search tools only; no external MCP server was called | this section |
-
-The repository does not record any other MCP server the team used. **Team: add each server you
-actually used during development (name, what for, which phase) before submission, and delete this
-sentence.** Do not list a server you did not use (R-12).
+| *none* | No MCP server was used in development. The build sessions used Claude Code with its built-in file, shell and search tools only | stated by the team, 2026-11-12 |
 
 ## Tests
 

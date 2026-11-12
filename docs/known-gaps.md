@@ -3,6 +3,13 @@
 A running list of what is not done, not measured or not proven, so nothing is claimed by accident
 (R-07, R-12). Each phase report in `docs/dev-log.md` links here. Newest first.
 
+## P8 acceptance (MCP Inspector CLI, 2026-11-12)
+
+| Gap | Where it matters | Detail |
+| --- | --- | --- |
+| Local PII model on Docker Ollama for Mac is slow: the first `verify_legal_citation` took over a minute | R-03, FR-65, FR-66, P11 deployment | The claim is redacted by `qwen2.5:7b-instruct` before any cloud call (R-03). In Docker on a Mac without a GPU the model loads in about half a minute and then answers slowly, so the first call after a cold start exceeded the Inspector CLI's 60 s timeout (`docs/img/mcp-cli-session.txt`); a retry with the model warm succeeded. The same cause is in the P6 row on `pii-extract`. **P11 implication:** the deployment host needs the model warm and enough CPU or a GPU (keep it loaded, for example `OLLAMA_KEEP_ALIVE`, and warm it at start-up), and a client timeout above 60 s for `verify_legal_citation` and `analyze_employment_contract` must be documented; the local redaction must never be bypassed to save time. Cold-start and warm latencies are not measured (R-07). |
+| Acceptance evidence is the CLI only | FR-67, R-12 | No browser Inspector or Claude Desktop screenshots exist; `analyze_employment_contract` was not run live (cost). See `docs/mcp.md`. |
+
 ## P7 and P8 review (Prompt R, PASS WITH FIXES; fixes applied 2026-11-12, these remain open)
 
 Item numbers are those of the review report.
