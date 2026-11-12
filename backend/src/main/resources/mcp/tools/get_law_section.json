@@ -17,9 +17,11 @@
         "description": "Act code as listed by list_jurisdiction_packs, for example BLA-2006."
       },
       "section_no": {
-        "type": "string",
+        "type": ["string", "integer"],
         "minLength": 1,
         "maxLength": 32,
+        "minimum": 0,
+        "maximum": 999999,
         "description": "Section number, Latin or Bangla digits, with an optional letter suffix."
       }
     },

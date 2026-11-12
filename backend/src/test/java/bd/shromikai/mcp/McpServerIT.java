@@ -178,15 +178,14 @@ class McpServerIT extends McpIT {
   }
 
   @Test
-  void getLawSectionForAnUnknownSectionIsAToolErrorWithAProblem() {
+  void getLawSectionForAnUnknownSectionIsAToolErrorWithAProblem() throws Exception {
     try (McpSyncClient client = connect(key("mcp"))) {
       McpSchema.CallToolResult result =
           client.callTool(
               new McpSchema.CallToolRequest(
                   "get_law_section", Map.of("act_code", FictionalCorpus.ACT, "section_no", "404")));
 
-      assertThat(result.isError()).isTrue();
-      JsonNode problem = mapper.valueToTree(result.structuredContent());
+      JsonNode problem = problemOf(result);
       assertThat(problem.path("code").asText()).isEqualTo("not-found");
       assertThat(problem.path("status").asInt()).isEqualTo(404);
     }
@@ -206,7 +205,7 @@ class McpServerIT extends McpIT {
   }
 
   @Test
-  void invalidArgumentsAreAValidationProblemNotACrash() {
+  void invalidArgumentsAreAValidationProblemNotACrash() throws Exception {
     try (McpSyncClient client = connect(key("mcp"))) {
       McpSchema.CallToolResult result =
           client.callTool(
@@ -218,9 +217,7 @@ class McpServerIT extends McpIT {
                       "quoted_text", "too short",
                       "claim", "short")));
 
-      assertThat(result.isError()).isTrue();
-      assertThat(mapper.valueToTree(result.structuredContent()).path("code").asText())
-          .isEqualTo("validation-failed");
+      assertThat(problemOf(result).path("code").asText()).isEqualTo("validation-failed");
     }
   }
 
@@ -310,5 +307,57 @@ class McpServerIT extends McpIT {
                 .query(Long.class)
                 .single())
         .isEqualTo(2L);
+  }
+
+  /**
+   * A strict client validates structuredContent against the tool's outputSchema. A problem document
+   * is not a success shape, so an error result must not carry one (otherwise the client reports
+   * "required property" instead of the real error). Checked for every tool that can fail.
+   */
+  @org.junit.jupiter.params.ParameterizedTest(name = "{0}")
+  @org.junit.jupiter.params.provider.ValueSource(
+      strings = {"get_law_section", "verify_legal_citation", "search_bd_law"})
+  void aFailedCallHasNoStructuredContentSoItCannotMismatchTheOutputSchema(String tool)
+      throws Exception {
+    try (McpSyncClient client = connect(key("mcp"))) {
+      client.listTools(); // a strict client caches the output schemas first
+      McpSchema.CallToolResult result =
+          client.callTool(new McpSchema.CallToolRequest(tool, Map.of("unexpected", "argument")));
+
+      JsonNode problem = problemOf(result);
+      assertThat(problem.path("code").asText()).isEqualTo("validation-failed");
+      assertThat(problem.path("status").asInt()).isEqualTo(400);
+      assertThat(problem.path("disclaimer").asText()).isNotBlank();
+    }
+  }
+
+  @Test
+  void aNumericSectionNumberIsReadAsItsText() throws Exception {
+    try (McpSyncClient client = connect(key("mcp"))) {
+      JsonNode viaNumber =
+          call(client, "get_law_section", Map.of("act_code", FictionalCorpus.ACT, "section_no", 1));
+      JsonNode viaText =
+          call(
+              client,
+              "get_law_section",
+              Map.of("act_code", FictionalCorpus.ACT, "section_no", "1"));
+
+      assertThat(viaNumber.path("section_key").asText())
+          .isEqualTo(viaText.path("section_key").asText());
+    }
+  }
+
+  @org.junit.jupiter.params.ParameterizedTest(name = "{0}")
+  @org.junit.jupiter.params.provider.ValueSource(strings = {"1.5", "-3", "true", "99999999999"})
+  void aSectionNumberThatIsNotAWholeNonNegativeNumberIsStillRefused(String json) throws Exception {
+    Object value = mapper.readValue(json, Object.class);
+    try (McpSyncClient client = connect(key("mcp"))) {
+      McpSchema.CallToolResult result =
+          client.callTool(
+              new McpSchema.CallToolRequest(
+                  "get_law_section", Map.of("act_code", FictionalCorpus.ACT, "section_no", value)));
+
+      assertThat(problemOf(result).path("code").asText()).isEqualTo("validation-failed");
+    }
   }
 }

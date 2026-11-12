@@ -29,9 +29,10 @@ import org.springframework.stereotype.Component;
 
 /**
  * Everything every MCP call has in common (FR-65, T-12): who is calling (the API key the transport
- * context carries), the per-key limit, problem documents as tool errors, the disclaimer and corpus
- * release in every result (R-12), and one {@code usage_event} per call. A refused call is audited
- * and not metered. No argument, query, claim or result is logged here (R-02).
+ * context carries), the per-key limit, problem documents as tool errors (text item only, no
+ * structured content), the disclaimer and corpus release in every result (R-12), and one {@code
+ * usage_event} per call. A refused call is audited and not metered. No argument, query, claim or
+ * result is logged here (R-02).
  */
 @Component
 @Profile("mcp")
@@ -180,10 +181,9 @@ public final class McpCallGuard {
       body.put("retryAfterSeconds", problem.retryAfterSeconds());
     }
     body.put("disclaimer", DISCLAIMER);
-    return McpSchema.CallToolResult.builder()
-        .structuredContent(body)
-        .addTextContent(body.toString())
-        .isError(true)
-        .build();
+    // No structuredContent on an error: the problem document is not the tool's success shape, and a
+    // client that validates structured content against the outputSchema would report a missing
+    // property instead of the real error. The problem document is the text item.
+    return McpSchema.CallToolResult.builder().addTextContent(body.toString()).isError(true).build();
   }
 }

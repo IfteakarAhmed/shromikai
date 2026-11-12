@@ -60,7 +60,7 @@ final class VerifyTool {
 
   McpCallGuard.Output verify(Args args) {
     String act = args.text("act_code", 2, 32);
-    String number = args.text("section_no", 1, 32);
+    String number = args.sectionNumber("section_no");
     String quote = args.text("quoted_text", 20, 300);
     String claim = args.text("claim", 20, 600);
 

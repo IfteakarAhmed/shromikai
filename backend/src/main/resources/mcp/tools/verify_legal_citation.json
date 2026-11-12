@@ -18,9 +18,12 @@
         "maxLength": 32
       },
       "section_no": {
-        "type": "string",
+        "type": ["string", "integer"],
         "minLength": 1,
-        "maxLength": 32
+        "maxLength": 32,
+        "minimum": 0,
+        "maximum": 999999,
+        "description": "Section number, preferably as text such as \"100\"; a whole number is read as its text."
       },
       "quoted_text": {
         "type": "string",

@@ -26,6 +26,23 @@ final class Args {
     return text;
   }
 
+  /**
+   * A section number: text of 1 to 32 characters, or a whole number from 0 to 999,999 read as its
+   * text ("100" for 100). Clients often send the number as a JSON number; a fraction, a negative
+   * number, a larger number and anything else is refused.
+   */
+  String sectionNumber(String name) {
+    Object value = values.get(name);
+    if (value instanceof Number number) {
+      double d = number.doubleValue();
+      if (d == Math.rint(d) && d >= 0 && d <= 999_999) {
+        return String.valueOf(number.longValue());
+      }
+      throw invalid(name + " must be text such as \"100\" or a whole number from 0 to 999999");
+    }
+    return text(name, 1, 32);
+  }
+
   String text(String name, int min, int max, String fallback) {
     return values.get(name) == null ? fallback : text(name, min, max);
   }

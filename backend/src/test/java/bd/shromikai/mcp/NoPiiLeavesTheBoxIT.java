@@ -107,7 +107,7 @@ class NoPiiLeavesTheBoxIT extends McpIT {
   }
 
   @Test
-  void aClaimIsNotSentWhenTheLocalModelIsDown() {
+  void aClaimIsNotSentWhenTheLocalModelIsDown() throws Exception {
     fake.failWith("pii-extract", bd.shromikai.shared.ai.fake.FailureMode.SERVER_ERROR);
 
     try (McpSyncClient client = connect()) {
@@ -122,9 +122,7 @@ class NoPiiLeavesTheBoxIT extends McpIT {
                       "claim",
                           "A claim of enough length that the local model must first redact.")));
 
-      assertThat(result.isError()).isTrue();
-      assertThat(mapper.valueToTree(result.structuredContent()).path("code").asText())
-          .isEqualTo("local-model-unavailable");
+      assertThat(problemOf(result).path("code").asText()).isEqualTo("local-model-unavailable");
     }
     assertThat(fake.calls()).noneMatch(c -> c.promptId().startsWith("verify-support"));
   }

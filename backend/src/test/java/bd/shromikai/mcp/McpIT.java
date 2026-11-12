@@ -1,5 +1,7 @@
 package bd.shromikai.mcp;
 
+import static org.assertj.core.api.Assertions.assertThat;
+
 import bd.shromikai.auth.ApiKeyService;
 import bd.shromikai.shared.ai.fake.FakeChatPort;
 import bd.shromikai.testsupport.FictionalCorpus;
@@ -114,5 +116,18 @@ abstract class McpIT {
 
   protected String url() {
     return "http://localhost:" + port;
+  }
+
+  /**
+   * The problem document of a failed tool call. It is the text item; an error result has no
+   * structuredContent, so a client that checks structured content against the tool's output schema
+   * is not shown a schema error in place of the real one (MCP tools spec, ADR-0021).
+   */
+  protected JsonNode problemOf(io.modelcontextprotocol.spec.McpSchema.CallToolResult result)
+      throws Exception {
+    assertThat(result.isError()).isTrue();
+    assertThat(result.structuredContent()).as("an error carries no structuredContent").isNull();
+    return mapper.readTree(
+        ((io.modelcontextprotocol.spec.McpSchema.TextContent) result.content().get(0)).text());
   }
 }

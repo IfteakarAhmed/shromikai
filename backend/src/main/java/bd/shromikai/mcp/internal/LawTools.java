@@ -69,7 +69,7 @@ final class LawTools {
 
   McpCallGuard.Output section(Args args) {
     String act = args.text("act_code", 2, 32);
-    String number = args.text("section_no", 1, 32);
+    String number = args.sectionNumber("section_no");
     Section section = find(act, number);
     ObjectNode out = mapper.createObjectNode();
     out.put("section_key", section.sectionKey());

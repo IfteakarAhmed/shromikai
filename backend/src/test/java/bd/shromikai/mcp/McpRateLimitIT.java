@@ -62,8 +62,12 @@ class McpRateLimitIT extends McpIT {
     JsonNode refused = call(first, firstSession);
 
     assertThat(refused.path("isError").asBoolean()).isTrue();
-    assertThat(refused.path("structuredContent").path("code").asText()).isEqualTo("rate-limited");
-    assertThat(refused.path("structuredContent").path("retryAfterSeconds").asInt()).isPositive();
+    assertThat(refused.has("structuredContent"))
+        .as("an error carries no structuredContent")
+        .isFalse();
+    JsonNode problem = mapper.readTree(refused.path("content").get(0).path("text").asText());
+    assertThat(problem.path("code").asText()).isEqualTo("rate-limited");
+    assertThat(problem.path("retryAfterSeconds").asInt()).isPositive();
     assertThat(call(second, secondSession).path("isError").asBoolean(false))
         .as("another key is unaffected")
         .isFalse();
