@@ -19,8 +19,7 @@ const SWIPE_DISTANCE = 56
 
 /**
  * Accessible tabs (roving tabindex, arrow keys, Home and End) whose panels can also be swiped on a
- * touch screen. Inactive panels stay mounted but hidden, so a checklist keeps its state while you
- * look at another tab.
+ * touch screen. Only the open panel is rendered, so a long page does not carry the others in its tree.
  */
 export function Tabs({ items, value, onChange, label, idPrefix = 'tabs' }: TabsProps) {
   const touchStart = useRef<{ x: number; y: number } | null>(null)
@@ -124,7 +123,7 @@ export function Tabs({ items, value, onChange, label, idPrefix = 'tabs' }: TabsP
             hidden={item.id !== value}
             tabIndex={0}
           >
-            {item.panel}
+            {item.id === value ? item.panel : null}
           </div>
         ))}
       </div>

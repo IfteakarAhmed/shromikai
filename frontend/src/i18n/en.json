@@ -76,7 +76,8 @@
     "compare": "Compare",
     "docs": "Documentation",
     "skip": "Skip to the main content",
-    "guestAs": "You are here as a guest"
+    "guestAs": "You are here as a guest",
+    "profile": "Profile"
   },
   "forbidden": {
     "title": "Not allowed",
@@ -394,5 +395,220 @@
     "notAdvice": "This is not legal advice",
     "uncertain": "If something is uncertain, we say so",
     "description": "This tool helps you understand a contract; it does not replace a lawyer. A claim that cannot be checked against an official source is never shown as certain."
+  },
+  "reason": {
+    "SECTION_NOT_FOUND": "The section is not in the law corpus",
+    "ACT_MISMATCH": "The act name did not match",
+    "SECTION_NOT_CURRENT": "The section is not in force now",
+    "ACT_NOT_IN_PACK": "The act is not in this corpus",
+    "NOT_IN_CANDIDATES": "The section was not in the list of sections searched",
+    "QUOTE_TOO_SHORT": "The quote is too short",
+    "QUOTE_TOO_LONG": "The quote is too long",
+    "QUOTE_NOT_FOUND": "The quoted words are not in the section",
+    "QUOTE_BELOW_THRESHOLD": "The quoted words do not match the section closely enough",
+    "QUOTE_WRONG_LANGUAGE": "The language of the quote does not match the section",
+    "SUPPORT_PARTIAL": "The section supports the claim only in part",
+    "SUPPORT_LOW_CONFIDENCE": "The support was not certain enough",
+    "SUPPORT_CONTRADICTS": "The section says the opposite of the claim",
+    "SUPPORT_UNRELATED": "The section has nothing to do with the claim",
+    "VERIFIER_UNAVAILABLE": "The verifier model was not available then",
+    "unknown": "The check was not completed"
+  },
+  "why": {
+    "title": "Why is this a risk?",
+    "foundBy": "How it was found",
+    "source": {
+      "RULE_ENGINE": "A fixed rule",
+      "LLM_ANALYSIS": "AI analysis",
+      "PLAYBOOK": "The organisation's policy"
+    },
+    "retrievedTitle": "Which sections of law were searched",
+    "retrievedBody": "{{count}} relevant sections were taken from the law corpus. The analysis can cite only these sections.",
+    "claimedTitle": "The sections the model claimed",
+    "claimedNone": "The model claimed no section.",
+    "attempt": "Attempt {{n}}",
+    "checksTitle": "The three checks",
+    "checkExistence": "The section exists and is in force",
+    "checkQuote": "The quoted words match the section",
+    "checkSupport": "The section supports the claim",
+    "outcome": {
+      "PASS": "Pass",
+      "FAIL": "Fail",
+      "SKIPPED": "Skipped",
+      "ERROR": "Error"
+    },
+    "similarity": "Match score {{value}}",
+    "verifiedBy": "Checked by: {{model}}",
+    "support": {
+      "SUPPORTS": "Supports",
+      "PARTIAL": "Partly supports",
+      "CONTRADICTS": "Contradicts",
+      "UNRELATED": "Unrelated"
+    },
+    "uncertainTitle": "Why uncertain?",
+    "uncertainBody": "No section passed all checks for this risk, so no citation is shown. It was sent for human review.",
+    "modelsTitle": "Which model did what",
+    "traceUnavailable": "The details of the check could not be fetched now.",
+    "loading": "Fetching the details…",
+    "verdictStatus": {
+      "VERIFIED": "Verified",
+      "UNCERTAIN": "Uncertain",
+      "REJECTED": "Rejected"
+    }
+  },
+  "tabs": {
+    "label": "Parts of the result",
+    "risks": "Risks",
+    "proposals": "Proposed new clauses",
+    "duties": "Duties",
+    "memo": "Memo"
+  },
+  "redline": {
+    "title": "Proposed new clauses",
+    "intro": "One proposal for each risk. Struck-through words go, underlined words are added.",
+    "original": "Original text",
+    "proposed": "Proposed text",
+    "changes": "Changes",
+    "removed": "Removed",
+    "added": "Added",
+    "rationale": "Why this is fair",
+    "ruleChecked": "Checked against the legal rules",
+    "action": {
+      "REPLACE": "Replace",
+      "INSERT": "Add",
+      "DELETE": "Remove"
+    },
+    "forFinding": "Risk: {{title}}",
+    "copy": "Copy the proposal",
+    "copied": "Copied",
+    "none": "No proposals.",
+    "noneBody": "A new clause is proposed only for a verified risk.",
+    "newClause": "New clause"
+  },
+  "duties": {
+    "title": "Duties",
+    "intro": "Who has to do what, from the contract and from the law, kept apart.",
+    "worker": "The worker's duties",
+    "employer": "The employer's duties",
+    "both": "Both sides",
+    "status": {
+      "STATED_IN_CONTRACT": "Written in the contract",
+      "STATUTORY_NOT_IN_CONTRACT": "In the law, not in the contract",
+      "CONFLICTS_WITH_CONTRACT": "The contract conflicts with the law"
+    },
+    "deadline": "Time limit: {{value}} {{unit}}",
+    "unit": {
+      "DAYS": "days",
+      "WEEKS": "weeks",
+      "MONTHS": "months"
+    },
+    "trigger": "When: {{text}}",
+    "none": "No duties were found for this side.",
+    "checkNote": "Ticks stay on this page only. They are gone when you close it.",
+    "progress": "{{done}} done of {{total}}"
+  },
+  "memo": {
+    "title": "Memo",
+    "intro": "A written summary of your result, to keep or to show a lawyer.",
+    "download": "Download the PDF",
+    "downloading": "Preparing…",
+    "downloadFailed": "The PDF could not be made. You can print the page and save it as a PDF.",
+    "print": "Print",
+    "copy": "Copy the text",
+    "copied": "Copied",
+    "share": "Share",
+    "listen": "Listen",
+    "stop": "Stop",
+    "generated": "Made: {{time}}",
+    "summary": "{{verified}} verified citations, {{uncertain}} uncertain",
+    "riskTable": "List of risks",
+    "colRisk": "Risk",
+    "colLevel": "Level",
+    "colStatus": "Status",
+    "revised": "Proposed new text",
+    "footer": "Analysis {{id}} · law corpus {{release}}"
+  },
+  "compare": {
+    "title": "Compare with a plain AI",
+    "intro": "See the same contract two ways: a plain AI, and our system with verification. See which citations survive.",
+    "start": "Compare on the sample contract",
+    "startText": "Compare on your own text",
+    "textHint": "Paste the contract text (at least {{min}} characters).",
+    "running": "Two answers are being made…",
+    "baselineTitle": "The plain AI's answer",
+    "baselineNote": "This is an unverified answer from one model. We checked the citations below; any that did not match are rejected.",
+    "oursTitle": "The verified result",
+    "summary": "{{rejected}} of the plain AI's {{total}} citations are rejected",
+    "summaryMore": "{{uncertain}} uncertain, {{verified}} matched. Citations shown in our result: {{shown}}, all verified.",
+    "claimedSection": "The section that was claimed",
+    "claimedQuote": "The quote that was claimed",
+    "notACitation": "This is not a citation, it is the model's claim.",
+    "claimVerified": "The claim matched in the check",
+    "claimUncertain": "? Uncertain",
+    "claimRejected": "✗ Rejected",
+    "unavailable": "The plain AI's answer is not available now.",
+    "scripted": "This is a scripted example, not a real model answer. Every claim was checked by the real verifier.",
+    "model": "Model: {{model}}",
+    "noFindings": "The plain AI gave no risks.",
+    "tabBaseline": "Plain AI",
+    "tabOurs": "Verified",
+    "tabsLabel": "The two results"
+  },
+  "ticket": {
+    "title": "Status of the human review",
+    "intro": "For risks whose section could not be verified, a person takes a look. See where it stands.",
+    "token": "Secret code of the ticket",
+    "tokenHint": "Arriving from the result page, the code is filled in. If you open the page afresh you need to enter it again.",
+    "open": "Show",
+    "status": {
+      "OPEN": "Waiting",
+      "IN_REVIEW": "Being looked at",
+      "APPROVED": "Approved",
+      "REJECTED": "Rejected",
+      "EXPIRED": "Expired"
+    },
+    "decision": {
+      "APPROVED_WITH_CITATION": "Approved with a section",
+      "APPROVED_WITHOUT_CITATION": "Approved without a section",
+      "REJECTED": "Rejected as a risk"
+    },
+    "note": "Reviewer's note",
+    "decidedAt": "Decided: {{time}}",
+    "expires": "The ticket stays until {{time}}",
+    "empty": "There is nothing on this ticket.",
+    "notFound": "The ticket or the code did not match.",
+    "back": "Back to the result",
+    "loading": "Fetching the status…"
+  },
+  "profile": {
+    "title": "Your profile",
+    "intro": "These change only the language and the style of the explanation. They do not change which risks are found.",
+    "sector": "Sector",
+    "jobRole": "Job or role",
+    "jobRoleHint": "At most {{max}} characters",
+    "preferredLanguage": "Language of the explanation",
+    "readingLevel": "Style of the explanation",
+    "save": "Save",
+    "saving": "Saving…",
+    "saved": "Profile saved.",
+    "none": "Prefer not to say",
+    "guest": "A profile needs an account. A guest cannot keep one.",
+    "signIn": "Sign in",
+    "level": {
+      "BASIC": "In very simple words",
+      "STANDARD": "In ordinary words"
+    },
+    "sectors": {
+      "READY_MADE_GARMENTS": "Ready-made garments",
+      "TEXTILES": "Textiles",
+      "CONSTRUCTION": "Construction",
+      "IT_SOFTWARE": "IT and software",
+      "RETAIL": "Retail",
+      "DOMESTIC_WORK": "Domestic work",
+      "SECURITY_SERVICES": "Security services",
+      "NGO": "NGO",
+      "BANKING_FINANCE": "Banking and finance",
+      "OTHER": "Other"
+    }
   }
 }

@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { useSearchParams } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
 import type { AnalysisResult, RiskFinding } from '../../api/analyses'
 import type { CitationGroup } from '../../lib/citations'
@@ -13,7 +14,12 @@ import { VerificationLegend } from '../../components/result/VerificationLegend'
 import { sortFindings } from '../../lib/findings'
 import { formatNumber } from '../../lib/format'
 import type { Language } from '../../i18n'
+import { Tabs } from '../../components/ui/Tabs'
 import { CitationSheet } from './CitationSheet'
+import { DutiesView } from './DutiesView'
+import { MemoView } from './MemoView'
+import { RedlineView } from './RedlineView'
+import { WhySheet } from './WhySheet'
 
 const SEVERITIES: readonly Severity[] = ['CRITICAL', 'HIGH', 'MEDIUM', 'LOW']
 
@@ -30,6 +36,14 @@ export function ResultsView({ result }: ResultsViewProps) {
   const { t, i18n } = useTranslation()
   const language: Language = i18n.language === 'en' ? 'en' : 'bn'
   const [citation, setCitation] = useState<CitationGroup | null>(null)
+  const [why, setWhy] = useState<RiskFinding | null>(null)
+  // Ticked duties live here, in memory, so they survive a change of tab but not the page (R-02).
+  const [doneDuties, setDoneDuties] = useState<ReadonlySet<string>>(new Set())
+  const [params, setParams] = useSearchParams()
+  const requested = params.get('tab')
+  const tab = ['risks', 'proposals', 'duties', 'memo'].includes(requested ?? '')
+    ? (requested ?? 'risks')
+    : 'risks'
   const findings = sortFindings(result.findings)
   const { summary } = result
   const n = (value: number) => formatNumber(value, language)
@@ -105,53 +119,105 @@ export function ResultsView({ result }: ResultsViewProps) {
         <VerificationLegend />
       </div>
 
-      <section aria-labelledby="findings-heading" className="mt-8">
-        <div className="flex flex-wrap items-baseline justify-between gap-2">
-          <h2 id="findings-heading" className="text-2xl font-bold">
-            {t('results.findingsTitle')}
-          </h2>
-          <p className="text-muted-foreground">
-            {t('results.findingsCount', { count: n(findings.length) })} · {t('results.sortNote')}
-          </p>
-        </div>
-        <ul className="mt-4 grid gap-4">
-          {findings.map((finding: RiskFinding) => (
-            <li key={finding.id}>
-              <RiskCard
-                finding={finding}
-                language={result.outputLanguage}
-                onOpenCitation={(c) => {
-                  setCitation(c)
-                }}
-                onOpenWhy={() => undefined}
-                ticketHref={
-                  result.reviewTicket === null
-                    ? undefined
-                    : `/app/tickets/${result.reviewTicket.ticketId}`
-                }
-              />
-            </li>
-          ))}
-        </ul>
-      </section>
+      <div className="mt-8">
+        <Tabs
+          idPrefix="results"
+          label={t('tabs.label')}
+          value={tab}
+          onChange={(id) => {
+            setParams(id === 'risks' ? {} : { tab: id }, { replace: true })
+          }}
+          items={[
+            {
+              id: 'risks',
+              label: t('tabs.risks'),
+              panel: (
+                <div>
+                  <section aria-labelledby="findings-heading">
+                    <div className="flex flex-wrap items-baseline justify-between gap-2">
+                      <h2 id="findings-heading" className="text-2xl font-bold">
+                        {t('results.findingsTitle')}
+                      </h2>
+                      <p className="text-muted-foreground">
+                        {t('results.findingsCount', { count: n(findings.length) })} ·{' '}
+                        {t('results.sortNote')}
+                      </p>
+                    </div>
+                    <ul className="mt-4 grid gap-4">
+                      {findings.map((finding: RiskFinding) => (
+                        <li key={finding.id}>
+                          <RiskCard
+                            finding={finding}
+                            language={result.outputLanguage}
+                            onOpenCitation={(c) => {
+                              setCitation(c)
+                            }}
+                            onOpenWhy={(f) => {
+                              setWhy(f)
+                            }}
+                            onOpenProposal={() => {
+                              setParams({ tab: 'proposals' }, { replace: true })
+                            }}
+                            ticketHref={
+                              result.reviewTicket === null
+                                ? undefined
+                                : `/app/tickets/${result.reviewTicket.ticketId}`
+                            }
+                          />
+                        </li>
+                      ))}
+                    </ul>
+                  </section>
 
-      {result.warnings.length > 0 && (
-        <section aria-labelledby="warnings-heading" className="mt-8">
-          <h2 id="warnings-heading" className="text-xl font-bold">
-            {t('results.warnings')}
-          </h2>
-          <ul className="mt-3 space-y-2">
-            {result.warnings.map((warning) => (
-              <li
-                key={warning.code}
-                className="rounded-lg border border-uncertain/30 bg-uncertain/5 px-4 py-3"
-              >
-                {warning.message}
-              </li>
-            ))}
-          </ul>
-        </section>
-      )}
+                  {result.warnings.length > 0 && (
+                    <section aria-labelledby="warnings-heading" className="mt-8">
+                      <h2 id="warnings-heading" className="text-xl font-bold">
+                        {t('results.warnings')}
+                      </h2>
+                      <ul className="mt-3 space-y-2">
+                        {result.warnings.map((warning) => (
+                          <li
+                            key={warning.code}
+                            className="rounded-lg border border-uncertain/30 bg-uncertain/5 px-4 py-3"
+                          >
+                            {warning.message}
+                          </li>
+                        ))}
+                      </ul>
+                    </section>
+                  )}
+                </div>
+              ),
+            },
+            {
+              id: 'proposals',
+              label: t('tabs.proposals'),
+              panel: <RedlineView result={result} onOpenCitation={setCitation} />,
+            },
+            {
+              id: 'duties',
+              label: t('tabs.duties'),
+              panel: (
+                <DutiesView
+                  result={result}
+                  done={doneDuties}
+                  onToggle={(id) => {
+                    setDoneDuties((current) => {
+                      const next = new Set(current)
+                      if (!next.delete(id)) {
+                        next.add(id)
+                      }
+                      return next
+                    })
+                  }}
+                  onOpenCitation={setCitation}
+                />
+              ),
+            },
+            { id: 'memo', label: t('tabs.memo'), panel: <MemoView result={result} /> },
+          ]}
+        />
+      </div>
 
       <section aria-labelledby="method-heading" className="mt-8">
         <details className="glass-panel rounded-xl p-5">
@@ -209,6 +275,13 @@ export function ResultsView({ result }: ResultsViewProps) {
         </div>
       </div>
 
+      <WhySheet
+        finding={why}
+        result={result}
+        onClose={() => {
+          setWhy(null)
+        }}
+      />
       <CitationSheet
         group={citation}
         onClose={() => {
