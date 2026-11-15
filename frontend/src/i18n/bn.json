@@ -6,7 +6,9 @@
   },
   "language": {
     "switch": "English",
-    "switchHint": "ভাষা পরিবর্তন"
+    "switchHint": "ভাষা পরিবর্তন",
+    "bangla": "বাংলা",
+    "english": "English"
   },
   "status": {
     "heading": "সিস্টেমের অবস্থা",

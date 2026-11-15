@@ -72,6 +72,11 @@ export function Header() {
           <NavLink to="/docs" className={linkClass}>
             {t('nav.docs')}
           </NavLink>
+          {user !== null && (
+            <NavLink to="/app/profile" className={linkClass}>
+              {t('nav.profile')}
+            </NavLink>
+          )}
           {role === 'ADMIN' && (
             <NavLink to="/admin" className={linkClass}>
               {t('nav.admin')}
@@ -141,6 +146,11 @@ export function Header() {
           <NavLink to="/docs" className={linkClass}>
             {t('nav.docs')}
           </NavLink>
+          {user !== null && (
+            <NavLink to="/app/profile" className={linkClass}>
+              {t('nav.profile')}
+            </NavLink>
+          )}
           {role === 'ADMIN' && (
             <NavLink to="/admin" className={linkClass}>
               {t('nav.admin')}

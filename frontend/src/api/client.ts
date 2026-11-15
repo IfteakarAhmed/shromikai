@@ -76,8 +76,14 @@ async function request<T>(path: string, init: RequestOptions, language: string):
   return (await response.json()) as T
 }
 
-export function apiGet<T>(path: string, language: string, accessToken?: string): Promise<T> {
-  return request<T>(path, bearer(accessToken), language)
+export function apiGet<T>(
+  path: string,
+  language: string,
+  accessToken?: string,
+  headers: Record<string, string> = {},
+): Promise<T> {
+  const auth = bearer(accessToken)
+  return request<T>(path, { headers: { ...auth.headers, ...headers } }, language)
 }
 
 /** POST with an optional JSON body. The access token goes in the header, never in the URL. */

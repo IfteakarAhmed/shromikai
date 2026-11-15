@@ -6,7 +6,9 @@
   },
   "language": {
     "switch": "বাংলা",
-    "switchHint": "Change language"
+    "switchHint": "Change language",
+    "bangla": "বাংলা",
+    "english": "English"
   },
   "status": {
     "heading": "System status",

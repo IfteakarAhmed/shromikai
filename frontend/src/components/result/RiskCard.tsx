@@ -1,4 +1,5 @@
 import { useTranslation } from 'react-i18next'
+import { Link } from 'react-router-dom'
 import type { RiskFinding } from '../../api/analyses'
 import { groupCitations, type CitationGroup } from '../../lib/citations'
 import { localizeDigits } from '../../lib/format'
@@ -125,12 +126,12 @@ export function RiskCard({
           </Button>
         )}
         {uncertain && ticketHref !== undefined && (
-          <a
-            href={ticketHref}
+          <Link
+            to={ticketHref}
             className="inline-flex min-h-11 items-center gap-1 rounded-lg px-3 font-semibold text-uncertain underline underline-offset-4"
           >
             {t('finding.ticketLink')}
-          </a>
+          </Link>
         )}
       </div>
     </GlassCard>

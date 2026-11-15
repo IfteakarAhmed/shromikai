@@ -15,6 +15,7 @@ import { sortFindings } from '../../lib/findings'
 import { formatNumber } from '../../lib/format'
 import type { Language } from '../../i18n'
 import { Tabs } from '../../components/ui/Tabs'
+import { rememberTicketCode } from '../../state/ticketCodes'
 import { CitationSheet } from './CitationSheet'
 import { DutiesView } from './DutiesView'
 import { MemoView } from './MemoView'
@@ -44,6 +45,10 @@ export function ResultsView({ result }: ResultsViewProps) {
   const tab = ['risks', 'proposals', 'duties', 'memo'].includes(requested ?? '')
     ? (requested ?? 'risks')
     : 'risks'
+  // The ticket's secret code is shown once, with the result; keep it for this page load only.
+  if (result.reviewTicket !== null) {
+    rememberTicketCode(result.reviewTicket.ticketId, result.reviewTicket.token)
+  }
   const findings = sortFindings(result.findings)
   const { summary } = result
   const n = (value: number) => formatNumber(value, language)

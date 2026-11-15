@@ -114,6 +114,18 @@ public class OpenApiConfig {
       }
       ApiSchemaComponents.all()
           .forEach((name, json) -> openApi.getComponents().addSchemas(name, parse(json)));
+      // The profile of an account is a map in Java; its fields are the StoredProfile schema.
+      for (String name : List.of("Me", "MeUpdate")) {
+        Schema<?> owner = openApi.getComponents().getSchemas().get(name);
+        if (owner != null
+            && owner.getProperties() != null
+            && owner.getProperties().containsKey("profile")) {
+          ComposedSchema profile = new ComposedSchema();
+          profile.addAllOfItem(new Schema<>().$ref("#/components/schemas/StoredProfile"));
+          profile.setNullable(true);
+          owner.getProperties().put("profile", profile);
+        }
+      }
       // Replaced by ReviewItemPatch; the Java record's schema would be an orphan.
       if (openApi.getComponents().getSchemas() != null) {
         openApi.getComponents().getSchemas().remove("Patch");

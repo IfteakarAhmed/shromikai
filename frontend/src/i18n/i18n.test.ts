@@ -44,7 +44,7 @@ describe('i18n', () => {
   it('R-11 bn strings use no English words except the brand and the English switch', () => {
     // app.name is the brand শ্রমিকAI; language.switch names the target language in English;
     // common.recorded is the label the product owner fixed for recorded data.
-    const allowed = new Set(['app.name', 'language.switch', 'common.recorded'])
+    const allowed = new Set(['app.name', 'language.switch', 'language.english', 'common.recorded'])
     for (const key of keys(bn).filter((k) => !allowed.has(k))) {
       const text = leaf(bn, key).replace(/\{\{\w+\}\}/g, '')
       expect(text, key).not.toMatch(/[A-Za-z]/)
@@ -58,7 +58,7 @@ describe('i18n', () => {
 
   it('R-11 no bn string is the English text left in place', () => {
     // Strings that are the same in both languages on purpose: the brand and the English switch.
-    const same = new Set(['app.name', 'language.switch'])
+    const same = new Set(['app.name', 'language.switch', 'language.english'])
     const untranslated = keys(bn).filter((key) => {
       const text = leaf(bn, key)
       return !same.has(key) && text === leaf(en, key) && /[A-Za-z]{3,}/.test(text)

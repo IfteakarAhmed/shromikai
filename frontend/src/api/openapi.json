@@ -1079,11 +1079,10 @@
             "nullable" : true
           },
           "profile" : {
-            "additionalProperties" : {
-              "type" : "object"
-            },
-            "nullable" : true,
-            "type" : "object"
+            "allOf" : [ {
+              "$ref" : "#/components/schemas/StoredProfile"
+            } ],
+            "nullable" : true
           },
           "role" : {
             "type" : "string"
@@ -1125,11 +1124,10 @@
             "type" : "string"
           },
           "profile" : {
-            "additionalProperties" : {
-              "type" : "object"
-            },
-            "nullable" : true,
-            "type" : "object"
+            "allOf" : [ {
+              "$ref" : "#/components/schemas/StoredProfile"
+            } ],
+            "nullable" : true
           }
         },
         "required" : [ "locale", "profile" ],
@@ -2587,6 +2585,33 @@
           }
         },
         "required" : [ "code", "message" ],
+        "type" : "object"
+      },
+      "StoredProfile" : {
+        "additionalProperties" : false,
+        "description" : "The personalisation profile of an account (api.md §3, Profile; E-09). A key that is present is not null; it changes wording only (FR-56).",
+        "properties" : {
+          "jobRole" : {
+            "maxLength" : 60,
+            "type" : "string"
+          },
+          "preferredLanguage" : {
+            "enum" : [ "bn", "en" ],
+            "type" : "string"
+          },
+          "readingLevel" : {
+            "enum" : [ "BASIC", "STANDARD" ],
+            "type" : "string"
+          },
+          "sector" : {
+            "enum" : [ "READY_MADE_GARMENTS", "TEXTILES", "CONSTRUCTION", "IT_SOFTWARE", "RETAIL", "DOMESTIC_WORK", "SECURITY_SERVICES", "NGO", "BANKING_FINANCE", "OTHER" ],
+            "type" : "string"
+          },
+          "side" : {
+            "enum" : [ "WORKER", "EMPLOYER" ],
+            "type" : "string"
+          }
+        },
         "type" : "object"
       },
       "TokenResponse" : {

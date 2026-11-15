@@ -1,0 +1,14 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:shromikai:schema:stored-profile:1",
+  "description": "The personalisation profile of an account (api.md §3, Profile; E-09). A key that is present is not null; it changes wording only (FR-56).",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "side": { "enum": ["WORKER", "EMPLOYER"] },
+    "sector": { "enum": ["READY_MADE_GARMENTS", "TEXTILES", "CONSTRUCTION", "IT_SOFTWARE", "RETAIL", "DOMESTIC_WORK", "SECURITY_SERVICES", "NGO", "BANKING_FINANCE", "OTHER"] },
+    "jobRole": { "type": "string", "maxLength": 60 },
+    "preferredLanguage": { "enum": ["bn", "en"] },
+    "readingLevel": { "enum": ["BASIC", "STANDARD"] }
+  }
+}

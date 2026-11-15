@@ -57,6 +57,11 @@ class OpenApiSnapshotIT {
     assertThat(latestEval.at("/allOf/0/$ref").asText())
         .isEqualTo("#/components/schemas/MetaLatestEval");
     assertThat(latestEval.get("nullable").asBoolean()).isTrue();
+    assertThat(live.at("/components/schemas/Me/properties/profile/allOf/0/$ref").asText())
+        .as("the stored profile is typed (FR-56)")
+        .isEqualTo("#/components/schemas/StoredProfile");
+    assertThat(live.at("/components/schemas/MeUpdate/properties/profile/allOf/0/$ref").asText())
+        .isEqualTo("#/components/schemas/StoredProfile");
     assertThat(Files.exists(SNAPSHOT))
         .as("run with -PupdateOpenApi to create the snapshot")
         .isTrue();

@@ -890,9 +890,7 @@ export interface components {
       email: string | null
       locale: string
       org: components['schemas']['MeOrg'] | null
-      profile: {
-        [key: string]: Record<string, never>
-      } | null
+      profile: components['schemas']['StoredProfile'] | null
       role: string
       /** Format: uuid */
       userId: string | null
@@ -908,9 +906,7 @@ export interface components {
     /** @default null */
     MeUpdate: {
       locale: string | null
-      profile: {
-        [key: string]: Record<string, never>
-      } | null
+      profile: components['schemas']['StoredProfile'] | null
     }
     Memo: {
       /** Format: uuid */
@@ -1467,6 +1463,28 @@ export interface components {
     SseWarningEvent: {
       code: string
       message: string
+    }
+    /** @description The personalisation profile of an account (api.md §3, Profile; E-09). A key that is present is not null; it changes wording only (FR-56). */
+    StoredProfile: {
+      jobRole?: string
+      /** @enum {string} */
+      preferredLanguage?: 'bn' | 'en'
+      /** @enum {string} */
+      readingLevel?: 'BASIC' | 'STANDARD'
+      /** @enum {string} */
+      sector?:
+        | 'READY_MADE_GARMENTS'
+        | 'TEXTILES'
+        | 'CONSTRUCTION'
+        | 'IT_SOFTWARE'
+        | 'RETAIL'
+        | 'DOMESTIC_WORK'
+        | 'SECURITY_SERVICES'
+        | 'NGO'
+        | 'BANKING_FINANCE'
+        | 'OTHER'
+      /** @enum {string} */
+      side?: 'WORKER' | 'EMPLOYER'
     }
     /** @default null */
     TokenResponse: {
