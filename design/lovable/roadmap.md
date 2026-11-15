@@ -1,0 +1,4 @@
+- [x] Build the client-only upload, validation, camera, role selection, and timed review flow.
+- [x] Add static security-guard contract findings, citation details, reasoning sheets, proposed clauses, checklist, and printable memo.
+- [x] Add Bangla and English text for the new flow and keep all user content in locale files.
+- [x] Verify uploads, progress, all tabs/sheets, print behavior, mobile layout, tests, typecheck, lint, and production build.

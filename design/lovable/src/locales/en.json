@@ -1,0 +1,463 @@
+{
+  "app": {
+    "name": "Shromik",
+    "ai": "AI",
+    "tagline": "Know your rights at work.",
+    "description": "Understand employment contracts against Bangladesh labour law—with verified government sources."
+  },
+  "header": {
+    "officialSources": "Bangladesh law · official sources",
+    "sampleReport": "Sample review",
+    "lowBandwidth": "Low bandwidth mode",
+    "lowBandwidthOn": "On",
+    "lowBandwidthOff": "Off"
+  },
+  "hero": {
+    "eyebrow": "Bangladesh employment contracts · verified law",
+    "title": "Your job contract, through the eyes of the law.",
+    "description": "Share your contract. In minutes, see where the risks are, which clauses work in your favour, and what to ask to change. Every legal citation is checked against an official source.",
+    "scope": "No guesswork. No legal claims without a source.",
+    "sceneAlt": "A floating glass contract sheet with an emerald seal on a verified clause and a broken red glass fragment.",
+    "sceneFallback": "Contract verification illustration",
+    "sampleButton": "Try a sample contract",
+    "workerDemo": "Demo as a worker",
+    "hrDemo": "Demo as HR",
+    "adminDemo": "Demo as admin"
+  },
+  "trust": {
+    "noInventedLaw": "Invented sections are never shown",
+    "privateOnDevice": "Your name and NID stay on your device",
+    "officialLink": "An official link for every citation"
+  },
+  "howItWorks": {
+    "eyebrow": "Four clear steps",
+    "title": "How it works",
+    "description": "From contract language to verified government sources—with clarity and privacy at every step.",
+    "upload": "Upload",
+    "privacy": "Privacy protection",
+    "review": "Find risks",
+    "verify": "Verify",
+    "stepNumber": "Step {{number}}"
+  },
+  "comparison": {
+    "eyebrow": "Why source checking matters",
+    "title": "Invented sections stop here.",
+    "description": "Every citation is checked against government law. When something cannot be verified, we say so.",
+    "plainAi": "A generic AI answer",
+    "plainCitation": "Bangladesh Labour Act, section 999",
+    "notFound": "Section not found",
+    "shromikAi": "ShromikAI verified source",
+    "verifiedQuote": "Where any worker in any establishment works on any day or week for more than the time fixed under this Act, the worker shall be entitled to an allowance for overtime at twice the ordinary rate of their basic wages and dearness allowance and any ad hoc or interim wages, if any.",
+    "translationLabel": "English translation for convenience",
+    "sourceLabel": "Official laws of Bangladesh · section 108",
+    "verifiedStatus": "Verified against an official source",
+    "sectionChip": "Section 108"
+  },
+  "roles": {
+    "worker": "Worker",
+    "hr": "HR",
+    "admin": "Admin"
+  },
+  "audience": {
+    "eyebrow": "Who ShromikAI is for",
+    "title": "For everyone in the employment relationship.",
+    "workers": "Workers",
+    "workersDescription": "Understand contract terms and find the law that supports your rights.",
+    "hr": "HR teams",
+    "hrDescription": "Review employment contract language and workplace policies.",
+    "ngo": "NGOs & lawyers",
+    "ngoDescription": "Connect people with reliable sources in official law.",
+    "workerCta": "Demo as a worker",
+    "hrCta": "Demo as HR",
+    "adminCta": "Demo as admin"
+  },
+  "limits": {
+    "eyebrow": "Clear boundaries",
+    "title": "We say what we know—and what we do not.",
+    "notAdvice": "This is not legal advice",
+    "uncertain": "If something is uncertain, we say so",
+    "description": "This tool helps explain contracts; it does not replace a lawyer. A claim that cannot be checked against an official source is never shown as certain."
+  },
+  "footer": {
+    "docs": "Documentation",
+    "app": "Sample review",
+    "copyright": "ShromikAI · for workers in Bangladesh"
+  },
+  "navigation": {
+    "backHome": "Back to home"
+  },
+  "docs": {
+    "title": "How verification works",
+    "description": "ShromikAI only shows sections found in the official laws of Bangladesh. If a source cannot be matched, the finding is clearly marked uncertain.",
+    "sourceTitle": "Official legal sources",
+    "sourceDescription": "Each section links directly to its relevant page in the Government of Bangladesh law repository.",
+    "limitsTitle": "Limits of this tool",
+    "limitsDescription": "Sample results are fictional. Understanding a real contract requires the complete document and advice from a qualified lawyer."
+  },
+  "demo": {
+    "eyebrow": "Fictional document · static example",
+    "title": "Sample contract review",
+    "description": "This is a fictional example to show the product concept. No contract is being uploaded or stored.",
+    "findingTitle": "Overtime pay clause",
+    "clause": "Overtime will be paid at 1.5 times the basic wage.",
+    "explanation": "Section 108 sets overtime pay at twice the ordinary rate of basic wages and other applicable wages. The full calculation is not clear in this contract sentence.",
+    "backHome": "Back to home",
+    "sampleLabel": "Not a real contract"
+  },
+  "review": {
+    "sectionTitle": "Contract review",
+    "sampleDocument": "Sample employment contract",
+    "sampleLabel": "Fictional document",
+    "viewReport": "View sample review",
+    "languageLabel": "Language",
+    "summaryTitle": "Review summary",
+    "clausesReviewed": "Clauses reviewed",
+    "verifiedFindings": "Verified sources",
+    "needsReview": "More information needed",
+    "findingsTitle": "Terms to review",
+    "findingsCount": "{{count}} findings",
+    "clauseLabel": "Contract term",
+    "analysisLabel": "Law check",
+    "noCitationNote": "There is not enough information to verify this against an official source.",
+    "allFindings": "All findings"
+  },
+  "finding": {
+    "dailyTitle": "Daily working hours",
+    "dailyExcerpt": "Work up to 10 hours per day.",
+    "dailyExplanation": "The usual daily limit is 8 hours; up to 10 hours may apply subject to the conditions in section 108.",
+    "overtimeTitle": "Overtime allowance",
+    "overtimeExcerpt": "Overtime will be paid at 1.5 times the basic wage.",
+    "overtimeExplanation": "Section 108 sets overtime pay at double the ordinary rate of basic wages, dearness allowance and any applicable ad hoc or interim wages. A term listing only 1.5 times basic wages does not make the full rate clear.",
+    "weeklyRestTitle": "Weekly rest day",
+    "weeklyRestExcerpt": "Rest days will be set according to the needs of the establishment.",
+    "weeklyRestExplanation": "This term does not specify the weekly rest day or its duration. A complete document is needed to assess it."
+  },
+  "citation": {
+    "labourAct": "Bangladesh Labour Act, 2006",
+    "section": "Section {{number}}",
+    "officialSource": "Official laws of Bangladesh",
+    "opensInNewTab": "Opens in a new tab"
+  },
+  "verification": {
+    "verified": "✓ Verified",
+    "uncertain": "? Uncertain",
+    "rejected": "✗ Rejected"
+  },
+  "severity": {
+    "critical": "Critical",
+    "high": "High risk",
+    "medium": "Review",
+    "low": "Low"
+  },
+  "language": {
+    "bangla": "বাংলা",
+    "english": "English",
+    "switchToBangla": "Switch to Bangla",
+    "switchToEnglish": "Switch to English"
+  },
+  "theme": {
+    "switchToLight": "Switch to light theme",
+    "switchToDark": "Switch to dark theme"
+  },
+  "errors": {
+    "notFoundTitle": "Page not found",
+    "notFoundDescription": "The page you are looking for does not exist or has been moved.",
+    "goHome": "Go home",
+    "pageDidNotLoad": "This page did not load",
+    "tryAgainDescription": "Something went wrong. Try again or head back home.",
+    "tryAgain": "Try again"
+  },
+  "common": {
+    "disclaimer": "এটা আইনি পরামর্শ নয় / This is not legal advice",
+    "footerNote": "Before making a decision, check the official law and consult a qualified lawyer.",
+    "emptyTitle": "Nothing here yet",
+    "emptyDescription": "New information will appear here when available.",
+    "loading": "Loading",
+    "verifiedOnly": "Only law verified against official sources",
+    "or": "or",
+    "close": "Close"
+  },
+  "stats": {
+    "foundIssues": "1 term needs revision",
+    "checkedAt": "Sample results"
+  },
+  "mockReview": {
+    "topline": "Sample data (recorded)",
+    "prototypeNote": "This is a fixed sample review; results are not generated from your file or text. Nothing is uploaded or saved.",
+    "tabs": {
+      "risks": "Risks",
+      "proposals": "Suggested clauses",
+      "duties": "Action list",
+      "memo": "Memo"
+    },
+    "upload": {
+      "eyebrow": "Private sample review",
+      "title": "Understand your contract terms",
+      "description": "Choose a PDF, image, or text file, or paste an excerpt. The sample results are from a separate security-guard contract.",
+      "dropTitle": "Drop a file here",
+      "dropHint": "PDF, JPG, PNG, or TXT · up to 10 MB",
+      "browse": "Choose file",
+      "camera": "Use camera",
+      "fileSelected": "Selected file",
+      "removeFile": "Remove file",
+      "pasteLabel": "Paste contract text",
+      "pastePlaceholder": "Type or paste a clause from your contract…",
+      "useSample": "Use security-guard sample",
+      "sideLabel": "I am the",
+      "worker": "Worker",
+      "employer": "Employer",
+      "analyze": "Analyze",
+      "analyzing": "Running sample review…",
+      "privacyTitle": "Personal information protection",
+      "privacyNote": "Intended privacy policy: names, NIDs, and phone numbers are removed on your device",
+      "privacyDetail": "This fixed sample does not read files or text or remove personal information; results come from a separate recorded sample. Nothing is sent or stored.",
+      "errorTooLarge": "This file is over 10 MB. Choose a smaller file.",
+      "errorUnsupported": "This file type is not supported. Choose a PDF, image, or TXT file.",
+      "errorRead": "We could not read this file. Please choose it again.",
+      "invalidText": "Paste some contract text or choose a file."
+    },
+    "progress": {
+      "eyebrow": "Sample review",
+      "title": "Checking contract terms",
+      "description": "This is sample progress; the text you added is not being analyzed.",
+      "stages": {
+        "reading": "Read",
+        "redacting": "Remove personal details",
+        "classifying": "Classify clauses",
+        "searching": "Find law",
+        "analyzing": "Analyze risks",
+        "verifying": "Verify"
+      },
+      "statuses": {
+        "reading": "Opening sample document",
+        "redacting": "Sample step: masking personal information",
+        "classifying": "Separating contract terms",
+        "searching": "Looking up official law",
+        "analyzing": "Comparing risk language",
+        "verifying": "Checking sources and quotations"
+      },
+      "stageDone": "Done",
+      "stageCurrent": "In progress",
+      "stageWaiting": "Waiting"
+    },
+    "report": {
+      "eyebrow": "Security guard contract",
+      "title": "Sample review results",
+      "summary": "Review terms matched to verified sources and items held for human review.",
+      "criticalCount": "Critical",
+      "highCount": "High",
+      "mediumCount": "Review",
+      "verifiedCount": "Verified",
+      "uncertainCount": "Uncertain",
+      "nonObvious": "Easy to miss",
+      "why": "Why?",
+      "noCitation": "Sent for human review",
+      "modelLabel": "Check method",
+      "recordedModel": "Sample rules matcher & citation checker · recorded",
+      "backToUpload": "Start a new sample",
+      "reviewScope": "This fixed sample contract states six 12-hour shifts per week. Results are not based on your text. Applicability depends on the work and establishment type."
+    },
+    "finding": {
+      "weeklyHours": {
+        "title": "Weekly working hours may exceed the limit",
+        "clause": "Six days a week, 12 hours per shift.",
+        "explanation": "This schedule totals 72 hours a week. The usual statutory limit is 48 hours, with conditional provisions allowing up to 60 hours in a week.",
+        "model": "Schedule rule checker"
+      },
+      "dailyHours": {
+        "title": "12-hour daily shift",
+        "clause": "Each daily shift is 12 hours.",
+        "explanation": "The usual daily limit is eight hours, with work up to ten hours allowed subject to conditions. The stated 12-hour shift does not explain the basis for the remaining time.",
+        "model": "Working-hours rule checker"
+      },
+      "unpaidOvertime": {
+        "title": "No additional overtime allowance",
+        "clause": "No separate allowance applies to additional hours.",
+        "explanation": "Section 108 sets applicable overtime allowance at twice the ordinary rate. Which hours count as overtime should be checked under section 102 and the applicable worker category.",
+        "model": "Wage clause checker"
+      },
+      "uniformDeposit": {
+        "title": "Uniform cost deducted from wages",
+        "clause": "A fixed amount for uniforms is deducted from wages each month.",
+        "explanation": "Section 125 lists authorized grounds for wage deductions. This clause does not state a clear basis for an automatic monthly uniform deduction; the deduction and circumstances need review.",
+        "model": "Wage deduction rule checker"
+      },
+      "probationDuration": {
+        "title": "Nine-month probation period",
+        "clause": "The first nine months after hiring count as a probation period.",
+        "explanation": "The usual period is six months for clerical work and three months for other work; a skilled worker may receive a specific three-month extension. The basis for nine months is not stated.",
+        "model": "Employment terms rule checker"
+      },
+      "terminationNotice": {
+        "title": "Employment may end without notice",
+        "clause": "The employer may end employment at any time without notice.",
+        "explanation": "For termination covered by section 26, written notice or wages in lieu apply according to worker category. This term states no limits or exceptions.",
+        "model": "Termination rule checker"
+      },
+      "missingBreak": {
+        "title": "No break stated for a long shift",
+        "clause": "No scheduled break is provided during a 12-hour shift.",
+        "explanation": "Section 101 provides rest or meal breaks based on hours worked. A 12-hour shift with no break does not match that provision.",
+        "model": "Break rule checker"
+      },
+      "noWeeklyRest": {
+        "title": "Weekly rest day may be cancelled",
+        "clause": "Weekly rest may be cancelled when work requires it.",
+        "explanation": "Section 103 sets weekly holidays by establishment type. Which rule applies to a security establishment should be checked before defining limits on cancelling rest.",
+        "model": "Leave clause checker"
+      },
+      "missingAppointmentLetter": {
+        "title": "No separate appointment or identity card",
+        "clause": "These duty terms are final; no separate appointment letter or identity card will be provided.",
+        "explanation": "Section 5 provides for an appointment letter and photo identity card. The sample wording denies both.",
+        "model": "Hiring documents rule checker"
+      },
+      "unconditionalUniformReplacement": {
+        "title": "Worker pays for every uniform replacement",
+        "clause": "The cost of a new uniform is deducted from wages when it wears out or is replaced.",
+        "explanation": "Section 125(c) connects deductions for damage or loss to the worker’s neglect or default. A full-price deduction without assessing cause and responsibility needs review.",
+        "model": "Deduction clause checker"
+      }
+    },
+    "uncertain": {
+      "title": "70% pay during probation",
+      "clause": "During the nine-month probation period, 70% of the basic wage will be paid.",
+      "explanation": "This sample does not specify the worker category, applicable sector minimum wage, or wage structure. The 70% rate cannot be verified from these facts; no legal conclusion is given.",
+      "model": "Sample information sufficiency checker"
+    },
+    "law": {
+      "act": "Bangladesh Labour Act, 2006",
+      "version": "Text displayed in the official laws repository · Bangladesh Labour Act, 2006 (Act No. 42 of 2006)",
+      "sourceLink": "View official source",
+      "openInNewTab": "Opens in a new tab",
+      "section4": {
+        "title": "Worker categories and probation period",
+        "text": "৪। (১) কাজের ধরন ও প্রকৃতির ভিত্তিতে কোন প্রতিষ্ঠানে নিয়োজিত শ্রমিকগণকে নিম্নলিখিত শ্রেণীতে বিভক্ত করা যাইবে, যথাঃ- (ক) শিক্ষাধীন; (খ) বদলী; (গ) সাময়িক; (ঘ) অস্থায়ী; 1 [(ঙ) শিক্ষানবিশ; (চ) স্থায়ী ; ও (ছ) মৌসুমী শ্রমিক।] (২) কোন শ্রমিককে শিক্ষাধীন শ্রমিক বলা হইবে যদি কোন প্রতিষ্ঠানে তাহার নিয়োগ প্রশিক্ষণার্থী হিসাবে হয়; এবং প্রশিক্ষণকালে তাহাকে ভাতা প্রদান করা হয় 2 [, ] 3 [এবং এইরূপ শ্রমিকের ক্ষেত্রে আইনের অষ্টাদশ অধ্যায় প্রযোজ্য হইবে।] (৩) কোন শ্রমিককে বদলী শ্রমিক বলা হইবে যদি কোন প্রতিষ্ঠানে তাহাকে কোন স্থায়ী শ্রমিক বা শিক্ষানবিসের পদে তাহাদের সাময়িক অনুপস্থিতিকালীন সময়ের জন্য নিযুক্ত করা হয়। 4 [(৪) কোন শ্রমিককে সাময়িক বলা হইবে যদি কোন প্রতিষ্ঠানে সাময়িক ধরনের কাজে সাময়িকভাবে তাহাকে নিয়োগ করা হয়;] (৫) কোন শ্রমিককে অস্থায়ী শ্রমিক বলা হইবে যদি কোন প্রতিষ্ঠানে তাহার নিয়োগ এমন কোন কাজের জন্য হয় যাহা একান্তভাবে অস্থায়ী ধরনের এবং যাহা সীমিত সময়ের মধ্যে সম্পন্ন হওয়ার সম্ভাবনা থাকে। (৬) কোন শ্রমিককে শিক্ষানবিস শ্রমিক বলা হইবে যদি কোন প্রতিষ্ঠানের কোন স্থায়ী পদে তাহাকে আপাততঃ নিয়োগ করা হয় এবং তাহার শিক্ষানবিশীকাল সমাপ্ত না হইয়া থাকে। (৭) কোন শ্রমিককে স্থায়ী শ্রমিক বলা হইবে যদি কোন প্রতিষ্ঠানে তাহাকে স্থায়ীভাবে নিযুক্ত করা হয়, অথবা প্রতিষ্ঠানে তিনি তাহার শিক্ষানবিশীকাল সন্তোষজনকভাবে সমাপ্ত করিয়া থাকেন। (৮) কেরানী-সংক্রান্ত কাজে নিযুক্ত কোন শ্রমিকের শিক্ষানবিশীকাল হইবে ছয় মাস এবং অন্যান্য শ্রমিকের জন্য এই সময় হইবে তিন মাসঃ তবে শর্ত থাকে যে, একজন দক্ষ শ্রমিকের ক্ষেত্রে তাহার শিক্ষানবিশীকাল আরও তিন মাস বৃদ্ধি করা যাইবে যদি কোন কারণে প্রথম তিন মাস শিক্ষানবিসীকালে তাহার কাজের মান নির্ণয় করা সম্ভব না হয় 5 [: আরও শর্ত থাকে যে, শিক্ষানবিশকাল শেষে বা তিন মাস মেয়াদ বৃদ্ধি শেষে কনফরমেশন লেটার দেওয়া না হইলেও উপ-ধারা (৭) এর বিধান অনুযায়ী সংশ্লিষ্ট শ্রমিক স্থায়ী বলিয়া গণ্য হইবে।] (৯) যদি কোন শ্রমিকের চাকুরী তাহার শিক্ষানবিসীকালে, বর্ধিত সময়সহ, অবসান হয়, এবং ইহার পরবর্তী তিন বছরের মধ্যে যদি তিনি একই মালিক কর্তৃক পুনরায় নিযুক্ত হন তাহা হইলে তিনি, যদি না স্থায়ীভাবে নিযুক্ত হন, একজন শিক্ষানবিসী হিসাবে গণ্য হইবেন এবং তাহার নতুন শিক্ষানবিশীকাল গণনার ক্ষেত্রে পূর্বের শিক্ষানবিশীকাল হিসাবে আনা হইবে। (১০) যদি কোন স্থায়ী শ্রমিক কোন নতুন পদে শিক্ষানবিস হিসাবে নিযুক্ত হন, তাহা হইলে তাহার শিক্ষানবিসীকালে যে কোন সময় তাহাকে পূর্বের স্থায়ী পদে ফেরত আনা যাইবে। 6 [(১১) কোন শ্রমিককে মৌসুমী শ্রমিক বলা হইবে যদি কোন প্রতিষ্ঠানে মৌসুমকালে কোন শ্রমিককে মৌসুমী কাজে নিয়োগ করা হয় এবং মৌসুম চলাকালীন পর্যন্ত কর্মরত থাকেন। (১২) চিনি কল, চাতাল প্রভৃতি শিল্প এবং মৌসুমী কারখানায় শ্রমিক নিয়োগের ক্ষেত্রে পূর্ববর্তী বৎসরে নিয়োগকৃত শ্রমিকদেরকে অগ্রাধিকার প্রদান করিতে হইবে।]",
+        "highlight": "অন্যান্য শ্রমিকের জন্য এই সময় হইবে তিন মাস"
+      },
+      "section5": {
+        "title": "Appointment letter and identity card",
+        "text": "৫। কোন মালিক নিয়োগপত্র প্রদান না করিয়া কোন শ্রমিককে নিয়োগ করিতে পারিবেন না, এবং নিয়োজিত প্রত্যেক শ্রমিককে ছবিসহ পরিচয়পত্র প্রদান করিতে হইবে।",
+        "highlight": "নিয়োগপত্র প্রদান না করিয়া কোন শ্রমিককে নিয়োগ করিতে পারিবেন না"
+      },
+      "section26": {
+        "title": "Termination of employment by employer otherwise than dismissal",
+        "text": "২৬৷  (১) এই অধ্যায়ের অন্যত্র বিধৃত কোন পন্থা ছাড়াও মালিক- (ক)\tমাসিক মজুরীর ভিত্তিতে নিয়োজিত শ্রমিকের তেগত্রে, একশত বিশ দিনের, (খ)\tঅন্য শ্রমিকের তেগত্রে, ষাট দিনের, লিখিত নোটিশ প্রদান করিয়া কোন স্থায়ী শ্রমিকের চাকুরীর অবসান করিতে পারিবেন৷ (২)  এই অধ্যায়ের অন্যত্র বিধৃত কোন পন্থা ছাড়াও মালিক- (ক)\tমাসিক মজুরীর ভিত্তিতে নিয়োজিত শ্রমিকের ক্ষেত্রে, ত্রিশ দিনের, (খ)\tঅন্য শ্রমিকের ক্ষেত্রে, চৌদ্দ দিনের, লিখিত নোটিশ প্রদান করিয়া কোন অস্থায়ী শ্রমিকের চাকুরীর অবসান করিতে পারিবেন, যদি না এই অবসান যে অস্থায়ী কাজ সম্পাদনের জন্য শ্রমিককে নিযুক্ত করা হইয়াছে উহা সম্পূর্ণ হওয়া, বন্ধ হওয়া, বিলুপ্ত হওয়া বা পরিত্যক্ত হওয়ার কারণে হয়৷ (৩) যে ক্ষেত্রে মালিক বিনা নোটিশে কোন শ্রমিকের চাকুরীর অবসান করিতে চাহেন সে ক্ষেত্রে, তিনি উপ-ধারা (১) অথবা (২) এর অধীন, প্রদেয় নোটিশের পরিবর্তে নোটিশ মেয়াদের জন্য মজুরী প্রদান করিয়া ইহা করিতে পারিবেন৷ (৪) যে ক্ষেত্রে এই ধারার অধীন কোন স্থায়ী শ্রমিকের চাকুরীর অবসান করা হয় সেক্ষেত্রে, মালিক শ্রমিককে তাহার প্রত্যেক সম্পূর্ণ বত্সরের চাকুরীর জন্য ক্ষতিপূরণ হিসাবে ত্রিশ দিনের মজুরী, অথবা গ্রাচ্যুইটি, যদি প্রদেয় হয়, যাহা অধিক হইবে, প্রদান করিবেন এবং এই ক্ষতিপূরণ এই আইনের অধীন শ্রমিককে প্রদেয় অন্যান্য সুবিধার অতিরিক্ত হইবে৷",
+        "highlight": "লিখিত নোটিশ প্রদান করিয়া কোন স্থায়ী শ্রমিকের চাকুরীর অবসান করিতে পারিবেন"
+      },
+      "section100": {
+        "title": "Daily working hours",
+        "text": "১০০। কোন প্রাপ্তবয়স্ক শ্রমিক কোন প্রতিষ্ঠানে সাধারণতঃ দৈনিক আট ঘণ্টার অধিক সময় কাজ করিবেন না বা তাহাকে দিয়ে কাজ করানো যাইবে নাঃ তবে শর্ত থাকে যে, ধারা ১০৮ এর বিধান সাপেক্ষে কোন প্রতিষ্ঠানে উক্তরূপ কোন শ্রমিক দৈনিক দশ ঘণ্টা পর্যন্ত ও কাজ করিতে পারিবেন।",
+        "highlight": "দৈনিক আট ঘণ্টার অধিক সময় কাজ করিবেন না"
+      },
+      "section101": {
+        "title": "Intervals for rest or meals",
+        "text": "১০১। কোন প্রতিষ্ঠানে কোন শ্রমিক- (ক) দৈনিক ছয় ঘণ্টার অধিক কাজ করিতে বাধ্য থাকিবেন না, যদি না উক্ত দিনে তাহাকে বিশ্রাম বা আহারের জন্য এক ঘণ্টা বিরতি দেওয়া হয়; (খ) দৈনিক পাঁচ ঘণ্টার অধিক কাজ করিতে বাধ্য থাকিবেন না, যদি না উক্ত দিনে উক্ত উদ্দেশ্যে তাহাকে আধা ঘণ্টা বিরতি দেওয়া হয়, অথবা (গ) দৈনিক আট ঘন্টার অধিক কাজ করিতে বাধ্য থাকিবেন না, যদি না উক্ত দিনে উক্ত উদ্দেশ্যে তাহাকে দফা (ক) এর অধীন একটি বিরতি অথবা দফা (খ) এর অধীন দুইটি বিরতি দেওয়া হয় 1 [; (ঘ) এই আইনে যাহা কিছুই থাকুক না কেন, নির্মাণ, রি-রোলিং, ষ্টিল মিলস, জাহাজ ভাঙ্গা, ঝালাই (welding) সহ শারীরিক ঝুঁকিপূর্ণ ও পরিশ্রমী কাজে নিয়োজিত বিভিন্ন ধরণের কারখানায় বিধি দ্বারা নির্ধারিত পদ্ধতিতে সরকার কর্মঘণ্টা ও বিশ্রামের সময় নির্ধারণ করিবে।]",
+        "highlight": "বিশ্রাম বা আহারের জন্য এক ঘণ্টা বিরতি দেওয়া হয়"
+      },
+      "section102": {
+        "title": "Weekly working hours",
+        "text": "১০২। (১) কোন প্রাপ্তবয়স্ক শ্রমিক কোন প্রতিষ্ঠানে সাধারণতঃ সপ্তাহে আটচল্লিশ ঘণ্টার অধিক সময় কাজ করিবেন না বা তাহাকে দিয়ে কাজ করানো যাইবে না। (২) ধারা ১০৮ এর বিধান সাপেক্ষে, কোন প্রাপ্তবয়স্ক শ্রমিক কোন প্রতিষ্ঠানে সপ্তাহে আটচল্লিশ ঘণ্টার অধিক সময়ও কাজ করতে পারিবেনঃ তবে শর্ত থাকে যে, কোন সপ্তাহে উক্তরূপ কোন শ্রমিকের মোট কর্ম-সময় ষাট ঘণ্টার অধিক হইবে না, এবং কোন বৎসরে উহা গড়ে প্রতি সপ্তাহে ছাপ্পান্ন ঘণ্টার অধিক হইবে নাঃ আরও শর্ত থাকে যে, কোন সড়ক পরিবহণ প্রতিষ্ঠানে চাকুরীরত কোন শ্রমিকের সর্বমোট অতিরিক্ত কর্মঘণ্টা বৎসরে একশত পঞ্চাশ ঘণ্টার অধিক হইবে নাঃ আরও শর্ত থাকে যে, বিশেষ বিশেষ শিল্পের ক্ষেত্রে, সরকার লিখিত আদেশ দ্বারা আরোপিত শর্তে, এ ধারার বিধান শিথিল করিতে অথবা উহা হইতে এককালীন সর্বোচ্চ ছয় মাস মেয়াদের জন্য অব্যাহতি দিতে পারিবে যদি সরকার এই মর্মে সন্তুষ্ট হয় যে, জনস্বার্থে/অর্থনৈতিক উন্নয়নের স্বার্থে উক্ত শিথিল/অব্যাহতি প্রয়োজনীয়।",
+        "highlight": "সপ্তাহে আটচল্লিশ ঘণ্টার অধিক সময় কাজ করিবেন না"
+      },
+      "section103": {
+        "title": "Weekly holiday",
+        "text": "১০৩। কোন প্রতিষ্ঠানে কর্মরত কোন শ্রমিক- 1 [ (ক) প্রতি সপ্তাহে কারখানা ও শিল্পের ক্ষেত্রে একদিন এবং দোকান ও প্রতিষ্ঠানের ক্ষেত্রে দেড় দিন ছুটি পাইবেন;] (খ) সড়ক পরিবহণ প্রতিষ্ঠানের ক্ষেত্রে, প্রতি সপ্তাহে অবিচ্ছিন্ন চবি্বশ ঘণ্টার একদিন ছুটি পাইবেন; 2 [ ***] 3 [ ; (গ) উপরোক্ত দফা (ক) ও (খ) এর আওতায় কোন ছুটির জন্য শ্রমিকের মজুরী হইতে কোন কর্তন করা যাইবে না।]",
+        "highlight": "প্রতি সপ্তাহে কারখানা ও শিল্পের ক্ষেত্রে একদিন এবং দোকান ও প্রতিষ্ঠানের ক্ষেত্রে দেড় দিন ছুটি পাইবেন"
+      },
+      "section108": {
+        "title": "Extra allowance for overtime work",
+        "text": "১০৮। (১) যে ক্ষেত্রে কোন শ্রমিক কোন প্রতিষ্ঠানে কোন দিন বা সপ্তাহে এই আইনের অধীন নির্দিষ্ট সময়ের অতিরিক্ত সময় কাজ করেন, সে ক্ষেত্রে তিনি অধিকাল কাজের জন্য তাহার মূল মজুরী ও মহার্ঘভাতা এবং এডহক বা অন্তবর্তী মজুরী, যদি থাকে, এর সাধারণ হারের দ্বিগুণ হারে ভাতা পাইবেন। 1 [ (২) ঠিকা-হার (পিস রেট) ভিত্তিতে মজুরিপ্রাপ্ত শ্রমিকগণের ক্ষেত্রে উপ-ধারা (১) এর বিধান প্রযোজ্য হইবে না।] (৩) এই ধারার বিধান পালন নিশ্চিত করার লক্ষে সরকার কোন প্রতিষ্ঠান কর্তৃক রক্ষণীয় রেজিস্টার বিধিদ্বারা নির্ধারণ করিতে পারিবে।",
+        "highlight": "এর সাধারণ হারের দ্বিগুণ হারে ভাতা পাইবেন"
+      },
+      "section125": {
+        "title": "Deductions which may be made from wages",
+        "text": "১২৫। (১) এই আইন দ্বারা অনুমোদিত কর্তনের ক্ষেত্র ব্যতীত অন্য কোন ৰেত্রে কোন শ্রমিকের মজুরী হইতে কিছুই কর্তন করা যাইবে না। (২) কেবলমাত্র এই আইনের বিধান অনুযায়ী কোন 1 [শ্রমিকের মূল মজুরী] হইতে কর্তন করা যাইবে, এবং উক্তরূপ কর্তন কেবলমাত্র নিম্নলিখিত প্রকারের হইবে, যথাঃ- (ক) ধারা ২৫ এর অধীন আরোপিত জরিমানা; (খ) কর্তব্য কাজে অননুমোদিত অনুপস্থিতির জন্য কর্তন; (গ) কোন শ্রমিকের হেফাজতে প্রদত্ত মালিকের কোন মালামালের ৰতি বা লোকসান, অথবা তিনি যে অর্থের জন্য হিসাব দিতে দায়ী সে অর্থ বিনষ্টির জন্য কর্তন, যদি উক্তরূপ ৰতি বা বিনষ্টির জন্য সরাসরি তাহার অবহেলা বা গাফিলতি দায়ী হয়; (ঘ) মালিক কর্তৃক সরবরাহকৃত বাসস্থানের জন্য কর্তন; (ঙ) চাকুরীর প্রয়োজনে ব্যবহৃত কাঁচামাল ও যন্ত্রপাতি ব্যতীত, সরকার কর্তৃক অনুমোদিত এবং মালিক কর্তৃক সরবরাহকৃত সুযোগ-সুবিধা ও সেবার জন্য কর্তন; (চ) কোন অগ্রিম বা কর্জ আদায়ের জন্য কর্তন, অথবা কোন অতিরিক্ত মজুরী প্রদানের ক্ষেত্রে উহা সমন্বয়ের জন্য কর্তন; (ছ) শ্রমিক কর্তৃক প্রদেয় আয়কর বাবদ কর্তন; (জ) কোন আদালতের আদেশে কর্তন, অথবা উক্তরূপ কর্তনের আদেশ দেওয়ার ক্ষমতা সম্পন্ন কোন কর্তৃপক্ষের আদেশে কর্তন; (ঝ) ভবিষ্য তহবিল আইন, ১৯২৫ (১৯২৫ সনের ১৯ নং আইন) প্রযোজ্য হয় এই রকম কোন ভবিষ্য তহবিল অথবা আয়কর আইন, ১৯৮৪ (১৯৮৪ সনের ৩৬ নং আইন) এ সংজ্ঞায়িত কোন স্বীকৃত ভবিষ্য তহবিল, অথবা সরকার কর্তৃক অনুমোদিত অন্য কোন ভবিষ্য তহবিলে জন্য চাঁদা কর্তন অথবা উহা হইতে প্রদত্ত অগ্রিম আদায়ের জন্য কর্তন; (ঞ) সরকার কর্তৃক অনুমোদিত কোন সমবায় সমিতিকে প্রদানের জন্য অথবা বাংলাদেশ ডাকবিভাগ অথবা সরকারী কোন বীমা কোমপানী কর্তৃক সংরক্ষিত কোন বীমা স্কীমকে প্রদানের জন্য কর্তন; (ট) শ্রমিকগণের অথবা তাহাদের পরিবারের সদস্যগণের কল্যাণের জন্য সরকারের অনুমোদনক্রমে মালিক কর্তৃক গঠিত কোন তহবিল অথবা তৎকর্তৃক প্রণীত কোন স্কীমের জন্য শ্রমিকগণের লিখিত সম্মতিতে, চাঁদা কর্তন; এবং (ঠ) চেক-অফ পদ্ধতিতে সিবিএ ইউনিয়নের জন্য চাঁদা কর্তন।",
+        "highlight": "এই আইন দ্বারা অনুমোদিত কর্তনের ক্ষেত্র ব্যতীত অন্য কোন ৰেত্রে কোন শ্রমিকের মজুরী হইতে কিছুই কর্তন করা যাইবে না"
+      }
+    },
+    "why": {
+      "title": "Sources behind this result",
+      "description": "Official sections matched with this sample explanation.",
+      "retrieved": "Sections checked",
+      "checks": "Three verification checks",
+      "lawExists": "Section exists",
+      "quoteMatches": "Quotation matches",
+      "supports": "Supports the clause finding",
+      "model": "Model that checked",
+      "recorded": "Sample verification · no live model run",
+      "close": "Close"
+    },
+    "citation": {
+      "title": "Official legal citation",
+      "act": "Act name",
+      "section": "Section {{number}}",
+      "version": "Text details",
+      "quotedText": "Text of the official section",
+      "close": "Close",
+      "languageNote": "Original Bengali text from the official laws repository; not a translation."
+    },
+    "proposals": {
+      "eyebrow": "Draft edits",
+      "title": "Suggested clause wording",
+      "description": "These are discussion drafts, not final wording without legal review.",
+      "old": "Current wording",
+      "new": "Suggested wording",
+      "source": "Source",
+      "accept": "Add to discussion list",
+      "selected": "Added to discussion list",
+      "overtime": {
+        "title": "Overtime allowance",
+        "old": "No separate allowance applies to additional hours.",
+        "new": "For work beyond the limits set by law, overtime allowance will be paid in accordance with applicable law."
+      },
+      "uniform": {
+        "title": "Uniform deductions",
+        "old": "A fixed amount for uniforms is deducted from wages each month.",
+        "new": "Any deduction from wages will be made only where authorized by law and after meeting the applicable conditions."
+      },
+      "termination": {
+        "title": "Notice of termination",
+        "old": "The employer may end employment at any time without notice.",
+        "new": "Employment will end with written notice, or payment of wages in lieu, as required by applicable law."
+      }
+    },
+    "duties": {
+      "title": "Next steps for both parties",
+      "description": "Mark responsibilities to discuss or review.",
+      "worker": "Worker",
+      "employer": "Employer",
+      "workerItems": [
+        "Request a written shift schedule and break policy",
+        "Ask for a written breakdown of wages and deductions",
+        "Collect an appointment letter and photo ID",
+        "Keep a copy of the revised draft"
+      ],
+      "employerItems": [
+        "Clarify working hours and weekly rest",
+        "Set out overtime pay and wage calculations",
+        "Provide the lawful basis and evidence for uniform deductions",
+        "Issue an appointment letter and photo identity card"
+      ]
+    },
+    "memo": {
+      "title": "Contract review memo",
+      "description": "Recorded review of a sample security-guard contract",
+      "generated": "Sample data (recorded)",
+      "download": "Download PDF",
+      "printHint": "Save as PDF in the print window",
+      "summary": "Summary",
+      "verified": "Verified findings",
+      "uncertain": "Needs human review",
+      "sourceList": "Official sources",
+      "preparedFor": "Side",
+      "worker": "Worker",
+      "employer": "Employer",
+      "notReal": "This is a fixed sample, not an individual contract or legal advice."
+    },
+    "side": {
+      "worker": "Worker",
+      "employer": "Employer"
+    }
+  }
+}
