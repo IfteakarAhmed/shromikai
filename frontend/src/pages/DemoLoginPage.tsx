@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
-import { Link, Navigate } from 'react-router-dom'
+import { Navigate } from 'react-router-dom'
+import { LinkButton } from '../components/ui/Button'
 import type { DemoRole } from '../api/auth'
 import { useAuth } from '../auth/authContext'
 
@@ -29,20 +30,20 @@ export function DemoLoginPage({ role }: { role: DemoRole }) {
   }
   if (failed) {
     return (
-      <section>
-        <p role="alert" className="text-lg text-red-800">
+      <section className="mx-auto max-w-2xl px-(--gutter) py-12">
+        <p role="alert" className="text-lg text-rejected">
           {t('demo.failed')}
         </p>
-        <p className="mt-6">
-          <Link to="/login" className="font-medium underline underline-offset-4">
+        <div className="mt-6">
+          <LinkButton to="/login" variant="outline">
             {t('demo.toLogin')}
-          </Link>
-        </p>
+          </LinkButton>
+        </div>
       </section>
     )
   }
   return (
-    <p role="status" className="text-stone-700">
+    <p role="status" className="mx-auto max-w-2xl px-(--gutter) py-12 text-muted-foreground">
       {t('demo.signingIn')}
     </p>
   )

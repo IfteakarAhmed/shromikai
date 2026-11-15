@@ -8,19 +8,26 @@ import { renderApp } from '../test/render'
 
 describe('StatusPage', () => {
   it('FR-01 shows the backend status from the meta endpoint', async () => {
-    renderApp(<App />)
+    renderApp(<App />, '/docs')
 
-    expect(screen.getByRole('status')).toHaveTextContent('লোড হচ্ছে')
     expect(await screen.findByTestId('backend-status')).toHaveTextContent('চালু (সংস্করণ ০.১.০)')
     expect(screen.getAllByText('১১২টি')).toHaveLength(2)
     expect(screen.getByText('৩টি')).toBeInTheDocument()
     expect(screen.getByText(/এটা আইনি পরামর্শ নয়/)).toBeInTheDocument()
   })
 
+  it('FR-01 says it is loading while the backend has not answered', async () => {
+    server.use(http.get('/api/v1/meta', () => new Promise<Response>(() => undefined)))
+
+    renderApp(<App />, '/docs')
+
+    expect(await screen.findByRole('status')).toHaveTextContent('লোড হচ্ছে')
+  })
+
   it('FR-02 shows a Bangla error message when the backend is down', async () => {
     server.use(http.get('/api/v1/meta', () => HttpResponse.error()))
 
-    renderApp(<App />)
+    renderApp(<App />, '/docs')
 
     expect(await screen.findByRole('alert')).toHaveTextContent('ব্যাকএন্ডের সাথে যোগাযোগ হচ্ছে না')
   })
@@ -42,14 +49,14 @@ describe('StatusPage', () => {
       ),
     )
 
-    renderApp(<App />)
+    renderApp(<App />, '/docs')
 
     expect(await screen.findByRole('alert')).toHaveTextContent('অপ্রত্যাশিত ত্রুটি')
   })
 
   it('FR-02 retries after a failure', async () => {
     server.use(http.get('/api/v1/meta', () => HttpResponse.error(), { once: true }))
-    renderApp(<App />)
+    renderApp(<App />, '/docs')
     await screen.findByRole('alert')
 
     await userEvent.click(screen.getByRole('button', { name: 'আবার চেষ্টা করুন' }))
@@ -58,7 +65,7 @@ describe('StatusPage', () => {
   })
 
   it('NFR-09 switches to English and remembers the choice', async () => {
-    renderApp(<App />)
+    renderApp(<App />, '/docs')
     await screen.findByTestId('backend-status')
 
     await userEvent.click(screen.getByRole('button', { name: 'ভাষা পরিবর্তন করে ইংরেজি করুন' }))

@@ -1,0 +1,140 @@
+import { render, screen, within } from '@testing-library/react'
+import userEvent from '@testing-library/user-event'
+import { beforeEach, describe, expect, it, vi } from 'vitest'
+import i18n from '../../i18n'
+import { makeCitation, makeFinding, makeUncertainFinding } from '../../test/fixtures'
+import { CitationChip } from './CitationChip'
+import { RiskCard } from './RiskCard'
+import { SeverityTag } from './SeverityTag'
+import { VerificationBadge } from './VerificationBadge'
+import { VerificationLegend } from './VerificationLegend'
+
+beforeEach(async () => {
+  await i18n.changeLanguage('bn')
+})
+
+describe('VerificationBadge', () => {
+  it('FR-70 shows ✓ যাচাইকৃত for a verified finding and ? অনিশ্চিত for an uncertain one', () => {
+    render(
+      <>
+        <VerificationBadge status="VERIFIED" />
+        <VerificationBadge status="UNCERTAIN" />
+      </>,
+    )
+
+    expect(screen.getByText('✓ যাচাইকৃত')).toBeInTheDocument()
+    expect(screen.getByText('? অনিশ্চিত')).toBeInTheDocument()
+  })
+
+  it('FR-70 labels a playbook finding as policy, never as law', () => {
+    render(<VerificationBadge status="POLICY_ONLY" />)
+
+    expect(screen.getByText('নীতি (আইন নয়)')).toBeInTheDocument()
+    expect(screen.queryByText(/যাচাইকৃত/)).not.toBeInTheDocument()
+  })
+
+  it('FR-70 the legend explains exactly two states and has no weak or partial one', () => {
+    render(<VerificationLegend />)
+
+    const items = screen.getAllByRole('listitem')
+    expect(items).toHaveLength(2)
+    expect(within(items[0] as HTMLElement).getByText('✓ যাচাইকৃত')).toBeInTheDocument()
+    expect(within(items[1] as HTMLElement).getByText('? অনিশ্চিত')).toBeInTheDocument()
+    expect(screen.queryByText(/দুর্বল|আংশিক|weak|partial/i)).not.toBeInTheDocument()
+  })
+})
+
+describe('SeverityTag', () => {
+  it('FR-70 names the severity in words, so colour is never the only signal', () => {
+    render(<SeverityTag severity="CRITICAL" />)
+
+    expect(screen.getByText('গুরুতর')).toBeInTheDocument()
+  })
+})
+
+describe('CitationChip', () => {
+  it('FR-70 names the act and the section and opens the citation on click', async () => {
+    const onOpen = vi.fn()
+    const citation = makeCitation()
+    render(<CitationChip citation={citation} language="bn" onOpen={onOpen} />)
+
+    const chip = screen.getByRole('button', { name: /কাল্পনিক আইন.*ধারা ৫/ })
+    expect(chip).toHaveTextContent('ধারা ৫')
+    await userEvent.click(chip)
+
+    expect(onOpen).toHaveBeenCalledWith(citation)
+  })
+
+  it('FR-70 uses the English act title and Latin digits in English', async () => {
+    await i18n.changeLanguage('en')
+    render(<CitationChip citation={makeCitation()} language="en" onOpen={() => undefined} />)
+
+    expect(screen.getByRole('button', { name: /Fictional Act.*section 5/i })).toBeInTheDocument()
+  })
+})
+
+describe('RiskCard', () => {
+  const noop = () => undefined
+
+  it('FR-70 a verified card shows its severity, reason and one chip per citation', () => {
+    const finding = makeFinding({
+      nonObvious: true,
+      citations: [
+        makeCitation(),
+        makeCitation({ sectionKey: 'XX-ACT-1:6@original', sectionNo: '6' }),
+      ],
+    })
+    render(
+      <RiskCard
+        finding={finding}
+        language="en"
+        onOpenCitation={noop}
+        onOpenWhy={noop}
+        onOpenProposal={noop}
+      />,
+    )
+
+    expect(screen.getByText('Dismissal without notice')).toBeInTheDocument()
+    expect(screen.getByText('✓ যাচাইকৃত')).toBeInTheDocument()
+    expect(screen.getByText('উচ্চ ঝুঁকি')).toBeInTheDocument()
+    expect(screen.getByText('চোখে পড়ে না এমন ঝুঁকি')).toBeInTheDocument()
+    expect(screen.getAllByRole('button', { name: /ধারা \S+ খুলুন/ })).toHaveLength(2)
+    expect(screen.getByText(/without any notice/)).toBeInTheDocument()
+  })
+
+  it('FR-70 R-01 an uncertain card never renders a citation and says it went to human review', () => {
+    // Even a malformed finding that carries a citation must not show it while UNCERTAIN.
+    const finding = makeUncertainFinding({ citations: [makeCitation()] })
+    render(<RiskCard finding={finding} language="en" onOpenCitation={noop} onOpenWhy={noop} />)
+
+    expect(screen.getByText('? অনিশ্চিত')).toBeInTheDocument()
+    expect(screen.getByText('মানুষের পর্যালোচনার জন্য পাঠানো হয়েছে')).toBeInTheDocument()
+    expect(screen.queryByRole('button', { name: /ধারা \S+ খুলুন/ })).not.toBeInTheDocument()
+    expect(screen.queryByRole('link')).not.toBeInTheDocument()
+    expect(screen.queryByText(/XX-ACT-1/)).not.toBeInTheDocument()
+  })
+
+  it('FR-70 the why button opens the trace of that finding', async () => {
+    const onOpenWhy = vi.fn()
+    render(
+      <RiskCard
+        finding={makeFinding()}
+        language="en"
+        onOpenCitation={noop}
+        onOpenWhy={onOpenWhy}
+      />,
+    )
+
+    await userEvent.click(screen.getByRole('button', { name: 'কেন?' }))
+
+    expect(onOpenWhy).toHaveBeenCalledOnce()
+  })
+
+  it('FR-70 marks the language of the content so a screen reader pronounces it right', () => {
+    const { container } = render(
+      <RiskCard finding={makeFinding()} language="bn" onOpenCitation={noop} onOpenWhy={noop} />,
+    )
+
+    expect(container.querySelector('[lang="bn"]')).not.toBeNull()
+  })
+})

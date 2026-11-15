@@ -1,16 +1,18 @@
 import { useTranslation } from 'react-i18next'
-import { Link } from 'react-router-dom'
+import { LinkButton } from '../components/ui/Button'
+import { useTitle } from '../lib/useTitle'
 
 export function NotFoundPage() {
   const { t } = useTranslation()
+  useTitle(t('notFound.title'))
   return (
-    <section>
-      <h1 className="text-2xl font-bold">{t('notFound.title')}</h1>
-      <p className="mt-6">
-        <Link to="/" className="font-medium underline underline-offset-4">
+    <section className="mx-auto max-w-2xl px-(--gutter) py-12">
+      <h1 className="text-3xl font-bold">{t('notFound.title')}</h1>
+      <div className="mt-6">
+        <LinkButton to="/" variant="outline">
           {t('common.home')}
-        </Link>
-      </p>
+        </LinkButton>
+      </div>
     </section>
   )
 }

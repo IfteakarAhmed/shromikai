@@ -18,7 +18,7 @@ describe('demo login', () => {
 
     renderApp(<App />, '/demo-user')
 
-    expect(await screen.findByText('বিশ্লেষণের পাতা শীঘ্রই আসছে।')).toBeInTheDocument()
+    expect(await screen.findByRole('heading', { name: 'আপনার চুক্তি দিন' })).toBeInTheDocument()
     expect(called).toBe(1)
   })
 
@@ -29,7 +29,7 @@ describe('demo login', () => {
 
     renderApp(<App />, '/demo-hr')
 
-    expect(await screen.findByText('বিশ্লেষণের পাতা শীঘ্রই আসছে।')).toBeInTheDocument()
+    expect(await screen.findByRole('heading', { name: 'আপনার চুক্তি দিন' })).toBeInTheDocument()
     expect(screen.getByText(/এইচআর/)).toBeInTheDocument()
   })
 
