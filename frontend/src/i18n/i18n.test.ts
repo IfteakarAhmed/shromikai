@@ -41,8 +41,9 @@ describe('i18n', () => {
   })
 
   it('R-11 bn strings use no English words except the brand and the English switch', () => {
-    // app.name is the brand শ্রমিকAI; language.switch names the target language in English.
-    const allowed = new Set(['app.name', 'language.switch'])
+    // app.name is the brand শ্রমিকAI; language.switch names the target language in English;
+    // common.recorded is the label the product owner fixed for recorded data.
+    const allowed = new Set(['app.name', 'language.switch', 'common.recorded'])
     for (const key of keys(bn).filter((k) => !allowed.has(k))) {
       const text = leaf(bn, key).replace(/\{\{\w+\}\}/g, '')
       expect(text, key).not.toMatch(/[A-Za-z]/)

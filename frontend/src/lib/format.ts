@@ -13,3 +13,10 @@ export function formatVersion(version: string, language: Language): string {
     ? version.replace(/[0-9]/g, (digit) => BANGLA_DIGITS.charAt(Number(digit)))
     : version
 }
+
+/** Any digits in a string (a section number, a count) in Bangla numerals for bn (NFR-09). */
+export function localizeDigits(value: string, language: Language): string {
+  return language === 'bn'
+    ? value.replace(/[0-9]/g, (digit) => BANGLA_DIGITS.charAt(Number(digit)))
+    : value
+}

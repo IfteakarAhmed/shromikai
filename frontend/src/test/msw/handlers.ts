@@ -24,6 +24,7 @@ export const sampleMeta: Meta = {
     lastRefreshAt: null,
   },
   audit: null,
+  recordedDemo: null,
 }
 
 /** Synthetic account for a role; every value is fictional. */

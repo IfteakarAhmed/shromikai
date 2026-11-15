@@ -21,14 +21,15 @@ Runtime dependencies added:
 
 | Package | Used for | Where it loads |
 | --- | --- | --- |
-| `three`, `@react-three/fiber` | The procedural hero scene on `/` | A lazy chunk, fetched only when WebGL exists, motion is allowed and low-bandwidth mode is off |
+| `three` | The procedural hero scene on `/`, written against plain three.js with named imports | A lazy chunk (about 120 KB gzip), fetched only when WebGL exists, motion is allowed and low-bandwidth mode is off |
 | `recharts` | Admin usage and cost charts, `/docs/evaluation` charts | Lazy chunks of `/admin` and `/docs` |
 
 Development dependencies added: `@playwright/test` and `@axe-core/playwright` (end-to-end and
 accessibility checks), `axe-core` (component-level accessibility checks), `@types/three`.
 
-Not adopted, on purpose: `@react-three/drei` (the hero needs no helper from it; dropped to stay
-under the hero budget), TanStack Start and Router, bun, shadcn and Radix (dialogs use the native
+Not adopted, on purpose: `@react-three/fiber` and `@react-three/drei`. React Three Fiber registers
+the whole of three.js, which made the scene chunk 234 KB gzip (measured with a first version of the
+scene) against a 200 KB budget; plain three with named imports is 120 KB. drei was never needed, TanStack Start and Router, bun, shadcn and Radix (dialogs use the native
 `<dialog>` element, which gives a focus trap, `Esc` and an inert background), `lucide-react`
 (a handful of inline SVG icons), `class-variance-authority`, `clsx`, `zod`, `react-hook-form`,
 `sonner`, `vaul`, `lovable-error-reporting` and Supabase code. Markdown for the `/docs` hub is
@@ -37,7 +38,7 @@ rendered by a small in-house component that builds React elements, so no HTML is
 ## Consequences
 
 - The initial bundle does not grow: `three` and `recharts` are lazy chunks. `check:bundle` gates
-  the initial JavaScript at 200 KB gzip and, from P9, the hero chunk at 200 KB gzip as well.
+  the initial JavaScript at 200 KB gzip and the hero (scene chunk plus poster) at 200 KB as well.
 - The hero always has a static poster fallback (no WebGL, reduced motion, low-bandwidth mode, load
   failure), so the page never depends on the 3D chunk.
 - Fewer dependencies mean more first-party UI code (dialogs, tabs, toasts) that the team tests with
@@ -45,8 +46,8 @@ rendered by a small in-house component that builds React elements, so no HTML is
 
 ## Alternatives
 
-- **Keep drei and the shadcn/Radix kit** as in the prototype: faster to write, but several times
-  the dependency count, a larger audit surface and a hero chunk over budget.
+- **Keep r3f, drei and the shadcn/Radix kit** as in the prototype: faster to write, but several
+  times the dependency count, a larger audit surface and a hero chunk over budget (measured).
 - **A CSS or SVG hero only**: smaller, but the prototype's 3D scene is a deliberate part of the
   design; it stays as a progressive enhancement over the same poster.
 - **A Markdown library for `/docs`**: one more runtime dependency and an HTML-injection path to

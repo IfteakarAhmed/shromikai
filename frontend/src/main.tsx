@@ -7,6 +7,7 @@ import i18n from './i18n'
 import { BrowserRouter } from 'react-router-dom'
 import App from './App'
 import { AuthProvider } from './auth/AuthProvider'
+import { PreferencesProvider } from './state/PreferencesProvider'
 
 document.documentElement.lang = i18n.language
 
@@ -24,9 +25,11 @@ createRoot(root).render(
   <StrictMode>
     <QueryClientProvider client={queryClient}>
       <BrowserRouter>
-        <AuthProvider>
-          <App />
-        </AuthProvider>
+        <PreferencesProvider>
+          <AuthProvider>
+            <App />
+          </AuthProvider>
+        </PreferencesProvider>
       </BrowserRouter>
     </QueryClientProvider>
   </StrictMode>,

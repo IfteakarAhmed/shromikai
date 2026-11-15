@@ -27,6 +27,36 @@ export default tseslint.config(
     },
   },
   {
+    // Web Storage and other browser stores are reached only through src/lib/storage.ts, which holds
+    // the allowlist of what may be persisted (AGENTS.md §6, R-02).
+    files: ['src/**/*.{ts,tsx}'],
+    ignores: ['src/lib/storage.ts', 'src/**/*.test.{ts,tsx}', 'src/test/**'],
+    rules: {
+      'no-restricted-globals': [
+        'error',
+        ...['localStorage', 'sessionStorage', 'indexedDB', 'caches'].map((name) => ({
+          name,
+          message: 'Persist only through src/lib/storage.ts (R-02).',
+        })),
+      ],
+      'no-restricted-properties': [
+        'error',
+        ...['window', 'globalThis', 'self'].flatMap((object) =>
+          ['localStorage', 'sessionStorage', 'indexedDB', 'caches'].map((property) => ({
+            object,
+            property,
+            message: 'Persist only through src/lib/storage.ts (R-02).',
+          })),
+        ),
+        {
+          object: 'navigator',
+          property: 'serviceWorker',
+          message: 'No service worker caches (R-02).',
+        },
+      ],
+    },
+  },
+  {
     files: ['**/*.{js,mjs}'],
     extends: [js.configs.recommended, prettier],
     languageOptions: { globals: globals.node },
