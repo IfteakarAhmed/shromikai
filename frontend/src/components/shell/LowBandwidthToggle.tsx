@@ -20,7 +20,8 @@ export function LowBandwidthToggle() {
       }}
     >
       <Icon name="gauge" />
-      <span>{t('header.lowBandwidth')}</span>
+      <span className="hidden xl:inline">{t('header.lowBandwidth')}</span>
+      <span className="sr-only xl:hidden">{t('header.lowBandwidth')}</span>
       <span className="font-bold" aria-hidden="true">
         {t(lowBandwidth ? 'header.on' : 'header.off')}
       </span>

@@ -9,6 +9,7 @@ import { Icon } from '../../components/ui/Icon'
 import { memoSpeech, memoText } from '../../lib/memoText'
 import { formatNumber, localizeDigits } from '../../lib/format'
 import { speak, useHasVoice } from '../../lib/speech'
+import { withoutRepeatedSections } from '../../lib/memoBlocks'
 import type { Language } from '../../i18n'
 
 type Block = AnalysisResult['memo']['sections'][number]['blocks'][number]
@@ -56,6 +57,10 @@ export function MemoView({ result }: { result: AnalysisResult }) {
       .flatMap((finding) => finding.citations)
       .concat(result.redlines.flatMap((redline) => redline.citations))
       .map((citation) => [citation.citationId, citation]),
+  )
+
+  const sectionKeys = new Map(
+    Array.from(citations.values()).map((citation) => [citation.citationId, citation.sectionKey]),
   )
 
   function renderBlock(block: Block, index: number) {
@@ -256,7 +261,7 @@ export function MemoView({ result }: { result: AnalysisResult }) {
         {memo.sections.map((section) => (
           <section key={section.kind} className="space-y-2">
             <h4 className="text-xl font-bold">{section.heading}</h4>
-            {section.blocks.map(renderBlock)}
+            {withoutRepeatedSections(section.blocks, sectionKeys).map(renderBlock)}
           </section>
         ))}
         <footer className="border-t border-border pt-3 text-sm text-muted-foreground">

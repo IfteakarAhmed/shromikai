@@ -98,28 +98,27 @@ export function Header() {
               {t('nav.signIn')}
             </Link>
           ) : (
+            <div className="hidden lg:block">
+              <Button variant="outline" onClick={() => void signOut()}>
+                <Icon name="logout" />
+                {t('nav.signOut')}
+              </Button>
+            </div>
+          )}
+          <div className="lg:hidden">
             <Button
               variant="outline"
-              className="hidden lg:inline-flex"
-              onClick={() => void signOut()}
+              size="icon"
+              aria-expanded={open}
+              aria-controls={menuId}
+              aria-label={t('nav.menu')}
+              onClick={() => {
+                setOpenAt(open ? null : location.pathname)
+              }}
             >
-              <Icon name="logout" />
-              {t('nav.signOut')}
+              <Icon name={open ? 'x' : 'menu'} />
             </Button>
-          )}
-          <Button
-            variant="outline"
-            size="icon"
-            className="lg:hidden"
-            aria-expanded={open}
-            aria-controls={menuId}
-            aria-label={t('nav.menu')}
-            onClick={() => {
-              setOpenAt(open ? null : location.pathname)
-            }}
-          >
-            <Icon name={open ? 'x' : 'menu'} />
-          </Button>
+          </div>
         </div>
       </div>
 

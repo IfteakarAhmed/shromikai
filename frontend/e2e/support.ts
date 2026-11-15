@@ -56,3 +56,10 @@ export function englishPhrases(): string[] {
   walk(en)
   return out
 }
+
+/** Signs in as the demo worker, runs the recorded sample and waits for the result. */
+export async function openResult(page: Page, locale: Locale): Promise<void> {
+  await page.goto('/demo-user')
+  await expect(page.getByRole('heading', { name: text(locale, 'upload.title') })).toBeVisible()
+  await analyseSample(page, locale)
+}

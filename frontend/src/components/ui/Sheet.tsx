@@ -61,7 +61,14 @@ export function Sheet({ open, onClose, title, description, children }: SheetProp
             <Icon name="x" />
           </Button>
         </header>
-        <div className="overflow-y-auto px-5 py-4">{children}</div>
+        <div
+          tabIndex={0}
+          role="region"
+          aria-labelledby={titleId}
+          className="overflow-y-auto px-5 py-4"
+        >
+          {children}
+        </div>
       </div>
     </dialog>
   )

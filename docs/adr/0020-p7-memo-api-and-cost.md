@@ -61,7 +61,7 @@ no live call was made and no number below is a measurement of a live answer.
     payload with exponent-form doubles is not supported (documented limit).
 11. **New container: Gotenberg 8.21.1** (`gotenberg/gotenberg`, pinned tag) renders the memo PDF
     from the HTML of `MemoHtmlRenderer` (FR-55, ADR-0001). It is started with JavaScript off and a
-    deny-list that blocks every URL except `data:`, keeps its work on `tmpfs`, and only the backend
+    deny-list that blocks every URL except `data:` and the render's own page under `file:///tmp/` (without that exception Chromium cannot open the page it was given, found in P9 when the PDF was first rendered through the compose service), keeps its work on `tmpfs`, and only the backend
     reaches it (port bound to 127.0.0.1 in development, internal network in production). The memo
     HTML has no script, link, font or image URL; `MemoTemplateTest` proves it. `MemoPdfIT` (tag
     `slow`, Testcontainers, the same image) checks that 20 Bangla conjunct words are extractable,

@@ -99,4 +99,70 @@ test.describe('screenshots', () => {
     await page.waitForLoadState('networkidle')
     await shot(page, 'landing-en-light')
   })
+
+  test('increment B pictures: why drawer, redline, duties, memo, compare and the ticket', async ({
+    page,
+  }) => {
+    test.skip(prefix !== 'B', 'only for increment B')
+    await page.goto('/demo-user')
+    await expect(page.getByRole('heading', { name: text('bn', 'upload.title') })).toBeVisible()
+    await page.getByRole('button', { name: text('bn', 'upload.sample') }).click()
+    await expect(page.getByRole('heading', { name: text('bn', 'results.title') })).toBeVisible({
+      timeout: 60_000,
+    })
+
+    await page
+      .getByRole('button', { name: text('bn', 'finding.why') })
+      .first()
+      .click()
+    await expect(page.getByRole('dialog').getByText(text('bn', 'why.checksTitle'))).toBeVisible()
+    await page.waitForTimeout(400)
+    await shot(page, 'why-verified')
+    await page.keyboard.press('Escape')
+
+    await page
+      .locator('article')
+      .filter({ hasText: text('bn', 'verification.sentForReview') })
+      .first()
+      .getByRole('button', { name: text('bn', 'finding.why') })
+      .click()
+    await expect(page.getByRole('dialog').getByText(text('bn', 'why.uncertainTitle'))).toBeVisible()
+    await page.waitForTimeout(400)
+    await shot(page, 'why-uncertain')
+    await page.keyboard.press('Escape')
+
+    await page.getByRole('tab', { name: text('bn', 'tabs.proposals') }).click()
+    await page.locator('del').first().scrollIntoViewIfNeeded()
+    await shot(page, 'redline')
+    await page.getByRole('tab', { name: text('bn', 'tabs.duties') }).click()
+    await page.getByRole('checkbox').first().check()
+    await shot(page, 'duties')
+    await page.getByRole('tab', { name: text('bn', 'tabs.memo') }).click()
+    await page.locator('.memo-print').scrollIntoViewIfNeeded()
+    await shot(page, 'memo')
+    await page.emulateMedia({ media: 'print' })
+    await page.locator('.memo-print').scrollIntoViewIfNeeded()
+    await shot(page, 'memo-print')
+    await page.emulateMedia({ media: 'screen' })
+
+    await page.getByRole('tab', { name: text('bn', 'tabs.risks') }).click()
+    await page
+      .getByRole('link', { name: text('bn', 'finding.ticketLink') })
+      .first()
+      .click()
+    await expect(page.getByText(text('bn', 'ticket.status.OPEN')).first()).toBeVisible()
+    await shot(page, 'ticket')
+
+    await page.goto('/app/compare')
+    await shot(page, 'compare-start')
+    await page.getByRole('button', { name: text('bn', 'compare.start') }).click()
+    await expect(page.getByTestId('compare-summary')).toBeVisible({ timeout: 90_000 })
+    await page.waitForTimeout(400)
+    await shot(page, 'compare')
+    await page.getByTestId('compare-summary').scrollIntoViewIfNeeded()
+    await page.evaluate(() => {
+      window.scrollBy(0, 500)
+    })
+    await shot(page, 'compare-claims')
+  })
 })

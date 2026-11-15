@@ -62,6 +62,32 @@ for (const locale of LOCALES) {
           .click()
         await expect(page.getByRole('dialog')).toBeVisible()
         await expectNoSeriousViolations(page, 'citation sheet')
+        await page.keyboard.press('Escape')
+
+        await page
+          .getByRole('button', { name: text(locale, 'finding.why') })
+          .first()
+          .click()
+        await expect(page.getByRole('dialog')).toBeVisible()
+        await expectNoSeriousViolations(page, 'why drawer')
+        await page.keyboard.press('Escape')
+
+        for (const tab of ['proposals', 'duties', 'memo']) {
+          await page.getByRole('tab', { name: text(locale, `tabs.${tab}`) }).click()
+          await expectNoSeriousViolations(page, `results tab ${tab}`)
+        }
+      })
+
+      test('NFR-08 compare and the review ticket', async ({ page }) => {
+        await page.goto('/demo-user')
+        await expect(
+          page.getByRole('heading', { name: text(locale, 'upload.title') }),
+        ).toBeVisible()
+        await page.goto('/app/compare')
+        await expectNoSeriousViolations(page, 'compare start')
+        await page.getByRole('button', { name: text(locale, 'compare.start') }).click()
+        await expect(page.getByTestId('compare-summary')).toBeVisible({ timeout: 90_000 })
+        await expectNoSeriousViolations(page, 'compare result')
       })
     })
   }
