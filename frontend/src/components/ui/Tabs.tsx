@@ -86,7 +86,7 @@ export function Tabs({ items, value, onChange, label, idPrefix = 'tabs' }: TabsP
         role="tablist"
         aria-label={label}
         onKeyDown={onKeyDown}
-        className="snap-tabs -mx-1 flex gap-1 overflow-x-auto border-b border-border px-1"
+        className="flex flex-wrap gap-1 border-b border-border"
       >
         {items.map((item) => {
           const selected = item.id === value

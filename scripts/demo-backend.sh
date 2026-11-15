@@ -18,6 +18,15 @@ if [ -f .env ]; then
 fi
 unset ANTHROPIC_API_KEY GEMINI_API_KEY GEMINI_MODEL
 
+# E2E=1 (the end-to-end tests set it) lifts the per-IP login limits and the guest daily quotas that
+# protect a public deployment, because a test run signs in far more often than a visitor does.
+if [ "${E2E:-}" = "1" ]; then
+  export SHROMIKAI_AUTH_RATE_LIMIT_PER_IP_PER_MINUTE=100000
+  export SHROMIKAI_AUTH_RATE_LIMIT_PER_USER_PER_MINUTE=100000
+  export SHROMIKAI_QUOTAS_GUEST_PER_IP_PER_DAY=100000
+  export SHROMIKAI_QUOTAS_GUEST_PER_DEVICE_PER_DAY=100000
+fi
+
 export SPRING_PROFILES_ACTIVE="demo,fake-models,local-embeddings"
 export SHROMIKAI_FAKE_MODELS_DEFAULT_CASE="syn-en-02-worker"
 cd backend

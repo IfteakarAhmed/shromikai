@@ -26,20 +26,17 @@ export function CitationChip({ citation, language, onOpen }: CitationChipProps) 
   return (
     <button
       type="button"
-      aria-label={t('citation.openSheet', {
-        act,
-        number: localizeDigits(citation.sectionNo, language),
-      })}
       onClick={() => {
         onOpen(citation)
       }}
       className="inline-flex min-h-11 max-w-full items-center gap-2 rounded-lg border border-border bg-background/60 px-3 py-2 text-left transition-colors hover:border-verified/60 hover:bg-verified/5"
     >
       <Icon name="scale" className="shrink-0 text-verified" />
-      <span className="min-w-0 truncate">{act}</span>
+      <span className="min-w-0 truncate">{act}</span>{' '}
       <span className="shrink-0 rounded bg-secondary px-1.5 py-0.5 text-sm font-semibold">
         {section}
-      </span>
+      </span>{' '}
+      <span className="sr-only">{t('citation.openHint')}</span>
     </button>
   )
 }

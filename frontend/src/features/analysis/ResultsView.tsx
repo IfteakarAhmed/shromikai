@@ -199,7 +199,7 @@ export function ResultsView({ result }: ResultsViewProps) {
         <div className="mx-auto flex max-w-6xl gap-2">
           <LinkButton to="/app/compare" variant="outline" className="flex-1">
             <Icon name="columns" />
-            {t('results.compare')}
+            {t('results.compareShort')}
           </LinkButton>
           <LinkButton to="/app" className="flex-1">
             <Icon name="upload" />

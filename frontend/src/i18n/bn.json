@@ -6,7 +6,7 @@
   },
   "language": {
     "switch": "English",
-    "switchLabel": "ভাষা পরিবর্তন করে ইংরেজি করুন"
+    "switchHint": "ভাষা পরিবর্তন"
   },
   "status": {
     "heading": "সিস্টেমের অবস্থা",
@@ -214,9 +214,9 @@
   },
   "citation": {
     "section": "ধারা {{number}}",
-    "openSheet": "{{act}}, ধারা {{number}} খুলুন",
     "officialSource": "সরকারি উৎসে দেখুন",
-    "opensInNewTab": "নতুন ট্যাবে খুলবে"
+    "opensInNewTab": "নতুন ট্যাবে খুলবে",
+    "openHint": "খুলুন"
   },
   "upload": {
     "title": "আপনার চুক্তি দিন",
@@ -311,7 +311,8 @@
     "warnings": "বিশেষ সতর্কতা",
     "coverage": "পর্যালোচনার সীমা",
     "expires": "এই ফলাফল {{time}} পর্যন্ত থাকবে।",
-    "ticket": "মানুষের পর্যালোচনার অবস্থা"
+    "ticket": "মানুষের পর্যালোচনার অবস্থা",
+    "compareShort": "তুলনা"
   },
   "citationSheet": {
     "title": "আইনের উদ্ধৃতি",

@@ -68,7 +68,7 @@ describe('StatusPage', () => {
     renderApp(<App />, '/docs')
     await screen.findByTestId('backend-status')
 
-    await userEvent.click(screen.getByRole('button', { name: 'ভাষা পরিবর্তন করে ইংরেজি করুন' }))
+    await userEvent.click(screen.getByRole('button', { name: /English/ }))
 
     expect(await screen.findByTestId('backend-status')).toHaveTextContent('Running (version 0.1.0)')
     expect(screen.getAllByText('112')).toHaveLength(2)

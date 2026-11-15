@@ -6,7 +6,7 @@
   },
   "language": {
     "switch": "বাংলা",
-    "switchLabel": "Switch the language to Bangla"
+    "switchHint": "Change language"
   },
   "status": {
     "heading": "System status",
@@ -214,9 +214,9 @@
   },
   "citation": {
     "section": "Section {{number}}",
-    "openSheet": "Open {{act}}, section {{number}}",
     "officialSource": "View at the official source",
-    "opensInNewTab": "Opens in a new tab"
+    "opensInNewTab": "Opens in a new tab",
+    "openHint": "Open"
   },
   "upload": {
     "title": "Share your contract",
@@ -311,7 +311,8 @@
     "warnings": "Notices",
     "coverage": "Limits of this review",
     "expires": "This result stays until {{time}}.",
-    "ticket": "Status of the human review"
+    "ticket": "Status of the human review",
+    "compareShort": "Compare"
   },
   "citationSheet": {
     "title": "Legal citation",

@@ -4,3 +4,5 @@ node_modules
 src/api/types.ts
 src/api/openapi.json
 package-lock.json
+playwright-report
+test-results

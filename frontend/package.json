@@ -13,7 +13,8 @@
     "test": "vitest run --coverage",
     "test:watch": "vitest",
     "gen:api": "openapi-typescript src/api/openapi.json -o src/api/types.ts && prettier --write src/api/types.ts --ignore-path /dev/null",
-    "check:bundle": "node scripts/check-bundle-size.mjs"
+    "check:bundle": "node scripts/check-bundle-size.mjs",
+    "e2e": "playwright test"
   },
   "dependencies": {
     "@fontsource/hind-siliguri": "^5.3.0",

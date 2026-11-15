@@ -58,7 +58,7 @@ describe('CitationChip', () => {
     const citation = makeCitation()
     render(<CitationChip citation={citation} language="bn" onOpen={onOpen} />)
 
-    const chip = screen.getByRole('button', { name: /কাল্পনিক আইন.*ধারা ৫/ })
+    const chip = screen.getByRole('button', { name: /কাল্পনিক আইন.*ধারা ৫ খুলুন/ })
     expect(chip).toHaveTextContent('ধারা ৫')
     await userEvent.click(chip)
 
@@ -69,7 +69,9 @@ describe('CitationChip', () => {
     await i18n.changeLanguage('en')
     render(<CitationChip citation={makeCitation()} language="en" onOpen={() => undefined} />)
 
-    expect(screen.getByRole('button', { name: /Fictional Act.*section 5/i })).toBeInTheDocument()
+    expect(
+      screen.getByRole('button', { name: /Fictional Act.*Section 5 Open/i }),
+    ).toBeInTheDocument()
   })
 })
 

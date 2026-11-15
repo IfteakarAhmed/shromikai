@@ -14,10 +14,10 @@ export function LanguageToggle() {
       onClick={() => {
         setLocale(target)
       }}
-      aria-label={t('language.switchLabel')}
     >
       <Icon name="globe" />
       <span lang={target}>{t('language.switch')}</span>
+      <span className="sr-only">{t('language.switchHint')}</span>
     </Button>
   )
 }
