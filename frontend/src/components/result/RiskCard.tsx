@@ -1,5 +1,6 @@
 import { useTranslation } from 'react-i18next'
-import type { RiskFinding, VerifiedCitation } from '../../api/analyses'
+import type { RiskFinding } from '../../api/analyses'
+import { groupCitations, type CitationGroup } from '../../lib/citations'
 import { localizeDigits } from '../../lib/format'
 import type { Language } from '../../i18n'
 import { Badge } from '../ui/Badge'
@@ -14,7 +15,7 @@ interface RiskCardProps {
   finding: RiskFinding
   /** The language of the analysis text (for `lang`); the labels follow the interface language. */
   language: Language
-  onOpenCitation: (citation: VerifiedCitation, finding: RiskFinding) => void
+  onOpenCitation: (group: CitationGroup, finding: RiskFinding) => void
   onOpenWhy: (finding: RiskFinding) => void
   onOpenProposal?: (finding: RiskFinding) => void
   ticketHref?: string
@@ -81,10 +82,10 @@ export function RiskCard({
             {t('finding.citations')}
           </h4>
           <div className="flex flex-wrap gap-2">
-            {finding.citations.map((citation) => (
+            {groupCitations(finding.citations).map((group) => (
               <CitationChip
-                key={citation.citationId}
-                citation={citation}
+                key={group.sectionKey}
+                group={group}
                 language={uiLanguage}
                 onOpen={(c) => {
                   onOpenCitation(c, finding)

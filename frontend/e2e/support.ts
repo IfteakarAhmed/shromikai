@@ -39,3 +39,20 @@ export async function analyseSample(page: Page, locale: Locale): Promise<void> {
     timeout: 60_000,
   })
 }
+
+/** Every interface string of the English file that has at least two words. */
+export function englishPhrases(): string[] {
+  const out: string[] = []
+  const walk = (node: unknown) => {
+    if (typeof node === 'string') {
+      const plain = node.replace(/\{\{\w+\}\}/g, '').trim()
+      if (/[A-Za-z]{3,}\s+[A-Za-z]{2,}/.test(plain) && plain.length >= 8) {
+        out.push(plain)
+      }
+    } else if (typeof node === 'object' && node !== null) {
+      Object.values(node).forEach(walk)
+    }
+  }
+  walk(en)
+  return out
+}

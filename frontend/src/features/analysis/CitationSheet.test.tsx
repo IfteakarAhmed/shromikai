@@ -9,6 +9,7 @@ import { QUOTE, makeCitation } from '../../test/fixtures'
 import { problem } from '../../test/msw/handlers'
 import { server } from '../../test/msw/server'
 import { renderApp } from '../../test/render'
+import { groupCitations, type CitationGroup } from '../../lib/citations'
 import { CitationSheet } from './CitationSheet'
 
 const TEXT = `1. General. ${QUOTE} Other duties are in section 6.`
@@ -38,19 +39,19 @@ function section(overrides: Record<string, unknown> = {}) {
   }
 }
 
-function Host({ citation = makeCitation() }: { citation?: VerifiedCitation }) {
-  const [open, setOpen] = useState<VerifiedCitation | null>(null)
+function Host({ citations = [makeCitation()] }: { citations?: VerifiedCitation[] }) {
+  const [open, setOpen] = useState<CitationGroup | null>(null)
   return (
     <>
       <Button
         onClick={() => {
-          setOpen(citation)
+          setOpen(groupCitations(citations)[0] ?? null)
         }}
       >
         open
       </Button>
       <CitationSheet
-        citation={open}
+        group={open}
         onClose={() => {
           setOpen(null)
         }}
@@ -92,7 +93,7 @@ describe('CitationSheet', () => {
         HttpResponse.json(section({ sourceUrl: 'javascript:alert(1)' })),
       ),
     )
-    renderApp(<Host citation={makeCitation({ sourceUrl: 'javascript:alert(1)' })} />)
+    renderApp(<Host citations={[makeCitation({ sourceUrl: 'javascript:alert(1)' })]} />)
     await userEvent.click(screen.getByRole('button', { name: 'open' }))
 
     await screen.findByText(QUOTE)
@@ -136,5 +137,27 @@ describe('CitationSheet', () => {
     await userEvent.click(screen.getByRole('button', { name: 'বন্ধ করুন' }))
 
     expect(screen.queryByRole('dialog')).not.toBeInTheDocument()
+  })
+
+  it('FR-70 marks both passages when a finding cites two passages of the section', async () => {
+    const other = 'Other duties are in section 6.'
+    server.use(http.get('/api/v1/laws/XX-ACT-1/5', () => HttpResponse.json(section())))
+    renderApp(
+      <Host
+        citations={[
+          makeCitation({ citationId: 'a' }),
+          makeCitation({ citationId: 'b', quote: other }),
+        ]}
+      />,
+    )
+    await userEvent.click(screen.getByRole('button', { name: 'open' }))
+
+    const dialog = await screen.findByRole('dialog')
+    await within(dialog).findByText(QUOTE)
+
+    expect(Array.from(dialog.querySelectorAll('mark')).map((m) => m.textContent)).toEqual([
+      QUOTE,
+      other,
+    ])
   })
 })

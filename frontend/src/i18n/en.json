@@ -216,7 +216,8 @@
     "section": "Section {{number}}",
     "officialSource": "View at the official source",
     "opensInNewTab": "Opens in a new tab",
-    "openHint": "Open"
+    "openHint": "Open",
+    "version": "version {{label}}"
   },
   "upload": {
     "title": "Share your contract",

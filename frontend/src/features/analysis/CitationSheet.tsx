@@ -1,18 +1,18 @@
 import { useQuery } from '@tanstack/react-query'
 import { useTranslation } from 'react-i18next'
-import type { VerifiedCitation } from '../../api/analyses'
+import type { CitationGroup } from '../../lib/citations'
 import { getSection } from '../../api/laws'
 import { useAuthedCall } from '../../api/useAuthedCall'
 import { Sheet } from '../../components/ui/Sheet'
 import { Skeleton } from '../../components/ui/Skeleton'
 import { Icon } from '../../components/ui/Icon'
 import { localizeDigits } from '../../lib/format'
-import { locateQuote, splitAround } from '../../lib/highlight'
+import { locateQuotes } from '../../lib/highlight'
 import { safeHref } from '../../lib/url'
 import type { Language } from '../../i18n'
 
 interface CitationSheetProps {
-  citation: VerifiedCitation | null
+  group: CitationGroup | null
   onClose: () => void
 }
 
@@ -21,10 +21,11 @@ interface CitationSheetProps {
  * version, and a link to the official source (FR-70). The section comes from the statute corpus;
  * if it cannot be fetched the verified quote itself is shown, never anything else.
  */
-export function CitationSheet({ citation, onClose }: CitationSheetProps) {
+export function CitationSheet({ group, onClose }: CitationSheetProps) {
   const { t, i18n } = useTranslation()
   const language: Language = i18n.language === 'en' ? 'en' : 'bn'
   const call = useAuthedCall()
+  const citation = group?.primary ?? null
   const section = useQuery({
     queryKey: ['section', citation?.sectionKey],
     enabled: citation !== null,
@@ -97,18 +98,21 @@ export function CitationSheet({ citation, onClose }: CitationSheetProps) {
                 <p className="mb-2 text-sm text-muted-foreground">
                   {t('citationSheet.unavailable')}
                 </p>
-                <blockquote
-                  lang={citation.quoteLanguage}
-                  className="rounded-lg border border-border bg-background/50 p-4 leading-relaxed"
-                >
-                  <mark className="quote">{citation.quote}</mark>
-                </blockquote>
+                {(group?.quotes ?? [citation.quote]).map((quote) => (
+                  <blockquote
+                    key={quote}
+                    lang={citation.quoteLanguage}
+                    className="mb-2 rounded-lg border border-border bg-background/50 p-4 leading-relaxed"
+                  >
+                    <mark className="quote">{quote}</mark>
+                  </blockquote>
+                ))}
               </>
             )}
             {section.isSuccess && (
               <SectionText
                 text={section.data.authoritativeText}
-                quote={citation.quote}
+                quotes={group?.quotes ?? [citation.quote]}
                 language={section.data.authoritativeLang === 'en' ? 'en' : 'bn'}
               />
             )}
@@ -150,40 +154,53 @@ export function CitationSheet({ citation, onClose }: CitationSheetProps) {
 
 function SectionText({
   text,
-  quote,
+  quotes,
   language,
 }: {
   text: string
-  quote: string
+  quotes: readonly string[]
   language: Language
 }) {
   const { t } = useTranslation()
-  const found = locateQuote(text, quote)
-  if (found === null) {
-    return (
-      <>
-        <p lang={language} className="whitespace-pre-line leading-relaxed">
-          {text}
-        </p>
-        <p className="mt-3 text-sm text-muted-foreground">{t('citationSheet.quoteNotInText')}</p>
-        <blockquote
-          lang={language}
-          className="mt-2 rounded-lg border border-border bg-background/50 p-4 leading-relaxed"
-        >
-          {quote}
-        </blockquote>
-      </>
-    )
+  const found = locateQuotes(text, quotes)
+  const pieces: { text: string; marked: boolean }[] = []
+  let cursor = 0
+  for (const span of found.spans) {
+    pieces.push({ text: found.text.slice(cursor, span.start), marked: false })
+    pieces.push({ text: found.text.slice(span.start, span.end), marked: true })
+    cursor = span.end
   }
-  const parts = splitAround(found.text, found.span)
+  pieces.push({ text: found.text.slice(cursor), marked: false })
   return (
     <>
       <p lang={language} className="whitespace-pre-line leading-relaxed">
-        {parts.before}
-        <mark className="quote">{parts.quote}</mark>
-        {parts.after}
+        {pieces.map((piece, index) =>
+          piece.marked ? (
+            <mark key={index} className="quote">
+              {piece.text}
+            </mark>
+          ) : (
+            piece.text
+          ),
+        )}
       </p>
-      <p className="mt-3 text-sm text-muted-foreground">{t('citationSheet.highlightNote')}</p>
+      {found.spans.length > 0 && (
+        <p className="mt-3 text-sm text-muted-foreground">{t('citationSheet.highlightNote')}</p>
+      )}
+      {found.missing > 0 && (
+        <>
+          <p className="mt-3 text-sm text-muted-foreground">{t('citationSheet.quoteNotInText')}</p>
+          {quotes.map((quote) => (
+            <blockquote
+              key={quote}
+              lang={language}
+              className="mt-2 rounded-lg border border-border bg-background/50 p-4 leading-relaxed"
+            >
+              {quote}
+            </blockquote>
+          ))}
+        </>
+      )}
     </>
   )
 }

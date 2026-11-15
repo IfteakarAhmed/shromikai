@@ -216,7 +216,8 @@
     "section": "ধারা {{number}}",
     "officialSource": "সরকারি উৎসে দেখুন",
     "opensInNewTab": "নতুন ট্যাবে খুলবে",
-    "openHint": "খুলুন"
+    "openHint": "খুলুন",
+    "version": "সংস্করণ {{label}}"
   },
   "upload": {
     "title": "আপনার চুক্তি দিন",

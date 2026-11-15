@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
-import type { AnalysisResult, RiskFinding, VerifiedCitation } from '../../api/analyses'
+import type { AnalysisResult, RiskFinding } from '../../api/analyses'
+import type { CitationGroup } from '../../lib/citations'
 import { Badge } from '../../components/ui/Badge'
 import { GlassCard } from '../../components/ui/GlassCard'
 import { Icon } from '../../components/ui/Icon'
@@ -28,7 +29,7 @@ interface ResultsViewProps {
 export function ResultsView({ result }: ResultsViewProps) {
   const { t, i18n } = useTranslation()
   const language: Language = i18n.language === 'en' ? 'en' : 'bn'
-  const [citation, setCitation] = useState<VerifiedCitation | null>(null)
+  const [citation, setCitation] = useState<CitationGroup | null>(null)
   const findings = sortFindings(result.findings)
   const { summary } = result
   const n = (value: number) => formatNumber(value, language)
@@ -209,7 +210,7 @@ export function ResultsView({ result }: ResultsViewProps) {
       </div>
 
       <CitationSheet
-        citation={citation}
+        group={citation}
         onClose={() => {
           setCitation(null)
         }}

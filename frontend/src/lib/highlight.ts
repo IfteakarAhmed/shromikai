@@ -56,6 +56,35 @@ export function locateQuote(original: string, quote: string): { text: string; sp
   return null
 }
 
+/** Every quote that can be found in the text, as sorted spans that do not overlap. */
+export function locateQuotes(
+  original: string,
+  quotes: readonly string[],
+): { text: string; spans: Span[]; missing: number } {
+  const text = original.normalize('NFC')
+  const spans: Span[] = []
+  let missing = 0
+  for (const quote of quotes) {
+    const found = locateQuote(text, quote)
+    if (found === null) {
+      missing += 1
+    } else {
+      spans.push(found.span)
+    }
+  }
+  spans.sort((a, b) => a.start - b.start)
+  const merged: Span[] = []
+  for (const span of spans) {
+    const last = merged.at(-1)
+    if (last !== undefined && span.start <= last.end) {
+      last.end = Math.max(last.end, span.end)
+    } else {
+      merged.push({ ...span })
+    }
+  }
+  return { text, spans: merged, missing }
+}
+
 export function splitAround(
   text: string,
   span: Span,

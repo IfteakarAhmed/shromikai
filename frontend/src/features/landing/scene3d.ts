@@ -252,6 +252,8 @@ export function createContractScene(host: HTMLElement, palette: Palette): SceneH
   })
   intersection.observe(host)
 
+  // One frame at once, so the scene is on screen before the first animation frame arrives.
+  renderer.render(scene, camera)
   let frame = 0
   let last = performance.now()
   let elapsed = 0

@@ -44,6 +44,7 @@ export function PreferencesProvider({ children }: { children: ReactNode }) {
   }, [])
   const setTheme = useCallback((next: Theme) => {
     writePreference('theme', next)
+    document.documentElement.dataset['theme'] = next
     setThemeState(next)
   }, [])
 

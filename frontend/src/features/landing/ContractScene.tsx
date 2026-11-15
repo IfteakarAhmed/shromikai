@@ -32,6 +32,10 @@ function readPalette(): Palette {
 export default function ContractScene({ onFailure }: { onFailure?: () => void }) {
   const host = useRef<HTMLDivElement>(null)
   const { theme } = usePreferences()
+  const failure = useRef(onFailure)
+  useEffect(() => {
+    failure.current = onFailure
+  })
 
   useEffect(() => {
     const element = host.current
@@ -39,19 +43,16 @@ export default function ContractScene({ onFailure }: { onFailure?: () => void })
       return undefined
     }
     let handle: { dispose: () => void } | null = null
-    // The theme attribute is applied by the preferences provider; read the colours a frame later.
-    const frame = requestAnimationFrame(() => {
-      try {
-        handle = createContractScene(element, readPalette())
-      } catch {
-        onFailure?.()
-      }
-    })
+    try {
+      // The theme attribute is set synchronously when the theme changes, so these are its colours.
+      handle = createContractScene(element, readPalette())
+    } catch {
+      failure.current?.()
+    }
     return () => {
-      cancelAnimationFrame(frame)
       handle?.dispose()
     }
-  }, [theme, onFailure])
+  }, [theme])
 
   return <div ref={host} aria-hidden="true" className="absolute inset-0" />
 }
