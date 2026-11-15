@@ -1,0 +1,14 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:shromikai:schema:analysis-status-view:1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["analysisId", "status", "stage", "progress", "problem"],
+  "properties": {
+    "analysisId": { "type": "string", "format": "uuid" },
+    "status": { "enum": ["QUEUED", "RUNNING", "FAILED"] },
+    "stage": { "enum": ["INTAKE", "OCR", "REDACT", "CLASSIFY", "RETRIEVE", "RULES", "RISK", "VERIFY", "CORRECT", "COMPOSE", "COMPLETE", null] },
+    "progress": { "type": "integer", "minimum": 0, "maximum": 100 },
+    "problem": { "oneOf": [{ "$ref": "urn:shromikai:schema:problem-summary:1" }, { "type": "null" }] }
+  }
+}

@@ -1,0 +1,27 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:shromikai:schema:review-ticket-status:1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["ticketId", "expiresAt", "items"],
+  "properties": {
+    "ticketId": { "type": "string", "format": "uuid" },
+    "expiresAt": { "type": "string", "format": "date-time" },
+    "items": {
+      "type": "array",
+      "items": {
+        "type": "object", "additionalProperties": false,
+        "required": ["findingId", "title", "status", "decision", "citation", "note", "decidedAt"],
+        "properties": {
+          "findingId": { "type": ["string", "null"] },
+          "title": { "type": ["string", "null"] },
+          "status": { "enum": ["OPEN", "IN_REVIEW", "APPROVED", "REJECTED", "EXPIRED"] },
+          "decision": { "enum": ["APPROVED_WITH_CITATION", "APPROVED_WITHOUT_CITATION", "REJECTED", null] },
+          "citation": { "oneOf": [{ "$ref": "urn:shromikai:schema:verified-citation:1" }, { "type": "null" }] },
+          "note": { "type": ["string", "null"], "maxLength": 1000 },
+          "decidedAt": { "type": ["string", "null"], "format": "date-time" }
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,44 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:shromikai:schema:analysis-trace:1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["analysisId", "createdAt", "events", "totals"],
+  "properties": {
+    "analysisId": { "type": "string", "format": "uuid" },
+    "createdAt": { "type": "string", "format": "date-time" },
+    "events": {
+      "type": "array",
+      "items": {
+        "type": "object", "additionalProperties": false,
+        "required": ["stage", "at", "durationMs", "promptId", "promptVersion", "modelId", "tokensIn", "tokensOut", "cacheReadTokens", "cacheWriteTokens", "costUsdMicros", "outcome", "detail"],
+        "properties": {
+          "stage": { "type": "string" },
+          "at": { "type": "string", "format": "date-time" },
+          "durationMs": { "type": "integer", "minimum": 0 },
+          "promptId": { "type": ["string", "null"] },
+          "promptVersion": { "type": ["integer", "null"] },
+          "modelId": { "type": ["string", "null"] },
+          "tokensIn": { "type": ["integer", "null"] },
+          "tokensOut": { "type": ["integer", "null"] },
+          "cacheReadTokens": { "type": ["integer", "null"] },
+          "cacheWriteTokens": { "type": ["integer", "null"] },
+          "costUsdMicros": { "type": ["integer", "null"] },
+          "outcome": { "type": "string" },
+          "detail": { "type": "object", "description": "Only section keys, scores, statuses, reason codes, flags and counts; never contract text (R-02)" }
+        }
+      }
+    },
+    "totals": {
+      "type": "object", "additionalProperties": false,
+      "required": ["tokensIn", "tokensOut", "cacheReadTokens", "cacheWriteTokens", "costUsdMicros"],
+      "properties": {
+        "tokensIn": { "type": "integer" },
+        "tokensOut": { "type": "integer" },
+        "cacheReadTokens": { "type": "integer" },
+        "cacheWriteTokens": { "type": "integer" },
+        "costUsdMicros": { "type": "integer" }
+      }
+    }
+  }
+}

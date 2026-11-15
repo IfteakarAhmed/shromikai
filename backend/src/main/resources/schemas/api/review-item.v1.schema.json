@@ -1,0 +1,55 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:shromikai:schema:review-item:1",
+  "description": "Admin view of a review item; contains no contract text (R-02).",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["id", "kind", "analysisId", "findingId", "createdAt", "expiresAt", "status", "clauseType", "findingKind", "severity", "side", "riskSummary", "facts", "claimedCitation", "verification", "reasonCodes", "candidateSectionKeys", "corpusChange", "assigneeId", "decision"],
+  "properties": {
+    "id": { "type": "string", "format": "uuid" },
+    "kind": { "enum": ["FINDING", "CORPUS_CHANGE"] },
+    "analysisId": { "type": ["string", "null"], "format": "uuid" },
+    "findingId": { "type": ["string", "null"] },
+    "createdAt": { "type": "string", "format": "date-time" },
+    "expiresAt": { "type": "string", "format": "date-time" },
+    "status": { "enum": ["OPEN", "IN_REVIEW", "APPROVED", "REJECTED", "EXPIRED"] },
+    "clauseType": { "oneOf": [{ "$ref": "urn:shromikai:schema:clause-type:1" }, { "type": "null" }] },
+    "findingKind": { "enum": ["CONFLICT", "OMISSION", "AMBIGUITY", "INTERACTION", "POLICY_DEVIATION", null] },
+    "severity": { "enum": ["CRITICAL", "HIGH", "MEDIUM", "LOW", null] },
+    "side": { "enum": ["WORKER", "EMPLOYER", null] },
+    "riskSummary": { "type": ["string", "null"], "maxLength": 400, "description": "Redacted paraphrase; shares no 8-token sequence with the source document" },
+    "facts": { "type": "array", "items": { "$ref": "urn:shromikai:schema:clause-fact:1" } },
+    "claimedCitation": {
+      "type": ["object", "null"], "additionalProperties": false, "required": ["sectionKey", "quote", "claim", "claimReduced"],
+      "properties": {
+        "sectionKey": { "type": "string" },
+        "quote": { "type": "string", "maxLength": 300 },
+        "claim": { "type": "string", "maxLength": 600, "description": "Redacted claim; shares no 8-token sequence with the source document" },
+        "claimReduced": { "type": "boolean", "description": "true when the agent's claim overlapped the contract and was replaced by the facts-only form" }
+      }
+    },
+    "verification": { "oneOf": [{ "$ref": "urn:shromikai:schema:verification-result:1" }, { "type": "null" }] },
+    "reasonCodes": { "type": "array", "items": { "type": "string" }, "description": "VerificationResult reason codes plus RULE_LLM_CONFLICT" },
+    "candidateSectionKeys": { "type": "array", "maxItems": 40, "items": { "type": "string" } },
+    "corpusChange": {
+      "type": ["object", "null"], "additionalProperties": false, "required": ["sourceUrl", "storedSha256", "newSha256", "ingestRunId"],
+      "properties": {
+        "sourceUrl": { "type": "string", "format": "uri" },
+        "storedSha256": { "type": "string", "pattern": "^[0-9a-f]{64}$" },
+        "newSha256": { "type": "string", "pattern": "^[0-9a-f]{64}$" },
+        "ingestRunId": { "type": ["string", "null"] }
+      }
+    },
+    "assigneeId": { "type": ["string", "null"], "format": "uuid" },
+    "decision": {
+      "type": ["object", "null"], "additionalProperties": false, "required": ["decision", "citation", "note", "decidedBy", "decidedAt"],
+      "properties": {
+        "decision": { "enum": ["APPROVED_WITH_CITATION", "APPROVED_WITHOUT_CITATION", "REJECTED"] },
+        "citation": { "oneOf": [{ "$ref": "urn:shromikai:schema:verified-citation:1" }, { "type": "null" }] },
+        "note": { "type": ["string", "null"], "maxLength": 1000 },
+        "decidedBy": { "type": "string", "format": "uuid" },
+        "decidedAt": { "type": "string", "format": "date-time" }
+      }
+    }
+  }
+}

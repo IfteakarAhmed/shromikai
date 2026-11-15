@@ -1,0 +1,71 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:shromikai:schema:compare-result:1",
+  "description": "Compare mode (FR-59, ADR-0022): a baseline entry is a labelled claim, never a citation; it has no citation object.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["compareId", "baseline", "shromikai", "summary", "disclaimer"],
+  "properties": {
+    "compareId": { "type": "string", "format": "uuid" },
+    "baseline": {
+      "type": "object", "additionalProperties": false,
+      "required": ["status", "reason", "modelId", "findings"],
+      "properties": {
+        "status": { "enum": ["OK", "UNAVAILABLE"] },
+        "reason": { "type": ["string", "null"], "description": "Content-free reason code when the baseline is unavailable" },
+        "modelId": { "type": ["string", "null"] },
+        "findings": {
+          "type": "array",
+          "items": {
+            "type": "object", "additionalProperties": false,
+            "required": ["title", "severity", "explanation", "citations"],
+            "properties": {
+              "title": { "type": "string" },
+              "severity": { "type": "string" },
+              "explanation": { "type": "string" },
+              "citations": {
+                "type": "array",
+                "items": {
+                  "type": "object", "additionalProperties": false,
+                  "required": ["claimed", "verification"],
+                  "properties": {
+                    "claimed": {
+                      "type": "object", "additionalProperties": false,
+                      "required": ["sectionKey", "quote", "claim"],
+                      "properties": {
+                        "sectionKey": { "type": "string" },
+                        "quote": { "type": "string" },
+                        "claim": { "type": "string" }
+                      }
+                    },
+                    "verification": {
+                      "type": "object", "additionalProperties": false,
+                      "required": ["status", "reasonCodes"],
+                      "properties": {
+                        "status": { "$ref": "urn:shromikai:schema:verification-status:1" },
+                        "reasonCodes": { "type": "array", "items": { "$ref": "urn:shromikai:schema:reason-code:1" } }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "shromikai": { "$ref": "urn:shromikai:schema:analysis-result:1" },
+    "summary": {
+      "type": "object", "additionalProperties": false,
+      "required": ["baselineCitations", "baselineRejected", "baselineUncertain", "baselineVerified", "shromikaiShownCitations"],
+      "properties": {
+        "baselineCitations": { "type": "integer", "minimum": 0 },
+        "baselineRejected": { "type": "integer", "minimum": 0 },
+        "baselineUncertain": { "type": "integer", "minimum": 0 },
+        "baselineVerified": { "type": "integer", "minimum": 0 },
+        "shromikaiShownCitations": { "type": "integer", "minimum": 0 }
+      }
+    },
+    "disclaimer": { "type": "string", "minLength": 20 }
+  }
+}

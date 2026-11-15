@@ -1,0 +1,98 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:shromikai:schema:analysis-result:1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["analysisId", "status", "createdAt", "completedAt", "expiresAt", "side", "outputLanguage", "profile", "input", "documentType", "clauses", "findings", "redlines", "obligations", "memo", "summary", "reviewTicket", "warnings", "provenance", "costUsd", "disclaimer", "envelope"],
+  "properties": {
+    "analysisId": { "type": "string", "format": "uuid" },
+    "status": { "const": "SUCCEEDED" },
+    "createdAt": { "type": "string", "format": "date-time" },
+    "completedAt": { "type": "string", "format": "date-time" },
+    "expiresAt": { "type": "string", "format": "date-time", "description": "completedAt + 30 minutes" },
+    "side": { "enum": ["WORKER", "EMPLOYER"] },
+    "outputLanguage": { "enum": ["bn", "en"] },
+    "profile": { "oneOf": [{ "$ref": "urn:shromikai:schema:analysis-profile:1" }, { "type": "null" }] },
+    "input": {
+      "type": "object", "additionalProperties": false,
+      "required": ["kind", "pageCount", "detectedLanguage", "ocrMeanConfidence", "legacyFontConverted", "sample"],
+      "properties": {
+        "kind": { "enum": ["PDF_TEXT", "PDF_SCAN", "IMAGE", "TEXT"] },
+        "pageCount": { "type": "integer", "minimum": 1, "maximum": 15 },
+        "detectedLanguage": { "enum": ["bn", "en", "mixed"] },
+        "ocrMeanConfidence": { "type": ["number", "null"], "minimum": 0, "maximum": 100 },
+        "legacyFontConverted": { "type": "boolean" },
+        "sample": { "type": "boolean", "description": "true when the bundled synthetic sample contract was analysed; the UI then labels the result 'synthetic sample'" }
+      }
+    },
+    "documentType": { "const": "EMPLOYMENT_CONTRACT" },
+    "clauses": { "type": "array", "items": { "$ref": "urn:shromikai:schema:clause:1" } },
+    "findings": { "type": "array", "items": { "$ref": "urn:shromikai:schema:risk-finding:1" } },
+    "redlines": { "type": "array", "items": { "$ref": "urn:shromikai:schema:redline:1" } },
+    "obligations": { "type": "array", "items": { "$ref": "urn:shromikai:schema:obligation-item:1" } },
+    "memo": { "$ref": "urn:shromikai:schema:memo:1" },
+    "summary": {
+      "type": "object", "additionalProperties": false,
+      "required": ["overallSeverity", "findingsBySeverity", "nonObviousFindings", "verifiedFindings", "uncertainFindings", "policyFindings", "verifiedCitations", "coverageNote"],
+      "properties": {
+        "overallSeverity": { "enum": ["CRITICAL", "HIGH", "MEDIUM", "LOW", null] },
+        "findingsBySeverity": {
+          "type": "object", "additionalProperties": false, "required": ["CRITICAL", "HIGH", "MEDIUM", "LOW"],
+          "properties": {
+            "CRITICAL": { "type": "integer", "minimum": 0 },
+            "HIGH": { "type": "integer", "minimum": 0 },
+            "MEDIUM": { "type": "integer", "minimum": 0 },
+            "LOW": { "type": "integer", "minimum": 0 }
+          }
+        },
+        "nonObviousFindings": { "type": "integer", "minimum": 0 },
+        "verifiedFindings": { "type": "integer", "minimum": 0 },
+        "uncertainFindings": { "type": "integer", "minimum": 0 },
+        "policyFindings": { "type": "integer", "minimum": 0 },
+        "verifiedCitations": { "type": "integer", "minimum": 0 },
+        "coverageNote": { "type": ["string", "null"], "maxLength": 400, "description": "Required when fewer than three findings were found (FR-38)" }
+      }
+    },
+    "reviewTicket": {
+      "type": ["object", "null"], "additionalProperties": false, "required": ["ticketId", "token", "expiresAt"],
+      "properties": {
+        "ticketId": { "type": "string", "format": "uuid" },
+        "token": { "type": "string", "minLength": 32, "maxLength": 64, "description": "Shown once; stored only as SHA-256" },
+        "expiresAt": { "type": "string", "format": "date-time" }
+      }
+    },
+    "warnings": {
+      "type": "array",
+      "items": {
+        "type": "object", "additionalProperties": false, "required": ["code", "message"],
+        "properties": {
+          "code": { "enum": ["counter-offer-dropped", "low-ocr-confidence-page", "retrieval-keyword-only", "verifier-same-family", "fewer-than-three-findings", "translation-unofficial", "legacy-font-converted", "instruction-like-text", "obligations-unavailable", "memo-narrative-unavailable", "counter-offer-unchecked"] },
+          "message": { "type": "string", "maxLength": 300 }
+        }
+      }
+    },
+    "provenance": {
+      "type": "object", "additionalProperties": false,
+      "required": ["pipelineVersion", "corpusRelease", "promptVersions", "models", "verifierIndependence", "recorded"],
+      "properties": {
+        "pipelineVersion": { "type": "string" },
+        "corpusRelease": { "type": "string" },
+        "promptVersions": { "type": "object", "additionalProperties": { "type": "integer", "minimum": 1 } },
+        "models": { "type": "object", "additionalProperties": { "type": "string" }, "description": "role → model ID actually used, including refusal fallbacks" },
+        "verifierIndependence": { "enum": ["DIFFERENT_FAMILY", "SAME_FAMILY", "MIXED", "NONE"] },
+        "recorded": { "type": "boolean", "description": "true in the fake-models profile; the UI then shows 'recorded'" }
+      }
+    },
+    "costUsd": { "type": "number", "minimum": 0 },
+    "disclaimer": { "type": "string", "minLength": 20 },
+    "envelope": {
+      "type": "object", "additionalProperties": false, "required": ["keyId", "algorithm", "expiresAt", "signature"],
+      "properties": {
+        "keyId": { "type": "string" },
+        "algorithm": { "const": "HMAC-SHA256" },
+        "expiresAt": { "type": "string", "format": "date-time" },
+        "signature": { "type": "string", "pattern": "^[A-Za-z0-9_-]{43}$" }
+      }
+    }
+  }
+}

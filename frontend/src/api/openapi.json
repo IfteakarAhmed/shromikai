@@ -83,6 +83,31 @@
         "required" : [ "actCode", "authoritativeLang", "jurisdiction", "ratificationStatus", "sectionCount", "sourceUrl", "status", "titleBn", "titleEn", "year" ],
         "type" : "object"
       },
+      "AnalysisAccepted" : {
+        "additionalProperties" : false,
+        "properties" : {
+          "analysisId" : {
+            "format" : "uuid",
+            "type" : "string"
+          },
+          "deadlineAt" : {
+            "format" : "date-time",
+            "type" : "string"
+          },
+          "eventsUrl" : {
+            "type" : "string"
+          },
+          "resultUrl" : {
+            "type" : "string"
+          },
+          "status" : {
+            "enum" : [ "QUEUED" ],
+            "type" : "string"
+          }
+        },
+        "required" : [ "analysisId", "deadlineAt", "eventsUrl", "resultUrl", "status" ],
+        "type" : "object"
+      },
       "AnalysisOptions" : {
         "default" : null,
         "properties" : {
@@ -119,28 +144,332 @@
         "type" : "object"
       },
       "AnalysisProfile" : {
-        "default" : null,
+        "additionalProperties" : false,
         "properties" : {
           "jobRole" : {
             "maxLength" : 60,
-            "minLength" : 0,
             "nullable" : true,
             "type" : "string"
           },
           "preferredLanguage" : {
+            "enum" : [ "bn", "en" ],
             "nullable" : true,
             "type" : "string"
           },
           "readingLevel" : {
+            "enum" : [ "BASIC", "STANDARD" ],
             "nullable" : true,
             "type" : "string"
           },
           "sector" : {
+            "enum" : [ "READY_MADE_GARMENTS", "TEXTILES", "CONSTRUCTION", "IT_SOFTWARE", "RETAIL", "DOMESTIC_WORK", "SECURITY_SERVICES", "NGO", "BANKING_FINANCE", "OTHER" ],
             "nullable" : true,
             "type" : "string"
           }
         },
-        "required" : [ "jobRole", "preferredLanguage", "readingLevel", "sector" ],
+        "type" : "object"
+      },
+      "AnalysisResult" : {
+        "additionalProperties" : false,
+        "properties" : {
+          "analysisId" : {
+            "format" : "uuid",
+            "type" : "string"
+          },
+          "clauses" : {
+            "items" : {
+              "$ref" : "#/components/schemas/Clause"
+            },
+            "type" : "array"
+          },
+          "completedAt" : {
+            "format" : "date-time",
+            "type" : "string"
+          },
+          "costUsd" : {
+            "minimum" : 0,
+            "type" : "number"
+          },
+          "createdAt" : {
+            "format" : "date-time",
+            "type" : "string"
+          },
+          "disclaimer" : {
+            "minLength" : 20,
+            "type" : "string"
+          },
+          "documentType" : {
+            "enum" : [ "EMPLOYMENT_CONTRACT" ],
+            "type" : "string"
+          },
+          "envelope" : {
+            "additionalProperties" : false,
+            "properties" : {
+              "algorithm" : {
+                "enum" : [ "HMAC-SHA256" ],
+                "type" : "string"
+              },
+              "expiresAt" : {
+                "format" : "date-time",
+                "type" : "string"
+              },
+              "keyId" : {
+                "type" : "string"
+              },
+              "signature" : {
+                "pattern" : "^[A-Za-z0-9_-]{43}$",
+                "type" : "string"
+              }
+            },
+            "required" : [ "algorithm", "expiresAt", "keyId", "signature" ],
+            "type" : "object"
+          },
+          "expiresAt" : {
+            "description" : "completedAt + 30 minutes",
+            "format" : "date-time",
+            "type" : "string"
+          },
+          "findings" : {
+            "items" : {
+              "$ref" : "#/components/schemas/RiskFinding"
+            },
+            "type" : "array"
+          },
+          "input" : {
+            "additionalProperties" : false,
+            "properties" : {
+              "detectedLanguage" : {
+                "enum" : [ "bn", "en", "mixed" ],
+                "type" : "string"
+              },
+              "kind" : {
+                "enum" : [ "PDF_TEXT", "PDF_SCAN", "IMAGE", "TEXT" ],
+                "type" : "string"
+              },
+              "legacyFontConverted" : {
+                "type" : "boolean"
+              },
+              "ocrMeanConfidence" : {
+                "maximum" : 100,
+                "minimum" : 0,
+                "nullable" : true,
+                "type" : "number"
+              },
+              "pageCount" : {
+                "maximum" : 15,
+                "minimum" : 1,
+                "type" : "integer"
+              },
+              "sample" : {
+                "description" : "true when the bundled synthetic sample contract was analysed; the UI then labels the result 'synthetic sample'",
+                "type" : "boolean"
+              }
+            },
+            "required" : [ "detectedLanguage", "kind", "legacyFontConverted", "ocrMeanConfidence", "pageCount", "sample" ],
+            "type" : "object"
+          },
+          "memo" : {
+            "$ref" : "#/components/schemas/Memo"
+          },
+          "obligations" : {
+            "items" : {
+              "$ref" : "#/components/schemas/ObligationItem"
+            },
+            "type" : "array"
+          },
+          "outputLanguage" : {
+            "enum" : [ "bn", "en" ],
+            "type" : "string"
+          },
+          "profile" : {
+            "allOf" : [ {
+              "$ref" : "#/components/schemas/AnalysisProfile"
+            } ],
+            "nullable" : true
+          },
+          "provenance" : {
+            "additionalProperties" : false,
+            "properties" : {
+              "corpusRelease" : {
+                "type" : "string"
+              },
+              "models" : {
+                "additionalProperties" : {
+                  "type" : "string"
+                },
+                "description" : "role → model ID actually used, including refusal fallbacks",
+                "type" : "object"
+              },
+              "pipelineVersion" : {
+                "type" : "string"
+              },
+              "promptVersions" : {
+                "additionalProperties" : {
+                  "minimum" : 1,
+                  "type" : "integer"
+                },
+                "type" : "object"
+              },
+              "recorded" : {
+                "description" : "true in the fake-models profile; the UI then shows 'recorded'",
+                "type" : "boolean"
+              },
+              "verifierIndependence" : {
+                "enum" : [ "DIFFERENT_FAMILY", "SAME_FAMILY", "MIXED", "NONE" ],
+                "type" : "string"
+              }
+            },
+            "required" : [ "corpusRelease", "models", "pipelineVersion", "promptVersions", "recorded", "verifierIndependence" ],
+            "type" : "object"
+          },
+          "redlines" : {
+            "items" : {
+              "$ref" : "#/components/schemas/Redline"
+            },
+            "type" : "array"
+          },
+          "reviewTicket" : {
+            "additionalProperties" : false,
+            "nullable" : true,
+            "properties" : {
+              "expiresAt" : {
+                "format" : "date-time",
+                "type" : "string"
+              },
+              "ticketId" : {
+                "format" : "uuid",
+                "type" : "string"
+              },
+              "token" : {
+                "description" : "Shown once; stored only as SHA-256",
+                "maxLength" : 64,
+                "minLength" : 32,
+                "type" : "string"
+              }
+            },
+            "required" : [ "expiresAt", "ticketId", "token" ],
+            "type" : "object"
+          },
+          "side" : {
+            "enum" : [ "WORKER", "EMPLOYER" ],
+            "type" : "string"
+          },
+          "status" : {
+            "enum" : [ "SUCCEEDED" ],
+            "type" : "string"
+          },
+          "summary" : {
+            "additionalProperties" : false,
+            "properties" : {
+              "coverageNote" : {
+                "description" : "Required when fewer than three findings were found (FR-38)",
+                "maxLength" : 400,
+                "nullable" : true,
+                "type" : "string"
+              },
+              "findingsBySeverity" : {
+                "additionalProperties" : false,
+                "properties" : {
+                  "CRITICAL" : {
+                    "minimum" : 0,
+                    "type" : "integer"
+                  },
+                  "HIGH" : {
+                    "minimum" : 0,
+                    "type" : "integer"
+                  },
+                  "LOW" : {
+                    "minimum" : 0,
+                    "type" : "integer"
+                  },
+                  "MEDIUM" : {
+                    "minimum" : 0,
+                    "type" : "integer"
+                  }
+                },
+                "required" : [ "CRITICAL", "HIGH", "LOW", "MEDIUM" ],
+                "type" : "object"
+              },
+              "nonObviousFindings" : {
+                "minimum" : 0,
+                "type" : "integer"
+              },
+              "overallSeverity" : {
+                "enum" : [ "CRITICAL", "HIGH", "MEDIUM", "LOW" ],
+                "nullable" : true,
+                "type" : "string"
+              },
+              "policyFindings" : {
+                "minimum" : 0,
+                "type" : "integer"
+              },
+              "uncertainFindings" : {
+                "minimum" : 0,
+                "type" : "integer"
+              },
+              "verifiedCitations" : {
+                "minimum" : 0,
+                "type" : "integer"
+              },
+              "verifiedFindings" : {
+                "minimum" : 0,
+                "type" : "integer"
+              }
+            },
+            "required" : [ "coverageNote", "findingsBySeverity", "nonObviousFindings", "overallSeverity", "policyFindings", "uncertainFindings", "verifiedCitations", "verifiedFindings" ],
+            "type" : "object"
+          },
+          "warnings" : {
+            "items" : {
+              "additionalProperties" : false,
+              "properties" : {
+                "code" : {
+                  "enum" : [ "counter-offer-dropped", "low-ocr-confidence-page", "retrieval-keyword-only", "verifier-same-family", "fewer-than-three-findings", "translation-unofficial", "legacy-font-converted", "instruction-like-text", "obligations-unavailable", "memo-narrative-unavailable", "counter-offer-unchecked" ],
+                  "type" : "string"
+                },
+                "message" : {
+                  "maxLength" : 300,
+                  "type" : "string"
+                }
+              },
+              "required" : [ "code", "message" ],
+              "type" : "object"
+            },
+            "type" : "array"
+          }
+        },
+        "required" : [ "analysisId", "clauses", "completedAt", "costUsd", "createdAt", "disclaimer", "documentType", "envelope", "expiresAt", "findings", "input", "memo", "obligations", "outputLanguage", "profile", "provenance", "redlines", "reviewTicket", "side", "status", "summary", "warnings" ],
+        "type" : "object"
+      },
+      "AnalysisStatusView" : {
+        "additionalProperties" : false,
+        "properties" : {
+          "analysisId" : {
+            "format" : "uuid",
+            "type" : "string"
+          },
+          "problem" : {
+            "allOf" : [ {
+              "$ref" : "#/components/schemas/Problem"
+            } ],
+            "nullable" : true
+          },
+          "progress" : {
+            "maximum" : 100,
+            "minimum" : 0,
+            "type" : "integer"
+          },
+          "stage" : {
+            "enum" : [ "INTAKE", "OCR", "REDACT", "CLASSIFY", "RETRIEVE", "RULES", "RISK", "VERIFY", "CORRECT", "COMPOSE", "COMPLETE" ],
+            "nullable" : true,
+            "type" : "string"
+          },
+          "status" : {
+            "enum" : [ "QUEUED", "RUNNING", "FAILED" ],
+            "type" : "string"
+          }
+        },
+        "required" : [ "analysisId", "problem", "progress", "stage", "status" ],
         "type" : "object"
       },
       "AnalysisTextRequest" : {
@@ -179,6 +508,103 @@
         "required" : [ "outputLanguage", "playbookId", "profile", "side", "text", "workerCategory" ],
         "type" : "object"
       },
+      "AnalysisTrace" : {
+        "additionalProperties" : false,
+        "properties" : {
+          "analysisId" : {
+            "format" : "uuid",
+            "type" : "string"
+          },
+          "createdAt" : {
+            "format" : "date-time",
+            "type" : "string"
+          },
+          "events" : {
+            "items" : {
+              "additionalProperties" : false,
+              "properties" : {
+                "at" : {
+                  "format" : "date-time",
+                  "type" : "string"
+                },
+                "cacheReadTokens" : {
+                  "nullable" : true,
+                  "type" : "integer"
+                },
+                "cacheWriteTokens" : {
+                  "nullable" : true,
+                  "type" : "integer"
+                },
+                "costUsdMicros" : {
+                  "nullable" : true,
+                  "type" : "integer"
+                },
+                "detail" : {
+                  "description" : "Only section keys, scores, statuses, reason codes, flags and counts; never contract text (R-02)",
+                  "type" : "object"
+                },
+                "durationMs" : {
+                  "minimum" : 0,
+                  "type" : "integer"
+                },
+                "modelId" : {
+                  "nullable" : true,
+                  "type" : "string"
+                },
+                "outcome" : {
+                  "type" : "string"
+                },
+                "promptId" : {
+                  "nullable" : true,
+                  "type" : "string"
+                },
+                "promptVersion" : {
+                  "nullable" : true,
+                  "type" : "integer"
+                },
+                "stage" : {
+                  "type" : "string"
+                },
+                "tokensIn" : {
+                  "nullable" : true,
+                  "type" : "integer"
+                },
+                "tokensOut" : {
+                  "nullable" : true,
+                  "type" : "integer"
+                }
+              },
+              "required" : [ "at", "cacheReadTokens", "cacheWriteTokens", "costUsdMicros", "detail", "durationMs", "modelId", "outcome", "promptId", "promptVersion", "stage", "tokensIn", "tokensOut" ],
+              "type" : "object"
+            },
+            "type" : "array"
+          },
+          "totals" : {
+            "additionalProperties" : false,
+            "properties" : {
+              "cacheReadTokens" : {
+                "type" : "integer"
+              },
+              "cacheWriteTokens" : {
+                "type" : "integer"
+              },
+              "costUsdMicros" : {
+                "type" : "integer"
+              },
+              "tokensIn" : {
+                "type" : "integer"
+              },
+              "tokensOut" : {
+                "type" : "integer"
+              }
+            },
+            "required" : [ "cacheReadTokens", "cacheWriteTokens", "costUsdMicros", "tokensIn", "tokensOut" ],
+            "type" : "object"
+          }
+        },
+        "required" : [ "analysisId", "createdAt", "events", "totals" ],
+        "type" : "object"
+      },
       "ApiKeyView" : {
         "properties" : {
           "createdAt" : {
@@ -215,6 +641,280 @@
           }
         },
         "required" : [ "createdAt", "id", "lastUsedAt", "name", "orgId", "prefix", "revokedAt", "scopes" ],
+        "type" : "object"
+      },
+      "Clause" : {
+        "additionalProperties" : false,
+        "properties" : {
+          "facts" : {
+            "items" : {
+              "$ref" : "#/components/schemas/ClauseFact"
+            },
+            "maxItems" : 20,
+            "type" : "array"
+          },
+          "flags" : {
+            "items" : {
+              "enum" : [ "INSTRUCTION_LIKE_TEXT", "LOW_OCR_CONFIDENCE", "LEGACY_FONT_CONVERTED" ],
+              "type" : "string"
+            },
+            "type" : "array"
+          },
+          "heading" : {
+            "maxLength" : 200,
+            "nullable" : true,
+            "type" : "string"
+          },
+          "id" : {
+            "pattern" : "^c[0-9]{1,3}$",
+            "type" : "string"
+          },
+          "label" : {
+            "description" : "Clause number as printed, for example ১. or (a)",
+            "maxLength" : 40,
+            "nullable" : true,
+            "type" : "string"
+          },
+          "language" : {
+            "enum" : [ "bn", "en", "mixed" ],
+            "type" : "string"
+          },
+          "ordinal" : {
+            "minimum" : 1,
+            "type" : "integer"
+          },
+          "pages" : {
+            "items" : {
+              "minimum" : 1,
+              "type" : "integer"
+            },
+            "type" : "array"
+          },
+          "paragraphIds" : {
+            "items" : {
+              "pattern" : "^p[0-9]{1,4}$",
+              "type" : "string"
+            },
+            "minItems" : 1,
+            "type" : "array"
+          },
+          "secondaryTypes" : {
+            "items" : {
+              "$ref" : "#/components/schemas/ClauseType"
+            },
+            "maxItems" : 3,
+            "type" : "array"
+          },
+          "segmentation" : {
+            "enum" : [ "RULE_BASED", "LLM_FALLBACK" ],
+            "type" : "string"
+          },
+          "text" : {
+            "description" : "Re-identified clause text, only in responses to the owning subject; never persisted (R-02)",
+            "maxLength" : 8000,
+            "type" : "string"
+          },
+          "type" : {
+            "$ref" : "#/components/schemas/ClauseType"
+          },
+          "typeConfidence" : {
+            "maximum" : 1,
+            "minimum" : 0,
+            "type" : "number"
+          }
+        },
+        "required" : [ "facts", "flags", "heading", "id", "label", "language", "ordinal", "pages", "paragraphIds", "secondaryTypes", "segmentation", "text", "type", "typeConfidence" ],
+        "type" : "object"
+      },
+      "ClauseFact" : {
+        "additionalProperties" : false,
+        "properties" : {
+          "confidence" : {
+            "maximum" : 1,
+            "minimum" : 0,
+            "type" : "number"
+          },
+          "parameter" : {
+            "$ref" : "#/components/schemas/FactParameter"
+          },
+          "regexAgrees" : {
+            "description" : "null when no regex extractor applies (FR-35)",
+            "nullable" : true,
+            "type" : "boolean"
+          },
+          "unit" : {
+            "$ref" : "#/components/schemas/Unit"
+          },
+          "value" : {
+            "description" : "null only when the clause mentions the parameter without a value; booleans are 0 or 1",
+            "nullable" : true,
+            "type" : "number"
+          }
+        },
+        "required" : [ "confidence", "parameter", "regexAgrees", "unit", "value" ],
+        "type" : "object"
+      },
+      "ClauseType" : {
+        "enum" : [ "APPOINTMENT_AND_ROLE", "PROBATION", "WAGES", "WAGE_PAYMENT_AND_DEDUCTIONS", "WORKING_HOURS", "OVERTIME", "REST_AND_HOLIDAYS", "LEAVE", "MATERNITY_BENEFIT", "NOTICE_AND_RESIGNATION", "TERMINATION", "DISCIPLINE_AND_MISCONDUCT", "SERVICE_BENEFITS", "TRANSFER_AND_DEPLOYMENT", "CONFIDENTIALITY", "NON_COMPETE", "INTELLECTUAL_PROPERTY", "HEALTH_AND_SAFETY", "DISPUTE_RESOLUTION", "GOVERNING_LAW", "GENERAL_PROVISIONS", "OTHER" ],
+        "type" : "string"
+      },
+      "CompareAccepted" : {
+        "additionalProperties" : false,
+        "properties" : {
+          "compareId" : {
+            "format" : "uuid",
+            "type" : "string"
+          },
+          "eventsUrl" : {
+            "type" : "string"
+          },
+          "resultUrl" : {
+            "type" : "string"
+          }
+        },
+        "required" : [ "compareId", "eventsUrl", "resultUrl" ],
+        "type" : "object"
+      },
+      "CompareResult" : {
+        "additionalProperties" : false,
+        "description" : "Compare mode (FR-59, ADR-0022): a baseline entry is a labelled claim, never a citation; it has no citation object.",
+        "properties" : {
+          "baseline" : {
+            "additionalProperties" : false,
+            "properties" : {
+              "findings" : {
+                "items" : {
+                  "additionalProperties" : false,
+                  "properties" : {
+                    "citations" : {
+                      "items" : {
+                        "additionalProperties" : false,
+                        "properties" : {
+                          "claimed" : {
+                            "additionalProperties" : false,
+                            "properties" : {
+                              "claim" : {
+                                "type" : "string"
+                              },
+                              "quote" : {
+                                "type" : "string"
+                              },
+                              "sectionKey" : {
+                                "type" : "string"
+                              }
+                            },
+                            "required" : [ "claim", "quote", "sectionKey" ],
+                            "type" : "object"
+                          },
+                          "verification" : {
+                            "additionalProperties" : false,
+                            "properties" : {
+                              "reasonCodes" : {
+                                "items" : {
+                                  "$ref" : "#/components/schemas/ReasonCode"
+                                },
+                                "type" : "array"
+                              },
+                              "status" : {
+                                "$ref" : "#/components/schemas/VerificationStatus"
+                              }
+                            },
+                            "required" : [ "reasonCodes", "status" ],
+                            "type" : "object"
+                          }
+                        },
+                        "required" : [ "claimed", "verification" ],
+                        "type" : "object"
+                      },
+                      "type" : "array"
+                    },
+                    "explanation" : {
+                      "type" : "string"
+                    },
+                    "severity" : {
+                      "type" : "string"
+                    },
+                    "title" : {
+                      "type" : "string"
+                    }
+                  },
+                  "required" : [ "citations", "explanation", "severity", "title" ],
+                  "type" : "object"
+                },
+                "type" : "array"
+              },
+              "modelId" : {
+                "nullable" : true,
+                "type" : "string"
+              },
+              "reason" : {
+                "description" : "Content-free reason code when the baseline is unavailable",
+                "nullable" : true,
+                "type" : "string"
+              },
+              "status" : {
+                "enum" : [ "OK", "UNAVAILABLE" ],
+                "type" : "string"
+              }
+            },
+            "required" : [ "findings", "modelId", "reason", "status" ],
+            "type" : "object"
+          },
+          "compareId" : {
+            "format" : "uuid",
+            "type" : "string"
+          },
+          "disclaimer" : {
+            "minLength" : 20,
+            "type" : "string"
+          },
+          "shromikai" : {
+            "$ref" : "#/components/schemas/AnalysisResult"
+          },
+          "summary" : {
+            "additionalProperties" : false,
+            "properties" : {
+              "baselineCitations" : {
+                "minimum" : 0,
+                "type" : "integer"
+              },
+              "baselineRejected" : {
+                "minimum" : 0,
+                "type" : "integer"
+              },
+              "baselineUncertain" : {
+                "minimum" : 0,
+                "type" : "integer"
+              },
+              "baselineVerified" : {
+                "minimum" : 0,
+                "type" : "integer"
+              },
+              "shromikaiShownCitations" : {
+                "minimum" : 0,
+                "type" : "integer"
+              }
+            },
+            "required" : [ "baselineCitations", "baselineRejected", "baselineUncertain", "baselineVerified", "shromikaiShownCitations" ],
+            "type" : "object"
+          }
+        },
+        "required" : [ "baseline", "compareId", "disclaimer", "shromikai", "summary" ],
+        "type" : "object"
+      },
+      "CompareRunning" : {
+        "additionalProperties" : false,
+        "properties" : {
+          "compareId" : {
+            "format" : "uuid",
+            "type" : "string"
+          },
+          "status" : {
+            "enum" : [ "RUNNING" ],
+            "type" : "string"
+          }
+        },
+        "required" : [ "compareId", "status" ],
         "type" : "object"
       },
       "CreateRequest" : {
@@ -276,6 +976,10 @@
         },
         "required" : [ "createdAt", "id", "key", "lastUsedAt", "name", "orgId", "prefix", "revokedAt", "scopes" ],
         "type" : "object"
+      },
+      "FactParameter" : {
+        "enum" : [ "PROBATION_LENGTH", "PROBATION_EXTENSION", "CONTRACT_DURATION", "NOTICE_BY_EMPLOYER", "NOTICE_BY_WORKER", "PAY_IN_LIEU_OF_NOTICE_ALLOWED", "DAILY_WORKING_HOURS", "WEEKLY_WORKING_HOURS", "OVERTIME_RATE", "OVERTIME_DAILY_HOURS", "OVERTIME_COMPULSORY", "WEEKLY_REST_DAYS", "ANNUAL_LEAVE", "CASUAL_LEAVE", "SICK_LEAVE", "FESTIVAL_HOLIDAYS", "MATERNITY_LEAVE", "WAGE_PERIOD", "WAGE_PAYMENT_DEADLINE", "DEDUCTION_LIMIT", "BASIC_WAGE", "GROSS_WAGE", "TERMINATION_WITHOUT_NOTICE_ALLOWED", "TERMINATION_BENEFIT_STATED", "NON_COMPETE_DURATION", "DISPUTE_FORUM_STATED" ],
+        "type" : "string"
       },
       "GuestRequest" : {
         "default" : null,
@@ -412,6 +1116,210 @@
           }
         },
         "required" : [ "locale", "profile" ],
+        "type" : "object"
+      },
+      "Memo" : {
+        "additionalProperties" : false,
+        "properties" : {
+          "analysisId" : {
+            "format" : "uuid",
+            "type" : "string"
+          },
+          "disclaimer" : {
+            "minLength" : 20,
+            "type" : "string"
+          },
+          "footer" : {
+            "additionalProperties" : false,
+            "properties" : {
+              "analysisId" : {
+                "type" : "string"
+              },
+              "corpusRelease" : {
+                "type" : "string"
+              },
+              "keyId" : {
+                "type" : "string"
+              },
+              "pipelineVersion" : {
+                "type" : "string"
+              }
+            },
+            "required" : [ "analysisId", "corpusRelease", "keyId", "pipelineVersion" ],
+            "type" : "object"
+          },
+          "generatedAt" : {
+            "format" : "date-time",
+            "type" : "string"
+          },
+          "id" : {
+            "format" : "uuid",
+            "type" : "string"
+          },
+          "language" : {
+            "enum" : [ "bn", "en" ],
+            "type" : "string"
+          },
+          "readingLevel" : {
+            "enum" : [ "BASIC", "STANDARD" ],
+            "type" : "string"
+          },
+          "sections" : {
+            "items" : {
+              "additionalProperties" : false,
+              "properties" : {
+                "blocks" : {
+                  "items" : {
+                    "oneOf" : [ {
+                      "additionalProperties" : false,
+                      "properties" : {
+                        "text" : {
+                          "maxLength" : 2000,
+                          "type" : "string"
+                        },
+                        "type" : {
+                          "enum" : [ "paragraph" ],
+                          "type" : "string"
+                        }
+                      },
+                      "required" : [ "text", "type" ],
+                      "type" : "object"
+                    }, {
+                      "additionalProperties" : false,
+                      "properties" : {
+                        "items" : {
+                          "items" : {
+                            "maxLength" : 400,
+                            "type" : "string"
+                          },
+                          "type" : "array"
+                        },
+                        "type" : {
+                          "enum" : [ "list" ],
+                          "type" : "string"
+                        }
+                      },
+                      "required" : [ "items", "type" ],
+                      "type" : "object"
+                    }, {
+                      "additionalProperties" : false,
+                      "properties" : {
+                        "findingIds" : {
+                          "items" : {
+                            "type" : "string"
+                          },
+                          "type" : "array"
+                        },
+                        "type" : {
+                          "enum" : [ "riskTable" ],
+                          "type" : "string"
+                        }
+                      },
+                      "required" : [ "findingIds", "type" ],
+                      "type" : "object"
+                    }, {
+                      "additionalProperties" : false,
+                      "properties" : {
+                        "findingId" : {
+                          "type" : "string"
+                        },
+                        "type" : {
+                          "enum" : [ "findingRef" ],
+                          "type" : "string"
+                        }
+                      },
+                      "required" : [ "findingId", "type" ],
+                      "type" : "object"
+                    }, {
+                      "additionalProperties" : false,
+                      "properties" : {
+                        "citationId" : {
+                          "type" : "string"
+                        },
+                        "type" : {
+                          "enum" : [ "citationChip" ],
+                          "type" : "string"
+                        }
+                      },
+                      "required" : [ "citationId", "type" ],
+                      "type" : "object"
+                    }, {
+                      "additionalProperties" : false,
+                      "properties" : {
+                        "redlineId" : {
+                          "type" : "string"
+                        },
+                        "type" : {
+                          "enum" : [ "redlineRef" ],
+                          "type" : "string"
+                        }
+                      },
+                      "required" : [ "redlineId", "type" ],
+                      "type" : "object"
+                    }, {
+                      "additionalProperties" : false,
+                      "properties" : {
+                        "obligationIds" : {
+                          "items" : {
+                            "type" : "string"
+                          },
+                          "type" : "array"
+                        },
+                        "type" : {
+                          "enum" : [ "obligationTable" ],
+                          "type" : "string"
+                        }
+                      },
+                      "required" : [ "obligationIds", "type" ],
+                      "type" : "object"
+                    } ]
+                  },
+                  "type" : "array"
+                },
+                "heading" : {
+                  "maxLength" : 120,
+                  "type" : "string"
+                },
+                "kind" : {
+                  "enum" : [ "SUMMARY", "RISK_TABLE", "RISK_DETAILS", "REVISED_CLAUSES", "OBLIGATIONS", "NEXT_STEPS", "VERIFICATION_AND_METHOD", "DISCLAIMER" ],
+                  "type" : "string"
+                }
+              },
+              "required" : [ "blocks", "heading", "kind" ],
+              "type" : "object"
+            },
+            "minItems" : 8,
+            "type" : "array"
+          },
+          "title" : {
+            "maxLength" : 160,
+            "type" : "string"
+          },
+          "verificationSummary" : {
+            "additionalProperties" : false,
+            "properties" : {
+              "independence" : {
+                "enum" : [ "DIFFERENT_FAMILY", "SAME_FAMILY", "MIXED", "NONE" ],
+                "type" : "string"
+              },
+              "policyFindings" : {
+                "minimum" : 0,
+                "type" : "integer"
+              },
+              "uncertainFindings" : {
+                "minimum" : 0,
+                "type" : "integer"
+              },
+              "verifiedCitations" : {
+                "minimum" : 0,
+                "type" : "integer"
+              }
+            },
+            "required" : [ "independence", "policyFindings", "uncertainFindings", "verifiedCitations" ],
+            "type" : "object"
+          }
+        },
+        "required" : [ "analysisId", "disclaimer", "footer", "generatedAt", "id", "language", "readingLevel", "sections", "title", "verificationSummary" ],
         "type" : "object"
       },
       "MemoRenderRequest" : {
@@ -562,6 +1470,108 @@
         "required" : [ "embedding", "fast", "judge", "localPii", "reasoning", "verifier", "verifierFallback" ],
         "type" : "object"
       },
+      "ObligationItem" : {
+        "additionalProperties" : false,
+        "properties" : {
+          "citations" : {
+            "items" : {
+              "$ref" : "#/components/schemas/VerifiedCitation"
+            },
+            "type" : "array"
+          },
+          "clauseIds" : {
+            "items" : {
+              "pattern" : "^c[0-9]{1,3}$",
+              "type" : "string"
+            },
+            "type" : "array"
+          },
+          "deadline" : {
+            "additionalProperties" : false,
+            "nullable" : true,
+            "properties" : {
+              "unit" : {
+                "enum" : [ "DAYS", "WEEKS", "MONTHS" ],
+                "type" : "string"
+              },
+              "value" : {
+                "minimum" : 0,
+                "type" : "number"
+              }
+            },
+            "required" : [ "unit", "value" ],
+            "type" : "object"
+          },
+          "id" : {
+            "pattern" : "^o[0-9]{1,3}$",
+            "type" : "string"
+          },
+          "obligation" : {
+            "maxLength" : 300,
+            "minLength" : 5,
+            "type" : "string"
+          },
+          "party" : {
+            "enum" : [ "EMPLOYER", "WORKER", "BOTH" ],
+            "type" : "string"
+          },
+          "source" : {
+            "enum" : [ "CONTRACT", "STATUTE", "BOTH" ],
+            "type" : "string"
+          },
+          "status" : {
+            "enum" : [ "STATED_IN_CONTRACT", "STATUTORY_NOT_IN_CONTRACT", "CONFLICTS_WITH_CONTRACT" ],
+            "type" : "string"
+          },
+          "trigger" : {
+            "maxLength" : 200,
+            "nullable" : true,
+            "type" : "string"
+          }
+        },
+        "required" : [ "citations", "clauseIds", "deadline", "id", "obligation", "party", "source", "status", "trigger" ],
+        "type" : "object"
+      },
+      "ObligationsExport" : {
+        "additionalProperties" : false,
+        "properties" : {
+          "analysisId" : {
+            "format" : "uuid",
+            "type" : "string"
+          },
+          "disclaimer" : {
+            "minLength" : 20,
+            "type" : "string"
+          },
+          "parties" : {
+            "additionalProperties" : false,
+            "properties" : {
+              "BOTH" : {
+                "items" : {
+                  "$ref" : "#/components/schemas/ObligationItem"
+                },
+                "type" : "array"
+              },
+              "EMPLOYER" : {
+                "items" : {
+                  "$ref" : "#/components/schemas/ObligationItem"
+                },
+                "type" : "array"
+              },
+              "WORKER" : {
+                "items" : {
+                  "$ref" : "#/components/schemas/ObligationItem"
+                },
+                "type" : "array"
+              }
+            },
+            "required" : [ "BOTH", "EMPLOYER", "WORKER" ],
+            "type" : "object"
+          }
+        },
+        "required" : [ "analysisId", "disclaimer", "parties" ],
+        "type" : "object"
+      },
       "PasswordChangeRequest" : {
         "default" : null,
         "properties" : {
@@ -577,30 +1587,6 @@
           }
         },
         "required" : [ "currentPassword", "newPassword" ],
-        "type" : "object"
-      },
-      "Patch" : {
-        "properties" : {
-          "claim" : {
-            "type" : "string"
-          },
-          "decision" : {
-            "type" : "string"
-          },
-          "note" : {
-            "type" : "string"
-          },
-          "quote" : {
-            "type" : "string"
-          },
-          "sectionKey" : {
-            "type" : "string"
-          },
-          "status" : {
-            "type" : "string"
-          }
-        },
-        "required" : [ "claim", "decision", "note", "quote", "sectionKey", "status" ],
         "type" : "object"
       },
       "Playbook" : {
@@ -791,6 +1777,102 @@
         "required" : [ "message", "pointer" ],
         "type" : "object"
       },
+      "ReasonCode" : {
+        "enum" : [ "SECTION_NOT_FOUND", "ACT_MISMATCH", "SECTION_NOT_CURRENT", "ACT_NOT_IN_PACK", "NOT_IN_CANDIDATES", "QUOTE_TOO_SHORT", "QUOTE_TOO_LONG", "QUOTE_NOT_FOUND", "QUOTE_BELOW_THRESHOLD", "QUOTE_WRONG_LANGUAGE", "SUPPORT_PARTIAL", "SUPPORT_LOW_CONFIDENCE", "SUPPORT_CONTRADICTS", "SUPPORT_UNRELATED", "VERIFIER_UNAVAILABLE" ],
+        "type" : "string"
+      },
+      "Redline" : {
+        "additionalProperties" : false,
+        "properties" : {
+          "action" : {
+            "enum" : [ "REPLACE", "INSERT", "DELETE" ],
+            "type" : "string"
+          },
+          "citations" : {
+            "items" : {
+              "$ref" : "#/components/schemas/VerifiedCitation"
+            },
+            "type" : "array"
+          },
+          "clauseId" : {
+            "description" : "null for INSERT of a missing clause",
+            "nullable" : true,
+            "type" : "string"
+          },
+          "diff" : {
+            "items" : {
+              "additionalProperties" : false,
+              "properties" : {
+                "op" : {
+                  "enum" : [ "EQUAL", "INSERT", "DELETE" ],
+                  "type" : "string"
+                },
+                "text" : {
+                  "type" : "string"
+                }
+              },
+              "required" : [ "op", "text" ],
+              "type" : "object"
+            },
+            "type" : "array"
+          },
+          "findingIds" : {
+            "items" : {
+              "pattern" : "^f[0-9]{1,3}$",
+              "type" : "string"
+            },
+            "minItems" : 1,
+            "type" : "array"
+          },
+          "id" : {
+            "pattern" : "^r[0-9]{1,3}$",
+            "type" : "string"
+          },
+          "language" : {
+            "enum" : [ "bn", "en" ],
+            "type" : "string"
+          },
+          "originalText" : {
+            "maxLength" : 8000,
+            "nullable" : true,
+            "type" : "string"
+          },
+          "proposedText" : {
+            "description" : "null only for DELETE",
+            "maxLength" : 4000,
+            "nullable" : true,
+            "type" : "string"
+          },
+          "rationale" : {
+            "description" : "Why the revision resolves the risk and stays reasonable for both sides",
+            "maxLength" : 600,
+            "type" : "string"
+          },
+          "ruleCheck" : {
+            "additionalProperties" : false,
+            "properties" : {
+              "attempts" : {
+                "enum" : [ 1, 2 ],
+                "type" : "integer"
+              },
+              "passed" : {
+                "enum" : [ true ],
+                "type" : "boolean"
+              },
+              "ruleIds" : {
+                "items" : {
+                  "type" : "string"
+                },
+                "type" : "array"
+              }
+            },
+            "required" : [ "attempts", "passed", "ruleIds" ],
+            "type" : "object"
+          }
+        },
+        "required" : [ "action", "citations", "clauseId", "diff", "findingIds", "id", "language", "originalText", "proposedText", "rationale", "ruleCheck" ],
+        "type" : "object"
+      },
       "Related" : {
         "properties" : {
           "kind" : {
@@ -847,6 +1929,395 @@
           }
         },
         "required" : [ "actCode", "fusedScore", "headingBn", "headingEn", "origin", "sectionKey", "sectionNo", "snippet", "sourceUrl", "textRank", "vectorRank" ],
+        "type" : "object"
+      },
+      "ReviewItem" : {
+        "additionalProperties" : false,
+        "description" : "Admin view of a review item; contains no contract text (R-02).",
+        "properties" : {
+          "analysisId" : {
+            "format" : "uuid",
+            "nullable" : true,
+            "type" : "string"
+          },
+          "assigneeId" : {
+            "format" : "uuid",
+            "nullable" : true,
+            "type" : "string"
+          },
+          "candidateSectionKeys" : {
+            "items" : {
+              "type" : "string"
+            },
+            "maxItems" : 40,
+            "type" : "array"
+          },
+          "claimedCitation" : {
+            "additionalProperties" : false,
+            "nullable" : true,
+            "properties" : {
+              "claim" : {
+                "description" : "Redacted claim; shares no 8-token sequence with the source document",
+                "maxLength" : 600,
+                "type" : "string"
+              },
+              "claimReduced" : {
+                "description" : "true when the agent's claim overlapped the contract and was replaced by the facts-only form",
+                "type" : "boolean"
+              },
+              "quote" : {
+                "maxLength" : 300,
+                "type" : "string"
+              },
+              "sectionKey" : {
+                "type" : "string"
+              }
+            },
+            "required" : [ "claim", "claimReduced", "quote", "sectionKey" ],
+            "type" : "object"
+          },
+          "clauseType" : {
+            "allOf" : [ {
+              "$ref" : "#/components/schemas/ClauseType"
+            } ],
+            "nullable" : true
+          },
+          "corpusChange" : {
+            "additionalProperties" : false,
+            "nullable" : true,
+            "properties" : {
+              "ingestRunId" : {
+                "nullable" : true,
+                "type" : "string"
+              },
+              "newSha256" : {
+                "pattern" : "^[0-9a-f]{64}$",
+                "type" : "string"
+              },
+              "sourceUrl" : {
+                "format" : "uri",
+                "type" : "string"
+              },
+              "storedSha256" : {
+                "pattern" : "^[0-9a-f]{64}$",
+                "type" : "string"
+              }
+            },
+            "required" : [ "ingestRunId", "newSha256", "sourceUrl", "storedSha256" ],
+            "type" : "object"
+          },
+          "createdAt" : {
+            "format" : "date-time",
+            "type" : "string"
+          },
+          "decision" : {
+            "additionalProperties" : false,
+            "nullable" : true,
+            "properties" : {
+              "citation" : {
+                "allOf" : [ {
+                  "$ref" : "#/components/schemas/VerifiedCitation"
+                } ],
+                "nullable" : true
+              },
+              "decidedAt" : {
+                "format" : "date-time",
+                "type" : "string"
+              },
+              "decidedBy" : {
+                "format" : "uuid",
+                "type" : "string"
+              },
+              "decision" : {
+                "enum" : [ "APPROVED_WITH_CITATION", "APPROVED_WITHOUT_CITATION", "REJECTED" ],
+                "type" : "string"
+              },
+              "note" : {
+                "maxLength" : 1000,
+                "nullable" : true,
+                "type" : "string"
+              }
+            },
+            "required" : [ "citation", "decidedAt", "decidedBy", "decision", "note" ],
+            "type" : "object"
+          },
+          "expiresAt" : {
+            "format" : "date-time",
+            "type" : "string"
+          },
+          "facts" : {
+            "items" : {
+              "$ref" : "#/components/schemas/ClauseFact"
+            },
+            "type" : "array"
+          },
+          "findingId" : {
+            "nullable" : true,
+            "type" : "string"
+          },
+          "findingKind" : {
+            "enum" : [ "CONFLICT", "OMISSION", "AMBIGUITY", "INTERACTION", "POLICY_DEVIATION" ],
+            "nullable" : true,
+            "type" : "string"
+          },
+          "id" : {
+            "format" : "uuid",
+            "type" : "string"
+          },
+          "kind" : {
+            "enum" : [ "FINDING", "CORPUS_CHANGE" ],
+            "type" : "string"
+          },
+          "reasonCodes" : {
+            "description" : "VerificationResult reason codes plus RULE_LLM_CONFLICT",
+            "items" : {
+              "type" : "string"
+            },
+            "type" : "array"
+          },
+          "riskSummary" : {
+            "description" : "Redacted paraphrase; shares no 8-token sequence with the source document",
+            "maxLength" : 400,
+            "nullable" : true,
+            "type" : "string"
+          },
+          "severity" : {
+            "enum" : [ "CRITICAL", "HIGH", "MEDIUM", "LOW" ],
+            "nullable" : true,
+            "type" : "string"
+          },
+          "side" : {
+            "enum" : [ "WORKER", "EMPLOYER" ],
+            "nullable" : true,
+            "type" : "string"
+          },
+          "status" : {
+            "enum" : [ "OPEN", "IN_REVIEW", "APPROVED", "REJECTED", "EXPIRED" ],
+            "type" : "string"
+          },
+          "verification" : {
+            "allOf" : [ {
+              "$ref" : "#/components/schemas/VerificationResult"
+            } ],
+            "nullable" : true
+          }
+        },
+        "required" : [ "analysisId", "assigneeId", "candidateSectionKeys", "claimedCitation", "clauseType", "corpusChange", "createdAt", "decision", "expiresAt", "facts", "findingId", "findingKind", "id", "kind", "reasonCodes", "riskSummary", "severity", "side", "status", "verification" ],
+        "type" : "object"
+      },
+      "ReviewItemPage" : {
+        "additionalProperties" : false,
+        "properties" : {
+          "items" : {
+            "items" : {
+              "$ref" : "#/components/schemas/ReviewItem"
+            },
+            "type" : "array"
+          },
+          "page" : {
+            "minimum" : 0,
+            "type" : "integer"
+          },
+          "size" : {
+            "maximum" : 100,
+            "minimum" : 1,
+            "type" : "integer"
+          },
+          "totalItems" : {
+            "minimum" : 0,
+            "type" : "integer"
+          }
+        },
+        "required" : [ "items", "page", "size", "totalItems" ],
+        "type" : "object"
+      },
+      "ReviewItemPatch" : {
+        "additionalProperties" : false,
+        "description" : "One of: claim { status: IN_REVIEW }, release { status: OPEN }, or a decision; a REJECTED or APPROVED_WITHOUT_CITATION decision needs a note.",
+        "properties" : {
+          "claim" : {
+            "maxLength" : 600,
+            "minLength" : 20,
+            "type" : "string"
+          },
+          "decision" : {
+            "enum" : [ "APPROVED_WITH_CITATION", "APPROVED_WITHOUT_CITATION", "REJECTED" ],
+            "type" : "string"
+          },
+          "note" : {
+            "maxLength" : 1000,
+            "type" : "string"
+          },
+          "quote" : {
+            "maxLength" : 300,
+            "minLength" : 20,
+            "type" : "string"
+          },
+          "sectionKey" : {
+            "type" : "string"
+          },
+          "status" : {
+            "enum" : [ "OPEN", "IN_REVIEW" ],
+            "type" : "string"
+          }
+        },
+        "type" : "object"
+      },
+      "ReviewTicketStatus" : {
+        "additionalProperties" : false,
+        "properties" : {
+          "expiresAt" : {
+            "format" : "date-time",
+            "type" : "string"
+          },
+          "items" : {
+            "items" : {
+              "additionalProperties" : false,
+              "properties" : {
+                "citation" : {
+                  "allOf" : [ {
+                    "$ref" : "#/components/schemas/VerifiedCitation"
+                  } ],
+                  "nullable" : true
+                },
+                "decidedAt" : {
+                  "format" : "date-time",
+                  "nullable" : true,
+                  "type" : "string"
+                },
+                "decision" : {
+                  "enum" : [ "APPROVED_WITH_CITATION", "APPROVED_WITHOUT_CITATION", "REJECTED" ],
+                  "nullable" : true,
+                  "type" : "string"
+                },
+                "findingId" : {
+                  "nullable" : true,
+                  "type" : "string"
+                },
+                "note" : {
+                  "maxLength" : 1000,
+                  "nullable" : true,
+                  "type" : "string"
+                },
+                "status" : {
+                  "enum" : [ "OPEN", "IN_REVIEW", "APPROVED", "REJECTED", "EXPIRED" ],
+                  "type" : "string"
+                },
+                "title" : {
+                  "nullable" : true,
+                  "type" : "string"
+                }
+              },
+              "required" : [ "citation", "decidedAt", "decision", "findingId", "note", "status", "title" ],
+              "type" : "object"
+            },
+            "type" : "array"
+          },
+          "ticketId" : {
+            "format" : "uuid",
+            "type" : "string"
+          }
+        },
+        "required" : [ "expiresAt", "items", "ticketId" ],
+        "type" : "object"
+      },
+      "RiskFinding" : {
+        "additionalProperties" : false,
+        "properties" : {
+          "citations" : {
+            "items" : {
+              "$ref" : "#/components/schemas/VerifiedCitation"
+            },
+            "maxItems" : 4,
+            "type" : "array"
+          },
+          "clauseIds" : {
+            "items" : {
+              "pattern" : "^c[0-9]{1,3}$",
+              "type" : "string"
+            },
+            "maxItems" : 5,
+            "type" : "array"
+          },
+          "clauseType" : {
+            "$ref" : "#/components/schemas/ClauseType"
+          },
+          "confidence" : {
+            "maximum" : 1,
+            "minimum" : 0,
+            "type" : "number"
+          },
+          "explanation" : {
+            "description" : "Short user-facing rationale in plain language, in outputLanguage; no reasoning dump",
+            "maxLength" : 1200,
+            "minLength" : 20,
+            "type" : "string"
+          },
+          "id" : {
+            "pattern" : "^f[0-9]{1,3}$",
+            "type" : "string"
+          },
+          "iloReferences" : {
+            "items" : {
+              "$ref" : "#/components/schemas/VerifiedCitation"
+            },
+            "maxItems" : 2,
+            "type" : "array"
+          },
+          "kind" : {
+            "enum" : [ "CONFLICT", "OMISSION", "AMBIGUITY", "INTERACTION", "POLICY_DEVIATION" ],
+            "type" : "string"
+          },
+          "nonObvious" : {
+            "type" : "boolean"
+          },
+          "playbookRuleId" : {
+            "format" : "uuid",
+            "nullable" : true,
+            "type" : "string"
+          },
+          "redlineId" : {
+            "nullable" : true,
+            "pattern" : "^r[0-9]{1,3}$",
+            "type" : "string"
+          },
+          "reviewItemId" : {
+            "format" : "uuid",
+            "nullable" : true,
+            "type" : "string"
+          },
+          "ruleId" : {
+            "nullable" : true,
+            "type" : "string"
+          },
+          "severity" : {
+            "enum" : [ "CRITICAL", "HIGH", "MEDIUM", "LOW" ],
+            "type" : "string"
+          },
+          "sideNote" : {
+            "maxLength" : 400,
+            "nullable" : true,
+            "type" : "string"
+          },
+          "source" : {
+            "enum" : [ "RULE_ENGINE", "LLM_ANALYSIS", "PLAYBOOK" ],
+            "type" : "string"
+          },
+          "title" : {
+            "maxLength" : 120,
+            "minLength" : 5,
+            "type" : "string"
+          },
+          "verificationStatus" : {
+            "enum" : [ "VERIFIED", "UNCERTAIN", "POLICY_ONLY" ],
+            "type" : "string"
+          },
+          "whyItMatters" : {
+            "maxLength" : 600,
+            "type" : "string"
+          }
+        },
+        "required" : [ "citations", "clauseIds", "clauseType", "confidence", "explanation", "id", "iloReferences", "kind", "nonObvious", "playbookRuleId", "redlineId", "reviewItemId", "ruleId", "severity", "sideNote", "source", "title", "verificationStatus", "whyItMatters" ],
         "type" : "object"
       },
       "SearchResults" : {
@@ -981,6 +2452,29 @@
         "required" : [ "algorithm", "expiresAt", "keyId", "payload", "signature" ],
         "type" : "object"
       },
+      "SseCompletedEvent" : {
+        "additionalProperties" : false,
+        "description" : "Data of the SSE event 'completed' (api.md §4.2).",
+        "properties" : {
+          "analysisId" : {
+            "format" : "uuid",
+            "type" : "string"
+          },
+          "findingCount" : {
+            "minimum" : 0,
+            "type" : "integer"
+          },
+          "resultUrl" : {
+            "type" : "string"
+          },
+          "uncertainCount" : {
+            "minimum" : 0,
+            "type" : "integer"
+          }
+        },
+        "required" : [ "analysisId", "findingCount", "resultUrl", "uncertainCount" ],
+        "type" : "object"
+      },
       "SseEmitter" : {
         "properties" : {
           "timeout" : {
@@ -990,6 +2484,52 @@
           }
         },
         "required" : [ "timeout" ],
+        "type" : "object"
+      },
+      "SseStageEvent" : {
+        "additionalProperties" : false,
+        "description" : "Data of the SSE event 'stage' (api.md §4.2).",
+        "properties" : {
+          "analysisId" : {
+            "format" : "uuid",
+            "type" : "string"
+          },
+          "at" : {
+            "format" : "date-time",
+            "type" : "string"
+          },
+          "message" : {
+            "type" : "string"
+          },
+          "progress" : {
+            "maximum" : 100,
+            "minimum" : 0,
+            "type" : "integer"
+          },
+          "stage" : {
+            "enum" : [ "INTAKE", "OCR", "REDACT", "CLASSIFY", "RETRIEVE", "RULES", "RISK", "VERIFY", "CORRECT", "COMPOSE", "COMPLETE" ],
+            "type" : "string"
+          },
+          "state" : {
+            "enum" : [ "STARTED", "COMPLETED", "SKIPPED" ],
+            "type" : "string"
+          }
+        },
+        "required" : [ "analysisId", "at", "message", "progress", "stage", "state" ],
+        "type" : "object"
+      },
+      "SseWarningEvent" : {
+        "additionalProperties" : false,
+        "description" : "Data of the SSE event 'warning' (api.md §4.2).",
+        "properties" : {
+          "code" : {
+            "type" : "string"
+          },
+          "message" : {
+            "type" : "string"
+          }
+        },
+        "required" : [ "code", "message" ],
         "type" : "object"
       },
       "TokenResponse" : {
@@ -1031,6 +2571,384 @@
           }
         },
         "required" : [ "lang", "official", "text" ],
+        "type" : "object"
+      },
+      "Unit" : {
+        "enum" : [ "DAYS", "WEEKS", "MONTHS", "HOURS_PER_DAY", "HOURS_PER_WEEK", "MULTIPLIER", "PERCENT", "BDT_PER_MONTH", "COUNT", "BOOLEAN" ],
+        "type" : "string"
+      },
+      "UsageReport" : {
+        "additionalProperties" : false,
+        "description" : "Admin usage and cost over at most 92 days, with the KPI-12 to KPI-14 block (PRD §10).",
+        "properties" : {
+          "days" : {
+            "items" : {
+              "additionalProperties" : false,
+              "properties" : {
+                "analyses" : {
+                  "minimum" : 0,
+                  "type" : "integer"
+                },
+                "apiCalls" : {
+                  "minimum" : 0,
+                  "type" : "integer"
+                },
+                "compares" : {
+                  "minimum" : 0,
+                  "type" : "integer"
+                },
+                "costByModel" : {
+                  "additionalProperties" : {
+                    "minimum" : 0,
+                    "type" : "number"
+                  },
+                  "type" : "object"
+                },
+                "costUsd" : {
+                  "minimum" : 0,
+                  "type" : "number"
+                },
+                "date" : {
+                  "format" : "date",
+                  "type" : "string"
+                },
+                "mcpCalls" : {
+                  "minimum" : 0,
+                  "type" : "integer"
+                },
+                "memoRenders" : {
+                  "minimum" : 0,
+                  "type" : "integer"
+                }
+              },
+              "required" : [ "analyses", "apiCalls", "compares", "costByModel", "costUsd", "date", "mcpCalls", "memoRenders" ],
+              "type" : "object"
+            },
+            "type" : "array"
+          },
+          "from" : {
+            "format" : "date",
+            "type" : "string"
+          },
+          "kpis" : {
+            "additionalProperties" : false,
+            "properties" : {
+              "completionRate" : {
+                "additionalProperties" : false,
+                "properties" : {
+                  "count" : {
+                    "minimum" : 0,
+                    "type" : "integer"
+                  },
+                  "n" : {
+                    "minimum" : 0,
+                    "type" : "integer"
+                  },
+                  "value" : {
+                    "maximum" : 1,
+                    "minimum" : 0,
+                    "nullable" : true,
+                    "type" : "number"
+                  }
+                },
+                "required" : [ "count", "n", "value" ],
+                "type" : "object"
+              },
+              "memoDownloadRate" : {
+                "additionalProperties" : false,
+                "properties" : {
+                  "count" : {
+                    "minimum" : 0,
+                    "type" : "integer"
+                  },
+                  "n" : {
+                    "minimum" : 0,
+                    "type" : "integer"
+                  },
+                  "value" : {
+                    "maximum" : 1,
+                    "minimum" : 0,
+                    "nullable" : true,
+                    "type" : "number"
+                  }
+                },
+                "required" : [ "count", "n", "value" ],
+                "type" : "object"
+              },
+              "reviewTurnaroundHoursMedian" : {
+                "additionalProperties" : false,
+                "properties" : {
+                  "n" : {
+                    "minimum" : 0,
+                    "type" : "integer"
+                  },
+                  "value" : {
+                    "minimum" : 0,
+                    "nullable" : true,
+                    "type" : "number"
+                  }
+                },
+                "required" : [ "n", "value" ],
+                "type" : "object"
+              },
+              "windowDays" : {
+                "enum" : [ 7 ],
+                "type" : "integer"
+              }
+            },
+            "required" : [ "completionRate", "memoDownloadRate", "reviewTurnaroundHoursMedian", "windowDays" ],
+            "type" : "object"
+          },
+          "orgId" : {
+            "format" : "uuid",
+            "nullable" : true,
+            "type" : "string"
+          },
+          "to" : {
+            "format" : "date",
+            "type" : "string"
+          },
+          "totals" : {
+            "additionalProperties" : false,
+            "properties" : {
+              "analyses" : {
+                "minimum" : 0,
+                "type" : "integer"
+              },
+              "apiCalls" : {
+                "minimum" : 0,
+                "type" : "integer"
+              },
+              "compares" : {
+                "minimum" : 0,
+                "type" : "integer"
+              },
+              "costByModel" : {
+                "additionalProperties" : {
+                  "minimum" : 0,
+                  "type" : "number"
+                },
+                "type" : "object"
+              },
+              "costUsd" : {
+                "minimum" : 0,
+                "type" : "number"
+              },
+              "mcpCalls" : {
+                "minimum" : 0,
+                "type" : "integer"
+              },
+              "memoRenders" : {
+                "minimum" : 0,
+                "type" : "integer"
+              }
+            },
+            "required" : [ "analyses", "apiCalls", "compares", "costByModel", "costUsd", "mcpCalls", "memoRenders" ],
+            "type" : "object"
+          }
+        },
+        "required" : [ "days", "from", "kpis", "orgId", "to", "totals" ],
+        "type" : "object"
+      },
+      "VerificationResult" : {
+        "additionalProperties" : false,
+        "properties" : {
+          "attempt" : {
+            "enum" : [ 1, 2 ],
+            "type" : "integer"
+          },
+          "checks" : {
+            "additionalProperties" : false,
+            "properties" : {
+              "existence" : {
+                "additionalProperties" : false,
+                "properties" : {
+                  "outcome" : {
+                    "enum" : [ "PASS", "FAIL", "SKIPPED", "ERROR" ],
+                    "type" : "string"
+                  }
+                },
+                "required" : [ "outcome" ],
+                "type" : "object"
+              },
+              "quoteMatch" : {
+                "additionalProperties" : false,
+                "properties" : {
+                  "matchedLanguage" : {
+                    "enum" : [ "bn", "en" ],
+                    "nullable" : true,
+                    "type" : "string"
+                  },
+                  "outcome" : {
+                    "enum" : [ "PASS", "FAIL", "SKIPPED", "ERROR" ],
+                    "type" : "string"
+                  },
+                  "similarity" : {
+                    "maximum" : 1,
+                    "minimum" : 0,
+                    "nullable" : true,
+                    "type" : "number"
+                  }
+                },
+                "required" : [ "matchedLanguage", "outcome", "similarity" ],
+                "type" : "object"
+              },
+              "support" : {
+                "additionalProperties" : false,
+                "properties" : {
+                  "confidence" : {
+                    "maximum" : 1,
+                    "minimum" : 0,
+                    "nullable" : true,
+                    "type" : "number"
+                  },
+                  "independence" : {
+                    "enum" : [ "DIFFERENT_FAMILY", "SAME_FAMILY", "RULE_PROVENANCE", "HUMAN" ],
+                    "nullable" : true,
+                    "type" : "string"
+                  },
+                  "label" : {
+                    "enum" : [ "SUPPORTS", "PARTIAL", "CONTRADICTS", "UNRELATED" ],
+                    "nullable" : true,
+                    "type" : "string"
+                  },
+                  "modelId" : {
+                    "nullable" : true,
+                    "type" : "string"
+                  },
+                  "outcome" : {
+                    "enum" : [ "PASS", "FAIL", "SKIPPED", "ERROR" ],
+                    "type" : "string"
+                  },
+                  "reason" : {
+                    "maxLength" : 200,
+                    "nullable" : true,
+                    "type" : "string"
+                  }
+                },
+                "required" : [ "confidence", "independence", "label", "modelId", "outcome", "reason" ],
+                "type" : "object"
+              }
+            },
+            "required" : [ "existence", "quoteMatch", "support" ],
+            "type" : "object"
+          },
+          "citationId" : {
+            "format" : "uuid",
+            "type" : "string"
+          },
+          "corpusRelease" : {
+            "type" : "string"
+          },
+          "reasonCodes" : {
+            "items" : {
+              "$ref" : "#/components/schemas/ReasonCode"
+            },
+            "type" : "array"
+          },
+          "sectionKey" : {
+            "type" : "string"
+          },
+          "status" : {
+            "$ref" : "#/components/schemas/VerificationStatus"
+          },
+          "verifiedAt" : {
+            "format" : "date-time",
+            "type" : "string"
+          }
+        },
+        "required" : [ "attempt", "checks", "citationId", "corpusRelease", "reasonCodes", "sectionKey", "status", "verifiedAt" ],
+        "type" : "object"
+      },
+      "VerificationStatus" : {
+        "enum" : [ "VERIFIED", "UNCERTAIN", "REJECTED" ],
+        "type" : "string"
+      },
+      "VerifiedCitation" : {
+        "additionalProperties" : false,
+        "properties" : {
+          "actCode" : {
+            "type" : "string"
+          },
+          "actTitleBn" : {
+            "nullable" : true,
+            "type" : "string"
+          },
+          "actTitleEn" : {
+            "nullable" : true,
+            "type" : "string"
+          },
+          "citationId" : {
+            "format" : "uuid",
+            "type" : "string"
+          },
+          "effectiveFrom" : {
+            "format" : "date",
+            "nullable" : true,
+            "type" : "string"
+          },
+          "headingBn" : {
+            "nullable" : true,
+            "type" : "string"
+          },
+          "headingEn" : {
+            "nullable" : true,
+            "type" : "string"
+          },
+          "quote" : {
+            "description" : "Exact text of the authoritative version as stored in the corpus",
+            "type" : "string"
+          },
+          "quoteLanguage" : {
+            "enum" : [ "bn", "en" ],
+            "type" : "string"
+          },
+          "sectionKey" : {
+            "type" : "string"
+          },
+          "sectionNo" : {
+            "type" : "string"
+          },
+          "sourceUrl" : {
+            "format" : "uri",
+            "type" : "string"
+          },
+          "translation" : {
+            "additionalProperties" : false,
+            "nullable" : true,
+            "properties" : {
+              "lang" : {
+                "enum" : [ "bn", "en" ],
+                "type" : "string"
+              },
+              "official" : {
+                "type" : "boolean"
+              },
+              "text" : {
+                "type" : "string"
+              }
+            },
+            "required" : [ "lang", "official", "text" ],
+            "type" : "object"
+          },
+          "verification" : {
+            "allOf" : [ {
+              "$ref" : "#/components/schemas/VerificationResult"
+            }, {
+              "properties" : {
+                "status" : {
+                  "enum" : [ "VERIFIED" ],
+                  "type" : "string"
+                }
+              },
+              "type" : "object"
+            } ]
+          },
+          "versionLabel" : {
+            "type" : "string"
+          }
+        },
+        "required" : [ "actCode", "actTitleBn", "actTitleEn", "citationId", "effectiveFrom", "headingBn", "headingEn", "quote", "quoteLanguage", "sectionKey", "sectionNo", "sourceUrl", "translation", "verification", "versionLabel" ],
         "type" : "object"
       }
     }
@@ -1245,13 +3163,23 @@
         "responses" : {
           "200" : {
             "content" : {
-              "*/*" : {
+              "application/json" : {
                 "schema" : {
-                  "type" : "object"
+                  "$ref" : "#/components/schemas/AnalysisResult"
                 }
               }
             },
             "description" : "OK"
+          },
+          "202" : {
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/AnalysisAccepted"
+                }
+              }
+            },
+            "description" : "202 response"
           },
           "default" : {
             "content" : {
@@ -1310,13 +3238,27 @@
         "responses" : {
           "200" : {
             "content" : {
-              "*/*" : {
+              "application/json" : {
                 "schema" : {
-                  "type" : "object"
+                  "oneOf" : [ {
+                    "$ref" : "#/components/schemas/AnalysisResult"
+                  }, {
+                    "$ref" : "#/components/schemas/AnalysisStatusView"
+                  } ]
                 }
               }
             },
             "description" : "OK"
+          },
+          "202" : {
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/AnalysisStatusView"
+                }
+              }
+            },
+            "description" : "202 response"
           },
           "default" : {
             "content" : {
@@ -1398,9 +3340,9 @@
         "responses" : {
           "200" : {
             "content" : {
-              "*/*" : {
+              "application/json" : {
                 "schema" : {
-                  "type" : "object"
+                  "$ref" : "#/components/schemas/ObligationsExport"
                 }
               }
             },
@@ -1435,9 +3377,9 @@
         "responses" : {
           "200" : {
             "content" : {
-              "*/*" : {
+              "application/json" : {
                 "schema" : {
-                  "type" : "object"
+                  "$ref" : "#/components/schemas/AnalysisTrace"
                 }
               }
             },
@@ -1725,6 +3667,16 @@
             },
             "description" : "OK"
           },
+          "202" : {
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/CompareAccepted"
+                }
+              }
+            },
+            "description" : "202 response"
+          },
           "default" : {
             "content" : {
               "application/problem+json" : {
@@ -1754,13 +3706,23 @@
         "responses" : {
           "200" : {
             "content" : {
-              "*/*" : {
+              "application/json" : {
                 "schema" : {
-                  "type" : "object"
+                  "$ref" : "#/components/schemas/CompareResult"
                 }
               }
             },
             "description" : "OK"
+          },
+          "202" : {
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/CompareRunning"
+                }
+              }
+            },
+            "description" : "202 response"
           },
           "default" : {
             "content" : {
@@ -2363,9 +4325,9 @@
         "responses" : {
           "200" : {
             "content" : {
-              "*/*" : {
+              "application/json" : {
                 "schema" : {
-                  "type" : "object"
+                  "$ref" : "#/components/schemas/ReviewItemPage"
                 }
               }
             },
@@ -2400,9 +4362,9 @@
         "responses" : {
           "200" : {
             "content" : {
-              "*/*" : {
+              "application/json" : {
                 "schema" : {
-                  "type" : "object"
+                  "$ref" : "#/components/schemas/ReviewItem"
                 }
               }
             },
@@ -2436,7 +4398,7 @@
           "content" : {
             "application/json" : {
               "schema" : {
-                "$ref" : "#/components/schemas/Patch"
+                "$ref" : "#/components/schemas/ReviewItemPatch"
               }
             }
           },
@@ -2445,9 +4407,9 @@
         "responses" : {
           "200" : {
             "content" : {
-              "*/*" : {
+              "application/json" : {
                 "schema" : {
-                  "type" : "object"
+                  "$ref" : "#/components/schemas/ReviewItem"
                 }
               }
             },
@@ -2489,9 +4451,9 @@
         "responses" : {
           "200" : {
             "content" : {
-              "*/*" : {
+              "application/json" : {
                 "schema" : {
-                  "type" : "object"
+                  "$ref" : "#/components/schemas/ReviewTicketStatus"
                 }
               }
             },

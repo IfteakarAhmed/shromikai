@@ -1,6 +1,8 @@
 package bd.shromikai.api.internal;
 
 import io.swagger.v3.oas.models.OpenAPI;
+import io.swagger.v3.oas.models.Operation;
+import io.swagger.v3.oas.models.PathItem;
 import io.swagger.v3.oas.models.info.Info;
 import io.swagger.v3.oas.models.info.License;
 import io.swagger.v3.oas.models.media.ArraySchema;
@@ -11,6 +13,7 @@ import io.swagger.v3.oas.models.media.MediaType;
 import io.swagger.v3.oas.models.media.ObjectSchema;
 import io.swagger.v3.oas.models.media.Schema;
 import io.swagger.v3.oas.models.media.StringSchema;
+import io.swagger.v3.oas.models.parameters.RequestBody;
 import io.swagger.v3.oas.models.responses.ApiResponse;
 import io.swagger.v3.oas.models.servers.Server;
 import java.lang.reflect.RecordComponent;
@@ -18,6 +21,7 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.TreeMap;
 import java.util.TreeSet;
 import org.jspecify.annotations.Nullable;
@@ -61,13 +65,14 @@ public class OpenApiConfig {
       if (openApi.getComponents() == null || openApi.getComponents().getSchemas() == null) {
         return;
       }
+      Set<String> fromFiles = ApiSchemaComponents.all().keySet();
       openApi
           .getComponents()
           .getSchemas()
-          .values()
           .forEach(
-              schema -> {
-                if (schema.getProperties() != null) {
+              (name, schema) -> {
+                // Schemas from the JSON Schema files keep their own required lists (FR-63).
+                if (schema.getProperties() != null && !fromFiles.contains(name)) {
                   schema.setRequired(
                       new ArrayList<>(new TreeSet<>(schema.getProperties().keySet())));
                 }
@@ -94,6 +99,116 @@ public class OpenApiConfig {
               });
       addProblem(openApi);
     };
+  }
+
+  /**
+   * Response and request schemas of api.md §5 (FR-63): the JSON Schema files under {@code
+   * schemas/api} become components, and the operations that return them say so, so the generated
+   * frontend types carry the real shapes instead of an untyped object.
+   */
+  @Bean
+  OpenApiCustomizer apiSchemas() {
+    return openApi -> {
+      if (openApi.getComponents() == null) {
+        return;
+      }
+      ApiSchemaComponents.all()
+          .forEach((name, json) -> openApi.getComponents().addSchemas(name, parse(json)));
+      // Replaced by ReviewItemPatch; the Java record's schema would be an orphan.
+      if (openApi.getComponents().getSchemas() != null) {
+        openApi.getComponents().getSchemas().remove("Patch");
+      }
+      if (openApi.getPaths() == null) {
+        return;
+      }
+      RESPONSES.forEach(
+          (operationKey, responses) -> {
+            String[] parts = operationKey.split(" ", 2);
+            var item = openApi.getPaths().get(parts[1]);
+            if (item == null) {
+              return;
+            }
+            Operation operation =
+                item.readOperationsMap().get(PathItem.HttpMethod.valueOf(parts[0]));
+            if (operation == null) {
+              return;
+            }
+            responses.forEach(
+                (status, components) -> {
+                  ApiResponse response = operation.getResponses().get(status);
+                  if (response == null) {
+                    response = new ApiResponse().description(status + " response");
+                    operation.getResponses().addApiResponse(status, response);
+                  }
+                  response.setContent(
+                      new Content()
+                          .addMediaType(
+                              "application/json", new MediaType().schema(schemaOf(components))));
+                });
+          });
+      REQUESTS.forEach(
+          (operationKey, component) -> {
+            String[] parts = operationKey.split(" ", 2);
+            var item = openApi.getPaths().get(parts[1]);
+            Operation operation =
+                item == null
+                    ? null
+                    : item.readOperationsMap().get(PathItem.HttpMethod.valueOf(parts[0]));
+            if (operation != null) {
+              operation.setRequestBody(
+                  new RequestBody()
+                      .required(true)
+                      .content(
+                          new Content()
+                              .addMediaType(
+                                  "application/json",
+                                  new MediaType().schema(schemaOf(component)))));
+            }
+          });
+    };
+  }
+
+  /** Operation to status to component name(s); {@code A|B} is a {@code oneOf}. */
+  private static final Map<String, Map<String, String>> RESPONSES =
+      Map.ofEntries(
+          Map.entry(
+              "POST /api/v1/analyses", Map.of("200", "AnalysisResult", "202", "AnalysisAccepted")),
+          Map.entry(
+              "GET /api/v1/analyses/{id}",
+              Map.of("200", "AnalysisResult|AnalysisStatusView", "202", "AnalysisStatusView")),
+          Map.entry("GET /api/v1/analyses/{id}/trace", Map.of("200", "AnalysisTrace")),
+          Map.entry("GET /api/v1/analyses/{id}/obligations", Map.of("200", "ObligationsExport")),
+          Map.entry("POST /api/v1/compare", Map.of("202", "CompareAccepted")),
+          Map.entry(
+              "GET /api/v1/compare/{id}", Map.of("200", "CompareResult", "202", "CompareRunning")),
+          Map.entry("GET /api/v1/review-tickets/{ticketId}", Map.of("200", "ReviewTicketStatus")),
+          Map.entry("GET /api/v1/review-items", Map.of("200", "ReviewItemPage")),
+          Map.entry("GET /api/v1/review-items/{id}", Map.of("200", "ReviewItem")),
+          Map.entry("PATCH /api/v1/review-items/{id}", Map.of("200", "ReviewItem")),
+          Map.entry("GET /api/v1/admin/usage", Map.of("200", "UsageReport")),
+          Map.entry("GET /api/v1/admin/traces/{analysisId}", Map.of("200", "AnalysisTrace")));
+
+  private static final Map<String, String> REQUESTS =
+      Map.of("PATCH /api/v1/review-items/{id}", "ReviewItemPatch");
+
+  private static Schema<?> schemaOf(String components) {
+    String[] names = components.split("\\|");
+    if (names.length == 1) {
+      return new Schema<>().$ref("#/components/schemas/" + names[0]);
+    }
+    ComposedSchema union = new ComposedSchema();
+    for (String name : names) {
+      union.addOneOfItem(new Schema<>().$ref("#/components/schemas/" + name));
+    }
+    return union;
+  }
+
+  private static Schema<?> parse(com.fasterxml.jackson.databind.JsonNode json) {
+    try {
+      return io.swagger.v3.core.util.Json.mapper().treeToValue(json, Schema.class);
+    } catch (com.fasterxml.jackson.core.JsonProcessingException e) {
+      throw new IllegalStateException("Invalid API schema component", e);
+    }
   }
 
   static final String PROBLEM_JSON = "application/problem+json";

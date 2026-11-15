@@ -1,0 +1,14 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:shromikai:schema:analysis-accepted:1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["analysisId", "status", "eventsUrl", "resultUrl", "deadlineAt"],
+  "properties": {
+    "analysisId": { "type": "string", "format": "uuid" },
+    "status": { "const": "QUEUED" },
+    "eventsUrl": { "type": "string" },
+    "resultUrl": { "type": "string" },
+    "deadlineAt": { "type": "string", "format": "date-time" }
+  }
+}

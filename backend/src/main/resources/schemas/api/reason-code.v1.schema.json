@@ -1,0 +1,10 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:shromikai:schema:reason-code:1",
+  "enum": [
+    "SECTION_NOT_FOUND", "ACT_MISMATCH", "SECTION_NOT_CURRENT", "ACT_NOT_IN_PACK", "NOT_IN_CANDIDATES",
+    "QUOTE_TOO_SHORT", "QUOTE_TOO_LONG", "QUOTE_NOT_FOUND", "QUOTE_BELOW_THRESHOLD", "QUOTE_WRONG_LANGUAGE",
+    "SUPPORT_PARTIAL", "SUPPORT_LOW_CONFIDENCE", "SUPPORT_CONTRADICTS", "SUPPORT_UNRELATED",
+    "VERIFIER_UNAVAILABLE"
+  ]
+}

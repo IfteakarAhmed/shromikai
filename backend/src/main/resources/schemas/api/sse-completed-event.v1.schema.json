@@ -1,0 +1,14 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:shromikai:schema:sse-completed-event:1",
+  "description": "Data of the SSE event 'completed' (api.md §4.2).",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["analysisId", "resultUrl", "findingCount", "uncertainCount"],
+  "properties": {
+    "analysisId": { "type": "string", "format": "uuid" },
+    "resultUrl": { "type": "string" },
+    "findingCount": { "type": "integer", "minimum": 0 },
+    "uncertainCount": { "type": "integer", "minimum": 0 }
+  }
+}

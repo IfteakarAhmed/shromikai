@@ -1,0 +1,5 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:shromikai:schema:unit:1",
+  "enum": ["DAYS", "WEEKS", "MONTHS", "HOURS_PER_DAY", "HOURS_PER_WEEK", "MULTIPLIER", "PERCENT", "BDT_PER_MONTH", "COUNT", "BOOLEAN"]
+}

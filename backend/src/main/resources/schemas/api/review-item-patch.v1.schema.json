@@ -1,0 +1,15 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:shromikai:schema:review-item-patch:1",
+  "description": "One of: claim { status: IN_REVIEW }, release { status: OPEN }, or a decision; a REJECTED or APPROVED_WITHOUT_CITATION decision needs a note.",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "status": { "enum": ["OPEN", "IN_REVIEW"] },
+    "decision": { "enum": ["APPROVED_WITH_CITATION", "APPROVED_WITHOUT_CITATION", "REJECTED"] },
+    "sectionKey": { "type": "string" },
+    "quote": { "type": "string", "minLength": 20, "maxLength": 300 },
+    "claim": { "type": "string", "minLength": 20, "maxLength": 600 },
+    "note": { "type": "string", "maxLength": 1000 }
+  }
+}

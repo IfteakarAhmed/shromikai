@@ -1,0 +1,12 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:shromikai:schema:analysis-profile:1",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "sector": { "enum": ["READY_MADE_GARMENTS", "TEXTILES", "CONSTRUCTION", "IT_SOFTWARE", "RETAIL", "DOMESTIC_WORK", "SECURITY_SERVICES", "NGO", "BANKING_FINANCE", "OTHER", null] },
+    "jobRole": { "type": ["string", "null"], "maxLength": 60 },
+    "preferredLanguage": { "enum": ["bn", "en", null] },
+    "readingLevel": { "enum": ["BASIC", "STANDARD", null] }
+  }
+}

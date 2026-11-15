@@ -20,12 +20,21 @@ import java.util.concurrent.ConcurrentHashMap;
  */
 public final class JsonSchemas {
 
+  private static final String URN_PREFIX = "urn:shromikai:schema:";
+
   private static final SchemaRegistry REGISTRY =
       SchemaRegistry.withDefaultDialect(
           SpecificationVersion.DRAFT_2020_12,
           builder ->
-              builder.schemaRegistryConfig(
-                  SchemaRegistryConfig.builder().formatAssertionsEnabled(true).build()));
+              builder
+                  .schemaRegistryConfig(
+                      SchemaRegistryConfig.builder().formatAssertionsEnabled(true).build())
+                  // api.md §5 schemas refer to each other as urn:shromikai:schema:{name}:{n}; the
+                  // file is schemas/api/{name}.v{n}.schema.json on the classpath.
+                  .schemaIdResolvers(
+                      ids ->
+                          ids.mappings(
+                              id -> id.startsWith(URN_PREFIX), JsonSchemas::classpathLocation)));
 
   private final ClassLoader classLoader;
   private final Map<String, Schema> cache = new ConcurrentHashMap<>();
@@ -67,6 +76,11 @@ public final class JsonSchemas {
         REGISTRY.getSchema(
             com.networknt.schema.SchemaLocation.of("https://json-schema.org/draft/2020-12/schema"));
     return meta.validate(schema).stream().map(Error::getMessage).sorted().toList();
+  }
+
+  private static String classpathLocation(String id) {
+    String[] parts = id.substring(URN_PREFIX.length()).split(":");
+    return "classpath:schemas/api/" + parts[0] + ".v" + parts[1] + ".schema.json";
   }
 
   private Schema load(String location) {

@@ -1,0 +1,19 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:shromikai:schema:obligations-export:1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["analysisId", "parties", "disclaimer"],
+  "properties": {
+    "analysisId": { "type": "string", "format": "uuid" },
+    "parties": {
+      "type": "object", "additionalProperties": false, "required": ["EMPLOYER", "WORKER", "BOTH"],
+      "properties": {
+        "EMPLOYER": { "type": "array", "items": { "$ref": "urn:shromikai:schema:obligation-item:1" } },
+        "WORKER": { "type": "array", "items": { "$ref": "urn:shromikai:schema:obligation-item:1" } },
+        "BOTH": { "type": "array", "items": { "$ref": "urn:shromikai:schema:obligation-item:1" } }
+      }
+    },
+    "disclaimer": { "type": "string", "minLength": 20 }
+  }
+}

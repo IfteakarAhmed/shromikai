@@ -1,0 +1,49 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:shromikai:schema:verification-result:1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["citationId", "sectionKey", "status", "attempt", "checks", "reasonCodes", "verifiedAt", "corpusRelease"],
+  "properties": {
+    "citationId": { "type": "string", "format": "uuid" },
+    "sectionKey": { "type": "string" },
+    "status": { "$ref": "urn:shromikai:schema:verification-status:1" },
+    "attempt": { "type": "integer", "enum": [1, 2] },
+    "checks": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["existence", "quoteMatch", "support"],
+      "properties": {
+        "existence": {
+          "type": "object", "additionalProperties": false, "required": ["outcome"],
+          "properties": { "outcome": { "$ref": "#/$defs/outcome" } }
+        },
+        "quoteMatch": {
+          "type": "object", "additionalProperties": false, "required": ["outcome", "similarity", "matchedLanguage"],
+          "properties": {
+            "outcome": { "$ref": "#/$defs/outcome" },
+            "similarity": { "type": ["number", "null"], "minimum": 0, "maximum": 1 },
+            "matchedLanguage": { "enum": ["bn", "en", null] }
+          }
+        },
+        "support": {
+          "type": "object", "additionalProperties": false, "required": ["outcome", "label", "confidence", "independence", "modelId", "reason"],
+          "properties": {
+            "outcome": { "$ref": "#/$defs/outcome" },
+            "label": { "enum": ["SUPPORTS", "PARTIAL", "CONTRADICTS", "UNRELATED", null] },
+            "confidence": { "type": ["number", "null"], "minimum": 0, "maximum": 1 },
+            "independence": { "enum": ["DIFFERENT_FAMILY", "SAME_FAMILY", "RULE_PROVENANCE", "HUMAN", null] },
+            "modelId": { "type": ["string", "null"] },
+            "reason": { "type": ["string", "null"], "maxLength": 200 }
+          }
+        }
+      }
+    },
+    "reasonCodes": { "type": "array", "items": { "$ref": "urn:shromikai:schema:reason-code:1" } },
+    "verifiedAt": { "type": "string", "format": "date-time" },
+    "corpusRelease": { "type": "string" }
+  },
+  "$defs": {
+    "outcome": { "enum": ["PASS", "FAIL", "SKIPPED", "ERROR"] }
+  }
+}

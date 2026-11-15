@@ -1,0 +1,24 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:shromikai:schema:obligation-item:1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["id", "party", "obligation", "trigger", "deadline", "source", "status", "clauseIds", "citations"],
+  "properties": {
+    "id": { "type": "string", "pattern": "^o[0-9]{1,3}$" },
+    "party": { "enum": ["EMPLOYER", "WORKER", "BOTH"] },
+    "obligation": { "type": "string", "minLength": 5, "maxLength": 300 },
+    "trigger": { "type": ["string", "null"], "maxLength": 200 },
+    "deadline": {
+      "type": ["object", "null"], "additionalProperties": false, "required": ["value", "unit"],
+      "properties": { "value": { "type": "number", "minimum": 0 }, "unit": { "enum": ["DAYS", "WEEKS", "MONTHS"] } }
+    },
+    "source": { "enum": ["CONTRACT", "STATUTE", "BOTH"] },
+    "status": { "enum": ["STATED_IN_CONTRACT", "STATUTORY_NOT_IN_CONTRACT", "CONFLICTS_WITH_CONTRACT"] },
+    "clauseIds": { "type": "array", "items": { "type": "string", "pattern": "^c[0-9]{1,3}$" } },
+    "citations": { "type": "array", "items": { "$ref": "urn:shromikai:schema:verified-citation:1" } }
+  },
+  "allOf": [
+    { "if": { "properties": { "source": { "enum": ["STATUTE", "BOTH"] } } }, "then": { "properties": { "citations": { "minItems": 1 } } } }
+  ]
+}

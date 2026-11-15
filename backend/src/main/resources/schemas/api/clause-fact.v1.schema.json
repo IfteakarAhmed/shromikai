@@ -1,0 +1,14 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:shromikai:schema:clause-fact:1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["parameter", "value", "unit", "confidence", "regexAgrees"],
+  "properties": {
+    "parameter": { "$ref": "urn:shromikai:schema:fact-parameter:1" },
+    "value": { "type": ["number", "null"], "description": "null only when the clause mentions the parameter without a value; booleans are 0 or 1" },
+    "unit": { "$ref": "urn:shromikai:schema:unit:1" },
+    "confidence": { "type": "number", "minimum": 0, "maximum": 1 },
+    "regexAgrees": { "type": ["boolean", "null"], "description": "null when no regex extractor applies (FR-35)" }
+  }
+}

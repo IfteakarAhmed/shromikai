@@ -485,6 +485,16 @@ export interface components {
       /** Format: int32 */
       year: number
     }
+    AnalysisAccepted: {
+      /** Format: uuid */
+      analysisId: string
+      /** Format: date-time */
+      deadlineAt: string
+      eventsUrl: string
+      resultUrl: string
+      /** @enum {string} */
+      status: 'QUEUED'
+    }
     /** @default null */
     AnalysisOptions: {
       clientKind: string | null
@@ -496,12 +506,151 @@ export interface components {
       side: 'WORKER' | 'EMPLOYER'
       workerCategory: string | null
     }
-    /** @default null */
     AnalysisProfile: {
-      jobRole: string | null
-      preferredLanguage: string | null
-      readingLevel: string | null
-      sector: string | null
+      jobRole?: string | null
+      /** @enum {string|null} */
+      preferredLanguage?: 'bn' | 'en' | null
+      /** @enum {string|null} */
+      readingLevel?: 'BASIC' | 'STANDARD' | null
+      /** @enum {string|null} */
+      sector?:
+        | 'READY_MADE_GARMENTS'
+        | 'TEXTILES'
+        | 'CONSTRUCTION'
+        | 'IT_SOFTWARE'
+        | 'RETAIL'
+        | 'DOMESTIC_WORK'
+        | 'SECURITY_SERVICES'
+        | 'NGO'
+        | 'BANKING_FINANCE'
+        | 'OTHER'
+        | null
+    }
+    AnalysisResult: {
+      /** Format: uuid */
+      analysisId: string
+      clauses: components['schemas']['Clause'][]
+      /** Format: date-time */
+      completedAt: string
+      costUsd: number
+      /** Format: date-time */
+      createdAt: string
+      disclaimer: string
+      /** @enum {string} */
+      documentType: 'EMPLOYMENT_CONTRACT'
+      envelope: {
+        /** @enum {string} */
+        algorithm: 'HMAC-SHA256'
+        /** Format: date-time */
+        expiresAt: string
+        keyId: string
+        signature: string
+      }
+      /**
+       * Format: date-time
+       * @description completedAt + 30 minutes
+       */
+      expiresAt: string
+      findings: components['schemas']['RiskFinding'][]
+      input: {
+        /** @enum {string} */
+        detectedLanguage: 'bn' | 'en' | 'mixed'
+        /** @enum {string} */
+        kind: 'PDF_TEXT' | 'PDF_SCAN' | 'IMAGE' | 'TEXT'
+        legacyFontConverted: boolean
+        ocrMeanConfidence: number | null
+        pageCount: number
+        /** @description true when the bundled synthetic sample contract was analysed; the UI then labels the result 'synthetic sample' */
+        sample: boolean
+      }
+      memo: components['schemas']['Memo']
+      obligations: components['schemas']['ObligationItem'][]
+      /** @enum {string} */
+      outputLanguage: 'bn' | 'en'
+      profile: components['schemas']['AnalysisProfile'] | null
+      provenance: {
+        corpusRelease: string
+        /** @description role → model ID actually used, including refusal fallbacks */
+        models: {
+          [key: string]: string
+        }
+        pipelineVersion: string
+        promptVersions: {
+          [key: string]: number
+        }
+        /** @description true in the fake-models profile; the UI then shows 'recorded' */
+        recorded: boolean
+        /** @enum {string} */
+        verifierIndependence: 'DIFFERENT_FAMILY' | 'SAME_FAMILY' | 'MIXED' | 'NONE'
+      }
+      redlines: components['schemas']['Redline'][]
+      reviewTicket: {
+        /** Format: date-time */
+        expiresAt: string
+        /** Format: uuid */
+        ticketId: string
+        /** @description Shown once; stored only as SHA-256 */
+        token: string
+      } | null
+      /** @enum {string} */
+      side: 'WORKER' | 'EMPLOYER'
+      /** @enum {string} */
+      status: 'SUCCEEDED'
+      summary: {
+        /** @description Required when fewer than three findings were found (FR-38) */
+        coverageNote: string | null
+        findingsBySeverity: {
+          CRITICAL: number
+          HIGH: number
+          LOW: number
+          MEDIUM: number
+        }
+        nonObviousFindings: number
+        /** @enum {string|null} */
+        overallSeverity: 'CRITICAL' | 'HIGH' | 'MEDIUM' | 'LOW' | null
+        policyFindings: number
+        uncertainFindings: number
+        verifiedCitations: number
+        verifiedFindings: number
+      }
+      warnings: {
+        /** @enum {string} */
+        code:
+          | 'counter-offer-dropped'
+          | 'low-ocr-confidence-page'
+          | 'retrieval-keyword-only'
+          | 'verifier-same-family'
+          | 'fewer-than-three-findings'
+          | 'translation-unofficial'
+          | 'legacy-font-converted'
+          | 'instruction-like-text'
+          | 'obligations-unavailable'
+          | 'memo-narrative-unavailable'
+          | 'counter-offer-unchecked'
+        message: string
+      }[]
+    }
+    AnalysisStatusView: {
+      /** Format: uuid */
+      analysisId: string
+      problem: components['schemas']['Problem'] | null
+      progress: number
+      /** @enum {string|null} */
+      stage:
+        | 'INTAKE'
+        | 'OCR'
+        | 'REDACT'
+        | 'CLASSIFY'
+        | 'RETRIEVE'
+        | 'RULES'
+        | 'RISK'
+        | 'VERIFY'
+        | 'CORRECT'
+        | 'COMPOSE'
+        | 'COMPLETE'
+        | null
+      /** @enum {string} */
+      status: 'QUEUED' | 'RUNNING' | 'FAILED'
     }
     /** @default null */
     AnalysisTextRequest: {
@@ -513,6 +662,36 @@ export interface components {
       side: 'WORKER' | 'EMPLOYER'
       text: string
       workerCategory: string | null
+    }
+    AnalysisTrace: {
+      /** Format: uuid */
+      analysisId: string
+      /** Format: date-time */
+      createdAt: string
+      events: {
+        /** Format: date-time */
+        at: string
+        cacheReadTokens: number | null
+        cacheWriteTokens: number | null
+        costUsdMicros: number | null
+        /** @description Only section keys, scores, statuses, reason codes, flags and counts; never contract text (R-02) */
+        detail: Record<string, never>
+        durationMs: number
+        modelId: string | null
+        outcome: string
+        promptId: string | null
+        promptVersion: number | null
+        stage: string
+        tokensIn: number | null
+        tokensOut: number | null
+      }[]
+      totals: {
+        cacheReadTokens: number
+        cacheWriteTokens: number
+        costUsdMicros: number
+        tokensIn: number
+        tokensOut: number
+      }
     }
     ApiKeyView: {
       /** Format: date-time */
@@ -528,6 +707,108 @@ export interface components {
       /** Format: date-time */
       revokedAt: string
       scopes: string[]
+    }
+    Clause: {
+      facts: components['schemas']['ClauseFact'][]
+      flags: ('INSTRUCTION_LIKE_TEXT' | 'LOW_OCR_CONFIDENCE' | 'LEGACY_FONT_CONVERTED')[]
+      heading: string | null
+      id: string
+      /** @description Clause number as printed, for example ১. or (a) */
+      label: string | null
+      /** @enum {string} */
+      language: 'bn' | 'en' | 'mixed'
+      ordinal: number
+      pages: number[]
+      paragraphIds: string[]
+      secondaryTypes: components['schemas']['ClauseType'][]
+      /** @enum {string} */
+      segmentation: 'RULE_BASED' | 'LLM_FALLBACK'
+      /** @description Re-identified clause text, only in responses to the owning subject; never persisted (R-02) */
+      text: string
+      type: components['schemas']['ClauseType']
+      typeConfidence: number
+    }
+    ClauseFact: {
+      confidence: number
+      parameter: components['schemas']['FactParameter']
+      /** @description null when no regex extractor applies (FR-35) */
+      regexAgrees: boolean | null
+      unit: components['schemas']['Unit']
+      /** @description null only when the clause mentions the parameter without a value; booleans are 0 or 1 */
+      value: number | null
+    }
+    /** @enum {string} */
+    ClauseType:
+      | 'APPOINTMENT_AND_ROLE'
+      | 'PROBATION'
+      | 'WAGES'
+      | 'WAGE_PAYMENT_AND_DEDUCTIONS'
+      | 'WORKING_HOURS'
+      | 'OVERTIME'
+      | 'REST_AND_HOLIDAYS'
+      | 'LEAVE'
+      | 'MATERNITY_BENEFIT'
+      | 'NOTICE_AND_RESIGNATION'
+      | 'TERMINATION'
+      | 'DISCIPLINE_AND_MISCONDUCT'
+      | 'SERVICE_BENEFITS'
+      | 'TRANSFER_AND_DEPLOYMENT'
+      | 'CONFIDENTIALITY'
+      | 'NON_COMPETE'
+      | 'INTELLECTUAL_PROPERTY'
+      | 'HEALTH_AND_SAFETY'
+      | 'DISPUTE_RESOLUTION'
+      | 'GOVERNING_LAW'
+      | 'GENERAL_PROVISIONS'
+      | 'OTHER'
+    CompareAccepted: {
+      /** Format: uuid */
+      compareId: string
+      eventsUrl: string
+      resultUrl: string
+    }
+    /** @description Compare mode (FR-59, ADR-0022): a baseline entry is a labelled claim, never a citation; it has no citation object. */
+    CompareResult: {
+      baseline: {
+        findings: {
+          citations: {
+            claimed: {
+              claim: string
+              quote: string
+              sectionKey: string
+            }
+            verification: {
+              reasonCodes: components['schemas']['ReasonCode'][]
+              status: components['schemas']['VerificationStatus']
+            }
+          }[]
+          explanation: string
+          severity: string
+          title: string
+        }[]
+        modelId: string | null
+        /** @description Content-free reason code when the baseline is unavailable */
+        reason: string | null
+        /** @enum {string} */
+        status: 'OK' | 'UNAVAILABLE'
+      }
+      /** Format: uuid */
+      compareId: string
+      disclaimer: string
+      shromikai: components['schemas']['AnalysisResult']
+      summary: {
+        baselineCitations: number
+        baselineRejected: number
+        baselineUncertain: number
+        baselineVerified: number
+        shromikaiShownCitations: number
+      }
+    }
+    CompareRunning: {
+      /** Format: uuid */
+      compareId: string
+      /** @enum {string} */
+      status: 'RUNNING'
     }
     CreateRequest: {
       name: string
@@ -551,6 +832,34 @@ export interface components {
       revokedAt: string
       scopes: string[]
     }
+    /** @enum {string} */
+    FactParameter:
+      | 'PROBATION_LENGTH'
+      | 'PROBATION_EXTENSION'
+      | 'CONTRACT_DURATION'
+      | 'NOTICE_BY_EMPLOYER'
+      | 'NOTICE_BY_WORKER'
+      | 'PAY_IN_LIEU_OF_NOTICE_ALLOWED'
+      | 'DAILY_WORKING_HOURS'
+      | 'WEEKLY_WORKING_HOURS'
+      | 'OVERTIME_RATE'
+      | 'OVERTIME_DAILY_HOURS'
+      | 'OVERTIME_COMPULSORY'
+      | 'WEEKLY_REST_DAYS'
+      | 'ANNUAL_LEAVE'
+      | 'CASUAL_LEAVE'
+      | 'SICK_LEAVE'
+      | 'FESTIVAL_HOLIDAYS'
+      | 'MATERNITY_LEAVE'
+      | 'WAGE_PERIOD'
+      | 'WAGE_PAYMENT_DEADLINE'
+      | 'DEDUCTION_LIMIT'
+      | 'BASIC_WAGE'
+      | 'GROSS_WAGE'
+      | 'TERMINATION_WITHOUT_NOTICE_ALLOWED'
+      | 'TERMINATION_BENEFIT_STATED'
+      | 'NON_COMPETE_DURATION'
+      | 'DISPUTE_FORUM_STATED'
     /** @default null */
     GuestRequest: {
       deviceToken: string
@@ -598,6 +907,83 @@ export interface components {
       profile: {
         [key: string]: Record<string, never>
       } | null
+    }
+    Memo: {
+      /** Format: uuid */
+      analysisId: string
+      disclaimer: string
+      footer: {
+        analysisId: string
+        corpusRelease: string
+        keyId: string
+        pipelineVersion: string
+      }
+      /** Format: date-time */
+      generatedAt: string
+      /** Format: uuid */
+      id: string
+      /** @enum {string} */
+      language: 'bn' | 'en'
+      /** @enum {string} */
+      readingLevel: 'BASIC' | 'STANDARD'
+      sections: {
+        blocks: (
+          | {
+              text: string
+              /** @enum {string} */
+              type: 'paragraph'
+            }
+          | {
+              items: string[]
+              /** @enum {string} */
+              type: 'list'
+            }
+          | {
+              findingIds: string[]
+              /** @enum {string} */
+              type: 'riskTable'
+            }
+          | {
+              findingId: string
+              /** @enum {string} */
+              type: 'findingRef'
+            }
+          | {
+              citationId: string
+              /** @enum {string} */
+              type: 'citationChip'
+            }
+          | {
+              redlineId: string
+              /** @enum {string} */
+              type: 'redlineRef'
+            }
+          | {
+              obligationIds: string[]
+              /** @enum {string} */
+              type: 'obligationTable'
+            }
+        )[]
+        heading: string
+        /** @enum {string} */
+        kind:
+          | 'SUMMARY'
+          | 'RISK_TABLE'
+          | 'RISK_DETAILS'
+          | 'REVISED_CLAUSES'
+          | 'OBLIGATIONS'
+          | 'NEXT_STEPS'
+          | 'VERIFICATION_AND_METHOD'
+          | 'DISCLAIMER'
+      }[]
+      title: string
+      verificationSummary: {
+        /** @enum {string} */
+        independence: 'DIFFERENT_FAMILY' | 'SAME_FAMILY' | 'MIXED' | 'NONE'
+        policyFindings: number
+        uncertainFindings: number
+        verifiedCitations: number
+      }
     }
     /** @default null */
     MemoRenderRequest: {
@@ -657,18 +1043,38 @@ export interface components {
       verifier: string | null
       verifierFallback: string
     }
+    ObligationItem: {
+      citations: components['schemas']['VerifiedCitation'][]
+      clauseIds: string[]
+      deadline: {
+        /** @enum {string} */
+        unit: 'DAYS' | 'WEEKS' | 'MONTHS'
+        value: number
+      } | null
+      id: string
+      obligation: string
+      /** @enum {string} */
+      party: 'EMPLOYER' | 'WORKER' | 'BOTH'
+      /** @enum {string} */
+      source: 'CONTRACT' | 'STATUTE' | 'BOTH'
+      /** @enum {string} */
+      status: 'STATED_IN_CONTRACT' | 'STATUTORY_NOT_IN_CONTRACT' | 'CONFLICTS_WITH_CONTRACT'
+      trigger: string | null
+    }
+    ObligationsExport: {
+      /** Format: uuid */
+      analysisId: string
+      disclaimer: string
+      parties: {
+        BOTH: components['schemas']['ObligationItem'][]
+        EMPLOYER: components['schemas']['ObligationItem'][]
+        WORKER: components['schemas']['ObligationItem'][]
+      }
+    }
     /** @default null */
     PasswordChangeRequest: {
       currentPassword: string
       newPassword: string
-    }
-    Patch: {
-      claim: string
-      decision: string
-      note: string
-      quote: string
-      sectionKey: string
-      status: string
     }
     Playbook: {
       /** Format: date-time */
@@ -775,6 +1181,51 @@ export interface components {
       message: string
       pointer: string
     }
+    /** @enum {string} */
+    ReasonCode:
+      | 'SECTION_NOT_FOUND'
+      | 'ACT_MISMATCH'
+      | 'SECTION_NOT_CURRENT'
+      | 'ACT_NOT_IN_PACK'
+      | 'NOT_IN_CANDIDATES'
+      | 'QUOTE_TOO_SHORT'
+      | 'QUOTE_TOO_LONG'
+      | 'QUOTE_NOT_FOUND'
+      | 'QUOTE_BELOW_THRESHOLD'
+      | 'QUOTE_WRONG_LANGUAGE'
+      | 'SUPPORT_PARTIAL'
+      | 'SUPPORT_LOW_CONFIDENCE'
+      | 'SUPPORT_CONTRADICTS'
+      | 'SUPPORT_UNRELATED'
+      | 'VERIFIER_UNAVAILABLE'
+    Redline: {
+      /** @enum {string} */
+      action: 'REPLACE' | 'INSERT' | 'DELETE'
+      citations: components['schemas']['VerifiedCitation'][]
+      /** @description null for INSERT of a missing clause */
+      clauseId: string | null
+      diff: {
+        /** @enum {string} */
+        op: 'EQUAL' | 'INSERT' | 'DELETE'
+        text: string
+      }[]
+      findingIds: string[]
+      id: string
+      /** @enum {string} */
+      language: 'bn' | 'en'
+      originalText: string | null
+      /** @description null only for DELETE */
+      proposedText: string | null
+      /** @description Why the revision resolves the risk and stays reasonable for both sides */
+      rationale: string
+      ruleCheck: {
+        /** @enum {integer} */
+        attempts: 1 | 2
+        /** @enum {boolean} */
+        passed: true
+        ruleIds: string[]
+      }
+    }
     Related: {
       kind: string
       reviewed: boolean
@@ -796,6 +1247,126 @@ export interface components {
       textRank: number
       /** Format: int32 */
       vectorRank: number
+    }
+    /** @description Admin view of a review item; contains no contract text (R-02). */
+    ReviewItem: {
+      /** Format: uuid */
+      analysisId: string | null
+      /** Format: uuid */
+      assigneeId: string | null
+      candidateSectionKeys: string[]
+      claimedCitation: {
+        /** @description Redacted claim; shares no 8-token sequence with the source document */
+        claim: string
+        /** @description true when the agent's claim overlapped the contract and was replaced by the facts-only form */
+        claimReduced: boolean
+        quote: string
+        sectionKey: string
+      } | null
+      clauseType: components['schemas']['ClauseType'] | null
+      corpusChange: {
+        ingestRunId: string | null
+        newSha256: string
+        /** Format: uri */
+        sourceUrl: string
+        storedSha256: string
+      } | null
+      /** Format: date-time */
+      createdAt: string
+      decision: {
+        citation: components['schemas']['VerifiedCitation'] | null
+        /** Format: date-time */
+        decidedAt: string
+        /** Format: uuid */
+        decidedBy: string
+        /** @enum {string} */
+        decision: 'APPROVED_WITH_CITATION' | 'APPROVED_WITHOUT_CITATION' | 'REJECTED'
+        note: string | null
+      } | null
+      /** Format: date-time */
+      expiresAt: string
+      facts: components['schemas']['ClauseFact'][]
+      findingId: string | null
+      /** @enum {string|null} */
+      findingKind: 'CONFLICT' | 'OMISSION' | 'AMBIGUITY' | 'INTERACTION' | 'POLICY_DEVIATION' | null
+      /** Format: uuid */
+      id: string
+      /** @enum {string} */
+      kind: 'FINDING' | 'CORPUS_CHANGE'
+      /** @description VerificationResult reason codes plus RULE_LLM_CONFLICT */
+      reasonCodes: string[]
+      /** @description Redacted paraphrase; shares no 8-token sequence with the source document */
+      riskSummary: string | null
+      /** @enum {string|null} */
+      severity: 'CRITICAL' | 'HIGH' | 'MEDIUM' | 'LOW' | null
+      /** @enum {string|null} */
+      side: 'WORKER' | 'EMPLOYER' | null
+      /** @enum {string} */
+      status: 'OPEN' | 'IN_REVIEW' | 'APPROVED' | 'REJECTED' | 'EXPIRED'
+      verification: components['schemas']['VerificationResult'] | null
+    }
+    ReviewItemPage: {
+      items: components['schemas']['ReviewItem'][]
+      page: number
+      size: number
+      totalItems: number
+    }
+    /** @description One of: claim { status: IN_REVIEW }, release { status: OPEN }, or a decision; a REJECTED or APPROVED_WITHOUT_CITATION decision needs a note. */
+    ReviewItemPatch: {
+      claim?: string
+      /** @enum {string} */
+      decision?: 'APPROVED_WITH_CITATION' | 'APPROVED_WITHOUT_CITATION' | 'REJECTED'
+      note?: string
+      quote?: string
+      sectionKey?: string
+      /** @enum {string} */
+      status?: 'OPEN' | 'IN_REVIEW'
+    }
+    ReviewTicketStatus: {
+      /** Format: date-time */
+      expiresAt: string
+      items: {
+        citation: components['schemas']['VerifiedCitation'] | null
+        /** Format: date-time */
+        decidedAt: string | null
+        /** @enum {string|null} */
+        decision: 'APPROVED_WITH_CITATION' | 'APPROVED_WITHOUT_CITATION' | 'REJECTED' | null
+        findingId: string | null
+        note: string | null
+        /** @enum {string} */
+        status: 'OPEN' | 'IN_REVIEW' | 'APPROVED' | 'REJECTED' | 'EXPIRED'
+        title: string | null
+      }[]
+      /** Format: uuid */
+      ticketId: string
+    }
+    RiskFinding: {
+      citations: components['schemas']['VerifiedCitation'][]
+      clauseIds: string[]
+      clauseType: components['schemas']['ClauseType']
+      confidence: number
+      /** @description Short user-facing rationale in plain language, in outputLanguage; no reasoning dump */
+      explanation: string
+      id: string
+      iloReferences: components['schemas']['VerifiedCitation'][]
+      /** @enum {string} */
+      kind: 'CONFLICT' | 'OMISSION' | 'AMBIGUITY' | 'INTERACTION' | 'POLICY_DEVIATION'
+      nonObvious: boolean
+      /** Format: uuid */
+      playbookRuleId: string | null
+      redlineId: string | null
+      /** Format: uuid */
+      reviewItemId: string | null
+      ruleId: string | null
+      /** @enum {string} */
+      severity: 'CRITICAL' | 'HIGH' | 'MEDIUM' | 'LOW'
+      sideNote: string | null
+      /** @enum {string} */
+      source: 'RULE_ENGINE' | 'LLM_ANALYSIS' | 'PLAYBOOK'
+      title: string
+      /** @enum {string} */
+      verificationStatus: 'VERIFIED' | 'UNCERTAIN' | 'POLICY_ONLY'
+      whyItMatters: string
     }
     /** @default null */
     SearchResults: {
@@ -842,9 +1413,46 @@ export interface components {
       payload: components['schemas']['JsonNode']
       signature: string
     }
+    /** @description Data of the SSE event 'completed' (api.md §4.2). */
+    SseCompletedEvent: {
+      /** Format: uuid */
+      analysisId: string
+      findingCount: number
+      resultUrl: string
+      uncertainCount: number
+    }
     SseEmitter: {
       /** Format: int64 */
       timeout: number | null
+    }
+    /** @description Data of the SSE event 'stage' (api.md §4.2). */
+    SseStageEvent: {
+      /** Format: uuid */
+      analysisId: string
+      /** Format: date-time */
+      at: string
+      message: string
+      progress: number
+      /** @enum {string} */
+      stage:
+        | 'INTAKE'
+        | 'OCR'
+        | 'REDACT'
+        | 'CLASSIFY'
+        | 'RETRIEVE'
+        | 'RULES'
+        | 'RISK'
+        | 'VERIFY'
+        | 'CORRECT'
+        | 'COMPOSE'
+        | 'COMPLETE'
+      /** @enum {string} */
+      state: 'STARTED' | 'COMPLETED' | 'SKIPPED'
+    }
+    /** @description Data of the SSE event 'warning' (api.md §4.2). */
+    SseWarningEvent: {
+      code: string
+      message: string
     }
     /** @default null */
     TokenResponse: {
@@ -859,6 +1467,137 @@ export interface components {
       lang: string
       official: boolean
       text: string
+    }
+    /** @enum {string} */
+    Unit:
+      | 'DAYS'
+      | 'WEEKS'
+      | 'MONTHS'
+      | 'HOURS_PER_DAY'
+      | 'HOURS_PER_WEEK'
+      | 'MULTIPLIER'
+      | 'PERCENT'
+      | 'BDT_PER_MONTH'
+      | 'COUNT'
+      | 'BOOLEAN'
+    /** @description Admin usage and cost over at most 92 days, with the KPI-12 to KPI-14 block (PRD §10). */
+    UsageReport: {
+      days: {
+        analyses: number
+        apiCalls: number
+        compares: number
+        costByModel: {
+          [key: string]: number
+        }
+        costUsd: number
+        /** Format: date */
+        date: string
+        mcpCalls: number
+        memoRenders: number
+      }[]
+      /** Format: date */
+      from: string
+      kpis: {
+        completionRate: {
+          count: number
+          n: number
+          value: number | null
+        }
+        memoDownloadRate: {
+          count: number
+          n: number
+          value: number | null
+        }
+        reviewTurnaroundHoursMedian: {
+          n: number
+          value: number | null
+        }
+        /** @enum {integer} */
+        windowDays: 7
+      }
+      /** Format: uuid */
+      orgId: string | null
+      /** Format: date */
+      to: string
+      totals: {
+        analyses: number
+        apiCalls: number
+        compares: number
+        costByModel: {
+          [key: string]: number
+        }
+        costUsd: number
+        mcpCalls: number
+        memoRenders: number
+      }
+    }
+    VerificationResult: {
+      /** @enum {integer} */
+      attempt: 1 | 2
+      checks: {
+        existence: {
+          /** @enum {string} */
+          outcome: 'PASS' | 'FAIL' | 'SKIPPED' | 'ERROR'
+        }
+        quoteMatch: {
+          /** @enum {string|null} */
+          matchedLanguage: 'bn' | 'en' | null
+          /** @enum {string} */
+          outcome: 'PASS' | 'FAIL' | 'SKIPPED' | 'ERROR'
+          similarity: number | null
+        }
+        support: {
+          confidence: number | null
+          /** @enum {string|null} */
+          independence: 'DIFFERENT_FAMILY' | 'SAME_FAMILY' | 'RULE_PROVENANCE' | 'HUMAN' | null
+          /** @enum {string|null} */
+          label: 'SUPPORTS' | 'PARTIAL' | 'CONTRADICTS' | 'UNRELATED' | null
+          modelId: string | null
+          /** @enum {string} */
+          outcome: 'PASS' | 'FAIL' | 'SKIPPED' | 'ERROR'
+          reason: string | null
+        }
+      }
+      /** Format: uuid */
+      citationId: string
+      corpusRelease: string
+      reasonCodes: components['schemas']['ReasonCode'][]
+      sectionKey: string
+      status: components['schemas']['VerificationStatus']
+      /** Format: date-time */
+      verifiedAt: string
+    }
+    /** @enum {string} */
+    VerificationStatus: 'VERIFIED' | 'UNCERTAIN' | 'REJECTED'
+    VerifiedCitation: {
+      actCode: string
+      actTitleBn: string | null
+      actTitleEn: string | null
+      /** Format: uuid */
+      citationId: string
+      /** Format: date */
+      effectiveFrom: string | null
+      headingBn: string | null
+      headingEn: string | null
+      /** @description Exact text of the authoritative version as stored in the corpus */
+      quote: string
+      /** @enum {string} */
+      quoteLanguage: 'bn' | 'en'
+      sectionKey: string
+      sectionNo: string
+      /** Format: uri */
+      sourceUrl: string
+      translation: {
+        /** @enum {string} */
+        lang: 'bn' | 'en'
+        official: boolean
+        text: string
+      } | null
+      verification: components['schemas']['VerificationResult'] & {
+        /** @enum {string} */
+        status?: 'VERIFIED'
+      }
+      versionLabel: string
     }
   }
   responses: never
@@ -1025,7 +1764,16 @@ export interface operations {
           [name: string]: unknown
         }
         content: {
-          '*/*': Record<string, never>
+          'application/json': components['schemas']['AnalysisResult']
+        }
+      }
+      /** @description 202 response */
+      202: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['AnalysisAccepted']
         }
       }
       /** @description Problem document */
@@ -1056,7 +1804,17 @@ export interface operations {
           [name: string]: unknown
         }
         content: {
-          '*/*': Record<string, never>
+          'application/json':
+            components['schemas']['AnalysisResult'] | components['schemas']['AnalysisStatusView']
+        }
+      }
+      /** @description 202 response */
+      202: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['AnalysisStatusView']
         }
       }
       /** @description Problem document */
@@ -1150,7 +1908,7 @@ export interface operations {
           [name: string]: unknown
         }
         content: {
-          '*/*': Record<string, never>
+          'application/json': components['schemas']['ObligationsExport']
         }
       }
       /** @description Problem document */
@@ -1181,7 +1939,7 @@ export interface operations {
           [name: string]: unknown
         }
         content: {
-          '*/*': Record<string, never>
+          'application/json': components['schemas']['AnalysisTrace']
         }
       }
       /** @description Problem document */
@@ -1438,6 +2196,15 @@ export interface operations {
           '*/*': Record<string, never>
         }
       }
+      /** @description 202 response */
+      202: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['CompareAccepted']
+        }
+      }
       /** @description Problem document */
       default: {
         headers: {
@@ -1466,7 +2233,16 @@ export interface operations {
           [name: string]: unknown
         }
         content: {
-          '*/*': Record<string, never>
+          'application/json': components['schemas']['CompareResult']
+        }
+      }
+      /** @description 202 response */
+      202: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['CompareRunning']
         }
       }
       /** @description Problem document */
@@ -1891,7 +2667,7 @@ export interface operations {
           [name: string]: unknown
         }
         content: {
-          '*/*': Record<string, never>
+          'application/json': components['schemas']['ReviewItemPage']
         }
       }
       /** @description Problem document */
@@ -1922,7 +2698,7 @@ export interface operations {
           [name: string]: unknown
         }
         content: {
-          '*/*': Record<string, never>
+          'application/json': components['schemas']['ReviewItem']
         }
       }
       /** @description Problem document */
@@ -1947,7 +2723,7 @@ export interface operations {
     }
     requestBody: {
       content: {
-        'application/json': components['schemas']['Patch']
+        'application/json': components['schemas']['ReviewItemPatch']
       }
     }
     responses: {
@@ -1957,7 +2733,7 @@ export interface operations {
           [name: string]: unknown
         }
         content: {
-          '*/*': Record<string, never>
+          'application/json': components['schemas']['ReviewItem']
         }
       }
       /** @description Problem document */
@@ -1990,7 +2766,7 @@ export interface operations {
           [name: string]: unknown
         }
         content: {
-          '*/*': Record<string, never>
+          'application/json': components['schemas']['ReviewTicketStatus']
         }
       }
       /** @description Problem document */

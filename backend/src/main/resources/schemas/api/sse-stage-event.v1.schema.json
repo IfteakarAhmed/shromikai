@@ -1,0 +1,16 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:shromikai:schema:sse-stage-event:1",
+  "description": "Data of the SSE event 'stage' (api.md §4.2).",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["analysisId", "stage", "state", "progress", "message", "at"],
+  "properties": {
+    "analysisId": { "type": "string", "format": "uuid" },
+    "stage": { "enum": ["INTAKE", "OCR", "REDACT", "CLASSIFY", "RETRIEVE", "RULES", "RISK", "VERIFY", "CORRECT", "COMPOSE", "COMPLETE"] },
+    "state": { "enum": ["STARTED", "COMPLETED", "SKIPPED"] },
+    "progress": { "type": "integer", "minimum": 0, "maximum": 100 },
+    "message": { "type": "string" },
+    "at": { "type": "string", "format": "date-time" }
+  }
+}

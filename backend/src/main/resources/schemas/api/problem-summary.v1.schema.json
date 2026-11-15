@@ -1,0 +1,19 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:shromikai:schema:problem-summary:1",
+  "description": "The Problem document of a failed analysis (api.md §5.14); validated by shape only here.",
+  "type": "object",
+  "required": ["type", "title", "status", "instance", "code", "traceId"],
+  "properties": {
+    "type": { "type": "string" },
+    "title": { "type": "string" },
+    "status": { "type": "integer" },
+    "detail": { "type": ["string", "null"] },
+    "instance": { "type": "string" },
+    "code": { "type": "string" },
+    "traceId": { "type": "string" },
+    "errors": { "type": "array", "items": { "type": "object" } },
+    "retryAfterSeconds": { "type": ["integer", "null"] },
+    "pages": { "type": "array", "items": { "type": "integer" } }
+  }
+}

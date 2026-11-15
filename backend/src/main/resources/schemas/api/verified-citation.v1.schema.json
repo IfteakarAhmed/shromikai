@@ -1,0 +1,38 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:shromikai:schema:verified-citation:1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["citationId", "sectionKey", "actCode", "actTitleBn", "actTitleEn", "sectionNo", "headingBn", "headingEn", "quote", "quoteLanguage", "translation", "sourceUrl", "versionLabel", "effectiveFrom", "verification"],
+  "properties": {
+    "citationId": { "type": "string", "format": "uuid" },
+    "sectionKey": { "type": "string" },
+    "actCode": { "type": "string" },
+    "actTitleBn": { "type": ["string", "null"] },
+    "actTitleEn": { "type": ["string", "null"] },
+    "sectionNo": { "type": "string" },
+    "headingBn": { "type": ["string", "null"] },
+    "headingEn": { "type": ["string", "null"] },
+    "quote": { "type": "string", "description": "Exact text of the authoritative version as stored in the corpus" },
+    "quoteLanguage": { "enum": ["bn", "en"] },
+    "translation": {
+      "type": ["object", "null"],
+      "additionalProperties": false,
+      "required": ["lang", "text", "official"],
+      "properties": {
+        "lang": { "enum": ["bn", "en"] },
+        "text": { "type": "string" },
+        "official": { "type": "boolean" }
+      }
+    },
+    "sourceUrl": { "type": "string", "format": "uri" },
+    "versionLabel": { "type": "string" },
+    "effectiveFrom": { "type": ["string", "null"], "format": "date" },
+    "verification": {
+      "allOf": [
+        { "$ref": "urn:shromikai:schema:verification-result:1" },
+        { "properties": { "status": { "const": "VERIFIED" } } }
+      ]
+    }
+  }
+}

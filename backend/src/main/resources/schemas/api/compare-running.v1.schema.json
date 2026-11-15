@@ -1,0 +1,11 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:shromikai:schema:compare-running:1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["compareId", "status"],
+  "properties": {
+    "compareId": { "type": "string", "format": "uuid" },
+    "status": { "const": "RUNNING" }
+  }
+}

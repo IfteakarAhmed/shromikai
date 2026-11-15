@@ -1,0 +1,12 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:shromikai:schema:compare-accepted:1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["compareId", "eventsUrl", "resultUrl"],
+  "properties": {
+    "compareId": { "type": "string", "format": "uuid" },
+    "eventsUrl": { "type": "string" },
+    "resultUrl": { "type": "string" }
+  }
+}
