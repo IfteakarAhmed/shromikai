@@ -1,11 +1,13 @@
 package bd.shromikai.law;
 
+import io.swagger.v3.oas.annotations.media.Schema;
 import java.time.Instant;
 import java.time.LocalDate;
 import java.util.List;
 import org.jspecify.annotations.Nullable;
 
 /** {@code Section} of api.md §3: one section version with its authoritative text. */
+@Schema(name = "Section")
 public record Section(
     String sectionKey,
     String actCode,
@@ -52,8 +54,10 @@ public record Section(
   }
 
   /** The text in the act's other language, when the portal published one; never official. */
+  @Schema(name = "Translation")
   public record Translation(String lang, String text, boolean official) {}
 
   /** An edge from this section to another section. */
+  @Schema(name = "Related")
   public record Related(String sectionKey, String kind, boolean reviewed) {}
 }

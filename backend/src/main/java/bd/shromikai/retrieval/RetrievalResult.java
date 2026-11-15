@@ -1,5 +1,6 @@
 package bd.shromikai.retrieval;
 
+import io.swagger.v3.oas.annotations.media.Schema;
 import org.jspecify.annotations.Nullable;
 
 /**
@@ -10,6 +11,7 @@ import org.jspecify.annotations.Nullable;
  * @param textRank 1-based rank in the full-text list, {@code null} if absent from it
  * @param fusedScore reciprocal-rank-fusion score; {@code 0} for {@code GRAPH} and {@code TOPIC_MAP}
  */
+@Schema(name = "RetrievalResult")
 public record RetrievalResult(
     String sectionKey,
     String actCode,

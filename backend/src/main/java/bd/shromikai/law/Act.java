@@ -1,9 +1,11 @@
 package bd.shromikai.law;
 
+import io.swagger.v3.oas.annotations.media.Schema;
 import java.util.List;
 import org.jspecify.annotations.Nullable;
 
 /** {@code Act} of api.md §3: the summary fields plus the current sections. */
+@Schema(name = "Act")
 public record Act(
     String actCode,
     @Nullable String titleBn,
