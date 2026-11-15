@@ -123,16 +123,27 @@ public class AnalysesController {
       @Nullable @Valid Profile profile,
       @Nullable UUID playbookId,
       @Nullable @Size(max = 40) String workerCategory,
-      @Nullable String clientKind) {}
+      @Nullable String clientKind,
+      @Nullable Boolean sample) {}
 
+  /**
+   * JSON body of a text analysis or compare. Exactly one of {@code text} and {@code sample: true}
+   * is sent: the bundled synthetic sample contract is analysed when {@code sample} is true.
+   */
   @Schema(name = "AnalysisTextRequest")
   public record TextRequest(
-      @NotNull @Size(min = 200, max = 60_000) String text,
+      @Nullable @Size(min = 200, max = 60_000) String text,
       @NotNull Side side,
       @NotNull String outputLanguage,
       @Nullable @Valid Profile profile,
       @Nullable UUID playbookId,
-      @Nullable @Size(max = 40) String workerCategory) {}
+      @Nullable @Size(max = 40) String workerCategory,
+      @Nullable Boolean sample) {
+
+    boolean isSample() {
+      return Boolean.TRUE.equals(sample);
+    }
+  }
 
   @Schema(name = "AnalysisAccepted")
   public record Accepted(
@@ -165,9 +176,15 @@ public class AnalysesController {
       HttpServletRequest http,
       boolean compare) {
     AnalysisSubject subject = AnalysisSubjects.of(caller, "API");
+    if (body.isSample() == (body.text() != null)) {
+      throw new ProblemException(
+          ProblemType.VALIDATION_FAILED, "Send either text or sample: true, not both or neither");
+    }
     String bodyHash =
         Hashing.sha256Hex(
-            body.text()
+            body.isSample()
+                + "|"
+                + body.text()
                 + "|"
                 + body.side()
                 + "|"
@@ -188,14 +205,19 @@ public class AnalysesController {
             http,
             compare ? 2 : 1,
             release ->
-                compare
-                    ? runner.compareText(subject, request, body.text(), release)
-                    : runner.startText(subject, request, body.text(), release));
+                body.isSample()
+                    ? (compare
+                        ? runner.compareSample(subject, request, release)
+                        : runner.startSample(subject, request, release))
+                    : (compare
+                        ? runner.compareText(subject, request, body.text(), release)
+                        : runner.startText(subject, request, body.text(), release)));
     remember(subject, idempotencyKey, bodyHash, job);
     if (compare) {
       return accepted(job, "/api/v1/compare/");
     }
-    if (body.text().length() <= SYNC_TEXT_LIMIT && runner.awaitFinished(job)) {
+    // The sample is always streamed: the visitor watches the stages.
+    if (!body.isSample() && body.text().length() <= SYNC_TEXT_LIMIT && runner.awaitFinished(job)) {
       return ResponseEntity.ok(finished(job, subject));
     }
     return accepted(job);
@@ -215,9 +237,13 @@ public class AnalysesController {
         (file != null ? 1 : 0)
             + (images != null && !images.isEmpty() ? 1 : 0)
             + (text != null ? 1 : 0);
-    if (parts != 1) {
+    boolean sample = Boolean.TRUE.equals(options.sample());
+    if (sample ? parts != 0 : parts != 1) {
       throw new ProblemException(
-          ProblemType.VALIDATION_FAILED, "Send exactly one of file, images or text");
+          ProblemType.VALIDATION_FAILED,
+          sample
+              ? "Send no content part with sample: true"
+              : "Send exactly one of file, images or text");
     }
     String clientKind = options.clientKind() == null ? "DESKTOP_WEB" : options.clientKind();
     AnalysisSubject subject = AnalysisSubjects.of(caller, clientKind);
@@ -247,9 +273,11 @@ public class AnalysesController {
             http,
             1,
             release ->
-                text != null
-                    ? runner.startText(subject, request, text, release)
-                    : runner.startFiles(subject, request, files, release));
+                sample
+                    ? runner.startSample(subject, request, release)
+                    : text != null
+                        ? runner.startText(subject, request, text, release)
+                        : runner.startFiles(subject, request, files, release));
     remember(subject, idempotencyKey, bodyHash, job);
     return accepted(job);
   }

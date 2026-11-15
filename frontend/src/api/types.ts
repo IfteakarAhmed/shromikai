@@ -502,6 +502,7 @@ export interface components {
       /** Format: uuid */
       playbookId: string | null
       profile: components['schemas']['AnalysisProfile'] | null
+      sample: boolean | null
       /** @enum {string} */
       side: 'WORKER' | 'EMPLOYER'
       workerCategory: string | null
@@ -658,9 +659,10 @@ export interface components {
       /** Format: uuid */
       playbookId: string | null
       profile: components['schemas']['AnalysisProfile'] | null
+      sample: boolean | null
       /** @enum {string} */
       side: 'WORKER' | 'EMPLOYER'
-      text: string
+      text: string | null
       workerCategory: string | null
     }
     AnalysisTrace: {

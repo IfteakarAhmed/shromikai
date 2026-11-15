@@ -37,6 +37,7 @@ public class AnalysisRunner {
   private final AnalysisService service;
   private final AnalysisPipeline pipeline;
   private final BaselineAgent baselines;
+  private final SampleContract samples;
   private final JobStore jobs;
   private final AnalysisProperties properties;
   private final ExecutorService executor = Executors.newVirtualThreadPerTaskExecutor();
@@ -46,11 +47,13 @@ public class AnalysisRunner {
       AnalysisService service,
       AnalysisPipeline pipeline,
       BaselineAgent baselines,
+      SampleContract samples,
       JobStore jobs,
       AnalysisProperties properties) {
     this.service = service;
     this.pipeline = pipeline;
     this.baselines = baselines;
+    this.samples = samples;
     this.jobs = jobs;
     this.properties = properties;
   }
@@ -64,6 +67,33 @@ public class AnalysisRunner {
   public AnalysisJob startText(
       AnalysisSubject subject, AnalysisRequest request, String text, Runnable onFinished) {
     return start(subject, request, job -> service.executeText(job, text), onFinished);
+  }
+
+  /** Starts an analysis of the bundled synthetic sample contract (api.md §4.1, FR-69). */
+  public AnalysisJob startSample(
+      AnalysisSubject subject, AnalysisRequest request, Runnable onFinished) {
+    return start(
+        subject,
+        request,
+        job -> {
+          job.markSample();
+          service.executeText(job, samples.text());
+        },
+        onFinished);
+  }
+
+  /** Compare mode on the bundled sample. */
+  public AnalysisJob compareSample(
+      AnalysisSubject subject, AnalysisRequest request, Runnable onFinished) {
+    return start(
+        subject,
+        request,
+        job -> {
+          job.markSample();
+          service.executeText(job, samples.text());
+        },
+        onFinished,
+        baselines::run);
   }
 
   /** Starts an analysis of uploaded files. */

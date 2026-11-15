@@ -263,7 +263,7 @@ public class AnalysisResults {
     input.put(
         "legacyFontConverted",
         job.clauses().stream().anyMatch(c -> c.flags().contains(ClauseFlag.LEGACY_FONT_CONVERTED)));
-    input.put("sample", false);
+    input.put("sample", job.sample());
     result.put("documentType", "EMPLOYMENT_CONTRACT");
     result.set("clauses", clauses(job, restore));
     result.set("findings", findings(outcome, restore));

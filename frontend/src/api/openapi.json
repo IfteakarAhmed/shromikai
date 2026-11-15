@@ -129,6 +129,10 @@
             } ],
             "nullable" : true
           },
+          "sample" : {
+            "nullable" : true,
+            "type" : "boolean"
+          },
           "side" : {
             "enum" : [ "WORKER", "EMPLOYER" ],
             "type" : "string"
@@ -140,7 +144,7 @@
             "type" : "string"
           }
         },
-        "required" : [ "clientKind", "outputLanguage", "playbookId", "profile", "side", "workerCategory" ],
+        "required" : [ "clientKind", "outputLanguage", "playbookId", "profile", "sample", "side", "workerCategory" ],
         "type" : "object"
       },
       "AnalysisProfile" : {
@@ -489,6 +493,10 @@
             } ],
             "nullable" : true
           },
+          "sample" : {
+            "nullable" : true,
+            "type" : "boolean"
+          },
           "side" : {
             "enum" : [ "WORKER", "EMPLOYER" ],
             "type" : "string"
@@ -496,6 +504,7 @@
           "text" : {
             "maxLength" : 60000,
             "minLength" : 200,
+            "nullable" : true,
             "type" : "string"
           },
           "workerCategory" : {
@@ -505,7 +514,7 @@
             "type" : "string"
           }
         },
-        "required" : [ "outputLanguage", "playbookId", "profile", "side", "text", "workerCategory" ],
+        "required" : [ "outputLanguage", "playbookId", "profile", "sample", "side", "text", "workerCategory" ],
         "type" : "object"
       },
       "AnalysisTrace" : {

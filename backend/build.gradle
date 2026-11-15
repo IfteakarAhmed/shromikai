@@ -375,6 +375,15 @@ tasks.named('check') {
             tasks.named('checkFixtures')
 }
 
+// The bundled sample contract and its ground-truth entities are copied from the evaluation set, so
+// there is a single copy of the text (FR-69; recorded answers are keyed by it).
+tasks.named('processResources') {
+    from('../eval/contracts/synthetic') {
+        include 'syn-en-02.md', 'syn-en-02.entities.yaml'
+        into 'samples'
+    }
+}
+
 // No heap dump on out-of-memory: a dump would hold contract text (R-02, architecture §10.1).
 tasks.named('bootRun') {
     jvmArgs '-XX:-HeapDumpOnOutOfMemoryError', '-Dfile.encoding=UTF-8'

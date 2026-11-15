@@ -79,6 +79,7 @@ public final class AnalysisJob {
   private volatile String inputKind = "TEXT";
   private volatile int pageCount = 1;
   private volatile @Nullable String language;
+  private volatile boolean sample;
 
   AnalysisJob(UUID id, Instant createdAt, Clock clock) {
     this.id = id;
@@ -167,6 +168,15 @@ public final class AnalysisJob {
 
   public @Nullable String language() {
     return language;
+  }
+
+  /** True when the bundled synthetic sample contract is analysed (api.md §4.1). */
+  public boolean sample() {
+    return sample;
+  }
+
+  void markSample() {
+    this.sample = true;
   }
 
   void intake(String kind, int pages, @Nullable String detectedLanguage) {

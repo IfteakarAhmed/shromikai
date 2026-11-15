@@ -14,7 +14,7 @@ import org.junit.jupiter.api.Test;
 class MultipartIdempotencyHashTest {
 
   private static final AnalysesController.Options OPTIONS =
-      new AnalysesController.Options(Side.WORKER, "en", null, null, null, null);
+      new AnalysesController.Options(Side.WORKER, "en", null, null, null, null, null);
 
   @Test
   void twoFilesOfTheSameLengthButDifferentBytesHashDifferently() {
