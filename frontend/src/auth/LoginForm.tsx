@@ -1,6 +1,7 @@
 import { useState, type SyntheticEvent } from 'react'
 import { useTranslation } from 'react-i18next'
 import { ApiError, NetworkError } from '../api/client'
+import { Button } from '../components/ui/Button'
 import { formatNumber } from '../lib/format'
 
 /** Same shape as the server's check; the server stays the authority. */
@@ -13,7 +14,7 @@ interface Props {
 }
 
 const inputClass =
-  'mt-1 block min-h-11 w-full rounded-md border border-stone-400 bg-white px-3 py-2 text-base focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-700'
+  'mt-1 block min-h-11 w-full rounded-lg border border-input bg-background/60 px-3 py-2 text-base'
 
 export function LoginForm({ onSubmit }: Props) {
   const { t, i18n } = useTranslation()
@@ -100,7 +101,7 @@ export function LoginForm({ onSubmit }: Props) {
           className={inputClass}
         />
         {errors.email !== undefined && (
-          <p id="login-email-error" className="mt-1 text-red-800">
+          <p id="login-email-error" className="mt-1 text-rejected">
             {errors.email}
           </p>
         )}
@@ -122,23 +123,19 @@ export function LoginForm({ onSubmit }: Props) {
           className={inputClass}
         />
         {errors.password !== undefined && (
-          <p id="login-password-error" className="mt-1 text-red-800">
+          <p id="login-password-error" className="mt-1 text-rejected">
             {errors.password}
           </p>
         )}
       </div>
       {failure !== null && (
-        <p role="alert" className="text-red-800">
+        <p role="alert" className="text-rejected">
           {failure}
         </p>
       )}
-      <button
-        type="submit"
-        disabled={busy}
-        className="min-h-11 w-full rounded-md bg-emerald-800 px-4 py-2 font-medium text-white hover:bg-emerald-900 disabled:opacity-60 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-700"
-      >
+      <Button type="submit" size="lg" busy={busy} className="w-full">
         {busy ? t('login.submitting') : t('login.submit')}
-      </button>
+      </Button>
     </form>
   )
 }

@@ -39,7 +39,7 @@ function isProblem(value: unknown): value is Problem {
 
 interface RequestOptions {
   method?: string
-  body?: string
+  body?: string | FormData
   headers?: Record<string, string>
 }
 
@@ -52,7 +52,8 @@ async function request<T>(path: string, init: RequestOptions, language: string):
       headers: {
         Accept: 'application/json',
         'Accept-Language': language,
-        ...(init.body === undefined ? {} : { 'Content-Type': 'application/json' }),
+        // A string body is JSON; a FormData body sets its own multipart boundary.
+        ...(typeof init.body === 'string' ? { 'Content-Type': 'application/json' } : {}),
         ...init.headers,
       },
     })
@@ -95,6 +96,66 @@ export function apiPost<T>(
     },
     language,
   )
+}
+
+/** A multipart POST (file upload); the browser adds the boundary to the content type. */
+export function apiPostForm<T>(
+  path: string,
+  language: string,
+  form: FormData,
+  accessToken?: string,
+): Promise<T> {
+  return request<T>(path, { method: 'POST', body: form, ...bearer(accessToken) }, language)
+}
+
+/** PATCH, PUT or DELETE with an optional JSON body. */
+export function apiSend<T>(
+  method: 'PATCH' | 'PUT' | 'DELETE',
+  path: string,
+  language: string,
+  body?: unknown,
+  accessToken?: string,
+): Promise<T> {
+  return request<T>(
+    path,
+    { method, body: body === undefined ? undefined : JSON.stringify(body), ...bearer(accessToken) },
+    language,
+  )
+}
+
+/** The raw response of an authorised request, for downloads such as the memo PDF. */
+export async function apiFetchBlob(
+  path: string,
+  language: string,
+  body: unknown,
+  accessToken?: string,
+): Promise<{ blob: Blob; contentType: string }> {
+  let response: Response
+  try {
+    response = await fetch(`${BASE}${path}`, {
+      method: 'POST',
+      credentials: 'same-origin',
+      headers: {
+        'Accept-Language': language,
+        'Content-Type': 'application/json',
+        ...(accessToken === undefined ? {} : { Authorization: `Bearer ${accessToken}` }),
+      },
+      body: JSON.stringify(body),
+    })
+  } catch {
+    throw new NetworkError()
+  }
+  if (!response.ok) {
+    let problem: Problem | null
+    try {
+      const parsed: unknown = await response.json()
+      problem = isProblem(parsed) ? parsed : null
+    } catch {
+      problem = null
+    }
+    throw new ApiError(response.status, problem)
+  }
+  return { blob: await response.blob(), contentType: response.headers.get('Content-Type') ?? '' }
 }
 
 function bearer(accessToken: string | undefined): RequestOptions {

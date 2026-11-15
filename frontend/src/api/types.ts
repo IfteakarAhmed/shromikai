@@ -456,34 +456,36 @@ export interface paths {
 export type webhooks = Record<string, never>
 export interface components {
   schemas: {
+    /** @default null */
     Act: {
       actCode: string
       authoritativeLang: string
       jurisdiction: string
-      ratificationStatus: string
+      ratificationStatus: string | null
       /** Format: int64 */
       sectionCount: number
       sections: components['schemas']['SectionRef'][]
       sourceUrl: string
       status: string
-      titleBn: string
+      titleBn: string | null
       titleEn: string
       /** Format: int32 */
-      year: number
+      year: number | null
     }
+    /** @default null */
     ActSummary: {
       actCode: string
       authoritativeLang: string
       jurisdiction: string
-      ratificationStatus: string
+      ratificationStatus: string | null
       /** Format: int64 */
       sectionCount: number
       sourceUrl: string
       status: string
-      titleBn: string
+      titleBn: string | null
       titleEn: string
       /** Format: int32 */
-      year: number
+      year: number | null
     }
     AnalysisAccepted: {
       /** Format: uuid */
@@ -1234,17 +1236,19 @@ export interface components {
         ruleIds: string[]
       }
     }
+    /** @default null */
     Related: {
       kind: string
       reviewed: boolean
       sectionKey: string
     }
+    /** @default null */
     RetrievalResult: {
       actCode: string
       /** Format: double */
       fusedScore: number
-      headingBn: string
-      headingEn: string
+      headingBn: string | null
+      headingEn: string | null
       /** @enum {string} */
       origin: 'SEARCH' | 'GRAPH' | 'TOPIC_MAP'
       sectionKey: string
@@ -1252,9 +1256,9 @@ export interface components {
       snippet: string
       sourceUrl: string
       /** Format: int32 */
-      textRank: number
+      textRank: number | null
       /** Format: int32 */
-      vectorRank: number
+      vectorRank: number | null
     }
     /** @description Admin view of a review item; contains no contract text (R-02). */
     ReviewItem: {
@@ -1382,35 +1386,37 @@ export interface components {
       query: string
       results: components['schemas']['RetrievalResult'][]
     }
+    /** @default null */
     Section: {
       actCode: string
-      actTitleBn: string
+      actTitleBn: string | null
       actTitleEn: string
       authoritativeLang: string
       authoritativeText: string
-      contentHash: string
-      corpusRelease: string
+      contentHash: string | null
+      corpusRelease: string | null
       /** Format: date */
-      effectiveFrom: string
+      effectiveFrom: string | null
       /** Format: date-time */
       fetchedAt: string
-      headingBn: string
-      headingEn: string
+      headingBn: string | null
+      headingEn: string | null
       isCurrent: boolean
       related: components['schemas']['Related'][]
       sectionKey: string
       sectionNo: string
-      sectionNoOriginal: string
+      sectionNoOriginal: string | null
       sourceUrl: string
-      translation: components['schemas']['Translation']
+      translation: components['schemas']['Translation'] | null
       versionLabel: string
     }
+    /** @default null */
     SectionRef: {
-      headingBn: string
-      headingEn: string
+      headingBn: string | null
+      headingEn: string | null
       sectionKey: string
       sectionNo: string
-      sectionNoOriginal: string
+      sectionNoOriginal: string | null
     }
     /** @default null */
     SignedEnvelope: {
@@ -1471,6 +1477,7 @@ export interface components {
       tokenType: string
       user: components['schemas']['Me'] | null
     }
+    /** @default null */
     Translation: {
       lang: string
       official: boolean

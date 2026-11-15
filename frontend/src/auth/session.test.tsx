@@ -14,21 +14,65 @@ async function signIn(email = 'worker@example.test') {
 }
 
 describe('session', () => {
-  it('FR-06 redirects a visitor without a session from /app to the login page', async () => {
-    renderApp(<App />, '/app')
+  it('FR-06 redirects a visitor without a session from /admin to the login page', async () => {
+    renderApp(<App />, '/admin')
 
     expect(await screen.findByRole('heading', { name: 'সাইন ইন' })).toBeInTheDocument()
-    expect(screen.queryByText('বিশ্লেষণের পাতা শীঘ্রই আসছে।')).not.toBeInTheDocument()
+    expect(screen.queryByText('প্রশাসনের পাতা শীঘ্রই আসছে।')).not.toBeInTheDocument()
   })
 
   it('FR-05 logs in and returns to the page that was asked for', async () => {
-    server.use(http.post('/api/v1/auth/login', () => HttpResponse.json(tokenResponse('WORKER'))))
+    server.use(http.post('/api/v1/auth/login', () => HttpResponse.json(tokenResponse('ADMIN'))))
+    renderApp(<App />, '/admin')
+
+    await signIn('admin@example.test')
+
+    expect(await screen.findByText('প্রশাসনের পাতা শীঘ্রই আসছে।')).toBeInTheDocument()
+    expect(screen.getByText(/admin@example.test হিসেবে ঢুকেছেন/)).toBeInTheDocument()
+  })
+
+  it('FR-09 opens /app to a visitor without a session by starting a guest session', async () => {
+    let device: unknown = null
+    server.use(
+      http.post('/api/v1/auth/guest', async ({ request }) => {
+        device = ((await request.json()) as { deviceToken?: string }).deviceToken
+        return HttpResponse.json({
+          accessToken: 'guest-token',
+          expiresIn: 7200,
+          tokenType: 'Bearer',
+          guest: true,
+          user: null,
+        })
+      }),
+    )
+
     renderApp(<App />, '/app')
 
-    await signIn()
+    expect(await screen.findByRole('heading', { name: 'আপনার চুক্তি দিন' })).toBeInTheDocument()
+    expect(device).toMatch(/^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/)
+    expect(window.localStorage.getItem('shromikai.device')).toBe(device)
+  })
 
-    expect(await screen.findByText('বিশ্লেষণের পাতা শীঘ্রই আসছে।')).toBeInTheDocument()
-    expect(screen.getByText(/worker@example.test হিসেবে ঢুকেছেন/)).toBeInTheDocument()
+  it('FR-09 a guest cannot open the admin console', async () => {
+    server.use(
+      http.post('/api/v1/auth/guest', () =>
+        HttpResponse.json({
+          accessToken: 'guest-token',
+          expiresIn: 7200,
+          tokenType: 'Bearer',
+          guest: true,
+          user: null,
+        }),
+      ),
+    )
+    renderApp(<App />, '/app')
+    await screen.findByRole('heading', { name: 'আপনার চুক্তি দিন' })
+
+    // Same session, a different route: a guest is not an admin.
+    const { unmount } = renderApp(<App />, '/admin')
+
+    expect(await screen.findByRole('heading', { name: 'সাইন ইন' })).toBeInTheDocument()
+    unmount()
   })
 
   it('FR-05 restores the session at start through the refresh cookie', async () => {
@@ -36,7 +80,7 @@ describe('session', () => {
 
     renderApp(<App />, '/app')
 
-    expect(await screen.findByText('বিশ্লেষণের পাতা শীঘ্রই আসছে।')).toBeInTheDocument()
+    expect(await screen.findByRole('heading', { name: 'আপনার চুক্তি দিন' })).toBeInTheDocument()
     expect(screen.getByText(/এইচআর/)).toBeInTheDocument()
   })
 
@@ -51,9 +95,9 @@ describe('session', () => {
 
     renderApp(<App />, '/demo-user')
 
-    expect(await screen.findByText('বিশ্লেষণের পাতা শীঘ্রই আসছে।')).toBeInTheDocument()
+    expect(await screen.findByRole('heading', { name: 'আপনার চুক্তি দিন' })).toBeInTheDocument()
     await delay(250)
-    expect(screen.getByText('বিশ্লেষণের পাতা শীঘ্রই আসছে।')).toBeInTheDocument()
+    expect(screen.getByRole('heading', { name: 'আপনার চুক্তি দিন' })).toBeInTheDocument()
   })
 
   it('FR-05 shows the login error from the server and stays on the form', async () => {
@@ -93,7 +137,7 @@ describe('session', () => {
 
     renderApp(<App />, '/app')
 
-    await screen.findByText('বিশ্লেষণের পাতা শীঘ্রই আসছে।')
+    await screen.findByRole('heading', { name: 'আপনার চুক্তি দিন' })
     expect(screen.queryByRole('link', { name: 'প্রশাসন' })).not.toBeInTheDocument()
   })
 
@@ -109,7 +153,7 @@ describe('session', () => {
       }),
     )
     renderApp(<App />, '/app')
-    await screen.findByText('বিশ্লেষণের পাতা শীঘ্রই আসছে।')
+    await screen.findByRole('heading', { name: 'আপনার চুক্তি দিন' })
 
     await userEvent.click(screen.getByRole('button', { name: 'সাইন আউট' }))
 
@@ -136,7 +180,7 @@ describe('session', () => {
       }),
     )
     renderApp(<App />, '/app')
-    await screen.findByText('বিশ্লেষণের পাতা শীঘ্রই আসছে।')
+    await screen.findByRole('heading', { name: 'আপনার চুক্তি দিন' })
 
     await userEvent.click(screen.getByRole('button', { name: 'সাইন আউট' }))
 
@@ -155,7 +199,7 @@ describe('session', () => {
     renderApp(<App />, '/login')
 
     await signIn()
-    await screen.findByText('বিশ্লেষণের পাতা শীঘ্রই আসছে।')
+    await screen.findByRole('heading', { name: 'আপনার চুক্তি দিন' })
 
     expect(urls.length).toBeGreaterThan(0)
     for (const url of urls) {

@@ -2,6 +2,7 @@ import { useCallback, useEffect, useMemo, useRef, useState, type ReactNode } fro
 import { useTranslation } from 'react-i18next'
 import * as authApi from '../api/auth'
 import { ApiError } from '../api/client'
+import { deviceToken } from '../lib/storage'
 import { AuthContext, type AuthApi, type Session } from './authContext'
 
 /** Renew the access token this long before it expires. */
@@ -18,19 +19,35 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const language = i18n.language === 'en' ? 'en' : 'bn'
   const [session, setSession] = useState<Session>({ status: 'loading' })
   const languageRef = useRef(language)
+  const tokenRef = useRef<string | null>(null)
   useEffect(() => {
     languageRef.current = language
   }, [language])
+  useEffect(() => {
+    tokenRef.current =
+      session.status === 'authenticated' || session.status === 'guest' ? session.accessToken : null
+  }, [session])
 
   const end = useCallback(() => {
     setSession({ status: 'anonymous' })
   }, [])
 
-  /** Starts a session from a token response, or ends it if the response has no user. */
+  /**
+   * Starts a session from a token response: a user, or a guest when the response has no user and
+   * says so. Anything else ends the session.
+   */
   const start = useCallback(
     (tokens: authApi.TokenResponse) => {
       if (tokens.user === null) {
-        end()
+        if (tokens.guest) {
+          setSession({
+            status: 'guest',
+            accessToken: tokens.accessToken,
+            expiresInSeconds: tokens.expiresIn,
+          })
+        } else {
+          end()
+        }
         return null
       }
       setSession({
@@ -78,14 +95,19 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     }
   }, [])
 
-  // Renew shortly before the access token expires; a failed renewal ends the session.
+  // Renew shortly before the access token expires; a failed renewal ends the session. A guest
+  // renews with its device token, a user with the refresh cookie.
   useEffect(() => {
-    if (session.status !== 'authenticated') {
+    if (session.status !== 'authenticated' && session.status !== 'guest') {
       return undefined
     }
+    const isGuest = session.status === 'guest'
     const delay = Math.max(MIN_DELAY_MS, session.expiresInSeconds * 1000 - REFRESH_MARGIN_MS)
     const timer = setTimeout(() => {
-      authApi.refresh(languageRef.current).then(start, end)
+      const next = isGuest
+        ? authApi.guest(deviceToken(), languageRef.current)
+        : authApi.refresh(languageRef.current)
+      next.then(start, end)
     }, delay)
     return () => {
       clearTimeout(timer)
@@ -105,6 +127,25 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       login: async (email, password) =>
         requireUser(await authApi.login(email, password, languageRef.current)),
       demoLogin: async (role) => requireUser(await authApi.demoLogin(role, languageRef.current)),
+      guestLogin: async () => {
+        const tokens = await authApi.guest(deviceToken(), languageRef.current)
+        start(tokens)
+      },
+      getToken: () => tokenRef.current,
+      renewToken: async () => {
+        try {
+          const tokens =
+            session.status === 'guest'
+              ? await authApi.guest(deviceToken(), languageRef.current)
+              : await authApi.refresh(languageRef.current)
+          start(tokens)
+          tokenRef.current = tokens.accessToken
+          return tokens.accessToken
+        } catch {
+          end()
+          return null
+        }
+      },
       logout: async () => {
         const token = session.status === 'authenticated' ? session.accessToken : null
         try {

@@ -14,6 +14,11 @@ export function demoLogin(role: DemoRole, language: string): Promise<TokenRespon
   return apiPost<TokenResponse>(`/api/v1/auth/demo/${role}`, language)
 }
 
+/** A guest session for this browser: the device token is a random UUID the browser keeps (FR-09). */
+export function guest(deviceToken: string, language: string): Promise<TokenResponse> {
+  return apiPost<TokenResponse>('/api/v1/auth/guest', language, { deviceToken })
+}
+
 export function logout(accessToken: string, language: string): Promise<undefined> {
   return apiPost<undefined>('/api/v1/auth/logout', language, undefined, accessToken)
 }
