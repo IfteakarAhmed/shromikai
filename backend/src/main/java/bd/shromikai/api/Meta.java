@@ -6,14 +6,24 @@ import java.time.Instant;
 import org.jspecify.annotations.Nullable;
 
 /**
- * Response of {@code GET /api/v1/meta} (api.md §3, schema {@code Meta}). {@code audit} stays {@code
- * null} until P9.
+ * Response of {@code GET /api/v1/meta} (api.md §3, schema {@code Meta}). {@code recordedDemo} is
+ * set only when the models are recorded answers (profile {@code fake-models}); the UI then says so
+ * and offers only what was recorded (R-12).
  */
 @Schema(name = "Meta")
 public record Meta(
-    String name, String version, Models models, Corpus corpus, @Nullable Audit audit) {
+    String name,
+    String version,
+    Models models,
+    Corpus corpus,
+    @Nullable Audit audit,
+    @Nullable RecordedDemo recordedDemo) {
 
-  /** Audit counters for the live docs hub (P9); {@code latestEval} is null until P10. */
+  /** The one request the recorded answers cover: the sample contract, this side and language. */
+  @Schema(name = "MetaRecordedDemo")
+  public record RecordedDemo(String side, String outputLanguage) {}
+
+  /** Audit counters for the live docs hub; {@code latestEval} is null until P10. */
   @Schema(name = "MetaAudit")
   public record Audit(
       long privacyBlocksLast7Days, long openReviewItems, @Nullable LatestEval latestEval) {}

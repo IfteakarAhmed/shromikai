@@ -384,9 +384,19 @@ tasks.named('processResources') {
     }
 }
 
+// The recorded model answers of the fake-models profile (synthetic contract, recorded once; R-12)
+// live with the tests. For a demo run they are put on the classpath of bootRun only, not in the
+// jar: this copy leaves out the hand-made xx-echo fixture.
+tasks.register('prepareDemoFixtures', Sync) {
+    from('src/test/resources/fixtures/llm') { exclude 'xx-echo/**' }
+    into layout.buildDirectory.dir('demo-fixtures/fixtures/llm')
+}
+
 // No heap dump on out-of-memory: a dump would hold contract text (R-02, architecture §10.1).
 tasks.named('bootRun') {
     jvmArgs '-XX:-HeapDumpOnOutOfMemoryError', '-Dfile.encoding=UTF-8'
+    dependsOn tasks.named('prepareDemoFixtures')
+    classpath = classpath + files(layout.buildDirectory.dir('demo-fixtures'))
 }
 
 tasks.named('bootJar') {

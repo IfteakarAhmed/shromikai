@@ -116,6 +116,13 @@ public class ReviewDesk {
     return out;
   }
 
+  /** Items waiting for a human: open or claimed and not yet decided (the counter of /meta). */
+  public long openCount() {
+    return jdbc.sql("select count(*) from review_item where status in ('OPEN', 'IN_REVIEW')")
+        .query(Long.class)
+        .single();
+  }
+
   public Optional<ObjectNode> get(UUID id) {
     return jdbc.sql("select * from review_item where id = :id")
         .param("id", id)

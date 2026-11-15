@@ -51,4 +51,14 @@ public class AuditService {
         .param("detail", detail.toString())
         .update();
   }
+
+  /** How many events of an action were recorded since a moment (the audit counters of /meta). */
+  public long countSince(AuditAction action, java.time.Instant since) {
+    return jdbc.sql(
+            "select count(*) from audit_event where action = :action and occurred_at >= :since")
+        .param("action", action.name())
+        .param("since", java.sql.Timestamp.from(since))
+        .query(Long.class)
+        .single();
+  }
 }

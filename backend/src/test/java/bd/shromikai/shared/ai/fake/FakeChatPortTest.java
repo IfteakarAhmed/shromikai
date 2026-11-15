@@ -149,4 +149,31 @@ class FakeChatPortTest {
   void shouldNameProviderFake() {
     assertThat(fake.provider()).isEqualTo("fake");
   }
+
+  @Test
+  void shouldAnswerWithTheNamedModel_whenAnInlineAnswerNamesOne() {
+    fake.respondWith(
+        "xx-echo", "scripted-demo-standin", request -> mapper.createObjectNode().put("echo", "x"));
+
+    ChatResponse response = fake.call(echo("anything"));
+
+    assertThat(response.modelId()).isEqualTo("scripted-demo-standin");
+    assertThat(response.recorded()).isTrue();
+  }
+
+  @Test
+  void shouldRaiseNotRecordedProblem_whenAskedAndNoRecordingMatches() {
+    fake.unrecordedAsProblem(true);
+    fake.useCase("no-such-case");
+
+    assertThatThrownBy(() -> fake.call(echo("hello")))
+        .isInstanceOfSatisfying(
+            bd.shromikai.shared.problem.ProblemException.class,
+            problem ->
+                assertThat(problem.type())
+                    .isEqualTo(bd.shromikai.shared.problem.ProblemType.NOT_RECORDED));
+    fake.useCase("default");
+    assertThatThrownBy(() -> fake.call(echo("a different input")))
+        .isInstanceOf(bd.shromikai.shared.problem.ProblemException.class);
+  }
 }

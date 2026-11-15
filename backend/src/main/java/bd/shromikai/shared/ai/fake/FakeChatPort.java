@@ -8,6 +8,8 @@ import bd.shromikai.shared.ai.ModelTimeoutException;
 import bd.shromikai.shared.ai.TokenUsage;
 import bd.shromikai.shared.ai.UpstreamUnavailableException;
 import bd.shromikai.shared.json.JsonSchemas;
+import bd.shromikai.shared.problem.ProblemException;
+import bd.shromikai.shared.problem.ProblemType;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.io.IOException;
@@ -40,6 +42,8 @@ public final class FakeChatPort implements ChatPort {
 
   private volatile String currentCase;
   private final Map<String, Function<ChatRequest, JsonNode>> inline = new ConcurrentHashMap<>();
+  private final Map<String, String> inlineModels = new ConcurrentHashMap<>();
+  private volatile boolean unrecordedAsProblem;
   private final Map<String, FailureMode> failures = new ConcurrentHashMap<>();
   private final Set<String> invalidOnceServed = ConcurrentHashMap.newKeySet();
   private final List<RecordedCall> calls = new CopyOnWriteArrayList<>();
@@ -76,6 +80,23 @@ public final class FakeChatPort implements ChatPort {
   /** Answers a prompt with a fixed response or a function of the request instead of a fixture. */
   public void respondWith(String promptId, Function<ChatRequest, JsonNode> response) {
     inline.put(promptId, response);
+    inlineModels.remove(promptId);
+  }
+
+  /** Like {@link #respondWith(String, Function)}, but the answer names the model that gave it. */
+  public void respondWith(
+      String promptId, String modelId, Function<ChatRequest, JsonNode> response) {
+    inline.put(promptId, response);
+    inlineModels.put(promptId, modelId);
+  }
+
+  /**
+   * When true, a request that has no matching recording is answered with the {@code not-recorded}
+   * problem instead of an {@link IllegalStateException}: a demo runs only what was recorded, and
+   * says so (api.md §7).
+   */
+  public void unrecordedAsProblem(boolean enabled) {
+    this.unrecordedAsProblem = enabled;
   }
 
   public void failWith(String promptId, FailureMode mode) {
@@ -89,6 +110,7 @@ public final class FakeChatPort implements ChatPort {
   /** Clears inline responses, failure modes, recorded calls and the selected case. */
   public void reset() {
     inline.clear();
+    inlineModels.clear();
     failures.clear();
     invalidOnceServed.clear();
     calls.clear();
@@ -108,7 +130,11 @@ public final class FakeChatPort implements ChatPort {
     }
     Function<ChatRequest, JsonNode> response = inline.get(request.promptId());
     if (response != null) {
-      return new ChatResponse(response.apply(request), request.modelId(), TokenUsage.NONE, true);
+      return new ChatResponse(
+          response.apply(request),
+          inlineModels.getOrDefault(request.promptId(), request.modelId()),
+          TokenUsage.NONE,
+          true);
     }
     return replay(request, caseId);
   }
@@ -143,6 +169,9 @@ public final class FakeChatPort implements ChatPort {
     }
     String expectedSha = fixture.path("requestSha256").asText();
     if (!expectedSha.equals(request.renderedSha256())) {
+      if (unrecordedAsProblem) {
+        throw new ProblemException(ProblemType.NOT_RECORDED);
+      }
       throw new IllegalStateException(
           "Fixture "
               + location
@@ -164,6 +193,9 @@ public final class FakeChatPort implements ChatPort {
   private JsonNode read(String location, ChatRequest request, String caseId) {
     InputStream stream = classLoader.getResourceAsStream(location);
     if (stream == null) {
+      if (unrecordedAsProblem) {
+        throw new ProblemException(ProblemType.NOT_RECORDED);
+      }
       throw new MissingFixtureException(request.promptId(), request.promptVersion(), caseId);
     }
     try (stream) {

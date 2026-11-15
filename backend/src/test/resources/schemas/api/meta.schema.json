@@ -1,9 +1,9 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "urn:shromikai:schema:meta:1",
-  "description": "Meta (docs/spec/api.md §3, E-01). audit is null until P9.",
+  "description": "Meta (docs/spec/api.md §3, E-01).",
   "type": "object",
-  "required": ["name", "version", "models", "corpus", "audit"],
+  "required": ["name", "version", "models", "corpus", "audit", "recordedDemo"],
   "additionalProperties": false,
   "properties": {
     "name": { "const": "ShromikAI" },
@@ -34,6 +34,20 @@
         "embeddedSections": { "type": "integer", "minimum": 0 },
         "lastRefreshAt": { "type": ["string", "null"], "format": "date-time" }
       }
+    },
+    "recordedDemo": {
+      "oneOf": [
+        { "type": "null" },
+        {
+          "type": "object",
+          "required": ["side", "outputLanguage"],
+          "additionalProperties": false,
+          "properties": {
+            "side": { "enum": ["WORKER", "EMPLOYER"] },
+            "outputLanguage": { "enum": ["bn", "en"] }
+          }
+        }
+      ]
     },
     "audit": {
       "oneOf": [

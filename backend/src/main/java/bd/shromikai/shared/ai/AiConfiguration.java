@@ -57,6 +57,22 @@ public class AiConfiguration {
     }
   }
 
+  /**
+   * Retrieval of the {@code fake-models} profile may use the real local embedding model ({@code
+   * local-embeddings}): embeddings run on the machine, cost nothing and make the recorded
+   * risk-analysis requests (which carry the retrieved sections) replay exactly.
+   */
+  @Configuration(proxyBeanMethods = false)
+  @Profile("fake-models & local-embeddings")
+  static class LocalEmbeddings {
+
+    @Bean
+    OllamaEmbeddingAdapter ollamaEmbeddingAdapter(
+        EmbeddingModel embeddingModel, ShromikaiProperties properties) {
+      return new OllamaEmbeddingAdapter(embeddingModel, properties.models().embedding());
+    }
+  }
+
   @Configuration(proxyBeanMethods = false)
   @Profile({"test", "fake-models"})
   static class FakeModels {
@@ -72,6 +88,7 @@ public class AiConfiguration {
     }
 
     @Bean
+    @Profile("!local-embeddings")
     FakeEmbeddingPort fakeEmbeddingPort(ShromikaiProperties properties) {
       return new FakeEmbeddingPort(properties.models().embedding());
     }

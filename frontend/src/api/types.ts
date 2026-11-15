@@ -999,6 +999,7 @@ export interface components {
       corpus: components['schemas']['MetaCorpus']
       models: components['schemas']['MetaModels']
       name: string
+      recordedDemo: components['schemas']['MetaRecordedDemo'] | null
       version: string
     }
     /** @default null */
@@ -1044,6 +1045,11 @@ export interface components {
       reasoning: string
       verifier: string | null
       verifierFallback: string
+    }
+    /** @default null */
+    MetaRecordedDemo: {
+      outputLanguage: string
+      side: string
     }
     ObligationItem: {
       citations: components['schemas']['VerifiedCitation'][]

@@ -299,6 +299,18 @@ spring:
       embedding: none
 
 ---
+# Retrieval of the fake-models profile with the real local embedding model (Ollama, no cloud call):
+# the recorded risk-analysis requests carry the retrieved sections, so they replay only when the
+# retrieval is the real one.
+spring:
+  config:
+    activate:
+      on-profile: local-embeddings
+  ai:
+    model:
+      embedding: ollama
+
+---
 # Judging deployment: real models, seeded demo accounts (P2). Needs DEMO_PASSWORD (12+ characters).
 spring:
   config:

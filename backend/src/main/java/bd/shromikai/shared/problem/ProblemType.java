@@ -56,6 +56,11 @@ public enum ProblemType {
       "Citation failed existence or quote check"),
   INVALID_TRANSITION(
       "invalid-transition", 422, "অবস্থা পরিবর্তন অনুমোদিত নয়", "Status change not allowed"),
+  NOT_RECORDED(
+      "not-recorded",
+      422,
+      "এই ডেমোতে এই অনুরোধের রেকর্ড করা উত্তর নেই",
+      "No recorded answer exists for this request (demo mode)"),
   PLAYBOOK_LIMIT_REACHED(
       "playbook-limit-reached", 422, "প্লেবুকের সীমা পূর্ণ", "Playbook limit reached"),
   ACCOUNT_LOCKED(

@@ -1363,11 +1363,17 @@
           "name" : {
             "type" : "string"
           },
+          "recordedDemo" : {
+            "allOf" : [ {
+              "$ref" : "#/components/schemas/MetaRecordedDemo"
+            } ],
+            "nullable" : true
+          },
           "version" : {
             "type" : "string"
           }
         },
-        "required" : [ "audit", "corpus", "models", "name", "version" ],
+        "required" : [ "audit", "corpus", "models", "name", "recordedDemo", "version" ],
         "type" : "object"
       },
       "MetaAudit" : {
@@ -1477,6 +1483,19 @@
           }
         },
         "required" : [ "embedding", "fast", "judge", "localPii", "reasoning", "verifier", "verifierFallback" ],
+        "type" : "object"
+      },
+      "MetaRecordedDemo" : {
+        "default" : null,
+        "properties" : {
+          "outputLanguage" : {
+            "type" : "string"
+          },
+          "side" : {
+            "type" : "string"
+          }
+        },
+        "required" : [ "outputLanguage", "side" ],
         "type" : "object"
       },
       "ObligationItem" : {

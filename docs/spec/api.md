@@ -138,7 +138,7 @@ Request and response objects without a full schema in §5:
 
 | Object | Fields |
 | --- | --- |
-| `Meta` | `name`, `version` (build), `models` `{ reasoning, fast, verifier, verifierFallback, judge, localPii, embedding }` (`verifier` and `judge` are `null` when `GEMINI_MODEL` is unset), `corpus` `{ release, acts, sections, currentSections, embeddedSections, lastRefreshAt }`, `audit` `{ privacyBlocksLast7Days, openReviewItems, latestEval: { reportDate, cases, citationPrecision, fabricatedCitationsShown, riskRecall } \| null }` |
+| `Meta` | `name`, `version` (build), `models` `{ reasoning, fast, verifier, verifierFallback, judge, localPii, embedding }` (`verifier` and `judge` are `null` when `GEMINI_MODEL` is unset), `corpus` `{ release, acts, sections, currentSections, embeddedSections, lastRefreshAt }`, `audit` `{ privacyBlocksLast7Days, openReviewItems, latestEval: { reportDate, cases, citationPrecision, fabricatedCitationsShown, riskRecall } \| null }` (`latestEval` is `null` until an evaluation report exists, P10), `recordedDemo` (`{ side, outputLanguage }` \| `null`; set only in the `fake-models` profile, where the models are recorded answers and only the bundled sample on that side and language can be analysed; any other request is answered `422` `not-recorded`) |
 | `TokenResponse` | `accessToken`, `expiresIn` (seconds), `tokenType` (`Bearer`), `guest` (boolean), `user` (`Me` \| `null` for guests) |
 | `Me` | `userId`, `email`, `role` (`Role`), `org` `{ id, name, kind, plan }` \| `null`, `locale`, `profile` (`Profile`), `demo` (boolean) For a guest, `userId`, `email`, `org` and `profile` are `null`, `role` is `WORKER` and `locale` is `bn`. `profile` is also `null` for an account that has not set one (FR-56, P7) |
 | `LoginRequest` | `email` (valid address, ≤ 254), `password` (1..128) |
@@ -997,6 +997,7 @@ All errors use `application/problem+json` per RFC 9457 with the `Problem` schema
 | `not-an-employment-contract` | 422 | This does not look like an employment contract | এটি চাকরির চুক্তি বলে মনে হচ্ছে না | FR-33 |
 | `citation-not-verifiable` | 422 | Citation failed existence or quote check | উদ্ধৃতি যাচাই করা যায়নি | Review decision |
 | `invalid-transition` | 422 | Status change not allowed | অবস্থা পরিবর্তন অনুমোদিত নয় | Review item |
+| `not-recorded` | 422 | No recorded answer exists for this request (demo mode) | এই ডেমোতে এই অনুরোধের রেকর্ড করা উত্তর নেই | Profile `fake-models` only: the request is not the recorded sample (`Meta.recordedDemo`) |
 | `playbook-limit-reached` | 422 | Playbook limit reached | প্লেবুকের সীমা পূর্ণ | More than 10 active playbooks |
 | `account-locked` | 423 | Account temporarily locked | অ্যাকাউন্ট সাময়িকভাবে বন্ধ | 5 failed logins; `retryAfterSeconds` set |
 | `quota-exceeded` | 429 | Daily limit reached | আজকের সীমা শেষ | Guest quota; `retryAfterSeconds` until midnight Asia/Dhaka |

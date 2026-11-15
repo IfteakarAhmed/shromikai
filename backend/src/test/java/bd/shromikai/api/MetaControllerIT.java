@@ -7,6 +7,7 @@ import bd.shromikai.shared.json.JsonSchemas;
 import bd.shromikai.testsupport.IntegrationTest;
 import bd.shromikai.testsupport.Requirement;
 import com.fasterxml.jackson.databind.JsonNode;
+import java.util.UUID;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -92,5 +93,65 @@ class MetaControllerIT {
     ResponseEntity<String> response = http.getForEntity("/api/v1/meta", String.class);
 
     assertThat(response.getHeaders().getFirst("X-Request-Id")).isNotBlank();
+  }
+
+  @Test
+  void shouldCountPrivacyBlocksOfTheLastSevenDaysAndOpenReviewItems() {
+    JsonNode before = http.getForObject("/api/v1/meta", JsonNode.class).path("audit");
+    assertThat(before.isObject()).as("audit is filled in P9").isTrue();
+    jdbc.sql(
+            """
+            insert into audit_event (actor_kind, action, occurred_at, detail)
+            values ('SYSTEM', 'PRIVACY_BLOCK', now() - interval '1 day', '{}'),
+                   ('SYSTEM', 'PRIVACY_BLOCK', now() - interval '6 days', '{}'),
+                   ('SYSTEM', 'PRIVACY_BLOCK', now() - interval '8 days', '{}'),
+                   ('SYSTEM', 'ACCESS_DENIED', now() - interval '1 day', '{}')
+            """)
+        .update();
+    UUID analysis = UUID.randomUUID();
+    jdbc.sql(
+            """
+            insert into analysis_run (id, subject_kind, subject_hash, client_kind, side,
+                                      output_language, input_kind, page_count, status,
+                                      pipeline_version)
+            values (:id, 'USER', repeat('d', 64), 'API', 'WORKER', 'en', 'TEXT', 1, 'SUCCEEDED', 'p7-1')
+            """)
+        .param("id", analysis)
+        .update();
+    try {
+      for (String status : new String[] {"OPEN", "IN_REVIEW", "REJECTED"}) {
+        jdbc.sql(
+                """
+                insert into review_item (id, kind, analysis_id, finding_id, clause_type, finding_kind,
+                                         severity, side, risk_summary, facts, reason_codes, status,
+                                         created_at, expires_at)
+                values (gen_random_uuid(), 'FINDING', :analysis, :finding, 'TERMINATION', 'CONFLICT',
+                        'HIGH', 'WORKER', 'Short notice.', '[]'::jsonb, array['SUPPORT_PARTIAL'],
+                        :status, now(), now() + interval '30 days')
+                """)
+            .param("analysis", analysis)
+            .param("finding", "f-" + status)
+            .param("status", status)
+            .update();
+      }
+
+      JsonNode after = http.getForObject("/api/v1/meta", JsonNode.class).path("audit");
+
+      assertThat(after.path("privacyBlocksLast7Days").asLong())
+          .isEqualTo(before.path("privacyBlocksLast7Days").asLong() + 2);
+      assertThat(after.path("openReviewItems").asLong())
+          .isEqualTo(before.path("openReviewItems").asLong() + 2);
+      assertThat(after.path("latestEval").isNull()).as("no eval report until P10").isTrue();
+    } finally {
+      jdbc.sql("delete from analysis_run where id = :id").param("id", analysis).update();
+    }
+  }
+
+  @Test
+  void shouldNotAnnounceARecordedDemoOutsideTheFakeModelsProfile() {
+    JsonNode meta = http.getForObject("/api/v1/meta", JsonNode.class);
+
+    assertThat(meta.has("recordedDemo")).isTrue();
+    assertThat(meta.path("recordedDemo").isNull()).isTrue();
   }
 }
