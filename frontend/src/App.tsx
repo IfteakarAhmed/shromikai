@@ -4,6 +4,7 @@ import { AppAccess } from './auth/AppAccess'
 import { ProtectedRoute } from './auth/ProtectedRoute'
 import { Skeleton } from './components/ui/Skeleton'
 import { AnalysisPage } from './features/analysis/AnalysisPage'
+import { CompareResultPage, CompareStartPage } from './features/compare/ComparePage'
 import { LandingPage } from './features/landing/LandingPage'
 import { UploadPage } from './features/upload/UploadPage'
 import { DemoLoginPage } from './pages/DemoLoginPage'
@@ -43,6 +44,8 @@ export default function App() {
         >
           <Route index element={<UploadPage />} />
           <Route path="analyses/:id" element={<AnalysisPage />} />
+          <Route path="compare" element={<CompareStartPage />} />
+          <Route path="compare/:id" element={<CompareResultPage />} />
         </Route>
         <Route
           path="admin/*"

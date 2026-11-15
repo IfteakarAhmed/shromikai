@@ -255,3 +255,50 @@ export function makeResult(overrides: Partial<AnalysisResult> = {}): AnalysisRes
     ...overrides,
   }
 }
+
+export function makeCompare(
+  overrides: Partial<import('../api/analyses').CompareResult> = {},
+): import('../api/analyses').CompareResult {
+  const claim = (
+    sectionKey: string,
+    status: 'VERIFIED' | 'UNCERTAIN' | 'REJECTED',
+    reasonCodes: (
+      'SECTION_NOT_FOUND' | 'QUOTE_NOT_FOUND' | 'SUPPORT_PARTIAL' | 'SECTION_NOT_CURRENT'
+    )[],
+  ) => ({
+    claimed: { sectionKey, quote: `A quote claimed for ${sectionKey} here.`, claim: 'A claim.' },
+    verification: { status, reasonCodes },
+  })
+  return {
+    compareId: '44444444-4444-4444-8444-444444444444',
+    baseline: {
+      status: 'OK',
+      reason: null,
+      modelId: 'plain-model',
+      findings: [
+        {
+          title: 'Dismissal needs notice',
+          severity: 'HIGH',
+          explanation: 'The plain model thinks the notice rule is broken.',
+          citations: [
+            claim('XX-ACT-1:999@original', 'REJECTED', ['SECTION_NOT_FOUND']),
+            claim('XX-ACT-1:5@original', 'REJECTED', ['QUOTE_NOT_FOUND']),
+            claim('XX-ACT-1:6@original', 'UNCERTAIN', ['SUPPORT_PARTIAL']),
+            claim('XX-ACT-1:7@original', 'VERIFIED', []),
+            claim('XX-ACT-1:8@original', 'REJECTED', ['SECTION_NOT_CURRENT']),
+          ],
+        },
+      ],
+    },
+    shromikai: makeResult(),
+    summary: {
+      baselineCitations: 5,
+      baselineRejected: 3,
+      baselineUncertain: 1,
+      baselineVerified: 1,
+      shromikaiShownCitations: 1,
+    },
+    disclaimer: 'This is not legal advice. Talk to a lawyer before an important decision.',
+    ...overrides,
+  }
+}

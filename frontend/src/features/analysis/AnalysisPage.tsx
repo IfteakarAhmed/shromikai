@@ -1,12 +1,9 @@
 import { useQuery } from '@tanstack/react-query'
-import { useEffect, useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useLocation, useParams } from 'react-router-dom'
 import { getAnalysis, isResult, pollAnalysis } from '../../api/analyses'
-import { ApiError, type Problem } from '../../api/client'
-import { watchEvents, type Stage } from '../../api/sse'
+import { ApiError } from '../../api/client'
 import { useAuthedCall } from '../../api/useAuthedCall'
-import { useAuth } from '../../auth/authContext'
 import { ErrorState } from '../../components/ui/ErrorState'
 import { LinkButton } from '../../components/ui/Button'
 import { EmptyState } from '../../components/ui/EmptyState'
@@ -14,26 +11,8 @@ import { Skeleton } from '../../components/ui/Skeleton'
 import { stepStates } from '../../lib/stages'
 import { useTitle } from '../../lib/useTitle'
 import { ProgressView } from './ProgressView'
-import { watchTiming } from './timing'
+import { useStageWatch } from './useStageWatch'
 import { ResultsView } from './ResultsView'
-
-interface WatchState {
-  seen: Stage[]
-  progress: number
-  warnings: { code: string; message: string }[]
-  polling: boolean
-  failure: Problem | null
-  gone: boolean
-}
-
-const INITIAL: WatchState = {
-  seen: [],
-  progress: 0,
-  warnings: [],
-  polling: false,
-  failure: null,
-  gone: false,
-}
 
 /**
  * `/app/analyses/:id`: the result if it is ready, otherwise the live progress of the real stages.
@@ -50,8 +29,6 @@ function AnalysisBody({ id }: { id: string }) {
   const language = i18n.language === 'en' ? 'en' : 'bn'
   const location = useLocation()
   const call = useAuthedCall()
-  const auth = useAuth()
-  const [watch, setWatch] = useState<WatchState>(INITIAL)
   const ocrExpected = (location.state as { ocrExpected?: boolean } | null)?.ocrExpected === true
 
   const query = useQuery({
@@ -65,59 +42,15 @@ function AnalysisBody({ id }: { id: string }) {
   const running = data !== undefined && !isResult(data) && data.status !== 'FAILED'
   useTitle(t(data !== undefined && isResult(data) ? 'results.title' : 'progress.title'))
 
-  // The latest auth functions, so a renewed token does not restart the stream.
-  const latest = useRef({ call, auth, language, refetch: query.refetch })
-  useEffect(() => {
-    latest.current = { call, auth, language, refetch: query.refetch }
+  const watch = useStageWatch({
+    url: `/api/v1/analyses/${id}/events`,
+    enabled: running,
+    language,
+    poll: (token, lang) => pollAnalysis(id, lang, token),
+    onCompleted: () => {
+      void query.refetch()
+    },
   })
-
-  useEffect(() => {
-    if (!running) {
-      return undefined
-    }
-    const controller = new AbortController()
-    void watchEvents({
-      url: `/api/v1/analyses/${id}/events`,
-      language: latest.current.language,
-      getToken: () => latest.current.auth.getToken(),
-      refreshToken: () => latest.current.auth.renewToken(),
-      poll: () => latest.current.call((token, lang) => pollAnalysis(id, lang, token)),
-      signal: controller.signal,
-      pollIntervalMs: watchTiming.pollIntervalMs,
-      retryDelayMs: watchTiming.retryDelayMs,
-      onEvent: (event) => {
-        if (event.name === 'stage') {
-          setWatch((current) => ({
-            ...current,
-            seen: current.seen.includes(event.stage)
-              ? current.seen
-              : [...current.seen, event.stage],
-            progress: Math.max(current.progress, event.progress),
-            polling: event.id === 0,
-          }))
-        } else if (event.name === 'warning') {
-          setWatch((current) => ({
-            ...current,
-            warnings: [...current.warnings, { code: event.code, message: event.message }],
-          }))
-        }
-      },
-    }).then((outcome) => {
-      if (controller.signal.aborted) {
-        return
-      }
-      if (outcome.kind === 'completed') {
-        void latest.current.refetch()
-      } else if (outcome.kind === 'failed') {
-        setWatch((current) => ({ ...current, failure: outcome.problem }))
-      } else if (outcome.kind === 'gone') {
-        setWatch((current) => ({ ...current, gone: true }))
-      }
-    })
-    return () => {
-      controller.abort()
-    }
-  }, [running, id])
 
   if (query.isPending) {
     return (
