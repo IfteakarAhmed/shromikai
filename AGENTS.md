@@ -273,7 +273,7 @@ Rules checked by `promptLint`:
 - TypeScript `strict`; no `any`; ESLint and Prettier; scripts `lint`, `typecheck`, `test`, `build`, `e2e`.
 - Function components; server state through TanStack Query; routing through React Router; i18n through i18next with `bn` default.
 - API types are generated from the OpenAPI document (`/v3/api-docs`); hand-written duplicates are forbidden.
-- The access token lives in memory only; the refresh token is an `HttpOnly` cookie. Never store analysis results, contract text or memo content in `localStorage`, `sessionStorage`, IndexedDB or service-worker caches. The only persisted values are the guest device token and UI preferences (locale, side, low-bandwidth mode).
+- The access token lives in memory only; the refresh token is an `HttpOnly` cookie. Never store analysis results, contract text or memo content in `localStorage`, `sessionStorage`, IndexedDB or service-worker caches. The only persisted values are the guest device token and UI preferences (locale, side, low-bandwidth mode, theme).
 - Accessibility: semantic HTML first, ARIA only when needed; every interactive element reachable by keyboard; `lang="bn"` on Bangla text.
 - No hard-coded results or metrics in the UI; everything comes from the API or eval output files.
 
