@@ -12,11 +12,54 @@ import { inLocale, LOCALES, text } from './support'
  * Pictures for the report are taken only on request:
  *   P9_SHOTS=D npx playwright test e2e/cinematic.spec.ts --project=desktop-chromium
  */
+// E2E_GL=metal runs the same tests on the Mac's GPU (ANGLE on Metal), where the D1 review saw
+// NaN-driven black shapes that SwiftShader never shows.
+const metal = process.env['E2E_GL'] === 'metal'
 test.use({
   launchOptions: {
-    args: ['--use-angle=swiftshader', '--enable-unsafe-swiftshader', '--ignore-gpu-blocklist'],
+    args: metal
+      ? ['--use-angle=metal', '--enable-gpu', '--ignore-gpu-blocklist']
+      : ['--use-angle=swiftshader', '--enable-unsafe-swiftshader', '--ignore-gpu-blocklist'],
   },
 })
+
+/**
+ * Share of the worst 32 × 32 block of the screenshot that is pure black (every channel at most
+ * 2). The ink background is about rgb(9, 13, 24), so only NaN-black pixels count.
+ */
+async function worstBlackBlock(page: Page): Promise<number> {
+  const png = (await page.screenshot()).toString('base64')
+  return page.evaluate(async (data) => {
+    const image = await createImageBitmap(
+      await (await fetch(`data:image/png;base64,${data}`)).blob(),
+    )
+    const canvas = document.createElement('canvas')
+    canvas.width = image.width
+    canvas.height = image.height
+    const context = canvas.getContext('2d')
+    if (context === null) {
+      throw new Error('no 2D canvas')
+    }
+    context.drawImage(image, 0, 0)
+    const { data: pixels } = context.getImageData(0, 0, image.width, image.height)
+    let worst = 0
+    for (let by = 0; by + 32 <= image.height; by += 32) {
+      for (let bx = 0; bx + 32 <= image.width; bx += 32) {
+        let black = 0
+        for (let y = by; y < by + 32; y += 1) {
+          for (let x = bx; x < bx + 32; x += 1) {
+            const i = (y * image.width + x) * 4
+            if ((pixels[i] ?? 0) <= 2 && (pixels[i + 1] ?? 0) <= 2 && (pixels[i + 2] ?? 0) <= 2) {
+              black += 1
+            }
+          }
+        }
+        worst = Math.max(worst, black / 1024)
+      }
+    }
+    return worst
+  }, png)
+}
 
 const shots = process.env['P9_SHOTS'] === 'D'
 const folder = resolve(process.cwd(), '..', 'docs', 'img', 'p9')
@@ -150,6 +193,22 @@ test.describe('cinematic landing', () => {
     await page.mouse.wheel(0, 1200)
     await expect.poll(() => page.evaluate(() => window.scrollY)).toBeGreaterThan(before + 600)
     await waitForCamera(page, await scrollToTimeline(page, 0.5))
+  })
+
+  test('FR-68 with bloom pinned on, no frame of the journey has a large pure-black region', async ({
+    page,
+  }, info) => {
+    test.skip(info.project.name !== 'desktop-chromium', 'desktop width only')
+    test.setTimeout(300_000)
+    await page.goto('/?scene=cinematic&quality=3')
+    await expect(page.locator('[data-scene="cinematic"] canvas')).toBeAttached({ timeout: 30_000 })
+    for (const t of [0.1, 0.25, 0.42, 0.58, 0.75, 1]) {
+      await waitForCamera(page, await scrollToTimeline(page, t))
+      await page.waitForTimeout(500)
+      expect(await worstBlackBlock(page), `pure-black block at timeline ${String(t)}`).toBeLessThan(
+        0.9,
+      )
+    }
   })
 
   test('NFR-08 keyboard only: the skip link comes first, then every control is reachable and in view', async ({
