@@ -1,5 +1,6 @@
 {
   "fixtureVersion" : 1,
+  "schemaInvalidAsRecorded" : true,
   "promptId" : "risk-analysis",
   "promptVersion" : 2,
   "caseId" : "syn-en-02-worker",

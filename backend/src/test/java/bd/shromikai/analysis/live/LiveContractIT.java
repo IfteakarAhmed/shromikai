@@ -63,7 +63,7 @@ class LiveContractIT extends LiveBase {
     assumeTrue(LiveEnv.optedIn("record"), "live recording: run with -PliveOk=record");
     Run.purpose = "record:" + CONTRACT;
     Run.caseId = CONTRACT + "-worker";
-    Run.maxCalls = 40;
+    Run.maxCalls = 25;
     // Record-missing only (after the rules became active, 2026-11-16): every request that an
     // existing recording answers is replayed for free and nothing is deleted or overwritten. The
     // prompts whose requests must not have changed have a limit of 0, so a request that no longer
@@ -72,15 +72,16 @@ class LiveContractIT extends LiveBase {
         java.util.Map.ofEntries(
             java.util.Map.entry("clause-classify", 0),
             java.util.Map.entry("clause-facts", 0),
-            java.util.Map.entry("query-rewrite", 0),
+            java.util.Map.entry("query-rewrite", 4),
             java.util.Map.entry("obligations", 2),
-            java.util.Map.entry("risk-analysis", 3),
-            java.util.Map.entry("risk-citation-repair", 4),
+            java.util.Map.entry("risk-analysis", 0),
+            java.util.Map.entry("risk-citation-repair", 2),
             java.util.Map.entry("verify-support-claude", 20),
             java.util.Map.entry("counter-offer", 12));
     Run.contractPrefix = "record:" + CONTRACT;
     // Abort when the new spend of this step reaches US$0.60 (ledger total near US$2.25).
-    Run.contractCapMicros = new LiveSpendLedger().spentOn("record:" + CONTRACT) + 600_000;
+    // The whole step may spend US$0.45 at most (US$0.1061 is spent): stop and report beyond it.
+    Run.contractCapMicros = new LiveSpendLedger().spentOn("record:" + CONTRACT) + 343_900;
     long cap = Run.contractCapMicros;
     long newSpend = cap - new LiveSpendLedger().spentOn("record:" + CONTRACT);
     if (cap == Long.MAX_VALUE || newSpend <= 0 || newSpend > 600_000) {
