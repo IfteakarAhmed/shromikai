@@ -42,6 +42,7 @@ class LiveContractIT extends LiveBase {
   private static final String CONTRACT = System.getProperty("shromikai.live.contract", "syn-en-02");
 
   @Autowired AnalysisService analyses;
+  @Autowired bd.shromikai.analysis.SampleContract sample;
   @Autowired AnalysisPipeline pipeline;
   @Autowired LiveSpendLedger ledger;
   @Autowired JdbcClient jdbc;
@@ -51,27 +52,24 @@ class LiveContractIT extends LiveBase {
     assumeTrue(LiveEnv.optedIn("record"), "live recording: run with -PliveOk=record");
     Run.purpose = "record:" + CONTRACT;
     Run.caseId = CONTRACT + "-worker";
-    Run.maxCalls = 40;
-    // Replay everything already recorded; go live only for the verifier (its prompt has a new
-    // version, ADR-0019), CORRECT (repair, its verification) and the counter-offers. A call that a
-    // recording should have answered but did not (the prompt or
-    // the input changed) is a live call of a prompt with limit 0 and stops the run at once.
+    Run.maxCalls = 90;
+    // The sample text lost its leak-test marker, so every request hash changes and all seven
+    // prompts are recorded again (a call an existing recording answers is replayed for free). The
+    // limits bound the calls of a clean run (about 58 in all) with some room for one retry.
     Run.perPromptLimits =
-        java.util.Map.of(
-            "clause-classify", 0,
-            "clause-facts", 0,
-            "query-rewrite", 0,
-            "risk-analysis", 0,
-            "risk-citation-repair", 4,
-            "verify-support-claude", 30,
-            "counter-offer", 11);
+        java.util.Map.ofEntries(
+            java.util.Map.entry("clause-classify", 4),
+            java.util.Map.entry("clause-facts", 14),
+            java.util.Map.entry("query-rewrite", 14),
+            java.util.Map.entry("risk-analysis", 6),
+            java.util.Map.entry("risk-citation-repair", 6),
+            java.util.Map.entry("verify-support-claude", 30),
+            java.util.Map.entry("counter-offer", 12));
     Run.contractPrefix = "record:" + CONTRACT;
-    // An extra US$0.20 for this run, and never more than US$1.20 for the contract in total.
+    // Never more than US$1.60 in total in the ledger (the user's instruction for this recording).
     Run.contractCapMicros =
-        Math.min(
-            1_200_000,
-            new bd.shromikai.testsupport.live.LiveSpendLedger().spentOn("record:" + CONTRACT)
-                + 200_000);
+        new LiveSpendLedger().spentOn("record:" + CONTRACT)
+            + Math.max(0, 1_600_000 - new LiveSpendLedger().spentMicros());
     Run.record = true;
     Run.localPiiStandInFor = CONTRACT;
   }
@@ -80,7 +78,7 @@ class LiveContractIT extends LiveBase {
   void shouldAnalyseTheShortestSyntheticContractWithRealModelsAndRecordIt() throws IOException {
     long spentBefore = ledger.spentMicros();
     int entriesBefore = ledger.entryCount();
-    AnalysisJob job = analyses.analyseText(SyntheticContracts.text(CONTRACT));
+    AnalysisJob job = analyses.analyseText(textOf(CONTRACT));
     try {
       if (job.status() != AnalysisJob.Status.CLASSIFIED) {
         report(job, spentBefore, entriesBefore);
@@ -117,6 +115,16 @@ class LiveContractIT extends LiveBase {
     } finally {
       jdbc.sql("delete from analysis_run where id = :id").param("id", job.id()).update();
     }
+  }
+
+  /**
+   * The text analysed: for the bundled sample the canary-free copy the demo serves (the recorded
+   * answers are keyed by it), otherwise the evaluation-set text.
+   */
+  private String textOf(String contract) {
+    return contract.equals(bd.shromikai.analysis.SampleContract.ID)
+        ? sample.text()
+        : SyntheticContracts.text(contract);
   }
 
   /** Writes what the run cost and found to the (git-ignored) ledger folder; never contract text. */

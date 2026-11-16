@@ -381,6 +381,9 @@ tasks.named('processResources') {
     from('../eval/contracts/synthetic') {
         include 'syn-en-02.md', 'syn-en-02.entities.yaml'
         into 'samples'
+        // The leak-test marker of the evaluation set stays out of the demo sample, so no memo,
+        // redline or counter-offer of the demo carries it (the recorded answers are keyed by this text).
+        filter { line -> line.replaceAll(' ZQXJ-CANARY-[0-9A-F]+', '') }
     }
 }
 
