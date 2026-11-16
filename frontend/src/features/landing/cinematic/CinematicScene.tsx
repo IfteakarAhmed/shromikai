@@ -1,6 +1,7 @@
 import { useEffect, useRef } from 'react'
 import { cssColorToHex } from '../oklch'
 import type { Palette } from '../scene3d'
+import { parseDevFlags } from './devFlags'
 import { createCinematicScene, type CinematicHandle } from './scene'
 import { timelineFromScroll } from './timeline'
 
@@ -40,6 +41,7 @@ export default function CinematicScene({ onFailure }: { onFailure: () => void })
         onContextLost: () => {
           failure.current()
         },
+        flags: parseDevFlags(window.location.search, import.meta.env.DEV),
       })
     } catch {
       failure.current()

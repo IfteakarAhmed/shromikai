@@ -33,6 +33,8 @@ import {
 } from 'three'
 import type { Palette } from '../scene3d'
 import { damp } from './damp'
+import { DEFAULT_FLAGS, type DevFlags } from './devFlags'
+import { frameStats } from './perfStats'
 import { INITIAL_QUALITY, nextQuality, qualitySettings, type QualityState } from './quality'
 import * as glsl from './shaders'
 import { contractSheetTexture, glowTexture, seeded } from './textures'
@@ -65,6 +67,8 @@ export interface CinematicOptions {
   onContextLost?: () => void
   /** Starts the loop at once (default true). */
   autoStart?: boolean
+  /** Development switches (`?bloom=off`, `?quality=3`, `?perf=1` and others); see devFlags. */
+  flags?: DevFlags
 }
 
 const FULL_DUST = 2600
@@ -96,6 +100,7 @@ export function createCinematicScene(
     renderer.dispose()
     throw new Error('the cinematic scene needs WebGL2')
   }
+  const flags = options.flags ?? DEFAULT_FLAGS
   const canvas = renderer.domElement
   canvas.setAttribute('aria-hidden', 'true')
   canvas.style.cssText = 'position:absolute;inset:0;width:100%;height:100%;display:block'
@@ -139,6 +144,8 @@ export function createCinematicScene(
     )
   }
   const glow = track(glowTexture())
+  const sheetMeshes: Mesh[] = []
+  const shaftMeshes: Mesh[] = []
   const textures: Texture[] = [1, 2, 3].map((seed) => track(contractSheetTexture(seed * 7919)))
 
   // ---- Stage 1 and 2: glass contract sheets, light shafts, the shield ring ----
@@ -173,6 +180,7 @@ export function createCinematicScene(
         uBend: { value: 0.08 },
       }),
     )
+    sheetMeshes.push(mesh)
     return mesh
   }
 
@@ -220,6 +228,7 @@ export function createCinematicScene(
     const shaft = new Mesh(track(new PlaneGeometry(width, 15)), shaftMaterial)
     shaft.position.set(...at)
     shaft.rotation.set(0, 0, angle)
+    shaftMeshes.push(shaft)
     hero.add(shaft)
   })
 
@@ -747,7 +756,8 @@ export function createCinematicScene(
   }
 
   // ---- State, sizing, quality ----
-  let quality: QualityState = INITIAL_QUALITY
+  let quality: QualityState =
+    flags.quality === null ? INITIAL_QUALITY : { ...INITIAL_QUALITY, level: flags.quality }
   let settings = qualitySettings(quality.level)
   let width = 1
   let height = 1
@@ -879,6 +889,47 @@ export function createCinematicScene(
     camera.lookAt(lookTarget)
   }
 
+  /** The development frame-time overlay (`?perf=1`): real numbers from this GPU, twice a second. */
+  function createPerfOverlay() {
+    const panel = document.createElement('pre')
+    panel.setAttribute('aria-hidden', 'true')
+    panel.dataset['perf'] = 'overlay'
+    panel.style.cssText =
+      'position:fixed;left:8px;bottom:8px;z-index:60;margin:0;padding:8px 10px;border-radius:8px;' +
+      'background:rgba(0,0,0,.72);color:#9ff5d0;font:12px/1.4 ui-monospace,monospace;' +
+      'pointer-events:none;white-space:pre'
+    document.body.appendChild(panel)
+    const samples: number[] = []
+    let lastShown = 0
+    return {
+      sample(ms: number) {
+        if (ms > 0 && ms < 1000) {
+          samples.push(ms)
+          if (samples.length > 120) {
+            samples.shift()
+          }
+        }
+        const now = performance.now()
+        if (now - lastShown < 500) {
+          return
+        }
+        lastShown = now
+        const stats = frameStats(samples)
+        const pinned = flags.quality === null ? '' : ' (pinned)'
+        panel.textContent = [
+          `fps ${stats.fps.toFixed(1)}`,
+          `avg ${stats.averageMs.toFixed(1)} ms  p95 ${stats.p95Ms.toFixed(1)} ms`,
+          `quality ${String(quality.level)}${pinned}  bloom ${settings.bloom && flags.bloom ? 'on' : 'off'}`,
+          `dpr ${pixelRatio.value.toFixed(2)}  ${String(width)}x${String(height)}`,
+          `calls ${String(renderer.info.render.calls)}  tris ${String(renderer.info.render.triangles)}`,
+        ].join('\n')
+      },
+      dispose() {
+        panel.remove()
+      },
+    }
+  }
+
   // ---- Loop ----
   let frame = 0
   let running = false
@@ -892,7 +943,10 @@ export function createCinematicScene(
     const seconds = Math.min(deltaMs / 1000, 0.05)
     clock += seconds
     const previousLevel = quality.level
-    quality = nextQuality(quality, deltaMs)
+    if (flags.quality === null) {
+      quality = nextQuality(quality, deltaMs)
+    }
+    perf?.sample(deltaMs)
     if (quality.level !== previousLevel) {
       settings = qualitySettings(quality.level)
       applyQuality()
@@ -907,7 +961,8 @@ export function createCinematicScene(
     pointer.dx = damp(pointer.dx, pointer.x, 2.5, seconds)
     pointer.dy = damp(pointer.dy, pointer.y, 2.5, seconds)
     update(currentT, clock)
-    draw(settings.bloom)
+    renderer.info.reset()
+    draw(settings.bloom && flags.bloom)
   }
 
   function setRunning(next: boolean) {
@@ -935,8 +990,26 @@ export function createCinematicScene(
   applyQuality()
   resize()
   host.dataset['quality'] = String(quality.level)
+  // Development switches: one layer at a time can be left out on a real GPU.
+  sheetMeshes.forEach((mesh) => {
+    mesh.visible = flags.sheets
+  })
+  coralCard.children.forEach((child) => {
+    if (child !== shards) {
+      child.visible = flags.sheets
+    }
+  })
+  shaftMeshes.forEach((mesh) => {
+    mesh.visible = flags.shafts
+  })
+  for (const points of [dust, shield, pulses, shards]) {
+    points.visible = flags.particles
+  }
+  renderer.info.autoReset = false
+  const perf = flags.perf ? createPerfOverlay() : null
+
   update(0, 0)
-  draw(settings.bloom)
+  draw(settings.bloom && flags.bloom)
   if (options.autoStart ?? true) {
     setRunning(true)
   }
@@ -964,6 +1037,7 @@ export function createCinematicScene(
     quality: () => quality.level,
     dispose() {
       setRunning(false)
+      perf?.dispose()
       observer.disconnect()
       canvas.removeEventListener('webglcontextlost', onLost)
       disposables.forEach((item) => {
