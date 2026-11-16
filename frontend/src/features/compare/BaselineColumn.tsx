@@ -27,7 +27,7 @@ export function BaselineColumn({ baseline, language }: { baseline: Baseline; lan
       >
         {t('compare.baselineNote')}
       </p>
-      {baseline.modelId !== null && (
+      {baseline.modelId !== null && !scripted && (
         <p className="mt-2 text-sm text-muted-foreground">
           {t('compare.model', { model: baseline.modelId })}
         </p>

@@ -1,5 +1,6 @@
 import type { ReactNode } from 'react'
 import { useTranslation } from 'react-i18next'
+import { localizeDigits } from '../../lib/format'
 
 /**
  * The two architecture pictures of `/docs/architecture` (FR-74), drawn by hand as SVG: no diagram
@@ -17,9 +18,28 @@ interface BoxProps {
   tone?: 'plain' | 'local' | 'cloud'
 }
 
+/** Splits a title into lines of at most `max` characters, at spaces. */
+function wrap(title: string, max: number): string[] {
+  const lines: string[] = []
+  let line = ''
+  for (const word of title.split(' ')) {
+    if (line !== '' && (line + ' ' + word).length > max) {
+      lines.push(line)
+      line = word
+    } else {
+      line = line === '' ? word : `${line} ${word}`
+    }
+  }
+  return [...lines, line]
+}
+
 function Box({ x, y, w, h, title, note, tone = 'plain' }: BoxProps) {
   const stroke =
     tone === 'cloud' ? 'var(--uncertain)' : tone === 'local' ? 'var(--verified)' : 'var(--border)'
+  const lines = wrap(title, Math.max(8, Math.floor(w / 9.5)))
+  const noteLines = note === undefined ? [] : wrap(note, Math.max(8, Math.floor(w / 7)))
+  const total = lines.length * 18 + noteLines.length * 15
+  const top = y + (h - total) / 2 + 14
   return (
     <g>
       <rect
@@ -32,27 +52,31 @@ function Box({ x, y, w, h, title, note, tone = 'plain' }: BoxProps) {
         stroke={stroke}
         strokeWidth={tone === 'plain' ? 1.5 : 2.5}
       />
-      <text
-        x={x + w / 2}
-        y={y + (note === undefined ? h / 2 + 5 : h / 2 - 4)}
-        textAnchor="middle"
-        fill="var(--foreground)"
-        fontSize={15}
-        fontWeight={600}
-      >
-        {title}
-      </text>
-      {note !== undefined && (
+      {lines.map((line, i) => (
         <text
+          key={`t${String(i)}`}
           x={x + w / 2}
-          y={y + h / 2 + 15}
+          y={top + i * 18}
+          textAnchor="middle"
+          fill="var(--foreground)"
+          fontSize={15}
+          fontWeight={600}
+        >
+          {line}
+        </text>
+      ))}
+      {noteLines.map((line, i) => (
+        <text
+          key={`n${String(i)}`}
+          x={x + w / 2}
+          y={top + lines.length * 18 + i * 15}
           textAnchor="middle"
           fill="var(--muted-foreground)"
           fontSize={12}
         >
-          {note}
+          {line}
         </text>
-      )}
+      ))}
     </g>
   )
 }
@@ -150,50 +174,50 @@ export function ContainersDiagram() {
       id="containers"
       title={t('docs.architecture.containersTitle')}
       description={t('docs.architecture.containersDesc')}
-      viewBox="0 0 760 400"
+      viewBox="0 0 880 410"
     >
       {(marker) => (
         <>
           <rect
-            x={150}
+            x={200}
             y={10}
-            width={420}
-            height={380}
+            width={470}
+            height={390}
             rx={14}
             fill="none"
             stroke="var(--verified)"
             strokeDasharray="6 5"
             strokeWidth={2}
           />
-          <text x={166} y={32} fill="var(--verified)" fontSize={13} fontWeight={600}>
+          <text x={216} y={32} fill="var(--verified)" fontSize={13} fontWeight={600}>
             {t('docs.architecture.privateNetwork')}
           </text>
-          <Box x={10} y={60} w={120} h={50} title={t('docs.architecture.browser')} />
-          <Box x={10} y={130} w={120} h={60} title={t('docs.architecture.clients')} />
-          <Box x={200} y={90} w={160} h={70} title={t('docs.architecture.backend')} />
-          <Box x={420} y={50} w={130} h={64} title={t('docs.architecture.database')} />
+          <Box x={240} y={50} w={170} h={64} title={t('docs.architecture.sources')} />
+          <Box x={470} y={45} w={170} h={64} title={t('docs.architecture.database')} />
           <Box
-            x={420}
-            y={140}
-            w={130}
-            h={64}
+            x={470}
+            y={125}
+            w={170}
+            h={76}
             title={t('docs.architecture.local')}
             note={t('docs.architecture.localNote')}
             tone="local"
           />
-          <Box x={420} y={230} w={130} h={50} title={t('docs.architecture.pdf')} />
-          <Box x={200} y={300} w={160} h={56} title={t('docs.architecture.sources')} />
+          <Box x={470} y={215} w={170} h={50} title={t('docs.architecture.pdf')} />
+          <Box x={240} y={290} w={170} h={70} title={t('docs.architecture.backend')} />
+          <Box x={10} y={255} w={170} h={50} title={t('docs.architecture.browser')} />
+          <Box x={10} y={325} w={170} h={66} title={t('docs.architecture.clients')} />
           <Box
-            x={620}
-            y={150}
-            w={130}
-            h={64}
+            x={700}
+            y={290}
+            w={170}
+            h={70}
             title={t('docs.architecture.cloudModels')}
             tone="cloud"
           />
           <text
-            x={685}
-            y={238}
+            x={785}
+            y={382}
             textAnchor="middle"
             fill="var(--uncertain)"
             fontSize={12}
@@ -201,17 +225,17 @@ export function ContainersDiagram() {
           >
             {t('docs.architecture.cloud')}
           </text>
-          <Arrow x1={130} y1={85} x2={198} y2={115} marker={marker} />
-          <Arrow x1={130} y1={160} x2={198} y2={140} marker={marker} />
-          <Arrow x1={360} y1={105} x2={418} y2={85} marker={marker} />
-          <Arrow x1={360} y1={125} x2={418} y2={170} marker={marker} />
-          <Arrow x1={360} y1={145} x2={418} y2={250} marker={marker} />
-          <Arrow x1={280} y1={162} x2={280} y2={298} marker={marker} />
+          <Arrow x1={180} y1={282} x2={238} y2={308} marker={marker} />
+          <Arrow x1={180} y1={355} x2={238} y2={342} marker={marker} />
+          <Arrow x1={325} y1={288} x2={325} y2={116} marker={marker} />
+          <Arrow x1={412} y1={300} x2={468} y2={90} marker={marker} />
+          <Arrow x1={412} y1={308} x2={468} y2={170} marker={marker} />
+          <Arrow x1={412} y1={316} x2={468} y2={245} marker={marker} />
           <Arrow
-            x1={360}
-            y1={130}
-            x2={618}
-            y2={182}
+            x1={412}
+            y1={335}
+            x2={698}
+            y2={335}
             label={t('docs.architecture.redactedOnly')}
             marker={marker}
           />
@@ -235,7 +259,8 @@ const STEPS = [
 ] as const
 
 export function PipelineDiagram() {
-  const { t } = useTranslation()
+  const { t, i18n } = useTranslation()
+  const language = i18n.language === 'en' ? 'en' : 'bn'
   const w = 170
   const h = 52
   const gap = 28
@@ -267,7 +292,7 @@ export function PipelineDiagram() {
                   tone={local ? 'local' : 'plain'}
                 />
                 <text x={x + 10} y={y - 5} fill="var(--muted-foreground)" fontSize={11}>
-                  {index + 1}
+                  {localizeDigits(String(index + 1), language)}
                 </text>
               </g>
             )

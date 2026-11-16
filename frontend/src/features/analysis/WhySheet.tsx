@@ -188,7 +188,7 @@ export function WhySheet({ finding, result, onClose }: WhySheetProps) {
                         <p className="mt-2 text-sm text-muted-foreground">
                           {t('why.verifiedBy', { model: checks.support.modelId })}
                           {checks.support.independence !== null &&
-                            ` · ${checks.support.independence}`}
+                            ` · ${t(`results.independence.${checks.support.independence}`, { defaultValue: checks.support.independence })}`}
                         </p>
                       )}
                     </li>

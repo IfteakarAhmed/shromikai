@@ -49,7 +49,7 @@ export default function EvaluationPage() {
             aria-label={t('docs.evaluation.caption')}
             tabIndex={0}
           >
-            <table className="w-full min-w-max border-collapse text-start">
+            <table className="w-full min-w-[34rem] border-collapse text-start">
               <caption className="sr-only">{t('docs.evaluation.caption')}</caption>
               <thead>
                 <tr className="border-b border-border">

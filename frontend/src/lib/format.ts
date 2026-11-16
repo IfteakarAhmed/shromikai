@@ -58,6 +58,7 @@ export function formatDateTime(iso: string, language: Language): string {
   return new Intl.DateTimeFormat(language === 'bn' ? 'bn-BD' : 'en-GB', {
     dateStyle: 'medium',
     timeStyle: 'short',
+    hourCycle: 'h23',
     timeZone: 'Asia/Dhaka',
   }).format(new Date(iso))
 }
@@ -69,4 +70,9 @@ export function formatDay(isoDate: string, language: Language): string {
     month: 'short',
     timeZone: 'UTC',
   }).format(new Date(`${isoDate}T00:00:00Z`))
+}
+
+/** A ratio of counts such as 0.003, with up to three places so a small one is not shown as zero. */
+export function formatRatio(value: number, language: Language): string {
+  return formatDecimal(value, language, 3)
 }

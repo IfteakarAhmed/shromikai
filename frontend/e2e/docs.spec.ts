@@ -52,6 +52,29 @@ for (const locale of LOCALES) {
       ).toBeVisible()
     })
 
+    test('FR-74 NFR-08 no label of the architecture pictures is wider than its box', async ({
+      page,
+    }) => {
+      await page.goto('/docs/architecture')
+      await expect(
+        page.getByRole('img', { name: text(locale, 'docs.architecture.pipelineTitle') }),
+      ).toBeVisible()
+      const overflowing = await page.evaluate(() => {
+        const bad: string[] = []
+        document.querySelectorAll('svg g').forEach((g) => {
+          const rect = g.querySelector(':scope > rect')
+          if (rect === null) return
+          const box = rect.getBoundingClientRect()
+          g.querySelectorAll(':scope > text').forEach((label) => {
+            const t = label.getBoundingClientRect()
+            if (t.left < box.left - 1 || t.right > box.right + 1) bad.push(label.textContent)
+          })
+        })
+        return bad
+      })
+      expect(overflowing).toEqual([])
+    })
+
     test('FR-74 a prompt page opens from the library', async ({ page }) => {
       await page.goto('/docs/prompts')
       await page.getByRole('link', { name: 'risk-analysis', exact: true }).click()

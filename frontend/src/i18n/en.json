@@ -1084,5 +1084,15 @@
       "contractsHow": "The numbers will appear here when the evaluation has produced a report file.",
       "contractsFound": "A report file exists, but this page does not show it yet."
     }
+  },
+  "warningCodes": {
+    "retrieval-keyword-only": "The embedding model was unavailable; keyword search only.",
+    "counter-offer-dropped": "A suggested revision was dropped.",
+    "counter-offer-unchecked": "No active rule applied, so the suggested revisions were not checked against a legal limit.",
+    "memo-narrative-unavailable": "The memo summary was written without a model.",
+    "fewer-than-three-findings": "Fewer than three risks were found; none were invented.",
+    "verifier-same-family": "Citations were checked by a model of the same family.",
+    "instruction-like-text": "A clause looked like an instruction and was analysed as data.",
+    "obligations-unavailable": "The obligations checklist could not be produced."
   }
 }

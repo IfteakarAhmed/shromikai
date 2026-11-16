@@ -10,7 +10,7 @@ import {
 } from 'recharts'
 import { useTranslation } from 'react-i18next'
 import type { UsageReport } from '../../api/admin'
-import { formatDay, formatNumber, formatUsd } from '../../lib/format'
+import { formatDay, formatDecimal, formatNumber, formatUsd } from '../../lib/format'
 import type { Language } from '../../i18n'
 
 /**
@@ -102,7 +102,11 @@ export default function UsageCharts({
             >
               <CartesianGrid stroke="var(--border)" strokeDasharray="3 3" />
               <XAxis dataKey="label" tick={tick} minTickGap={12} />
-              <YAxis tick={tick} width={56} tickFormatter={(v: number) => formatUsd(v, language)} />
+              <YAxis
+                tick={tick}
+                width={48}
+                tickFormatter={(v: number) => formatDecimal(v, language, 2)}
+              />
               <Tooltip {...tooltip} formatter={(v) => formatUsd(Number(v), language)} />
               <Bar dataKey="costUsd" name={t('admin.usage.cost')} fill="var(--primary)" />
             </BarChart>

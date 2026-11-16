@@ -1,4 +1,5 @@
 import { useTranslation } from 'react-i18next'
+import { warningText } from '../../lib/warnings'
 import { cx } from '../../lib/cx'
 import { formatNumber } from '../../lib/format'
 import { clampProgress, UI_STAGES, type StepState } from '../../lib/stages'
@@ -106,11 +107,11 @@ export function ProgressView({ states, progress, warnings, polling }: ProgressVi
         <ul className="mt-4 space-y-2">
           {warnings.map((warning) => (
             <li
-              key={`${warning.code}-${warning.message}`}
+              key={`${warning.code}-${warningText(t, warning)}`}
               className="rounded-lg border border-uncertain/30 bg-uncertain/5 px-4 py-3"
             >
               <strong>{t('progress.warning')}: </strong>
-              {warning.message}
+              {warningText(t, warning)}
             </li>
           ))}
         </ul>

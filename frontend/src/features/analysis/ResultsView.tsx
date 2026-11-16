@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { useSearchParams } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
+import { warningText } from '../../lib/warnings'
 import type { AnalysisResult, RiskFinding } from '../../api/analyses'
 import type { CitationGroup } from '../../lib/citations'
 import { Badge } from '../../components/ui/Badge'
@@ -185,7 +186,7 @@ export function ResultsView({ result }: ResultsViewProps) {
                             key={warning.code}
                             className="rounded-lg border border-uncertain/30 bg-uncertain/5 px-4 py-3"
                           >
-                            {warning.message}
+                            {warningText(t, warning)}
                           </li>
                         ))}
                       </ul>

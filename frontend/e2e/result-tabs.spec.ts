@@ -18,7 +18,8 @@ for (const locale of LOCALES) {
       await verified.getByRole('button', { name: text(locale, 'finding.why') }).click()
       let dialog = page.getByRole('dialog')
       await expect(dialog.getByText(text(locale, 'why.checksTitle'))).toBeVisible()
-      await expect(dialog.getByText(text(locale, 'why.checkExistence'))).toBeVisible()
+      // A risk can rest on more than one section, and each section has its own three checks.
+      await expect(dialog.getByText(text(locale, 'why.checkExistence')).first()).toBeVisible()
       await expect(dialog.getByText(text(locale, 'why.outcome.PASS')).first()).toBeVisible()
       await expect(dialog.getByText(/claude|recorded|scripted/i).first()).toBeVisible()
       await page.keyboard.press('Escape')

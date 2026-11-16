@@ -19,7 +19,7 @@ import { GlassCard } from '../../components/ui/GlassCard'
 import { Icon } from '../../components/ui/Icon'
 import { Skeleton } from '../../components/ui/Skeleton'
 import { CLAUSE_TYPES, COMPARATORS, FACTS, FACT_UNITS, SEVERITIES } from '../../lib/enums'
-import { formatNumber } from '../../lib/format'
+import { formatNumber, localizeDigits } from '../../lib/format'
 import { useTitle } from '../../lib/useTitle'
 import type { Language } from '../../i18n'
 
@@ -291,7 +291,8 @@ function PlaybookForm({
   onCancel: () => void
   onSubmit: () => void
 }) {
-  const { t } = useTranslation()
+  const { t, i18n } = useTranslation()
+  const language: Language = i18n.language === 'en' ? 'en' : 'bn'
   const [touched, setTouched] = useState(false)
 
   function setRule(index: number, patch: Partial<RuleDraft>) {
@@ -385,13 +386,14 @@ function PlaybookForm({
         )}
         {draft.rules.map((rule, index) => {
           const n = String(index + 1)
+          const shown = localizeDigits(n, language)
           const units = FACT_UNITS[rule.fact]
           const needsValue = rule.comparator !== 'REQUIRED' && rule.comparator !== 'PROHIBITED'
           const p = problems.rule[index]
           return (
             <GlassCard key={index} className="space-y-4 p-5">
               <div className="flex items-center justify-between gap-3">
-                <h3 className="text-lg font-bold">{t('admin.playbooks.rule', { n })}</h3>
+                <h3 className="text-lg font-bold">{t('admin.playbooks.rule', { n: shown })}</h3>
                 <Button
                   variant="outline"
                   onClick={() => {
@@ -399,7 +401,7 @@ function PlaybookForm({
                   }}
                 >
                   <Icon name="trash" />
-                  {t('admin.playbooks.removeRule', { n })}
+                  {t('admin.playbooks.removeRule', { n: shown })}
                 </Button>
               </div>
               <div className="grid gap-4 md:grid-cols-2">

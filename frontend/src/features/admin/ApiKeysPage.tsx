@@ -250,8 +250,10 @@ export default function ApiKeysPage() {
                           ),
                         )}
                       </td>
-                      <td className="px-4 py-3">{formatDateTime(key.createdAt, language)}</td>
-                      <td className="px-4 py-3">
+                      <td className="whitespace-nowrap px-4 py-3">
+                        {formatDateTime(key.createdAt, language)}
+                      </td>
+                      <td className="whitespace-nowrap px-4 py-3">
                         {key.lastUsedAt === null
                           ? t('admin.keys.neverUsed')
                           : formatDateTime(key.lastUsedAt, language)}

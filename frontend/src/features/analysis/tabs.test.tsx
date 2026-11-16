@@ -51,7 +51,11 @@ describe('RedlineView', () => {
         />
       </PreferencesProvider>,
     )
-    expect(screen.getByText('No rule checked these proposals.')).toBeInTheDocument()
+    expect(
+      screen.getByText(
+        'কোনো সক্রিয় নিয়ম প্রযোজ্য ছিল না, তাই প্রস্তাবিত পরিবর্তন আইনি সীমার সঙ্গে মেলানো হয়নি।',
+      ),
+    ).toBeInTheDocument()
     expect(screen.queryByText('আইনের নিয়মের সাথে মিলিয়ে দেখা হয়েছে')).not.toBeInTheDocument()
 
     rerender(

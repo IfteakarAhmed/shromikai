@@ -234,7 +234,9 @@ describe('AnalysisPage progress', () => {
       `id: 1\nevent: warning\ndata: ${JSON.stringify({ code: 'retrieval-keyword-only', message: 'Search used keywords only.' })}\n\n`,
     )
 
-    expect(await screen.findByText('Search used keywords only.')).toBeInTheDocument()
+    expect(
+      await screen.findByText('সার্চ-মডেল পাওয়া যায়নি, তাই শুধু শব্দ মিলিয়ে খোঁজা হয়েছে।'),
+    ).toBeInTheDocument()
     stream.close()
   })
 

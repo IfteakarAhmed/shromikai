@@ -6,7 +6,7 @@ import { useAuthedCall } from '../../api/useAuthedCall'
 import { ErrorState } from '../../components/ui/ErrorState'
 import { GlassCard } from '../../components/ui/GlassCard'
 import { Skeleton } from '../../components/ui/Skeleton'
-import { formatDecimal, formatNumber, formatPercent } from '../../lib/format'
+import { formatDecimal, formatNumber, formatPercent, formatRatio } from '../../lib/format'
 import type { Language } from '../../i18n'
 
 const LINKS = [
@@ -111,7 +111,7 @@ function Kpis({
         value={
           memoDownloadRate.value === null
             ? null
-            : t('admin.kpi.ratio', { value: formatDecimal(memoDownloadRate.value, language) })
+            : t('admin.kpi.ratio', { value: formatRatio(memoDownloadRate.value, language) })
         }
         basis={t('admin.kpi.basis', { count: n(memoDownloadRate.count), n: n(memoDownloadRate.n) })}
       />

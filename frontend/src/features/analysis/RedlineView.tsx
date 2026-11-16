@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
+import { warningText } from '../../lib/warnings'
 import type { AnalysisResult, Redline } from '../../api/analyses'
 import { CitationChip } from '../../components/result/CitationChip'
 import { Badge } from '../../components/ui/Badge'
@@ -35,7 +36,7 @@ export function RedlineView({ result, onOpenCitation }: RedlineViewProps) {
           role="note"
           className="mt-3 rounded-lg border border-uncertain/30 bg-uncertain/5 px-4 py-3"
         >
-          {unchecked.message}
+          {warningText(t, unchecked)}
         </p>
       )}
       <ul className="mt-5 grid gap-4">
