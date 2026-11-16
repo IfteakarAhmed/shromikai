@@ -2,6 +2,7 @@ import { Suspense, lazy, type ReactNode } from 'react'
 import { useTranslation } from 'react-i18next'
 import { LinkButton } from '../../components/ui/Button'
 import { GlassCard } from '../../components/ui/GlassCard'
+import { DisplayText } from '../../components/ui/DisplayText'
 import { Icon, type IconName } from '../../components/ui/Icon'
 import { cx } from '../../lib/cx'
 import { useTitle } from '../../lib/useTitle'
@@ -58,7 +59,7 @@ function ChapterText({
       <div className={cinematic ? 'mt-4' : undefined}>
         <p className="font-semibold text-primary">{t(`story.${chapter}Eyebrow`)}</p>
         <h2 id={`${chapter}-title`} className="mt-1 text-3xl font-bold leading-tight">
-          {t(`story.${chapter}Title`)}
+          <DisplayText text={t(`story.${chapter}Title`)} />
         </h2>
         <p className="mt-3 max-w-2xl text-lg text-muted-foreground">{t(`story.${chapter}Body`)}</p>
         {children}
@@ -131,7 +132,7 @@ export function LandingPage() {
                   cinematic ? 'text-5xl sm:text-6xl' : 'text-4xl sm:text-5xl',
                 )}
               >
-                {t('hero.title')}
+                <DisplayText text={t('hero.title')} />
               </h1>
               <p className="mt-4 text-lg text-muted-foreground">{t('hero.description')}</p>
               <p className="mt-2 font-semibold">{t('hero.scope')}</p>
@@ -225,7 +226,7 @@ export function LandingPage() {
             >
               <p className="font-semibold text-primary">{t('story.finaleEyebrow')}</p>
               <h2 id="finale-title" className="mt-1 text-4xl font-bold leading-tight">
-                {t('story.finaleTitle')}
+                <DisplayText text={t('story.finaleTitle')} />
               </h2>
               <p className="mt-3 text-lg text-muted-foreground">{t('story.finaleBody')}</p>
               <div className="mt-6 flex flex-col justify-center gap-3 sm:flex-row">
@@ -247,7 +248,7 @@ export function LandingPage() {
         <section aria-labelledby="audience-title" className="mx-auto max-w-6xl px-(--gutter) py-14">
           <p className="font-semibold text-primary">{t('audience.eyebrow')}</p>
           <h2 id="audience-title" className="mt-1 text-3xl font-bold">
-            {t('audience.title')}
+            <DisplayText text={t('audience.title')} />
           </h2>
           <ul className="mt-8 grid gap-4 md:grid-cols-3">
             {(
@@ -274,7 +275,7 @@ export function LandingPage() {
           <div className="mx-auto max-w-6xl px-(--gutter) py-12">
             <p className="font-semibold text-primary">{t('limits.eyebrow')}</p>
             <h2 id="limits-title" className="mt-1 text-3xl font-bold">
-              {t('limits.title')}
+              <DisplayText text={t('limits.title')} />
             </h2>
             <ul className="mt-4 flex flex-wrap gap-3">
               <li className="rounded-lg border border-uncertain/40 bg-uncertain/10 px-4 py-2 font-semibold">

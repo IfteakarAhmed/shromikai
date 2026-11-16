@@ -112,6 +112,49 @@ test.describe('visual language (C1)', () => {
     await shot(page, 'conjuncts')
   })
 
+  test('NFR-09 display headings never end with a danda; a danda inside one is in Hind Siliguri', async ({
+    page,
+  }) => {
+    async function check(where: string) {
+      await page.waitForLoadState('networkidle')
+      const problems = await page.evaluate(() =>
+        Array.from(document.querySelectorAll<HTMLElement>('h1, h2'))
+          .filter((heading) => getComputedStyle(heading).fontFamily.startsWith('"Tiro Bangla"'))
+          .flatMap((heading) => {
+            const text = heading.textContent.trim()
+            const found: string[] = []
+            if (text.endsWith('।')) {
+              found.push(`ends with a danda: ${text}`)
+            }
+            const walker = document.createTreeWalker(heading, NodeFilter.SHOW_TEXT)
+            for (let node = walker.nextNode(); node !== null; node = walker.nextNode()) {
+              const parent = node.parentElement
+              if ((node.textContent ?? '').includes('।') && parent !== null) {
+                if (!getComputedStyle(parent).fontFamily.startsWith('"Hind Siliguri"')) {
+                  found.push(`danda in Tiro Bangla: ${text}`)
+                }
+              }
+            }
+            return found
+          }),
+      )
+      expect(problems, where).toEqual([])
+    }
+    for (const path of ['/?scene=lite', '/?scene=cinematic', '/login', '/docs']) {
+      await page.goto(path)
+      await check(path)
+    }
+    await page.goto('/demo-user')
+    await expect(page.getByRole('heading', { name: text('bn', 'upload.title') })).toBeVisible()
+    await check('/app')
+    await analyseSample(page, 'bn')
+    await check('results')
+    await page.goto('/app/compare')
+    await check('/app/compare')
+    await page.goto('/app/profile')
+    await check('/app/profile')
+  })
+
   test('NFR-09 body text is 18 px on the app pages', async ({ page }) => {
     await page.goto('/login')
     expect(await page.evaluate(() => getComputedStyle(document.body).fontSize)).toBe('18px')
