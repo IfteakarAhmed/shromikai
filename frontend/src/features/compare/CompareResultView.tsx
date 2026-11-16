@@ -63,7 +63,7 @@ export function CompareResultView({ compare }: { compare: CompareResult }) {
 
   return (
     <div className="mx-auto max-w-6xl px-(--gutter) py-8">
-      <h1 className="text-3xl font-bold">{t('compare.title')}</h1>
+      <h1 className="parallax text-3xl font-bold">{t('compare.title')}</h1>
       {scripted && (
         <p
           role="note"

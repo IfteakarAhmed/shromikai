@@ -340,7 +340,7 @@ function PlaybookForm({
 
   return (
     <form onSubmit={submit} noValidate className="mt-5 space-y-6">
-      <GlassCard className="space-y-4 p-5">
+      <GlassCard depth="still" className="space-y-4 p-5">
         <div>
           <label htmlFor="pb-name" className="font-semibold">
             {t('admin.playbooks.name')}
@@ -391,7 +391,7 @@ function PlaybookForm({
           const needsValue = rule.comparator !== 'REQUIRED' && rule.comparator !== 'PROHIBITED'
           const p = problems.rule[index]
           return (
-            <GlassCard key={index} className="space-y-4 p-5">
+            <GlassCard depth="still" key={index} className="space-y-4 p-5">
               <div className="flex items-center justify-between gap-3">
                 <h3 className="text-lg font-bold">{t('admin.playbooks.rule', { n: shown })}</h3>
                 <Button

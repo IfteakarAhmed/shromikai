@@ -3,6 +3,7 @@ import { useEffect, useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { renderMemo, type AnalysisResult } from '../../api/analyses'
 import { useAuthedCall } from '../../api/useAuthedCall'
+import { GlassCard } from '../../components/ui/GlassCard'
 import { Button } from '../../components/ui/Button'
 import { Disclaimer } from '../../components/ui/Disclaimer'
 import { Icon } from '../../components/ui/Icon'
@@ -238,9 +239,10 @@ export function MemoView({ result }: { result: AnalysisResult }) {
         </p>
       )}
 
-      <article
+      <GlassCard
+        as="article"
         lang={memo.language}
-        className="memo-print glass-panel mt-5 space-y-5 rounded-xl p-6"
+        className="memo-print mt-5 space-y-5 p-6"
         aria-label={memo.title}
       >
         <header>
@@ -270,7 +272,7 @@ export function MemoView({ result }: { result: AnalysisResult }) {
             {t('memo.footer', { id: memo.footer.analysisId, release: memo.footer.corpusRelease })}
           </p>
         </footer>
-      </article>
+      </GlassCard>
       <div className="no-print mt-4">
         <Disclaimer text={result.disclaimer} />
       </div>

@@ -209,7 +209,7 @@ export function UploadPage() {
         </p>
       )}
 
-      <GlassCard className="mt-6 p-5">
+      <GlassCard depth="still" className="mt-6 p-5">
         <fieldset disabled={recorded !== null || busy} className="min-w-0 border-0 p-0">
           <legend className="sr-only">{t('upload.method')}</legend>
           <Tabs

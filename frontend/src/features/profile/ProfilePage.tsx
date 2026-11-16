@@ -113,7 +113,7 @@ function ProfileForm({ me }: { me: Me }) {
   })
 
   return (
-    <GlassCard className="mt-6 p-5">
+    <GlassCard depth="still" className="mt-6 p-5">
       <form
         onSubmit={(event: SyntheticEvent) => {
           event.preventDefault()

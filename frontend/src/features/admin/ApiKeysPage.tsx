@@ -123,7 +123,7 @@ export default function ApiKeysPage() {
       )}
 
       <form onSubmit={submit} noValidate className="mt-5">
-        <GlassCard className="space-y-4 p-5">
+        <GlassCard depth="still" className="space-y-4 p-5">
           <h3 className="text-lg font-bold">{t('admin.keys.create')}</h3>
           <div>
             <label htmlFor="key-name" className="font-semibold">

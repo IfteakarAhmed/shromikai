@@ -43,7 +43,7 @@ export function RiskCard({
 
   return (
     <GlassCard as="article" className="p-5" aria-labelledby={`finding-${finding.id}`}>
-      <div className="flex flex-wrap items-center gap-2">
+      <div className="lift-2 flex flex-wrap items-center gap-2">
         <SeverityTag severity={finding.severity} />
         <VerificationBadge status={finding.verificationStatus} />
         {finding.nonObvious && <Badge tone="neutral">{t('finding.nonObvious')}</Badge>}
@@ -57,7 +57,7 @@ export function RiskCard({
         )}
       </div>
 
-      <div lang={language} className="mt-3">
+      <div lang={language} className="lift-1 mt-3">
         <h3 id={`finding-${finding.id}`} className="text-xl font-bold leading-snug">
           {finding.title}
         </h3>
@@ -83,7 +83,7 @@ export function RiskCard({
       )}
 
       {verified && finding.citations.length > 0 && (
-        <div className="mt-4">
+        <div className="lift-2 mt-4">
           <h4 className="mb-2 text-sm font-semibold text-muted-foreground">
             {t('finding.citations')}
           </h4>
@@ -103,13 +103,13 @@ export function RiskCard({
       )}
 
       {uncertain && (
-        <div className="mt-4 flex items-start gap-2 rounded-lg border border-uncertain/40 bg-uncertain/10 p-3 text-uncertain">
+        <div className="lift-1 mt-4 flex items-start gap-2 rounded-lg border border-uncertain/40 bg-uncertain/10 p-3 text-uncertain">
           <Icon name="help" className="mt-1 shrink-0" />
           <p className="font-medium">{t('verification.sentForReview')}</p>
         </div>
       )}
 
-      <div className="mt-4 flex flex-wrap items-center gap-2">
+      <div className="lift-1 mt-4 flex flex-wrap items-center gap-2">
         <Button
           variant="outline"
           onClick={() => {

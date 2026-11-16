@@ -52,7 +52,7 @@ export function CompareStartPage() {
 
   return (
     <div className="mx-auto max-w-3xl px-(--gutter) py-10">
-      <h1 className="text-3xl font-bold">{t('compare.title')}</h1>
+      <h1 className="parallax text-3xl font-bold">{t('compare.title')}</h1>
       <p className="mt-2 text-lg text-muted-foreground">{t('compare.intro')}</p>
       {recorded !== null && (
         <p
@@ -62,7 +62,7 @@ export function CompareStartPage() {
           {t('upload.recordedOnly')}
         </p>
       )}
-      <GlassCard className="mt-6 p-5">
+      <GlassCard depth="still" className="mt-6 p-5">
         <Button
           size="lg"
           busy={start.isPending && start.variables.kind === 'sample'}
@@ -75,7 +75,7 @@ export function CompareStartPage() {
           {t('compare.start')}
         </Button>
       </GlassCard>
-      <GlassCard className="mt-4 p-5">
+      <GlassCard depth="still" className="mt-4 p-5">
         <label htmlFor="compare-text" className="font-semibold">
           {t('compare.startText')}
         </label>

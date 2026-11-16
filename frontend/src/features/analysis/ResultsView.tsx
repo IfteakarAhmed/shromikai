@@ -56,7 +56,7 @@ export function ResultsView({ result }: ResultsViewProps) {
 
   return (
     <div className="mx-auto max-w-6xl px-(--gutter) pb-28 pt-8 lg:pb-12">
-      <header className="flex flex-wrap items-start justify-between gap-4">
+      <header className="parallax flex flex-wrap items-start justify-between gap-4">
         <div>
           <h1 className="text-3xl font-bold">{t('results.title')}</h1>
           <div className="mt-2 flex flex-wrap items-center gap-2">

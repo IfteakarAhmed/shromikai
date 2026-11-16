@@ -28,7 +28,7 @@ export function LoginPage() {
   }
   return (
     <section aria-labelledby="login-heading" className="mx-auto max-w-md px-(--gutter) py-10">
-      <GlassCard className="p-6">
+      <GlassCard depth="still" className="p-6">
         <h1 id="login-heading" className="text-3xl font-bold">
           {t('login.title')}
         </h1>
@@ -40,7 +40,7 @@ export function LoginPage() {
         />
       </GlassCard>
 
-      <GlassCard className="mt-6 p-6">
+      <GlassCard depth="still" className="mt-6 p-6">
         <h2 className="text-xl font-bold">{t('login.guestTitle')}</h2>
         <p className="mt-1 text-muted-foreground">{t('login.guestBody')}</p>
         <Button
@@ -65,7 +65,7 @@ export function LoginPage() {
         )}
       </GlassCard>
 
-      <GlassCard className="mt-6 p-6">
+      <GlassCard depth="still" className="mt-6 p-6">
         <h2 className="text-xl font-bold">{t('login.demoTitle')}</h2>
         <p className="mt-1 text-muted-foreground">{t('login.demoBody')}</p>
         <div className="mt-4 grid gap-2 sm:grid-cols-3">

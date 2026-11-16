@@ -81,7 +81,7 @@ export function ReviewDetail({ id, language }: { id: string; language: Language 
         />
       )}
       {query.data !== undefined && (
-        <GlassCard className="space-y-5 p-5">
+        <GlassCard depth="still" className="space-y-5 p-5">
           <header>
             <h3 id="review-detail-heading" className="text-xl font-bold">
               {title(query.data)}
