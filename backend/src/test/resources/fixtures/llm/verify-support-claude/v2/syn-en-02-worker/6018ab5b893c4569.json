@@ -1,0 +1,22 @@
+{
+  "fixtureVersion" : 1,
+  "promptId" : "verify-support-claude",
+  "promptVersion" : 2,
+  "caseId" : "syn-en-02-worker",
+  "modelId" : "claude-haiku-5-5",
+  "requestSha256" : "6018ab5b893c4569c3072602c0331f5737fa2485c050b05c25ce92191ac31cd3",
+  "provenance" : "synthetic",
+  "source" : "recorded from a live call",
+  "recordedAt" : "2026-11-11T13:36:32.381498Z",
+  "stopReason" : "end_turn",
+  "usage" : {
+    "inputTokens" : 559,
+    "outputTokens" : 76,
+    "cacheReadTokens" : 982
+  },
+  "response" : {
+    "label" : "SUPPORTS",
+    "confidence" : 0.9,
+    "reason" : "Section s.127(1) bars deductions for loss until the worker is found guilty via proper inquiry following natural justice; the claim's elements are all present."
+  }
+}

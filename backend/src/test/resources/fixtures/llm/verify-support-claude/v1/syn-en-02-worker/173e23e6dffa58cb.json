@@ -1,0 +1,22 @@
+{
+  "fixtureVersion" : 1,
+  "promptId" : "verify-support-claude",
+  "promptVersion" : 1,
+  "caseId" : "syn-en-02-worker",
+  "modelId" : "claude-haiku-5-5",
+  "requestSha256" : "173e23e6dffa58cbcfb2cd35ac414eafd6f337774e73888c5088430cee83f312",
+  "provenance" : "synthetic",
+  "source" : "recorded from a live call",
+  "recordedAt" : "2026-11-11T12:44:49.957705Z",
+  "stopReason" : "end_turn",
+  "usage" : {
+    "inputTokens" : 1380,
+    "outputTokens" : 76,
+    "cacheReadTokens" : 982
+  },
+  "response" : {
+    "label" : "SUPPORTS",
+    "confidence" : 0.95,
+    "reason" : "Section s.348গ(1) establishes an alternative dispute resolution authority for labour disputes that acts impartially and equitably, matching the claim."
+  }
+}

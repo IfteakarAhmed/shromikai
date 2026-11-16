@@ -1,0 +1,21 @@
+{
+  "fixtureVersion" : 1,
+  "promptId" : "query-rewrite",
+  "promptVersion" : 1,
+  "caseId" : "syn-en-02-worker",
+  "modelId" : "claude-haiku-5-5",
+  "requestSha256" : "d3a11ca8d2a03cb19b5f42d0579515b49d94df4726fb8c1b6a6be30c5e0fff0f",
+  "provenance" : "synthetic",
+  "source" : "recorded from a live call",
+  "recordedAt" : "2026-11-11T12:10:48.977256Z",
+  "usage" : {
+    "inputTokens" : 61,
+    "outputTokens" : 148,
+    "cacheReadTokens" : 798
+  },
+  "response" : {
+    "status" : "OK",
+    "reason" : "NONE",
+    "queries" : [ "weekly rest day entitlement for workers Bangladesh labour law", "public holidays paid leave for employees Bangladesh", "সাপ্তাহিক ছুটি ও সরকারি ছুটির অধিকার শ্রমিক", "সাপ্তাহিক বিশ্রাম দিবস ও সাধারণ ছুটি শ্রম আইন" ]
+  }
+}

@@ -1,0 +1,68 @@
+{
+  "fixtureVersion" : 1,
+  "promptId" : "risk-analysis",
+  "promptVersion" : 2,
+  "caseId" : "syn-en-02-worker",
+  "modelId" : "claude-sonnet-5-5",
+  "requestSha256" : "feafae1189175361930fe68ec177497580435e1dba5cdb6ebfaf68c8a56232a1",
+  "provenance" : "synthetic",
+  "source" : "recorded from a live call",
+  "recordedAt" : "2026-11-11T12:44:43.765114Z",
+  "stopReason" : "end_turn",
+  "usage" : {
+    "inputTokens" : 10838,
+    "outputTokens" : 1221,
+    "cacheReadTokens" : 0
+  },
+  "response" : {
+    "status" : "OK",
+    "reason" : "NONE",
+    "findings" : [ {
+      "title" : "মালিকের ম্যানেজারের সিদ্ধান্তই চূড়ান্ত",
+      "kind" : "CONFLICT",
+      "severity" : "HIGH",
+      "non_obvious" : false,
+      "clause_type" : "DISPUTE_RESOLUTION",
+      "clause_ids" : [ "c10" ],
+      "explanation" : "বিরোধ কোম্পানির ম্যানেজার নিষ্পত্তি করবেন ও তা চূড়ান্ত, ফলে আইনি প্রতিকার বন্ধ হয়। এটি বাতিলযোগ্য।",
+      "citations" : [ {
+        "section_key" : "CA-1872:28@original",
+        "quote" : "restricted absolutely from enforcing his rights under or in respect of any contract",
+        "claim" : "আদালতে অধিকার প্রয়োগে পরম বাধা দেওয়া চুক্তি বাতিল।"
+      }, {
+        "section_key" : "BLA-2006:214@amend-2013",
+        "quote" : "কোন শিল্প বিরোধ অথবা অন্য কোন বিরোধ অথবা কোন প্রশ্নের বিচারও নিষ্পত্তি",
+        "claim" : "শ্রম আদালতের এখতিয়ারে শ্রম বিরোধ নিষ্পত্তি হয়।"
+      } ],
+      "confidence" : 0.85
+    }, {
+      "title" : "নিরপেক্ষ বিরোধ নিষ্পত্তির ব্যবস্থা নেই",
+      "kind" : "OMISSION",
+      "severity" : "MEDIUM",
+      "non_obvious" : true,
+      "clause_type" : "DISPUTE_RESOLUTION",
+      "clause_ids" : [ "c10" ],
+      "explanation" : "চুক্তিতে শ্রম আদালত, সালিশ বা বিকল্প কর্তৃপক্ষের উল্লেখ নেই। নিরপেক্ষ ফোরামে যাওয়ার অধিকার ঝুঁকিতে পড়ে।",
+      "citations" : [ {
+        "section_key" : "BLA-2006:348C@amend-2026",
+        "quote" : "শ্রম-সংক্রান্ত ব্যক্তিগত ও যৌথ বিরোধ নিষ্পত্তির জন্য এই আইনের আওতায় একটি বিকল্প বিরোধ নিষ্পত্তি কর্তৃপক্ষ",
+        "claim" : "শ্রম বিরোধের জন্য নিরপেক্ষ বিকল্প কর্তৃপক্ষ আছে।"
+      } ],
+      "confidence" : 0.7
+    }, {
+      "title" : "বিনা নোটিশে অবসান ও ক্ষতিপূরণ নেই",
+      "kind" : "CONFLICT",
+      "severity" : "CRITICAL",
+      "non_obvious" : false,
+      "clause_type" : "NOTICE_AND_RESIGNATION",
+      "clause_ids" : [ "c8" ],
+      "explanation" : "মালিক নোটিশ ছাড়াই চাকুরী শেষ করতে পারেন, নোটিশ ০ দিন। আইনে নোটিশ বা নোটিশের মজুরী ও ক্ষতিপূরণ প্রযোজ্য।",
+      "citations" : [ {
+        "section_key" : "BLA-2006:26@original",
+        "quote" : "নোটিশের পরিবর্তে নোটিশ মেয়াদের জন্য মজুরী প্রদান করিয়া ইহা করিতে পারিবেন",
+        "claim" : "বিনা নোটিশে অবসানে নোটিশ মেয়াদের মজুরী দিতে হয়।"
+      } ],
+      "confidence" : 0.85
+    } ]
+  }
+}

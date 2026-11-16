@@ -1,0 +1,21 @@
+{
+  "fixtureVersion" : 1,
+  "promptId" : "query-rewrite",
+  "promptVersion" : 1,
+  "caseId" : "syn-en-02-worker",
+  "modelId" : "claude-haiku-5-5",
+  "requestSha256" : "0ad744ce96e0710ca63cd28c9392867b7ba610e9b49912b6cf315d6e0314d39e",
+  "provenance" : "synthetic",
+  "source" : "recorded from a live call",
+  "recordedAt" : "2026-11-11T12:10:48.662125Z",
+  "usage" : {
+    "inputTokens" : 67,
+    "outputTokens" : 153,
+    "cacheReadTokens" : 798
+  },
+  "response" : {
+    "status" : "OK",
+    "reason" : "NONE",
+    "queries" : [ "কর্মঘণ্টা নির্ধারণ এবং অতিরিক্ত সময়ের মজুরি বাংলাদেশ শ্রম আইন", "night shift allowance and overtime pay Bangladesh labour law", "ঘণ্টা প্রতি দিন বিশ্রাম ও নৈশ কর্মের বিধান শ্রম আইন" ]
+  }
+}

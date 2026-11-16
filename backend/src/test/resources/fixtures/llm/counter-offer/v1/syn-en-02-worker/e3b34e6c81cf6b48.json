@@ -1,0 +1,24 @@
+{
+  "fixtureVersion" : 1,
+  "promptId" : "counter-offer",
+  "promptVersion" : 1,
+  "caseId" : "syn-en-02-worker",
+  "modelId" : "claude-sonnet-5-5",
+  "requestSha256" : "e3b34e6c81cf6b48a51f8e4d67b567aef9201cdeb71a4abe7beb148d2129ca2e",
+  "provenance" : "synthetic",
+  "source" : "recorded from a live call",
+  "recordedAt" : "2026-11-11T12:45:06.237721Z",
+  "stopReason" : "end_turn",
+  "usage" : {
+    "inputTokens" : 589,
+    "outputTokens" : 351,
+    "cacheReadTokens" : 1172
+  },
+  "response" : {
+    "status" : "OK",
+    "reason" : "NONE",
+    "action" : "REPLACE",
+    "proposed_text" : "9. Governing law and disputes\nThis contract is governed by the laws of Bangladesh. Any dispute arising out of or in connection with this contract shall first be discussed in good faith between the Company and the Guard. If the dispute is not settled within 30 days, either party may refer it to the Labour Court, or to the alternative dispute resolution authority established under the Bangladesh Labour Act, 2006, which shall proceed on an impartial and fair basis. Nothing in this clause removes or limits the Guard's right to approach the Labour Court or the said authority.\nSigned for the Company by [PERSON_2]; the Guard: [PERSON_1]. Witness: [PERSON_3].",
+    "rationale" : "The clause no longer lets the Company's manager decide finally, and instead provides for the Labour Court or the impartial alternative dispute resolution authority, as the cited provision requires. A 30-day period for direct discussion first still lets both sides settle matters quickly."
+  }
+}

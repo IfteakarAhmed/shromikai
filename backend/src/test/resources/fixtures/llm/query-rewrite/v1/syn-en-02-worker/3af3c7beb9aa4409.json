@@ -1,0 +1,21 @@
+{
+  "fixtureVersion" : 1,
+  "promptId" : "query-rewrite",
+  "promptVersion" : 1,
+  "caseId" : "syn-en-02-worker",
+  "modelId" : "claude-haiku-5-5",
+  "requestSha256" : "3af3c7beb9aa44090680e1b5c046da84161cb8908581da995d7a784e8d9cf815",
+  "provenance" : "synthetic",
+  "source" : "recorded from a live call",
+  "recordedAt" : "2026-11-11T12:10:48.594707Z",
+  "usage" : {
+    "inputTokens" : 75,
+    "outputTokens" : 87,
+    "cacheReadTokens" : 798
+  },
+  "response" : {
+    "status" : "OK",
+    "reason" : "NONE",
+    "queries" : [ "probation period salary reduction employment Bangladesh", "প্রবেশনকাল বেতন হ্রাস শ্রম আইন", "probation employee confirmation Bangladesh labour law" ]
+  }
+}

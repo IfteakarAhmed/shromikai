@@ -1,0 +1,21 @@
+{
+  "fixtureVersion" : 1,
+  "promptId" : "query-rewrite",
+  "promptVersion" : 1,
+  "caseId" : "syn-en-02-worker",
+  "modelId" : "claude-haiku-5-5",
+  "requestSha256" : "f038aae538c515e2df1d93018014381c18579aa0e7bb6d8b32a495e69eca559d",
+  "provenance" : "synthetic",
+  "source" : "recorded from a live call",
+  "recordedAt" : "2026-11-11T12:10:48.569323Z",
+  "usage" : {
+    "inputTokens" : 65,
+    "outputTokens" : 135,
+    "cacheReadTokens" : 798
+  },
+  "response" : {
+    "status" : "OK",
+    "reason" : "NONE",
+    "queries" : [ "শ্রমিকের আঘাত ও অসুস্থতার চিকিৎসা ব্যয় ও মজুরি", "employee injury sickness medical expenses wages during absence", "অসুস্থতাজনিত ছুটি ও মজুরি পরিশোধ বাংলাদেশ শ্রম আইন" ]
+  }
+}

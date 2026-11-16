@@ -1,0 +1,24 @@
+{
+  "fixtureVersion" : 1,
+  "promptId" : "counter-offer",
+  "promptVersion" : 2,
+  "caseId" : "syn-en-02-worker",
+  "modelId" : "claude-sonnet-5-5",
+  "requestSha256" : "c02aa8a61faa0bb69e89b2287111575ee7a1cd89265fdd95c80ec1931388eef6",
+  "provenance" : "synthetic",
+  "source" : "recorded from a live call",
+  "recordedAt" : "2026-11-11T13:36:45.186293Z",
+  "stopReason" : "end_turn",
+  "usage" : {
+    "inputTokens" : 575,
+    "outputTokens" : 372,
+    "cacheReadTokens" : 0
+  },
+  "response" : {
+    "status" : "OK",
+    "reason" : "NONE",
+    "action" : "REPLACE",
+    "proposed_text" : "৯. প্রযোজ্য আইন ও বিরোধ: যেকোনো বিরোধ প্রথমে কোম্পানির ম্যানেজারের কাছে লিখিতভাবে উপস্থাপন করা যাবে এবং পক্ষগণ আলোচনার মাধ্যমে তা নিষ্পত্তির চেষ্টা করবেন। নিষ্পত্তি না হলে যেকোনো পক্ষ বাংলাদেশের প্রচলিত আইন অনুযায়ী এখতিয়ারসম্পন্ন শ্রম আদালত বা অন্য আদালতে প্রতিকার চাইতে পারবেন।",
+    "rationale" : "ম্যানেজারের সিদ্ধান্তের চূড়ান্ততা বাদ দিয়ে আলোচনার সুযোগ রেখে আদালতে যাওয়ার অধিকার নিশ্চিত করা হয়েছে।"
+  }
+}

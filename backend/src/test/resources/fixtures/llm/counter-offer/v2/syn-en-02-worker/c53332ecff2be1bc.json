@@ -1,0 +1,24 @@
+{
+  "fixtureVersion" : 1,
+  "promptId" : "counter-offer",
+  "promptVersion" : 2,
+  "caseId" : "syn-en-02-worker",
+  "modelId" : "claude-sonnet-5-5",
+  "requestSha256" : "c53332ecff2be1bc1f97ad969b41b350293429e5edbe9e96e341cd2f8fdf764c",
+  "provenance" : "synthetic",
+  "source" : "recorded from a live call",
+  "recordedAt" : "2026-11-11T13:36:43.537640Z",
+  "stopReason" : "end_turn",
+  "usage" : {
+    "inputTokens" : 572,
+    "outputTokens" : 359,
+    "cacheReadTokens" : 0
+  },
+  "response" : {
+    "status" : "OK",
+    "reason" : "NONE",
+    "action" : "REPLACE",
+    "proposed_text" : "৪. সাপ্তাহিক ও উৎসব ছুটি: গার্ড প্রতিষ্ঠানের ক্ষেত্রে প্রতি সপ্তাহে দেড় দিন সাপ্তাহিক ছুটি এবং প্রতি পঞ্জিকা বৎসরে ১৩ দিনের মজুরীসহ উৎসব ছুটি পাইবেন। ছুটির দিনে কাজ করানো হইলে আইন অনুযায়ী ক্ষতিপূরণ বা বাড়তি ছুটি প্রযোজ্য হইবে।",
+    "rationale" : "ধারাটি এখন আইনসম্মত সাপ্তাহিক ছুটি ও ১৩ দিনের মজুরীসহ উৎসব ছুটি নিশ্চিত করে এবং প্রয়োজনে কাজ করানোর সুযোগ রাখে।"
+  }
+}

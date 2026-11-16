@@ -1,0 +1,22 @@
+{
+  "fixtureVersion" : 1,
+  "promptId" : "verify-support-claude",
+  "promptVersion" : 1,
+  "caseId" : "syn-en-02-worker",
+  "modelId" : "claude-haiku-5-5",
+  "requestSha256" : "f9b8b695938c476b3aa14df6f84c5da6c99461a3a47d87321f2ad74f3a7235a7",
+  "provenance" : "synthetic",
+  "source" : "recorded from a live call",
+  "recordedAt" : "2026-11-11T12:44:48.580783Z",
+  "stopReason" : "end_turn",
+  "usage" : {
+    "inputTokens" : 3199,
+    "outputTokens" : 76,
+    "cacheReadTokens" : 982
+  },
+  "response" : {
+    "label" : "SUPPORTS",
+    "confidence" : 0.9,
+    "reason" : "Section 214(10)(ka) gives labour courts exclusive jurisdiction to try and settle industrial disputes and other disputes under the Act."
+  }
+}

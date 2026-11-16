@@ -1,0 +1,72 @@
+{
+  "fixtureVersion" : 1,
+  "promptId" : "risk-analysis",
+  "promptVersion" : 2,
+  "caseId" : "syn-en-02-worker",
+  "modelId" : "claude-sonnet-5-5",
+  "requestSha256" : "7f2b2071a964d4c411fa1627feeb7e676509591ce7bb35aabc8540b6cf47b1e3",
+  "provenance" : "synthetic",
+  "source" : "recorded from a live call",
+  "recordedAt" : "2026-11-11T12:28:29.154682Z",
+  "stopReason" : "end_turn",
+  "usage" : {
+    "inputTokens" : 14051,
+    "outputTokens" : 1402,
+    "cacheReadTokens" : 0
+  },
+  "response" : {
+    "status" : "OK",
+    "reason" : "NONE",
+    "findings" : [ {
+      "title" : "মাসিক ইউনিফর্ম/সরঞ্জাম খরচ কর্তন",
+      "kind" : "CONFLICT",
+      "severity" : "CRITICAL",
+      "non_obvious" : false,
+      "clause_type" : "WAGE_PAYMENT_AND_DEDUCTIONS",
+      "clause_ids" : [ "c3" ],
+      "explanation" : "প্রতি মাসে ইউনিফর্ম ও সরঞ্জামের খরচ কাটা হবে। আইনে এই কর্তন অনুমোদিত নয়; কেবল তালিকাভুক্ত কর্তন চলে।",
+      "citations" : [ {
+        "section_key" : "BLA-2006:125@amend-2013",
+        "quote" : "এই আইন দ্বারা অনুমোদিত কর্তনের ক্ষেত্র ব্যতীত অন্য কোন ৰেত্রে কোন শ্রমিকের মজুরী হইতে কিছুই কর্তন করা যাইবে না",
+        "claim" : "অনুমোদিত ক্ষেত্র ছাড়া মজুরী থেকে কর্তন নিষিদ্ধ।"
+      }, {
+        "section_key" : "BLA-2006:128@original",
+        "quote" : "এবং দফা (ঙ) এর অধীন কর্তনের ৰেত্রে উহা সরকার কতর্ৃক আরোপিত শর্ত সাপেৰে হইবে",
+        "claim" : "সেবা-সুবিধার কর্তন সরকারি শর্ত সাপেক্ষ; কাজের সরঞ্জাম বাদ।"
+      } ],
+      "confidence" : 0.85
+    }, {
+      "title" : "যেকোনো স্থানে বদলির অবাধ ক্ষমতা",
+      "kind" : "AMBIGUITY",
+      "severity" : "MEDIUM",
+      "non_obvious" : true,
+      "clause_type" : "TRANSFER_AND_DEPLOYMENT",
+      "clause_ids" : [ "c2" ],
+      "explanation" : "কোম্পানি যেকোনো সময় দেশের যেকোনো স্থানে পোস্টিং দিতে পারে। নোটিশ, ব্যয় বা সীমা নেই; চাকুরীর শর্তে ক্ষতির ঝুঁকি।",
+      "citations" : [ {
+        "section_key" : "BLA-2006:3@amend-2026",
+        "quote" : "কোন শ্রমিকের জন্য এই অধ্যায়ের কোন বিধান হইতে কম অনুকূল হইতে পারিবে না",
+        "claim" : "নিয়োগের শর্ত আইনের চেয়ে কম অনুকূল হতে পারে না।"
+      } ],
+      "confidence" : 0.55
+    }, {
+      "title" : "কর্তনের পদ্ধতিগত সুরক্ষা অনুপস্থিত",
+      "kind" : "OMISSION",
+      "severity" : "MEDIUM",
+      "non_obvious" : true,
+      "clause_type" : "WAGE_PAYMENT_AND_DEDUCTIONS",
+      "clause_ids" : [ "c3" ],
+      "explanation" : "চুক্তিতে মজুরী পরিশোধের সময় নেই এবং সরঞ্জাম-ক্ষতি কর্তনে তদন্ত বা সম্মতির শর্ত নেই। বেআইনি কর্তন ও বিলম্বের ঝুঁকি।",
+      "citations" : [ {
+        "section_key" : "BLA-2006:123@amend-2013",
+        "quote" : "সাত কর্মদিবসের মধ্যে তাহার মজুরী পরিশোধ করিতে হইবে",
+        "claim" : "মজুরীকাল শেষের পর সাত কর্মদিবসে মজুরী দিতে হবে।"
+      }, {
+        "section_key" : "BLA-2006:127@original",
+        "quote" : "যথাযথ তদনত্দের মাধ্যমে উক্ত শ্রমিককে দোষী সাব্যসত্দ করা হয়",
+        "claim" : "ক্ষতির কর্তনের আগে ন্যায্য তদন্তে দোষী সাব্যস্ত করতে হবে।"
+      } ],
+      "confidence" : 0.6
+    } ]
+  }
+}

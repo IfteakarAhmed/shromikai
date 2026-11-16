@@ -1,0 +1,22 @@
+{
+  "fixtureVersion" : 1,
+  "promptId" : "verify-support-claude",
+  "promptVersion" : 2,
+  "caseId" : "syn-en-02-worker",
+  "modelId" : "claude-haiku-5-5",
+  "requestSha256" : "d0f91d55658340519eda3e323d471f69e61bcdb88d0db9a13f859849fe25eab8",
+  "provenance" : "synthetic",
+  "source" : "recorded from a live call",
+  "recordedAt" : "2026-11-11T13:36:32.287664Z",
+  "stopReason" : "end_turn",
+  "usage" : {
+    "inputTokens" : 3199,
+    "outputTokens" : 80,
+    "cacheReadTokens" : 982
+  },
+  "response" : {
+    "label" : "SUPPORTS",
+    "confidence" : 0.9,
+    "reason" : "Section 214(10)(ka) gives labour courts exclusive jurisdiction over adjudicating industrial or other disputes under the Act, matching the claim."
+  }
+}

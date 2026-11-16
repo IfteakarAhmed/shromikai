@@ -1,0 +1,24 @@
+{
+  "fixtureVersion" : 1,
+  "promptId" : "counter-offer",
+  "promptVersion" : 1,
+  "caseId" : "syn-en-02-worker",
+  "modelId" : "claude-sonnet-5-5",
+  "requestSha256" : "3890dd9df9653c047dd5d7bb0b83bb4a18f7cdc66d7f76f796fb96d6dc4f6d02",
+  "provenance" : "synthetic",
+  "source" : "recorded from a live call",
+  "recordedAt" : "2026-11-11T12:45:02.978656Z",
+  "stopReason" : "end_turn",
+  "usage" : {
+    "inputTokens" : 738,
+    "outputTokens" : 355,
+    "cacheReadTokens" : 0
+  },
+  "response" : {
+    "status" : "OK",
+    "reason" : "NONE",
+    "action" : "REPLACE",
+    "proposed_text" : "3. Hours of work The Guard works 8 hours a day under normal duty. Any work beyond the hours fixed by law is overtime, and the Guard shall be paid for overtime at twice the ordinary rate of the Guard's basic wage, dearness allowance and ad hoc or interim wage, if any. Overtime is worked only when the employer requires it, and the Guard is entitled to the weekly rest and holidays provided by law.",
+    "rationale" : "আইনে দৈনিক ৮ ঘণ্টার সীমা এবং অধিকাল কাজে দ্বিগুণ হারে ভাতা বাধ্যতামূলক, তাই ধারাটি সেই অনুযায়ী সংশোধিত হয়েছে। নিয়োগকর্তা প্রয়োজনে অধিকাল কাজ করাতে পারবেন, তাই পক্ষদের জন্য ভারসাম্য বজায় থাকে।"
+  }
+}

@@ -1,0 +1,24 @@
+{
+  "fixtureVersion" : 1,
+  "promptId" : "counter-offer",
+  "promptVersion" : 1,
+  "caseId" : "syn-en-02-worker",
+  "modelId" : "claude-sonnet-5-5",
+  "requestSha256" : "2cd5d4eb3322f4deff7a26e25848f2bf25fed41a4fe10114c5c429549c142d29",
+  "provenance" : "synthetic",
+  "source" : "recorded from a live call",
+  "recordedAt" : "2026-11-11T12:45:03.277931Z",
+  "stopReason" : "end_turn",
+  "usage" : {
+    "inputTokens" : 575,
+    "outputTokens" : 455,
+    "cacheReadTokens" : 0
+  },
+  "response" : {
+    "status" : "OK",
+    "reason" : "NONE",
+    "action" : "REPLACE",
+    "proposed_text" : "9. Governing law and disputes\nThis contract is governed by the laws of Bangladesh. Any dispute arising out of this contract shall first be discussed in good faith between the Company's manager and the Guard. If the dispute is not settled within 30 days, either party may refer it to the Labour Court or any other competent tribunal or court in Bangladesh. Nothing in this contract limits the right of either party to enforce their rights through the usual legal proceedings, and no decision of the Company's manager shall be final or binding on the Guard.\nSigned for the Company by [PERSON_2]; the Guard: [PERSON_1]. Witness: [PERSON_3].",
+    "rationale" : "ধারাটি এখন ম্যানেজারের সিদ্ধান্তকে চূড়ান্ত বলার পরিবর্তে প্রথমে আলোচনার সুযোগ রাখে এবং এরপর শ্রম আদালত বা উপযুক্ত আদালতে যাওয়ার অধিকার বহাল রাখে। ফলে আইনি প্রতিকার বন্ধ করার ঝুঁকি দূর হয় এবং উভয় পক্ষ আগে সালিশি আলোচনার সুযোগ পায়।"
+  }
+}

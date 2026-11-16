@@ -1,0 +1,26 @@
+{
+  "fixtureVersion" : 1,
+  "promptId" : "risk-citation-repair",
+  "promptVersion" : 2,
+  "caseId" : "syn-en-02-worker",
+  "modelId" : "claude-sonnet-5-5",
+  "requestSha256" : "54420be552ccab42e0681704020c683ceb8e24e34ed85e21bce11b7808417b5a",
+  "provenance" : "synthetic",
+  "source" : "recorded from a live call",
+  "recordedAt" : "2026-11-11T13:36:38.195477Z",
+  "stopReason" : "end_turn",
+  "usage" : {
+    "inputTokens" : 15062,
+    "outputTokens" : 140,
+    "cacheReadTokens" : 0
+  },
+  "response" : {
+    "status" : "OK",
+    "reason" : "NONE",
+    "citations" : [ {
+      "section_key" : "BLA-2006:27@amend-2026",
+      "quote" : "মালিককে ষাট দিনের লিখিত নোটিশ প্রদান করিয়া তাহার চাকুরী হইতে ইস্তফা দিতে পারিবেন",
+      "claim" : "A permanent worker may resign by giving written notice to the employer."
+    } ]
+  }
+}

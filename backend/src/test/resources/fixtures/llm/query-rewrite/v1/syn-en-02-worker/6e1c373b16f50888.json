@@ -1,0 +1,21 @@
+{
+  "fixtureVersion" : 1,
+  "promptId" : "query-rewrite",
+  "promptVersion" : 1,
+  "caseId" : "syn-en-02-worker",
+  "modelId" : "claude-haiku-5-5",
+  "requestSha256" : "6e1c373b16f508887c3640e4238417f0c24e0e53b3aeb8a4097bf47d55160c93",
+  "provenance" : "synthetic",
+  "source" : "recorded from a live call",
+  "recordedAt" : "2026-11-11T12:10:52.983762Z",
+  "usage" : {
+    "inputTokens" : 99,
+    "outputTokens" : 134,
+    "cacheReadTokens" : 798
+  },
+  "response" : {
+    "status" : "OK",
+    "reason" : "NONE",
+    "queries" : [ "বাংলাদেশ শ্রম আইন কর্মসংস্থান বিরোধ নিষ্পত্তি", "employment dispute resolution labour court Bangladesh", "চূড়ান্ত সিদ্ধান্ত ব্যবস্থাপক শ্রমিক অভিযোগ আইন" ]
+  }
+}

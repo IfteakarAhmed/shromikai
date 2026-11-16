@@ -1,0 +1,24 @@
+{
+  "fixtureVersion" : 1,
+  "promptId" : "counter-offer",
+  "promptVersion" : 1,
+  "caseId" : "syn-en-02-worker",
+  "modelId" : "claude-sonnet-5-5",
+  "requestSha256" : "495f3f44813962a457417ded58e7fbb42fd605bd82078c6a6f74fb316dbe2845",
+  "provenance" : "synthetic",
+  "source" : "recorded from a live call",
+  "recordedAt" : "2026-11-11T12:45:03.181109Z",
+  "stopReason" : "end_turn",
+  "usage" : {
+    "inputTokens" : 572,
+    "outputTokens" : 317,
+    "cacheReadTokens" : 0
+  },
+  "response" : {
+    "status" : "OK",
+    "reason" : "NONE",
+    "action" : "REPLACE",
+    "proposed_text" : "4. Weekly rest and holidays: The Guard shall be entitled to weekly rest of 1 day in each week where the workplace is a factory or industry, and 1.5 days in each week where it is a shop or establishment. The Guard shall also be granted 13 festival holidays with wages in each calendar year. Where the client site is closed on a holiday, the Guard shall not be required to attend, and that day shall not be deducted from wages. Where the Guard is required to work on a rest day or festival holiday, the Company shall give a substitute rest day and pay for that work as the law provides.",
+    "rationale" : "The clause now gives the weekly rest and 13 days of paid festival holidays that the cited provisions require, replacing the denial of all rest. The Company can still schedule guard duty on those days by granting a substitute rest day and paying as the law provides, so site coverage is kept.]"
+  }
+}

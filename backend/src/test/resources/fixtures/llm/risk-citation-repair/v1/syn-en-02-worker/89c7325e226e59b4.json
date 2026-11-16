@@ -1,0 +1,26 @@
+{
+  "fixtureVersion" : 1,
+  "promptId" : "risk-citation-repair",
+  "promptVersion" : 1,
+  "caseId" : "syn-en-02-worker",
+  "modelId" : "claude-sonnet-5-5",
+  "requestSha256" : "89c7325e226e59b495913c875d27efe5572957bd93feed864257d4462d6400d3",
+  "provenance" : "synthetic",
+  "source" : "recorded from a live call",
+  "recordedAt" : "2026-11-11T12:44:57.197838Z",
+  "stopReason" : "end_turn",
+  "usage" : {
+    "inputTokens" : 45863,
+    "outputTokens" : 221,
+    "cacheReadTokens" : 0
+  },
+  "response" : {
+    "status" : "OK",
+    "reason" : "NONE",
+    "citations" : [ {
+      "section_key" : "BLA-2006:4@amend-2026",
+      "quote" : "কেরানী-সংক্রান্ত কাজে নিযুক্ত কোন শ্রমিকের শিক্ষানবিশীকাল হইবে ছয় মাস এবং অন্যান্য শ্রমিকের জন্য এই সময় হইবে তিন মাস",
+      "claim" : "The Act fixes the probation period for a worker in clerical work at six months and for other workers at three months, which may be extended by a further three months only for a skilled worker whose work quality could not be assessed in the first three months."
+    } ]
+  }
+}

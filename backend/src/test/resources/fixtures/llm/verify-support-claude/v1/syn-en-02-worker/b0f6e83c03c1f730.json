@@ -1,0 +1,22 @@
+{
+  "fixtureVersion" : 1,
+  "promptId" : "verify-support-claude",
+  "promptVersion" : 1,
+  "caseId" : "syn-en-02-worker",
+  "modelId" : "claude-haiku-5-5",
+  "requestSha256" : "b0f6e83c03c1f73093470a360872a31506bc0e4437590d41b1f3d848726a7173",
+  "provenance" : "synthetic",
+  "source" : "recorded from a live call",
+  "recordedAt" : "2026-11-11T12:44:47.814392Z",
+  "stopReason" : "end_turn",
+  "usage" : {
+    "inputTokens" : 1195,
+    "outputTokens" : 73,
+    "cacheReadTokens" : 0
+  },
+  "response" : {
+    "label" : "SUPPORTS",
+    "confidence" : 0.85,
+    "reason" : "Section 26(1) allows termination of permanent workers by written notice, and 26(3) allows paying wages for the notice period instead of notice."
+  }
+}

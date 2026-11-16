@@ -1,0 +1,22 @@
+{
+  "fixtureVersion" : 1,
+  "promptId" : "verify-support-claude",
+  "promptVersion" : 2,
+  "caseId" : "syn-en-02-worker",
+  "modelId" : "claude-haiku-5-5",
+  "requestSha256" : "91fb8c4febb8831967ac2b51caac9ed209c5d5ad5ef6d33917ad196557d2e608",
+  "provenance" : "synthetic",
+  "source" : "recorded from a live call",
+  "recordedAt" : "2026-11-11T13:36:39.833175Z",
+  "stopReason" : "end_turn",
+  "usage" : {
+    "inputTokens" : 1769,
+    "outputTokens" : 69,
+    "cacheReadTokens" : 982
+  },
+  "response" : {
+    "label" : "PARTIAL",
+    "confidence" : 0.8,
+    "reason" : "Section s.27(1) lets a permanent worker resign with written notice, but it specifies 60 days notice, which the claim omits."
+  }
+}

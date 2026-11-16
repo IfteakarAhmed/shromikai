@@ -1,0 +1,22 @@
+{
+  "fixtureVersion" : 1,
+  "promptId" : "verify-support-claude",
+  "promptVersion" : 1,
+  "caseId" : "syn-en-02-worker",
+  "modelId" : "claude-haiku-5-5",
+  "requestSha256" : "f8f23e0be837d026f5b849ae6014ec97497e68987ecb0a193366920a0e9162ae",
+  "provenance" : "synthetic",
+  "source" : "recorded from a live call",
+  "recordedAt" : "2026-11-11T12:44:48.760999Z",
+  "stopReason" : "end_turn",
+  "usage" : {
+    "inputTokens" : 2349,
+    "outputTokens" : 80,
+    "cacheReadTokens" : 982
+  },
+  "response" : {
+    "label" : "PARTIAL",
+    "confidence" : 0.8,
+    "reason" : "Section 4(8) gives 3 months for non-clerical workers, but the extension is a further 3 months only for skilled workers, not a general 6-month cap for all."
+  }
+}

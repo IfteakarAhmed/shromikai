@@ -1,0 +1,21 @@
+{
+  "fixtureVersion" : 1,
+  "promptId" : "query-rewrite",
+  "promptVersion" : 1,
+  "caseId" : "syn-en-02-worker",
+  "modelId" : "claude-haiku-5-5",
+  "requestSha256" : "b8bb34f3011bf78f7854b8d3003f63fdd3cba233fd81103b8c6ee582a6e0bb62",
+  "provenance" : "synthetic",
+  "source" : "recorded from a live call",
+  "recordedAt" : "2026-11-11T12:10:49.172476Z",
+  "usage" : {
+    "inputTokens" : 82,
+    "outputTokens" : 105,
+    "cacheReadTokens" : 798
+  },
+  "response" : {
+    "status" : "OK",
+    "reason" : "NONE",
+    "queries" : [ "নোটিশ ছাড়া চাকরি সমাপ্তি শ্রমিক", "employee resignation notice period termination without notice", "চাকরি থেকে পদত্যাগের অনুমতি নিয়োগকর্তা" ]
+  }
+}

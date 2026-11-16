@@ -1,0 +1,24 @@
+{
+  "fixtureVersion" : 1,
+  "promptId" : "counter-offer",
+  "promptVersion" : 2,
+  "caseId" : "syn-en-02-worker",
+  "modelId" : "claude-sonnet-5-5",
+  "requestSha256" : "8334562147b65c9e1e820188bc9a092bfa6867c55222fd486223b0be77f10f54",
+  "provenance" : "synthetic",
+  "source" : "recorded from a live call",
+  "recordedAt" : "2026-11-11T13:36:43.301532Z",
+  "stopReason" : "end_turn",
+  "usage" : {
+    "inputTokens" : 598,
+    "outputTokens" : 331,
+    "cacheReadTokens" : 0
+  },
+  "response" : {
+    "status" : "OK",
+    "reason" : "NONE",
+    "action" : "REPLACE",
+    "proposed_text" : "৭. নোটিশ ও চাকুরীর অবসান: কোম্পানি লিখিত নোটিশ প্রদান করিয়া, অথবা নোটিশের পরিবর্তে নোটিশ মেয়াদের মজুরী প্রদান করিয়া এই চুক্তি শেষ করিতে পারিবে। গার্ড আইনানুযায়ী লিখিত নোটিশ প্রদান করিয়া পদত্যাগ করিতে পারিবেন; কোম্পানির পূর্বানুমতি প্রয়োজন হইবে না।",
+    "rationale" : "ধারাটি এখন আইনসম্মত লিখিত নোটিশ বা নোটিশের মজুরি বাধ্যতামূলক করে এবং কোম্পানির অবসানের অধিকারও বজায় রাখে।"
+  }
+}

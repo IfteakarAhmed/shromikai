@@ -1,0 +1,21 @@
+{
+  "fixtureVersion" : 1,
+  "promptId" : "query-rewrite",
+  "promptVersion" : 1,
+  "caseId" : "syn-en-02-worker",
+  "modelId" : "claude-haiku-5-5",
+  "requestSha256" : "92927ed8b873a08cf0c8dec23141427436809d0b43611d063b048664aa51b756",
+  "provenance" : "synthetic",
+  "source" : "recorded from a live call",
+  "recordedAt" : "2026-11-11T12:10:52.464674Z",
+  "usage" : {
+    "inputTokens" : 51,
+    "outputTokens" : 133,
+    "cacheReadTokens" : 798
+  },
+  "response" : {
+    "status" : "OK",
+    "reason" : "NONE",
+    "queries" : [ "Non-compete restriction after employment termination in Bangladesh", "বাংলাদেশ শ্রম আইন চাকরি ছাড়ার পর প্রতিযোগিতামূলক কাজ নিষেধাজ্ঞা", "Restraint of trade post-employment clause enforceability Bangladesh contract" ]
+  }
+}
