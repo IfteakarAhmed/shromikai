@@ -1,5 +1,7 @@
 import type { ButtonHTMLAttributes, ReactNode } from 'react'
-import { Link, type LinkProps } from 'react-router-dom'
+import { Link, useNavigate, type LinkProps } from 'react-router-dom'
+import { isPlainClick, withViewTransition } from '../../lib/viewTransition'
+import { usePreferences } from '../../state/preferencesContext'
 import { buttonClass, type ButtonSize, type ButtonVariant } from './buttonClass'
 import { Icon } from './Icon'
 
@@ -39,11 +41,33 @@ interface LinkButtonProps extends LinkProps {
   size?: ButtonSize
 }
 
+/** A link that looks like a button; same-tab navigation runs inside a View Transition. */
 export function LinkButton({
   variant = 'primary',
   size = 'md',
   className,
+  onClick,
   ...props
 }: LinkButtonProps) {
-  return <Link className={buttonClass(variant, size, className)} {...props} />
+  const navigate = useNavigate()
+  const { lowBandwidth } = usePreferences()
+  return (
+    <Link
+      className={buttonClass(variant, size, className)}
+      {...props}
+      onClick={(event) => {
+        onClick?.(event)
+        if (!isPlainClick(event, props.target)) {
+          return
+        }
+        event.preventDefault()
+        withViewTransition(() => {
+          void navigate(props.to, {
+            state: props.state as unknown,
+            replace: props.replace ?? false,
+          })
+        }, lowBandwidth)
+      }}
+    />
+  )
 }

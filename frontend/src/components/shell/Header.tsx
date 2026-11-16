@@ -1,6 +1,8 @@
 import { useEffect, useId, useState } from 'react'
 import { useTranslation } from 'react-i18next'
-import { Link, NavLink, useLocation, useNavigate } from 'react-router-dom'
+import { Link, NavLink, useLocation, useNavigate, type NavLinkProps } from 'react-router-dom'
+import { isPlainClick, withViewTransition } from '../../lib/viewTransition'
+import { usePreferences } from '../../state/preferencesContext'
 import { isRole } from '../../api/auth'
 import { useAuth } from '../../auth/authContext'
 import { cx } from '../../lib/cx'
@@ -12,9 +14,30 @@ import { ThemeToggle } from './ThemeToggle'
 
 const linkClass = ({ isActive }: { isActive: boolean }) =>
   cx(
-    'inline-flex min-h-11 items-center rounded-lg px-3 font-semibold transition-colors',
+    'inline-flex min-h-14 items-center rounded-xl px-3 font-semibold transition-colors lg:min-h-11',
     isActive ? 'bg-accent text-foreground' : 'text-muted-foreground hover:text-foreground',
   )
+
+/** A navigation link whose same-tab clicks run inside a View Transition (C1). */
+function NavItem({ to, ...props }: NavLinkProps & { to: string }) {
+  const navigate = useNavigate()
+  const { lowBandwidth } = usePreferences()
+  return (
+    <NavLink
+      to={to}
+      {...props}
+      onClick={(event) => {
+        if (!isPlainClick(event)) {
+          return
+        }
+        event.preventDefault()
+        withViewTransition(() => {
+          void navigate(to)
+        }, lowBandwidth)
+      }}
+    />
+  )
+}
 
 /** The sticky header: brand, role-aware menu and the preference toggles (FR-68, FR-75, FR-76). */
 export function Header() {
@@ -50,11 +73,11 @@ export function Header() {
   }
 
   return (
-    <header className="glass-panel sticky top-0 z-30 rounded-none border-x-0 border-t-0">
+    <header className="site-header glass-panel sticky top-0 z-30 rounded-none border-x-0 border-t-0">
       <div className="mx-auto flex max-w-6xl items-center justify-between gap-3 px-(--gutter) py-2">
         <Link
           to="/"
-          className="inline-flex min-h-11 items-center gap-2 rounded-lg text-xl font-bold"
+          className="inline-flex min-h-14 items-center gap-2 rounded-lg text-xl font-bold lg:min-h-11"
         >
           <span className="flex size-9 items-center justify-center rounded-lg bg-primary text-primary-foreground">
             <Icon name="shield" size={20} />
@@ -63,29 +86,29 @@ export function Header() {
         </Link>
 
         <nav aria-label={t('nav.label')} className="hidden items-center gap-1 lg:flex">
-          <NavLink to="/app" end className={linkClass}>
+          <NavItem to="/app" end className={linkClass}>
             {t('nav.analyse')}
-          </NavLink>
-          <NavLink to="/app/compare" className={linkClass}>
+          </NavItem>
+          <NavItem to="/app/compare" className={linkClass}>
             {t('nav.compare')}
-          </NavLink>
-          <NavLink to="/docs" className={linkClass}>
+          </NavItem>
+          <NavItem to="/docs" className={linkClass}>
             {t('nav.docs')}
-          </NavLink>
+          </NavItem>
           {user !== null && (
-            <NavLink to="/app/profile" className={linkClass}>
+            <NavItem to="/app/profile" className={linkClass}>
               {t('nav.profile')}
-            </NavLink>
+            </NavItem>
           )}
           {role === 'HR' && (
-            <NavLink to="/app/playbooks" className={linkClass}>
+            <NavItem to="/app/playbooks" className={linkClass}>
               {t('nav.playbooks')}
-            </NavLink>
+            </NavItem>
           )}
           {role === 'ADMIN' && (
-            <NavLink to="/admin" className={linkClass}>
+            <NavItem to="/admin" className={linkClass}>
               {t('nav.admin')}
-            </NavLink>
+            </NavItem>
           )}
         </nav>
 
@@ -98,7 +121,7 @@ export function Header() {
           {user === null ? (
             <Link
               to="/login"
-              className="hidden min-h-11 items-center rounded-lg border border-border px-4 font-semibold hover:bg-accent lg:inline-flex"
+              className="hidden min-h-11 items-center rounded-xl border border-border px-4 font-semibold hover:bg-accent lg:inline-flex"
             >
               {t('nav.signIn')}
             </Link>
@@ -141,29 +164,29 @@ export function Header() {
         className="border-t border-border px-(--gutter) py-3 lg:hidden"
       >
         <nav aria-label={t('nav.label')} className="mx-auto flex max-w-6xl flex-col gap-1">
-          <NavLink to="/app" end className={linkClass}>
+          <NavItem to="/app" end className={linkClass}>
             {t('nav.analyse')}
-          </NavLink>
-          <NavLink to="/app/compare" className={linkClass}>
+          </NavItem>
+          <NavItem to="/app/compare" className={linkClass}>
             {t('nav.compare')}
-          </NavLink>
-          <NavLink to="/docs" className={linkClass}>
+          </NavItem>
+          <NavItem to="/docs" className={linkClass}>
             {t('nav.docs')}
-          </NavLink>
+          </NavItem>
           {user !== null && (
-            <NavLink to="/app/profile" className={linkClass}>
+            <NavItem to="/app/profile" className={linkClass}>
               {t('nav.profile')}
-            </NavLink>
+            </NavItem>
           )}
           {role === 'HR' && (
-            <NavLink to="/app/playbooks" className={linkClass}>
+            <NavItem to="/app/playbooks" className={linkClass}>
               {t('nav.playbooks')}
-            </NavLink>
+            </NavItem>
           )}
           {role === 'ADMIN' && (
-            <NavLink to="/admin" className={linkClass}>
+            <NavItem to="/admin" className={linkClass}>
               {t('nav.admin')}
-            </NavLink>
+            </NavItem>
           )}
           <div className="mt-2 flex flex-wrap gap-2">
             <LowBandwidthToggle />
@@ -171,7 +194,7 @@ export function Header() {
             {user === null ? (
               <Link
                 to="/login"
-                className="inline-flex min-h-11 items-center rounded-lg border border-border px-4 font-semibold hover:bg-accent"
+                className="inline-flex min-h-14 items-center rounded-xl border border-border px-4 font-semibold hover:bg-accent lg:min-h-11"
               >
                 {t('nav.signIn')}
               </Link>

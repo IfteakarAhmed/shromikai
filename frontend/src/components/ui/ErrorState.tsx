@@ -16,7 +16,7 @@ export function ErrorState({ error, onRetry }: ErrorStateProps) {
   return (
     <div
       role="alert"
-      className="flex flex-col items-start gap-3 rounded-xl border border-rejected/40 bg-rejected/5 p-5"
+      className="glass-panel flex flex-col items-start gap-3 rounded-2xl border-rejected/40 p-5"
     >
       <p className="flex items-start gap-2 font-medium text-rejected">
         <Icon name="alert" className="mt-1 shrink-0" />

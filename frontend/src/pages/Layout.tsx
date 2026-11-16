@@ -1,6 +1,7 @@
 import { useEffect } from 'react'
 import { useTranslation } from 'react-i18next'
 import { Outlet, useLocation } from 'react-router-dom'
+import { AmbientBackdrop } from '../components/shell/AmbientBackdrop'
 import { Footer } from '../components/shell/Footer'
 import { Header } from '../components/shell/Header'
 import { RecordedBanner } from '../components/shell/RecordedBanner'
@@ -26,6 +27,7 @@ export function Layout() {
       >
         {t('nav.skip')}
       </a>
+      {!ink && <AmbientBackdrop />}
       <Header />
       <RecordedBanner />
       <main id="main" tabIndex={-1} className="flex-1 outline-none">

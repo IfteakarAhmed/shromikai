@@ -102,9 +102,9 @@ export function Tabs({ items, value, onChange, label, idPrefix = 'tabs' }: TabsP
                 onChange(item.id)
               }}
               className={cx(
-                'min-h-11 shrink-0 whitespace-nowrap border-b-2 px-4 font-semibold transition-colors',
+                'min-h-14 shrink-0 whitespace-nowrap border-b-2 px-4 font-semibold transition-colors md:min-h-11',
                 selected
-                  ? 'border-primary text-foreground'
+                  ? 'border-primary text-foreground shadow-[0_10px_24px_-18px_var(--glow-primary)]'
                   : 'border-transparent text-muted-foreground hover:text-foreground',
               )}
             >

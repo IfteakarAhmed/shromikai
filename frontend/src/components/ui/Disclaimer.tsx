@@ -7,7 +7,7 @@ export function Disclaimer({ text }: { text?: string }) {
   return (
     <aside
       role="note"
-      className="flex items-start gap-2.5 rounded-lg border border-uncertain/30 bg-uncertain/5 px-4 py-3"
+      className="flex items-start gap-2.5 rounded-xl border border-uncertain/30 bg-uncertain/5 px-4 py-3 shadow-[0_0_40px_-24px_var(--glow-uncertain)]"
     >
       <Icon name="info" className="mt-1 shrink-0 text-uncertain" />
       <p className="font-medium">{text ?? t('app.disclaimer')}</p>
