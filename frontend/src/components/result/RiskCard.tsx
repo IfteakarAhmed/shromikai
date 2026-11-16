@@ -50,6 +50,11 @@ export function RiskCard({
         <Badge tone="neutral" className="text-muted-foreground">
           {t(`kind.${finding.kind}`)}
         </Badge>
+        {finding.source !== 'LLM_ANALYSIS' && (
+          <Badge tone="neutral" data-testid="finding-source">
+            {t(`finding.source.${finding.source}`)}
+          </Badge>
+        )}
       </div>
 
       <div lang={language} className="mt-3">

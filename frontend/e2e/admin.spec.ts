@@ -26,7 +26,7 @@ for (const locale of LOCALES) {
       await inLocale(page, locale)
     })
 
-    test('FR-60 FR-73 admin review: take an item, a decision needs a note, then it is approved', async ({
+    test('FR-60 FR-73 admin review: take an item, a decision needs a note, then it is approved @rules-off', async ({
       page,
     }) => {
       await workerRunsSample(page, locale)

@@ -7,7 +7,7 @@ for (const locale of LOCALES) {
       await inLocale(page, locale)
     })
 
-    test('FR-68 FR-69 FR-70 /demo-user: sample, live progress, verified and uncertain results, citation sheet', async ({
+    test('FR-68 FR-69 FR-70 /demo-user: sample, live progress, verified and uncertain results, citation sheet @rules-off', async ({
       page,
     }) => {
       await page.goto('/demo-user')

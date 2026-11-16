@@ -87,6 +87,29 @@ describe('CitationChip', () => {
 describe('RiskCard', () => {
   const noop = () => undefined
 
+  it('FR-70 FR-36 says where a finding comes from: a fixed legal limit, an organisation policy, or nothing for the model', () => {
+    const labels = new Map([
+      ['RULE_ENGINE', 'নির্দিষ্ট আইনি সীমা'],
+      ['PLAYBOOK', 'প্রতিষ্ঠানের নীতি'],
+    ])
+    for (const source of ['RULE_ENGINE', 'PLAYBOOK', 'LLM_ANALYSIS'] as const) {
+      const { unmount } = render(
+        <RiskCard
+          finding={makeFinding({ source })}
+          language="en"
+          onOpenCitation={noop}
+          onOpenWhy={noop}
+        />,
+      )
+      for (const [other, label] of labels) {
+        expect(screen.queryByText(label) !== null, `${source} shows ${other}`).toBe(
+          source === other,
+        )
+      }
+      unmount()
+    }
+  })
+
   it('FR-70 a verified card shows its severity, reason and one chip per citation', () => {
     const finding = makeFinding({
       nonObvious: true,

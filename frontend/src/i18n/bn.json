@@ -202,7 +202,11 @@
     "citations": "আইনের উদ্ধৃতি",
     "noCitation": "কোনো উদ্ধৃতি দেখানো হয়নি।",
     "ticketLink": "পর্যালোচনার অবস্থা দেখুন",
-    "confidence": "সিস্টেমের আস্থা"
+    "confidence": "সিস্টেমের আস্থা",
+    "source": {
+      "RULE_ENGINE": "নির্দিষ্ট আইনি সীমা",
+      "PLAYBOOK": "প্রতিষ্ঠানের নীতি"
+    }
   },
   "citation": {
     "section": "ধারা {{number}}",

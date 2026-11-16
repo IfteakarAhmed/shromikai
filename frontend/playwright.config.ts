@@ -6,7 +6,17 @@ import { defineConfig, devices } from '@playwright/test'
  * synthetic sample contract, the real corpus and the real verifier. No cloud call is possible.
  * Start the database and Ollama first (scripts/dev-up.sh).
  */
+/**
+ * Two demo modes of the backend (scripts/demo-backend.sh). The default runs with the legal rules on
+ * (13 findings, none uncertain). `DEMO_RULES=off npm run e2e` runs the backend without a rule file,
+ * so the earlier recordings replay (uncertain findings, the "no active rule" notice) and runs only
+ * the tests tagged @rules-off; the default run leaves those out.
+ */
+const rulesOff = process.env['DEMO_RULES'] === 'off'
+
 export default defineConfig({
+  grep: rulesOff ? /@rules-off/ : undefined,
+  grepInvert: rulesOff ? undefined : /@rules-off/,
   testDir: './e2e',
   fullyParallel: false,
   workers: 1,
@@ -38,7 +48,7 @@ export default defineConfig({
       url: 'http://localhost:8080/api/v1/meta',
       timeout: 240_000,
       reuseExistingServer: true,
-      env: { E2E: '1' },
+      env: { E2E: '1', DEMO_RULES: rulesOff ? 'off' : 'on' },
     },
     {
       command: 'npm run dev -- --port 5173 --strictPort',

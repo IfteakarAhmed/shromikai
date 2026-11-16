@@ -202,7 +202,11 @@
     "citations": "Legal citations",
     "noCitation": "No citation is shown.",
     "ticketLink": "See the review status",
-    "confidence": "System confidence"
+    "confidence": "System confidence",
+    "source": {
+      "RULE_ENGINE": "Fixed legal limit",
+      "PLAYBOOK": "Your organisation's policy"
+    }
   },
   "citation": {
     "section": "Section {{number}}",

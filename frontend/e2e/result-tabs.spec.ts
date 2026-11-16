@@ -8,7 +8,7 @@ for (const locale of LOCALES) {
       await openResult(page, locale)
     })
 
-    test('FR-70 the why drawer shows the three checks of a verified risk and the reasons of an uncertain one', async ({
+    test('FR-70 the why drawer shows the three checks of a verified risk and the reasons of an uncertain one @rules-off', async ({
       page,
     }) => {
       const verified = page
@@ -80,7 +80,7 @@ for (const locale of LOCALES) {
       await expect(page.getByRole('tablist')).toBeHidden()
     })
 
-    test('FR-61 an uncertain risk links to the status of its human review, with the code already known', async ({
+    test('FR-61 an uncertain risk links to the status of its human review, with the code already known @rules-off', async ({
       page,
     }) => {
       await page

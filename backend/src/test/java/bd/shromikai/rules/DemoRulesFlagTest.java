@@ -18,8 +18,8 @@ import org.springframework.core.env.SystemEnvironmentPropertySource;
 
 /**
  * FR-36: {@code DEMO_RULES=off} is a switch of {@code scripts/demo-backend.sh} only. It makes the
- * demo load no rule file (so the older recordings replay); the default is rules on. The script
- * does it with the environment variable below, which must really bind to an empty list, and no
+ * demo load no rule file (so the older recordings replay); the default is rules on. The script does
+ * it with the environment variable below, which must really bind to an empty list, and no
  * production code or configuration reads {@code DEMO_RULES}.
  */
 @Tag("unit")
