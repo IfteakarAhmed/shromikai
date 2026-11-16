@@ -5,6 +5,8 @@ import tailwindcss from '@tailwindcss/vite'
 
 export default defineConfig({
   plugins: [react(), tailwindcss()],
+  // The manifest lets check:bundle follow each lazy chunk to the shared chunks it imports.
+  build: { manifest: true },
   server: {
     // The docs hub reads ../docs and ../eval/reports at build time (FR-74).
     fs: { allow: ['..'] },

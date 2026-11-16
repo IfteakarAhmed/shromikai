@@ -2,7 +2,7 @@
 
 | Field | Value |
 | --- | --- |
-| Status | Accepted |
+| Status | Accepted (amended 2026-11-16 for the cinematic landing, Increment D) |
 | Date | 2026-11-15 |
 | Deciders | Presentation Lead (TODO: name), Team Leader (TODO: name) |
 | Related | AGENTS.md §6 and §9 item 1; PRD FR-68 to FR-78, NFR-10; architecture §17 |
@@ -44,6 +44,45 @@ rendered by a small in-house component that builds React elements, so no HTML is
 - Fewer dependencies mean more first-party UI code (dialogs, tabs, toasts) that the team tests with
   Vitest and axe.
 
+## Amendment 2026-11-16: the cinematic landing (P9 Increment D)
+
+**Context.** The landing becomes a scroll-driven story in six chapters with one fixed WebGL scene
+behind real HTML chapters (FR-68). The scene is larger than the framed hero, so it needs its own
+budget, and phones and slow connections must not pay for it (FR-76, NFR-10).
+
+**Decision.**
+
+- **No new dependency.** The scene is plain `three` with hand-written GLSL, runtime canvas
+  textures and particles. Bloom is a small custom pass (bright pass, blur at half and quarter
+  size, composite); `EffectComposer` and the post-processing add-ons are not used. No external
+  asset: no video, model, downloaded texture or font.
+- **Three tiers, chosen by pure tested functions** (`features/landing/cinematic/tier.ts`):
+  *cinematic* (WebGL2, at least 4 cores, at least 4 GB memory when known, width at least 1024, no
+  data saver, `effectiveType` 4g or unknown, no reduced motion, low-bandwidth mode off);
+  *standard* (the framed hero scene); *lite* (the poster, no WebGL). Width under 768, a connection
+  other than 4g, data saver, reduced motion and low-bandwidth mode default to lite. A visible
+  switch turns the scene on ("দৃশ্য চালু করুন") or off ("স্থির ছবি") at any time; the choice lives
+  in memory only, so the storage allowlist does not change. `?scene=lite|standard|cinematic`
+  forces a tier for review and screenshots.
+- **Native scroll, no hijacking.** The chapters are ordinary sections with sticky text; the
+  middle of the viewport among them is the timeline value, damped per frame. The canvas pauses
+  when the tab is hidden or the story has scrolled away, caps the pixel ratio at 1.5, and lowers
+  quality (particles, then bloom, then pixel ratio) when frames stay slow; it never raises it
+  again in the same visit.
+- **Posters from the scene.** `scripts/render-scene.mjs` renders the scene with headless Chromium
+  and SwiftShader into the lite poster (`src/assets/contract-poster.webp`, replacing the
+  prototype picture) and the social image (`public/og-image.jpg`).
+- **Budgets.** Initial JavaScript stays under 200 KB gzip (it grew by about 1.6 KB for the tier
+  code and the chapter strings; the scene code is not in it). The cinematic scene, three.js
+  included, is a lazy chunk of at most **300 KB gzip**, fetched only on the cinematic tier. The
+  standard hero (its chunk, the shared three.js chunk and the poster) stays at 200 KB. The lite
+  landing stays under **1.5 MB** of total transfer.
+
+**Consequences.** three.js is now a shared lazy chunk used by both scenes. The landing keeps the
+ink palette in either theme (`data-surface="ink"`), because the scene is drawn on ink. Headless
+tests can draw the scene only through SwiftShader, which is slow; the adaptive quality lowers it
+there, so the report pictures show the reduced levels.
+
 ## Alternatives
 
 - **Keep r3f, drei and the shadcn/Radix kit** as in the prototype: faster to write, but several
@@ -55,5 +94,9 @@ rendered by a small in-house component that builds React elements, so no HTML is
 
 ## Verification
 
-`npm run check:bundle` (initial chunk and hero chunk budgets); `LandingHero` tests (poster
-fallbacks, no 3D import in low-bandwidth mode); `npm audit --omit=dev` in the nightly workflow.
+`npm run check:bundle` (initial JavaScript, the standard hero and the cinematic scene, following
+lazy chunks through the Vite manifest); `npm run check:lite` (lite landing transfer, measured in
+Chromium against the production build); `HeroFrame` and `LandingPage` tests (poster fallbacks,
+no scene import on the lite tier, the switch, nothing stored); `tier`, `timeline`, `damp`,
+`quality` and `capabilities` unit tests; `e2e/cinematic.spec.ts` (WebGL2 canvas, native scroll,
+keyboard only, axe in every tier); `npm audit --omit=dev` in the nightly workflow.
