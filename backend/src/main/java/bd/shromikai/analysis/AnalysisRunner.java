@@ -40,6 +40,7 @@ public class AnalysisRunner {
   private final SampleContract samples;
   private final JobStore jobs;
   private final AnalysisProperties properties;
+  private final List<AnalysisFinishedListener> listeners;
   private final ExecutorService executor = Executors.newVirtualThreadPerTaskExecutor();
   private final Map<UUID, CompletableFuture<Void>> running = new ConcurrentHashMap<>();
 
@@ -49,13 +50,15 @@ public class AnalysisRunner {
       BaselineAgent baselines,
       SampleContract samples,
       JobStore jobs,
-      AnalysisProperties properties) {
+      AnalysisProperties properties,
+      List<AnalysisFinishedListener> listeners) {
     this.service = service;
     this.pipeline = pipeline;
     this.baselines = baselines;
     this.samples = samples;
     this.jobs = jobs;
     this.properties = properties;
+    this.listeners = List.copyOf(listeners);
   }
 
   /**
@@ -93,7 +96,8 @@ public class AnalysisRunner {
           service.executeText(job, samples.text());
         },
         onFinished,
-        baselines::run);
+        baselines::run,
+        true);
   }
 
   /** Starts an analysis of uploaded files. */
@@ -106,13 +110,18 @@ public class AnalysisRunner {
   public AnalysisJob compareText(
       AnalysisSubject subject, AnalysisRequest request, String text, Runnable onFinished) {
     return start(
-        subject, request, job -> service.executeText(job, text), onFinished, baselines::run);
+        subject, request, job -> service.executeText(job, text), onFinished, baselines::run, true);
   }
 
   public AnalysisJob compareFiles(
       AnalysisSubject subject, AnalysisRequest request, List<byte[]> files, Runnable onFinished) {
     return start(
-        subject, request, job -> service.executeFiles(job, files), onFinished, baselines::run);
+        subject,
+        request,
+        job -> service.executeFiles(job, files),
+        onFinished,
+        baselines::run,
+        true);
   }
 
   private AnalysisJob start(
@@ -120,7 +129,7 @@ public class AnalysisRunner {
       AnalysisRequest request,
       java.util.function.Consumer<AnalysisJob> intake,
       Runnable onFinished) {
-    return start(subject, request, intake, onFinished, job -> {});
+    return start(subject, request, intake, onFinished, job -> {}, false);
   }
 
   private AnalysisJob start(
@@ -128,7 +137,8 @@ public class AnalysisRunner {
       AnalysisRequest request,
       java.util.function.Consumer<AnalysisJob> intake,
       Runnable onFinished,
-      java.util.function.Consumer<AnalysisJob> afterAnalysis) {
+      java.util.function.Consumer<AnalysisJob> afterAnalysis,
+      boolean compare) {
     checkConcurrency(subject);
     AnalysisJob job = service.open(subject, request);
     CompletableFuture<Void> future =
@@ -148,12 +158,23 @@ public class AnalysisRunner {
                 }
               } finally {
                 running.remove(job.id());
+                notifyListeners(job, compare);
                 onFinished.run();
               }
             },
             executor);
     running.put(job.id(), future);
     return job;
+  }
+
+  private void notifyListeners(AnalysisJob job, boolean compare) {
+    for (AnalysisFinishedListener listener : listeners) {
+      try {
+        listener.finished(job, compare);
+      } catch (RuntimeException e) {
+        LOG.warn("analysis listener failed: {}", e.getClass().getSimpleName());
+      }
+    }
   }
 
   /** Waits until the job ends or {@code sync-wait} has passed; true when it has ended. */

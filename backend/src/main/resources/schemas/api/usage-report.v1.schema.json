@@ -4,62 +4,226 @@
   "description": "Admin usage and cost over at most 92 days, with the KPI-12 to KPI-14 block (PRD §10).",
   "type": "object",
   "additionalProperties": false,
-  "required": ["from", "to", "orgId", "days", "totals", "kpis"],
+  "required": [
+    "from",
+    "to",
+    "orgId",
+    "days",
+    "totals",
+    "kpis"
+  ],
   "properties": {
-    "from": { "type": "string", "format": "date" },
-    "to": { "type": "string", "format": "date" },
-    "orgId": { "type": ["string", "null"], "format": "uuid" },
+    "from": {
+      "type": "string",
+      "format": "date"
+    },
+    "to": {
+      "type": "string",
+      "format": "date"
+    },
+    "orgId": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "format": "uuid"
+    },
     "days": {
       "type": "array",
       "items": {
-        "type": "object", "additionalProperties": false,
-        "required": ["date", "analyses", "compares", "memoRenders", "apiCalls", "mcpCalls", "costUsd", "costByModel"],
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "date",
+          "analyses",
+          "compares",
+          "memoRenders",
+          "apiCalls",
+          "mcpCalls",
+          "costUsd",
+          "costByModel"
+        ],
         "properties": {
-          "date": { "type": "string", "format": "date" },
-          "analyses": { "type": "integer", "minimum": 0 },
-          "compares": { "type": "integer", "minimum": 0 },
-          "memoRenders": { "type": "integer", "minimum": 0 },
-          "apiCalls": { "type": "integer", "minimum": 0 },
-          "mcpCalls": { "type": "integer", "minimum": 0 },
-          "costUsd": { "type": "number", "minimum": 0 },
-          "costByModel": { "type": "object", "additionalProperties": { "type": "number", "minimum": 0 } }
+          "date": {
+            "type": "string",
+            "format": "date"
+          },
+          "analyses": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "compares": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "memoRenders": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "apiCalls": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "mcpCalls": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "costUsd": {
+            "type": "number",
+            "minimum": 0
+          },
+          "costByModel": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "number",
+              "minimum": 0
+            }
+          }
         }
       }
     },
     "totals": {
-      "type": "object", "additionalProperties": false,
-      "required": ["analyses", "compares", "memoRenders", "apiCalls", "mcpCalls", "costUsd", "costByModel"],
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "analyses",
+        "compares",
+        "memoRenders",
+        "apiCalls",
+        "mcpCalls",
+        "costUsd",
+        "costByModel"
+      ],
       "properties": {
-        "analyses": { "type": "integer", "minimum": 0 },
-        "compares": { "type": "integer", "minimum": 0 },
-        "memoRenders": { "type": "integer", "minimum": 0 },
-        "apiCalls": { "type": "integer", "minimum": 0 },
-        "mcpCalls": { "type": "integer", "minimum": 0 },
-        "costUsd": { "type": "number", "minimum": 0 },
-        "costByModel": { "type": "object", "additionalProperties": { "type": "number", "minimum": 0 } }
+        "analyses": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "compares": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "memoRenders": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "apiCalls": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "mcpCalls": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "costUsd": {
+          "type": "number",
+          "minimum": 0
+        },
+        "costByModel": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "number",
+            "minimum": 0
+          }
+        }
       }
     },
     "kpis": {
-      "type": "object", "additionalProperties": false,
-      "required": ["windowDays", "completionRate", "memoDownloadRate", "reviewTurnaroundHoursMedian"],
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "windowDays",
+        "completionRate",
+        "memoDownloadRate",
+        "reviewTurnaroundHoursMedian"
+      ],
       "properties": {
-        "windowDays": { "const": 7 },
-        "completionRate": { "$ref": "#/$defs/rate" },
-        "memoDownloadRate": { "$ref": "#/$defs/rate" },
+        "windowDays": {
+          "const": 7
+        },
+        "completionRate": {
+          "$ref": "#/$defs/rate"
+        },
+        "memoDownloadRate": {
+          "$ref": "#/$defs/ratio"
+        },
         "reviewTurnaroundHoursMedian": {
-          "type": "object", "additionalProperties": false, "required": ["value", "n"],
-          "properties": { "value": { "type": ["number", "null"], "minimum": 0 }, "n": { "type": "integer", "minimum": 0 } }
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "value",
+            "n"
+          ],
+          "properties": {
+            "value": {
+              "type": [
+                "number",
+                "null"
+              ],
+              "minimum": 0
+            },
+            "n": {
+              "type": "integer",
+              "minimum": 0
+            }
+          }
         }
       }
     }
   },
   "$defs": {
     "rate": {
-      "type": "object", "additionalProperties": false, "required": ["value", "count", "n"],
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "value",
+        "count",
+        "n"
+      ],
       "properties": {
-        "value": { "type": ["number", "null"], "minimum": 0, "maximum": 1 },
-        "count": { "type": "integer", "minimum": 0 },
-        "n": { "type": "integer", "minimum": 0 }
+        "value": {
+          "type": [
+            "number",
+            "null"
+          ],
+          "minimum": 0,
+          "maximum": 1
+        },
+        "count": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "n": {
+          "type": "integer",
+          "minimum": 0
+        }
+      }
+    },
+    "ratio": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "value",
+        "count",
+        "n"
+      ],
+      "description": "KPI-13: MEMO_RENDER events divided by SUCCEEDED analyses; it can exceed 1 when a memo is rendered more than once.",
+      "properties": {
+        "value": {
+          "type": [
+            "number",
+            "null"
+          ],
+          "minimum": 0
+        },
+        "count": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "n": {
+          "type": "integer",
+          "minimum": 0
+        }
       }
     }
   }

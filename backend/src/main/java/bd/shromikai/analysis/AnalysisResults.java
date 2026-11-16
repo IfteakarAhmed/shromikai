@@ -200,6 +200,21 @@ public class AnalysisResults {
         runs.info(id)
             .filter(r -> r.ownerKey().equals(caller.key()))
             .orElseThrow(() -> new ProblemException(ProblemType.NOT_FOUND));
+    return trace(id, info);
+  }
+
+  /**
+   * The same content-free trace for an administrator, whoever owns the analysis (FR-73). The trace
+   * holds stages, models, tokens, costs and counts only, never contract text (R-02); {@code 404}
+   * when the trace has expired or never existed.
+   */
+  public ObjectNode traceAny(UUID id) {
+    AnalysisRunStore.RunInfo info =
+        runs.info(id).orElseThrow(() -> new ProblemException(ProblemType.NOT_FOUND));
+    return trace(id, info);
+  }
+
+  private ObjectNode trace(UUID id, AnalysisRunStore.RunInfo info) {
     ObjectNode trace = mapper.createObjectNode();
     trace.put("analysisId", id.toString());
     trace.put("createdAt", info.createdAt().toString());

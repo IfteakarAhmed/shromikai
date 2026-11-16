@@ -1,5 +1,7 @@
 package bd.shromikai.api;
 
+import bd.shromikai.auth.AuthenticatedSubject;
+import bd.shromikai.auth.UsageService;
 import bd.shromikai.memo.MemoRenderService;
 import bd.shromikai.verify.SignedResultCodec;
 import com.fasterxml.jackson.databind.JsonNode;
@@ -10,6 +12,7 @@ import java.time.Instant;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -27,9 +30,11 @@ import org.springframework.web.bind.annotation.RestController;
 public class MemoController {
 
   private final MemoRenderService memos;
+  private final UsageService usage;
 
-  public MemoController(MemoRenderService memos) {
+  public MemoController(MemoRenderService memos, UsageService usage) {
     this.memos = memos;
+    this.usage = usage;
   }
 
   @Schema(name = "SignedEnvelope")
@@ -48,13 +53,16 @@ public class MemoController {
       path = "/render",
       consumes = MediaType.APPLICATION_JSON_VALUE,
       produces = {MediaType.APPLICATION_PDF_VALUE, MediaType.TEXT_HTML_VALUE})
-  public ResponseEntity<byte[]> render(@Valid @RequestBody RenderRequest request) {
+  public ResponseEntity<byte[]> render(
+      @AuthenticationPrincipal AuthenticatedSubject caller,
+      @Valid @RequestBody RenderRequest request) {
     Envelope e = request.envelope();
     MemoRenderService.Rendered rendered =
         memos.render(
             new SignedResultCodec.Envelope(
                 e.payload(), e.keyId(), e.algorithm(), e.expiresAt(), e.signature()),
             request.format());
+    usage.record(caller.orgId(), null, null, UsageService.Kind.MEMO_RENDER, 1, 0);
     return ResponseEntity.ok()
         .header(HttpHeaders.CONTENT_TYPE, rendered.contentType())
         .header(HttpHeaders.CACHE_CONTROL, "no-store")

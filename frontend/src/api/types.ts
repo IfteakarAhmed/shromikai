@@ -52,6 +52,38 @@ export interface paths {
     patch?: never
     trace?: never
   }
+  '/api/v1/admin/traces/{analysisId}': {
+    parameters: {
+      query?: never
+      header?: never
+      path?: never
+      cookie?: never
+    }
+    get: operations['trace_1']
+    put?: never
+    post?: never
+    delete?: never
+    options?: never
+    head?: never
+    patch?: never
+    trace?: never
+  }
+  '/api/v1/admin/usage': {
+    parameters: {
+      query?: never
+      header?: never
+      path?: never
+      cookie?: never
+    }
+    get: operations['usage']
+    put?: never
+    post?: never
+    delete?: never
+    options?: never
+    head?: never
+    patch?: never
+    trace?: never
+  }
   '/api/v1/analyses': {
     parameters: {
       query?: never
@@ -1536,6 +1568,7 @@ export interface components {
           n: number
           value: number | null
         }
+        /** @description KPI-13: MEMO_RENDER events divided by SUCCEEDED analyses; it can exceed 1 when a memo is rendered more than once. */
         memoDownloadRate: {
           count: number
           n: number
@@ -1756,6 +1789,70 @@ export interface operations {
         }
         content: {
           '*/*': components['schemas']['IngestAccepted']
+        }
+      }
+      /** @description Problem document */
+      default: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/problem+json': components['schemas']['Problem']
+        }
+      }
+    }
+  }
+  trace_1: {
+    parameters: {
+      query?: never
+      header?: never
+      path: {
+        analysisId: string
+      }
+      cookie?: never
+    }
+    requestBody?: never
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['AnalysisTrace']
+        }
+      }
+      /** @description Problem document */
+      default: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/problem+json': components['schemas']['Problem']
+        }
+      }
+    }
+  }
+  usage: {
+    parameters: {
+      query?: {
+        from?: string
+        to?: string
+        orgId?: string
+      }
+      header?: never
+      path?: never
+      cookie?: never
+    }
+    requestBody?: never
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['UsageReport']
         }
       }
       /** @description Problem document */

@@ -2739,6 +2739,7 @@
               },
               "memoDownloadRate" : {
                 "additionalProperties" : false,
+                "description" : "KPI-13: MEMO_RENDER events divided by SUCCEEDED analyses; it can exceed 1 when a memo is rendered more than once.",
                 "properties" : {
                   "count" : {
                     "minimum" : 0,
@@ -2749,7 +2750,6 @@
                     "type" : "integer"
                   },
                   "value" : {
-                    "maximum" : 1,
                     "minimum" : 0,
                     "nullable" : true,
                     "type" : "number"
@@ -3195,6 +3195,96 @@
           }
         },
         "tags" : [ "admin-law-controller" ]
+      }
+    },
+    "/api/v1/admin/traces/{analysisId}" : {
+      "get" : {
+        "operationId" : "trace_1",
+        "parameters" : [ {
+          "in" : "path",
+          "name" : "analysisId",
+          "required" : true,
+          "schema" : {
+            "format" : "uuid",
+            "type" : "string"
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/AnalysisTrace"
+                }
+              }
+            },
+            "description" : "OK"
+          },
+          "default" : {
+            "content" : {
+              "application/problem+json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/Problem"
+                }
+              }
+            },
+            "description" : "Problem document"
+          }
+        },
+        "tags" : [ "admin-trace-controller" ]
+      }
+    },
+    "/api/v1/admin/usage" : {
+      "get" : {
+        "operationId" : "usage",
+        "parameters" : [ {
+          "in" : "query",
+          "name" : "from",
+          "required" : false,
+          "schema" : {
+            "format" : "date",
+            "type" : "string"
+          }
+        }, {
+          "in" : "query",
+          "name" : "to",
+          "required" : false,
+          "schema" : {
+            "format" : "date",
+            "type" : "string"
+          }
+        }, {
+          "in" : "query",
+          "name" : "orgId",
+          "required" : false,
+          "schema" : {
+            "format" : "uuid",
+            "type" : "string"
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/UsageReport"
+                }
+              }
+            },
+            "description" : "OK"
+          },
+          "default" : {
+            "content" : {
+              "application/problem+json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/Problem"
+                }
+              }
+            },
+            "description" : "Problem document"
+          }
+        },
+        "tags" : [ "admin-usage-controller" ]
       }
     },
     "/api/v1/analyses" : {
