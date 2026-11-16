@@ -1,18 +1,10 @@
 import { useEffect, useRef } from 'react'
 import { usePreferences } from '../../state/preferencesContext'
+import { cssColorToHex } from './oklch'
 import { createContractScene, type Palette } from './scene3d'
 
-/** A CSS colour token as a hex string (the canvas understands every CSS colour syntax). */
 function tokenToHex(name: string): string {
-  const value = getComputedStyle(document.documentElement).getPropertyValue(name).trim()
-  const context = document.createElement('canvas').getContext('2d', { willReadFrequently: true })
-  if (context === null) {
-    return '#ffffff'
-  }
-  context.fillStyle = value
-  context.fillRect(0, 0, 1, 1)
-  const [r = 255, g = 255, b = 255] = context.getImageData(0, 0, 1, 1).data
-  return `#${[r, g, b].map((channel) => channel.toString(16).padStart(2, '0')).join('')}`
+  return cssColorToHex(getComputedStyle(document.documentElement).getPropertyValue(name))
 }
 
 function readPalette(): Palette {
