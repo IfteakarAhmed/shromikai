@@ -53,14 +53,14 @@ class DailyBudgetDefaultTest {
   @Test
   void onlyTheDemoScriptRaisesItAndItRemovesTheCloudKeysFirst() throws IOException {
     String script = Files.readString(Path.of("../scripts/demo-backend.sh"));
-    assertThat(script).contains("SHROMIKAI_BUDGET_DAILY_USD");
+    assertThat(script).contains("SHROMIKAI_BUDGET_DAILYUSD");
     assertThat(script.indexOf("unset ANTHROPIC_API_KEY"))
         .isNotNegative()
-        .isLessThan(script.indexOf("SHROMIKAI_BUDGET_DAILY_USD"));
+        .isLessThan(script.indexOf("SHROMIKAI_BUDGET_DAILYUSD"));
     for (String other : List.of("../scripts/dev-up.sh", "../docker-compose.yml")) {
       Path path = Path.of(other);
       if (Files.exists(path)) {
-        assertThat(Files.readString(path)).doesNotContain("BUDGET_DAILY_USD");
+        assertThat(Files.readString(path)).doesNotContain("BUDGET_DAILYUSD");
       }
     }
   }

@@ -22,7 +22,7 @@ unset ANTHROPIC_API_KEY GEMINI_API_KEY GEMINI_MODEL
 # budget of the shipped configuration (US$50, FR-62) although nothing is spent: this script removes
 # the cloud API keys above, so no real spend is possible. Only this script raises the limit; the
 # shipped default and the prod profile keep US$50 (DailyBudgetDefaultTest).
-export SHROMIKAI_BUDGET_DAILY_USD=1000000
+export SHROMIKAI_BUDGET_DAILYUSD=1000000
 
 # E2E=1 (the end-to-end tests set it) lifts the per-IP login limits and the guest daily quotas that
 # protect a public deployment, because a test run signs in far more often than a visitor does.

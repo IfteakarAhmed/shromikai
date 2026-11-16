@@ -4,6 +4,7 @@ import java.time.Duration;
 import java.util.Map;
 import java.util.Set;
 import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.boot.context.properties.bind.ConstructorBinding;
 
 /**
  * Pipeline timing and budget (architecture §5.3, §12). {@code stepTimeouts} are per-step cancel
@@ -36,6 +37,9 @@ public record AnalysisProperties(Analysis analysis, Budget budget) {
   }
 
   public record Budget(double perAnalysisUsd, long perAnalysisTokens, double dailyUsd) {
+
+    @ConstructorBinding
+    public Budget {}
 
     public Budget(double perAnalysisUsd, long perAnalysisTokens) {
       this(perAnalysisUsd, perAnalysisTokens, 50.0);
