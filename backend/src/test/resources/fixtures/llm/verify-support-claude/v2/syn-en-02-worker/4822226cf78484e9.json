@@ -1,0 +1,22 @@
+{
+  "fixtureVersion" : 1,
+  "promptId" : "verify-support-claude",
+  "promptVersion" : 2,
+  "caseId" : "syn-en-02-worker",
+  "modelId" : "claude-haiku-5-5",
+  "requestSha256" : "4822226cf78484e9330724ab1090a54a72667f66aa4ca2d017e9bf5f24235e42",
+  "provenance" : "synthetic",
+  "source" : "recorded from a live call",
+  "recordedAt" : "2026-11-16T03:57:58.242640Z",
+  "stopReason" : "end_turn",
+  "usage" : {
+    "inputTokens" : 1787,
+    "outputTokens" : 97,
+    "cacheReadTokens" : 982
+  },
+  "response" : {
+    "label" : "PARTIAL",
+    "confidence" : 0.7,
+    "reason" : "Section s.27(1) gives a permanent worker a right to resign with 60 days written notice, but the claim is broader: it applies to all workers, while s.27(2) sets 30 or 14 days for temporary workers."
+  }
+}

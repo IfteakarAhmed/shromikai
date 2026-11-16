@@ -1,0 +1,22 @@
+{
+  "fixtureVersion" : 1,
+  "promptId" : "query-rewrite",
+  "promptVersion" : 1,
+  "caseId" : "syn-en-02-worker",
+  "modelId" : "claude-haiku-5-5",
+  "requestSha256" : "c115c14fe67bac934e00f2d6826c4b1f8e71545959aef4881228372d85c47ace",
+  "provenance" : "synthetic",
+  "source" : "recorded from a live call",
+  "recordedAt" : "2026-11-16T03:58:00.016861Z",
+  "stopReason" : "end_turn",
+  "usage" : {
+    "inputTokens" : 165,
+    "outputTokens" : 155,
+    "cacheReadTokens" : 798
+  },
+  "response" : {
+    "status" : "OK",
+    "reason" : "NONE",
+    "queries" : [ "বাংলাদেশ শ্রম আইন দৈনিক কর্মঘণ্টা ও অতিরিক্ত কাজের সীমা", "অধিকাল ভাতা ও ওভারটাইম পরিশোধের বিধান", "Bangladesh labour law overtime pay and daily working hours limit", "Bangladesh labour law night shift allowance and overtime rate" ]
+  }
+}

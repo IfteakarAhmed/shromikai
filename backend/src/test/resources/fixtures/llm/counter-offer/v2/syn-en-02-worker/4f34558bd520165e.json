@@ -1,0 +1,24 @@
+{
+  "fixtureVersion" : 1,
+  "promptId" : "counter-offer",
+  "promptVersion" : 2,
+  "caseId" : "syn-en-02-worker",
+  "modelId" : "claude-sonnet-5-5",
+  "requestSha256" : "4f34558bd520165e5332823b9cb0ee06743f8a2dcc34b0177de93327eff465dd",
+  "provenance" : "synthetic",
+  "source" : "recorded from a live call",
+  "recordedAt" : "2026-11-16T03:58:12.613783Z",
+  "stopReason" : "end_turn",
+  "usage" : {
+    "inputTokens" : 421,
+    "outputTokens" : 328,
+    "cacheReadTokens" : 0
+  },
+  "response" : {
+    "status" : "OK",
+    "reason" : "NONE",
+    "action" : "REPLACE",
+    "proposed_text" : "৪. সাপ্তাহিক বিশ্রাম ও ছুটি: গার্ড আইন অনুযায়ী সাপ্তাহিক বিশ্রামদিন পাবেন এবং প্রতি পঞ্জিকা বৎসরে ১৩ দিনের মজুরীসহ উৎসব ছুটি পাবেন। ক্লায়েন্ট সাইট চালু থাকলে নিয়োগকর্তা পালা নির্ধারণ করে ছুটি দিতে পারবেন।",
+    "rationale" : "ধারাটি এখন আইনসম্মত ১৩ দিনের মজুরীসহ উৎসব ছুটি ও সাপ্তাহিক বিশ্রাম নিশ্চিত করে এবং পালা নির্ধারণের সুযোগ রাখে।"
+  }
+}

@@ -1,0 +1,23 @@
+{
+  "fixtureVersion" : 1,
+  "schemaInvalidAsRecorded" : true,
+  "promptId" : "verify-support-claude",
+  "promptVersion" : 2,
+  "caseId" : "syn-en-02-worker",
+  "modelId" : "claude-haiku-5-5",
+  "requestSha256" : "1d818b7ad3453a506db2b07cbaf3df425dbd2ee39d99f4c0fbcf44101ad60603",
+  "provenance" : "synthetic",
+  "source" : "recorded from a live call",
+  "recordedAt" : "2026-11-16T03:57:54.355639Z",
+  "stopReason" : "end_turn",
+  "usage" : {
+    "inputTokens" : 336,
+    "outputTokens" : 92,
+    "cacheReadTokens" : 982
+  },
+  "response" : {
+    "label" : "PARTIAL",
+    "confidence" : 0.7,
+    "reason" : "Section voids agreements restraining lawful profession or trade, matching the claim; but claim's 'void to that extent' is in section, quote matches; exception for sale of goodwill not mentioned in claim."
+  }
+}

@@ -1,0 +1,24 @@
+{
+  "fixtureVersion" : 1,
+  "promptId" : "counter-offer",
+  "promptVersion" : 2,
+  "caseId" : "syn-en-02-worker",
+  "modelId" : "claude-sonnet-5-5",
+  "requestSha256" : "fcb8b142bf589cfb9d6cf5a38dd42fe4a44a3680d6c130e8439fd8c1a55e804e",
+  "provenance" : "synthetic",
+  "source" : "recorded from a live call",
+  "recordedAt" : "2026-11-16T03:58:12.408202Z",
+  "stopReason" : "end_turn",
+  "usage" : {
+    "inputTokens" : 865,
+    "outputTokens" : 217,
+    "cacheReadTokens" : 0
+  },
+  "response" : {
+    "status" : "OK",
+    "reason" : "NONE",
+    "action" : "REPLACE",
+    "proposed_text" : "2. Salary: The monthly salary is BDT 11,000, paid in full. The employer shall provide uniforms and equipment at its own cost, and no deduction for them shall be made from wages, except deductions that the law expressly permits.",
+    "rationale" : "ইউনিফর্ম ও সরঞ্জামের খরচ নিয়োগকর্তা বহন করবে, ফলে আইনবহির্ভূত মজুরী কর্তন বাদ যায় ও পূর্ণ মজুরী নিশ্চিত হয়।"
+  }
+}

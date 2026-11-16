@@ -1,0 +1,22 @@
+{
+  "fixtureVersion" : 1,
+  "promptId" : "verify-support-claude",
+  "promptVersion" : 2,
+  "caseId" : "syn-en-02-worker",
+  "modelId" : "claude-haiku-5-5",
+  "requestSha256" : "6542a6365cf22a62401b28c317d2f5840f7deaa7e48a39d21303a515137cfe14",
+  "provenance" : "synthetic",
+  "source" : "recorded from a live call",
+  "recordedAt" : "2026-11-16T03:57:54.540611Z",
+  "stopReason" : "end_turn",
+  "usage" : {
+    "inputTokens" : 1798,
+    "outputTokens" : 64,
+    "cacheReadTokens" : 982
+  },
+  "response" : {
+    "label" : "SUPPORTS",
+    "confidence" : 0.9,
+    "reason" : "Section 27(3) lets a worker resign without notice by paying wages equal to the notice period, matching the claim."
+  }
+}

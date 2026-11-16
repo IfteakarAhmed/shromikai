@@ -1,0 +1,26 @@
+{
+  "fixtureVersion" : 1,
+  "promptId" : "risk-citation-repair",
+  "promptVersion" : 2,
+  "caseId" : "syn-en-02-worker",
+  "modelId" : "claude-sonnet-5-5",
+  "requestSha256" : "87a8fa7e4e9796c18056368ce17424389c34c38bc95bebe9952f5db673cee496",
+  "provenance" : "synthetic",
+  "source" : "recorded from a live call",
+  "recordedAt" : "2026-11-16T03:58:06.877348Z",
+  "stopReason" : "end_turn",
+  "usage" : {
+    "inputTokens" : 12082,
+    "outputTokens" : 117,
+    "cacheReadTokens" : 1386
+  },
+  "response" : {
+    "status" : "OK",
+    "reason" : "NONE",
+    "citations" : [ {
+      "section_key" : "BLA-2006:108@amend-2018",
+      "quote" : "অধিকাল কাজের জন্য তাহার মূল মজুরী ও মহার্ঘভাতা",
+      "claim" : "Overtime work is paid at twice the ordinary rate of wages."
+    } ]
+  }
+}

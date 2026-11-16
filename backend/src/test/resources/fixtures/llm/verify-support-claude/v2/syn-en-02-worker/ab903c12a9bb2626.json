@@ -1,0 +1,22 @@
+{
+  "fixtureVersion" : 1,
+  "promptId" : "verify-support-claude",
+  "promptVersion" : 2,
+  "caseId" : "syn-en-02-worker",
+  "modelId" : "claude-haiku-5-5",
+  "requestSha256" : "ab903c12a9bb2626ca4122034637ddb3eda236bcfddb30834cc8f0b70881206f",
+  "provenance" : "synthetic",
+  "source" : "recorded from a live call",
+  "recordedAt" : "2026-11-16T03:57:53.772274Z",
+  "stopReason" : "end_turn",
+  "usage" : {
+    "inputTokens" : 1181,
+    "outputTokens" : 83,
+    "cacheReadTokens" : 982
+  },
+  "response" : {
+    "label" : "PARTIAL",
+    "confidence" : 0.7,
+    "reason" : "Section allows termination by written notice or wage in lieu of notice, but its notice periods are not stated and the claim omits the separate 30-day compensation duty for permanent workers."
+  }
+}

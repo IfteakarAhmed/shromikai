@@ -1,0 +1,22 @@
+{
+  "fixtureVersion" : 1,
+  "promptId" : "verify-support-claude",
+  "promptVersion" : 2,
+  "caseId" : "syn-en-02-worker",
+  "modelId" : "claude-haiku-5-5",
+  "requestSha256" : "a6442019001e3538179296c4ea0dc64e81930a73d3a4550c0988f24d34313dcb",
+  "provenance" : "synthetic",
+  "source" : "recorded from a live call",
+  "recordedAt" : "2026-11-16T03:57:52.269332Z",
+  "stopReason" : "end_turn",
+  "usage" : {
+    "inputTokens" : 2279,
+    "outputTokens" : 71,
+    "cacheReadTokens" : 0
+  },
+  "response" : {
+    "label" : "SUPPORTS",
+    "confidence" : 0.93,
+    "reason" : "Section 132(1) lets a worker apply to the Labour Court to recover wages deducted in breach of the Act, matching the claim."
+  }
+}

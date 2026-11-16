@@ -1,0 +1,22 @@
+{
+  "fixtureVersion" : 1,
+  "promptId" : "verify-support-claude",
+  "promptVersion" : 2,
+  "caseId" : "syn-en-02-worker",
+  "modelId" : "claude-haiku-5-5",
+  "requestSha256" : "c3534717672f13dced339103780a76f5d03eca4da1e76a591d7e463bce549247",
+  "provenance" : "synthetic",
+  "source" : "recorded from a live call",
+  "recordedAt" : "2026-11-16T03:57:54.089507Z",
+  "stopReason" : "end_turn",
+  "usage" : {
+    "inputTokens" : 2328,
+    "outputTokens" : 72,
+    "cacheReadTokens" : 982
+  },
+  "response" : {
+    "label" : "PARTIAL",
+    "confidence" : 0.85,
+    "reason" : "Section sets 3 months for non-clerical probation and allows an extra 3 months for skilled workers, but gives no overall limit on extension."
+  }
+}

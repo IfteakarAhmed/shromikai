@@ -1,0 +1,22 @@
+{
+  "fixtureVersion" : 1,
+  "promptId" : "verify-support-claude",
+  "promptVersion" : 2,
+  "caseId" : "syn-en-02-worker",
+  "modelId" : "claude-haiku-5-5",
+  "requestSha256" : "001a8c3cf17b53813f6de3b4c15ba02306444b8fa060619897b745b5c65d68b7",
+  "provenance" : "synthetic",
+  "source" : "recorded from a live call",
+  "recordedAt" : "2026-11-16T03:57:58.151426Z",
+  "stopReason" : "end_turn",
+  "usage" : {
+    "inputTokens" : 627,
+    "outputTokens" : 71,
+    "cacheReadTokens" : 982
+  },
+  "response" : {
+    "label" : "SUPPORTS",
+    "confidence" : 0.92,
+    "reason" : "Section 78ka(1) bars employing anyone without ensuring personal protective equipment is supplied and used; the claim matches this element."
+  }
+}

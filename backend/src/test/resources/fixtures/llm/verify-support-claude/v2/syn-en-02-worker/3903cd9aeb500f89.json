@@ -1,0 +1,22 @@
+{
+  "fixtureVersion" : 1,
+  "promptId" : "verify-support-claude",
+  "promptVersion" : 2,
+  "caseId" : "syn-en-02-worker",
+  "modelId" : "claude-haiku-5-5",
+  "requestSha256" : "3903cd9aeb500f89d24905838a8ab3d60f42f16308dc2722fded1c3ae2d19ebf",
+  "provenance" : "synthetic",
+  "source" : "recorded from a live call",
+  "recordedAt" : "2026-11-16T03:57:52.275501Z",
+  "stopReason" : "end_turn",
+  "usage" : {
+    "inputTokens" : 3326,
+    "outputTokens" : 67,
+    "cacheReadTokens" : 0
+  },
+  "response" : {
+    "label" : "SUPPORTS",
+    "confidence" : 0.92,
+    "reason" : "Section 150(1) says an employer must compensate a worker injured in an accident arising during employment, matching the claim's elements."
+  }
+}

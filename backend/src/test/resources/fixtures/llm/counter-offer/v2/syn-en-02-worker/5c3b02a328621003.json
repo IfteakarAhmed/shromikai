@@ -1,0 +1,24 @@
+{
+  "fixtureVersion" : 1,
+  "promptId" : "counter-offer",
+  "promptVersion" : 2,
+  "caseId" : "syn-en-02-worker",
+  "modelId" : "claude-sonnet-5-5",
+  "requestSha256" : "5c3b02a3286210030f1bf17d56ea8690f19a960329841f9083522dd3dc392d2e",
+  "provenance" : "synthetic",
+  "source" : "recorded from a live call",
+  "recordedAt" : "2026-11-16T03:58:13.288587Z",
+  "stopReason" : "end_turn",
+  "usage" : {
+    "inputTokens" : 343,
+    "outputTokens" : 321,
+    "cacheReadTokens" : 0
+  },
+  "response" : {
+    "status" : "OK",
+    "reason" : "NONE",
+    "action" : "REPLACE",
+    "proposed_text" : "৮. গোপনীয়তা: চাকরি ছাড়ার পর গার্ড নিয়োগকর্তার গোপনীয় তথ্য, ক্লায়েন্টের তালিকা ও নিরাপত্তা-ব্যবস্থার বিবরণ প্রকাশ বা অপব্যবহার করবেন না। এই ধারা গার্ডকে কোনো বৈধ পেশা বা কোনো নিরাপত্তা কোম্পানিতে কাজ করা থেকে বিরত রাখে না।",
+    "rationale" : "পেশা-নিষেধ বাদ দিয়ে শুধু গোপনীয়তা রাখায় ধারাটি বৈধ থাকে এবং নিয়োগকর্তার স্বার্থও সুরক্ষিত হয়।"
+  }
+}

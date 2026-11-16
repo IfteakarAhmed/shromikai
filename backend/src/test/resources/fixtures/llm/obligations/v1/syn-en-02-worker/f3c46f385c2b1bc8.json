@@ -1,0 +1,109 @@
+{
+  "fixtureVersion" : 1,
+  "promptId" : "obligations",
+  "promptVersion" : 1,
+  "caseId" : "syn-en-02-worker",
+  "modelId" : "claude-haiku-5-5",
+  "requestSha256" : "f3c46f385c2b1bc8ef4c9731d397442433cde81c209e23f7f2e052829acb8ef2",
+  "provenance" : "synthetic",
+  "source" : "recorded from a live call",
+  "recordedAt" : "2026-11-16T03:57:49.924148Z",
+  "stopReason" : "end_turn",
+  "usage" : {
+    "inputTokens" : 23665,
+    "outputTokens" : 1691,
+    "cacheReadTokens" : 2230
+  },
+  "response" : {
+    "status" : "OK",
+    "reason" : "NONE",
+    "items" : [ {
+      "party" : "EMPLOYER",
+      "obligation" : "মাসিক বেতন নির্ধারিত সময়ে পরিশোধ করা",
+      "trigger" : "মজুরীকাল শেষ হওয়ার পর",
+      "deadline" : {
+        "value" : 7,
+        "unit" : "DAYS"
+      },
+      "source" : "STATUTE",
+      "status" : "STATUTORY_NOT_IN_CONTRACT",
+      "clause_ids" : [ "c3" ],
+      "citations" : [ {
+        "section_key" : "BLA-2006:123@amend-2013",
+        "quote" : "মজুরীকাল শেষ হওয়ার পরবর্তী সাত কর্মদিবসের মধ্যে তাহার মজুরী পরিশোধ করিতে হইবে",
+        "claim" : "মজুরী সাত কর্মদিবসের মধ্যে পরিশোধ করতে হবে"
+      } ]
+    }, {
+      "party" : "EMPLOYER",
+      "obligation" : "দৈনিক কর্মঘণ্টা আট ঘণ্টার বেশি না রাখা",
+      "trigger" : "প্রাপ্তবয়স্ক শ্রমিকের ক্ষেত্রে",
+      "deadline" : null,
+      "source" : "STATUTE",
+      "status" : "CONFLICTS_WITH_CONTRACT",
+      "clause_ids" : [ "c4" ],
+      "citations" : [ {
+        "section_key" : "BLA-2006:100@original",
+        "quote" : "দৈনিক আট ঘণ্টার অধিক সময় কাজ করিবেন না",
+        "claim" : "দৈনিক কর্মঘণ্টা সাধারণত আট ঘণ্টার বেশি হবে না"
+      } ]
+    }, {
+      "party" : "EMPLOYER",
+      "obligation" : "সাপ্তাহিক বিশ্রামের ব্যবস্থা নিশ্চিত করা",
+      "trigger" : "চুক্তির কর্মদিবসের পর",
+      "deadline" : null,
+      "source" : "STATUTE",
+      "status" : "STATUTORY_NOT_IN_CONTRACT",
+      "clause_ids" : [ "c5" ],
+      "citations" : [ {
+        "section_key" : "BLA-2006:101@amend-2013",
+        "quote" : "দৈনিক ছয় ঘণ্টার অধিক কাজ করিতে বাধ্য থাকিবেন না",
+        "claim" : "বিশ্রাম বা বিরতি ছাড়া দীর্ঘ কাজ করানো যাবে না"
+      } ]
+    }, {
+      "party" : "EMPLOYER",
+      "obligation" : "কর্মস্থলে নিরাপত্তা সরঞ্জাম সরবরাহ করা",
+      "trigger" : "নিয়োগের আগে",
+      "deadline" : null,
+      "source" : "STATUTE",
+      "status" : "STATUTORY_NOT_IN_CONTRACT",
+      "clause_ids" : [ "c7" ],
+      "citations" : [ {
+        "section_key" : "BLA-2006:78A@amend-2013",
+        "quote" : "ব্যক্তিগত সুরক্ষা যন্ত্রপাতি সরবরাহ ও ব্যবহার নিশ্চিত করা ব্যতীত কাউকে কর্মে নিয়োগ করিতে পারিবে না",
+        "claim" : "নিরাপত্তা সরঞ্জাম ছাড়া নিয়োগ করা যাবে না"
+      } ]
+    }, {
+      "party" : "EMPLOYER",
+      "obligation" : "ষাট দিনের লিখিত নোটিশ ছাড়া চাকুরী অবসান না করা",
+      "trigger" : "স্থায়ী শ্রমিকের চাকুরী অবসানে",
+      "deadline" : {
+        "value" : 60,
+        "unit" : "DAYS"
+      },
+      "source" : "STATUTE",
+      "status" : "CONFLICTS_WITH_CONTRACT",
+      "clause_ids" : [ "c8" ],
+      "citations" : [ {
+        "section_key" : "BLA-2006:26@original",
+        "quote" : "লিখিত নোটিশ প্রদান করিয়া কোন স্থায়ী শ্রমিকের চাকুরীর অবসান করিতে পারিবেন",
+        "claim" : "স্থায়ী শ্রমিককে লিখিত নোটিশ দিতে হবে"
+      } ]
+    }, {
+      "party" : "WORKER",
+      "obligation" : "ষাট দিনের লিখিত নোটিশ দিয়ে চাকুরী থেকে ইস্তফা দেওয়া",
+      "trigger" : "স্থায়ী শ্রমিক ইস্তফা দিলে",
+      "deadline" : {
+        "value" : 60,
+        "unit" : "DAYS"
+      },
+      "source" : "STATUTE",
+      "status" : "STATUTORY_NOT_IN_CONTRACT",
+      "clause_ids" : [ "c8" ],
+      "citations" : [ {
+        "section_key" : "BLA-2006:27@amend-2026",
+        "quote" : "ষাট দিনের লিখিত নোটিশ প্রদান করিয়া তাহার চাকুরী হইতে ইস্তফা দিতে পারিবেন",
+        "claim" : "শ্রমিক ষাট দিনের নোটিশ দিয়ে ইস্তফা দিতে পারবেন"
+      } ]
+    } ]
+  }
+}

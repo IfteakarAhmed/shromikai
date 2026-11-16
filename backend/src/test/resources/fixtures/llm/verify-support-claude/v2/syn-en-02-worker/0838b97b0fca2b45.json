@@ -1,0 +1,22 @@
+{
+  "fixtureVersion" : 1,
+  "promptId" : "verify-support-claude",
+  "promptVersion" : 2,
+  "caseId" : "syn-en-02-worker",
+  "modelId" : "claude-haiku-5-5",
+  "requestSha256" : "0838b97b0fca2b450da58edc4b37d7c25696a30bf0324da554d507eb656fe5e8",
+  "provenance" : "synthetic",
+  "source" : "recorded from a live call",
+  "recordedAt" : "2026-11-16T03:57:52.234800Z",
+  "stopReason" : "end_turn",
+  "usage" : {
+    "inputTokens" : 470,
+    "outputTokens" : 94,
+    "cacheReadTokens" : 0
+  },
+  "response" : {
+    "label" : "PARTIAL",
+    "confidence" : 0.8,
+    "reason" : "Section (ক)-(গ) confirms weekly holiday and no wage deduction for it, but mandatory nature is not stated explicitly and 'বাধ্যতামূলক' is broader than the text."
+  }
+}

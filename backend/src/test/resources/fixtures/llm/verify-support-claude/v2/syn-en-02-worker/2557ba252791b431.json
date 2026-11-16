@@ -1,0 +1,22 @@
+{
+  "fixtureVersion" : 1,
+  "promptId" : "verify-support-claude",
+  "promptVersion" : 2,
+  "caseId" : "syn-en-02-worker",
+  "modelId" : "claude-haiku-5-5",
+  "requestSha256" : "2557ba252791b431a75cfa04ceffc34377183abb656c669a1ee0a677a84dac92",
+  "provenance" : "synthetic",
+  "source" : "recorded from a live call",
+  "recordedAt" : "2026-11-16T03:57:52.448961Z",
+  "stopReason" : "end_turn",
+  "usage" : {
+    "inputTokens" : 1719,
+    "outputTokens" : 73,
+    "cacheReadTokens" : 0
+  },
+  "response" : {
+    "label" : "SUPPORTS",
+    "confidence" : 0.93,
+    "reason" : "Section 125(1) bars any deduction from a worker's wages except those the Act allows, matching the claim's element of unauthorised deductions."
+  }
+}

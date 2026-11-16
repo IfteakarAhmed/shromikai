@@ -1,0 +1,22 @@
+{
+  "fixtureVersion" : 1,
+  "promptId" : "verify-support-claude",
+  "promptVersion" : 2,
+  "caseId" : "syn-en-02-worker",
+  "modelId" : "claude-haiku-5-5",
+  "requestSha256" : "02a3b75d102a984bf7ec70a304a94790e5b786e6514dd23064b50525c37ded12",
+  "provenance" : "synthetic",
+  "source" : "recorded from a live call",
+  "recordedAt" : "2026-11-16T03:58:05.341156Z",
+  "stopReason" : "end_turn",
+  "usage" : {
+    "inputTokens" : 2339,
+    "outputTokens" : 77,
+    "cacheReadTokens" : 982
+  },
+  "response" : {
+    "label" : "PARTIAL",
+    "confidence" : 0.8,
+    "reason" : "Section sets 3 months probation for other workers but allows extension by 3 more months for skilled workers, so 'no more than 3 months' is not fully supported."
+  }
+}

@@ -1,0 +1,72 @@
+{
+  "fixtureVersion" : 1,
+  "promptId" : "risk-analysis",
+  "promptVersion" : 2,
+  "caseId" : "syn-en-02-worker",
+  "modelId" : "claude-sonnet-5-5",
+  "requestSha256" : "f20969e38ccefebc77c924a89befc86190403e0c0a8a42133b39ad2859defce2",
+  "provenance" : "synthetic",
+  "source" : "recorded from a live call",
+  "recordedAt" : "2026-11-16T03:57:44.185170Z",
+  "stopReason" : "end_turn",
+  "usage" : {
+    "inputTokens" : 17838,
+    "outputTokens" : 1268,
+    "cacheReadTokens" : 0
+  },
+  "response" : {
+    "status" : "OK",
+    "reason" : "NONE",
+    "findings" : [ {
+      "title" : "১২ ঘণ্টা কাজ ও অধিকাল ভাতা নেই",
+      "kind" : "CONFLICT",
+      "severity" : "CRITICAL",
+      "non_obvious" : false,
+      "clause_type" : "WORKING_HOURS",
+      "clause_ids" : [ "c4" ],
+      "explanation" : "দৈনিক ১২ ঘণ্টা কাজ, অতিরিক্ত বা নৈশ কাজে কোনো ভাতা নেই। আইনে সর্বোচ্চ ১০ ঘণ্টা এবং অধিকালে দ্বিগুণ হার প্রাপ্য।",
+      "citations" : [ {
+        "section_key" : "BLA-2006:108@amend-2018",
+        "quote" : "অধিকাল কাজের জন্য তাহার মূল মজুরী ও মহার্ঘভাতা",
+        "claim" : "অধিকাল কাজে মূল মজুরির দ্বিগুণ হারে ভাতা প্রাপ্য।"
+      }, {
+        "section_key" : "BLA-2006:100@original",
+        "quote" : "দৈনিক দশ ঘণ্টা পর্যন্ত ও কাজ করিতে পারিবেন",
+        "claim" : "দৈনিক কাজের সীমা সর্বোচ্চ দশ ঘণ্টা।"
+      } ],
+      "confidence" : 0.95
+    }, {
+      "title" : "সাপ্তাহিক ও উৎসব ছুটি অস্বীকার",
+      "kind" : "CONFLICT",
+      "severity" : "CRITICAL",
+      "non_obvious" : false,
+      "clause_type" : "REST_AND_HOLIDAYS",
+      "clause_ids" : [ "c5" ],
+      "explanation" : "সাপ্তাহিক বিশ্রামদিন ও উৎসব ছুটি নেই বলা হয়েছে। আইনে সাপ্তাহিক ছুটি ও ১৩ দিনের মজুরীসহ উৎসব ছুটি বাধ্যতামূলক।",
+      "citations" : [ {
+        "section_key" : "BLA-2006:118@amend-2026",
+        "quote" : "প্রতি পঞ্জিকা বৎসরে [১৩ (তের)] দিনের মজুরীসহ উৎসব ছুটি মঞ্জুর করিতে হইবে",
+        "claim" : "প্রত্যেক শ্রমিক ১৩ দিনের মজুরীসহ উৎসব ছুটি পান।"
+      }, {
+        "section_key" : "BLA-2006:103@amend-2018",
+        "quote" : "প্রতি সপ্তাহে কারখানা ও শিল্পের ক্ষেত্রে একদিন",
+        "claim" : "সাপ্তাহিক ছুটি বাধ্যতামূলক; তার জন্য মজুরি কর্তন চলে না।"
+      } ],
+      "confidence" : 0.93
+    }, {
+      "title" : "৯ মাস শিক্ষানবিশী ও ৭০% বেতন",
+      "kind" : "CONFLICT",
+      "severity" : "HIGH",
+      "non_obvious" : false,
+      "clause_type" : "PROBATION",
+      "clause_ids" : [ "c6" ],
+      "explanation" : "৯ মাস শিক্ষানবিশী ও ৭০% বেতন বলা হয়েছে। আইনে সীমা ৩ মাস, দক্ষ শ্রমিকের জন্য সর্বোচ্চ ৬ মাস।",
+      "citations" : [ {
+        "section_key" : "BLA-2006:4@amend-2026",
+        "quote" : "অন্যান্য শ্রমিকের জন্য এই সময় হইবে তিন মাস",
+        "claim" : "শিক্ষানবিশীকাল সাধারণত তিন মাস, বাড়ালেও সীমিত।"
+      } ],
+      "confidence" : 0.88
+    } ]
+  }
+}

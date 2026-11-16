@@ -1,0 +1,22 @@
+{
+  "fixtureVersion" : 1,
+  "promptId" : "verify-support-claude",
+  "promptVersion" : 2,
+  "caseId" : "syn-en-02-worker",
+  "modelId" : "claude-haiku-5-5",
+  "requestSha256" : "90e1ccfe5bfc976ec4437b50eda40c3279c185abadf8ed568f552e037b17aa69",
+  "provenance" : "synthetic",
+  "source" : "recorded from a live call",
+  "recordedAt" : "2026-11-16T03:57:53.667114Z",
+  "stopReason" : "end_turn",
+  "usage" : {
+    "inputTokens" : 404,
+    "outputTokens" : 74,
+    "cacheReadTokens" : 982
+  },
+  "response" : {
+    "label" : "SUPPORTS",
+    "confidence" : 0.92,
+    "reason" : "Section voids agreements restricting a party absolutely from enforcing contract rights in ordinary tribunals, matching the claim, as quoted."
+  }
+}

@@ -1,0 +1,87 @@
+{
+  "fixtureVersion" : 1,
+  "schemaInvalidAsRecorded" : true,
+  "promptId" : "obligations",
+  "promptVersion" : 1,
+  "caseId" : "syn-en-02-worker",
+  "modelId" : "claude-haiku-5-5",
+  "requestSha256" : "c83cfbc9863a784f162e1b0a44fdc39ba90872b5b0da31a260e8b4c29244b210",
+  "provenance" : "synthetic",
+  "source" : "recorded from a live call",
+  "recordedAt" : "2026-11-16T03:57:42.615702Z",
+  "stopReason" : "end_turn",
+  "usage" : {
+    "inputTokens" : 23606,
+    "outputTokens" : 1364,
+    "cacheReadTokens" : 0
+  },
+  "response" : {
+    "status" : "OK",
+    "reason" : "NONE",
+    "items" : [ {
+      "party" : "EMPLOYER",
+      "obligation" : "ঘণ্টা ও বিশ্রামের নিয়ম মানা; দৈনিক ১২ ঘণ্টা কাজ বৈধ নয়",
+      "trigger" : "কাজের সময় নির্ধারণে",
+      "deadline" : null,
+      "source" : "BOTH",
+      "status" : "CONFLICTS_WITH_CONTRACT",
+      "clause_ids" : [ "c4" ],
+      "citations" : [ {
+        "section_key" : "BLA-2006:100@original",
+        "quote" : "কোন প্রাপ্তবয়স্ক শ্রমিক কোন প্রতিষ্ঠানে সাধারণতঃ দৈনিক আট ঘণ্টার অধিক সময় কাজ করিবেন না",
+        "claim" : "দৈনিক ৮ ঘণ্টার বেশি কাজ সাধারণত নিষিদ্ধ; চুক্তির ১২ ঘণ্টা বিরোধপূর্ণ"
+      } ]
+    }, {
+      "party" : "EMPLOYER",
+      "obligation" : "সাপ্তাহিক ছুটি ও সরকারি ছুটি দেওয়া",
+      "trigger" : "সাপ্তাহিক ও উৎসব ছুটির সময়",
+      "deadline" : null,
+      "source" : "CONTRACT",
+      "status" : "STATED_IN_CONTRACT",
+      "clause_ids" : [ "c5" ],
+      "citations" : [ ]
+    }, {
+      "party" : "EMPLOYER",
+      "obligation" : "মজুরী কর্মদিবসে সাত কর্মদিবসের মধ্যে পরিশোধ",
+      "trigger" : "মজুরীকাল শেষ হলে",
+      "deadline" : {
+        "value" : 7,
+        "unit" : "DAYS"
+      },
+      "source" : "STATUTE",
+      "status" : "STATUTORY_NOT_IN_CONTRACT",
+      "clause_ids" : [ "c3" ],
+      "citations" : [ {
+        "section_key" : "BLA-2006:123@amend-2013",
+        "quote" : "কোন শ্রমিকের যে মজুরীকাল সমপর্কে তাহার মজুরী প্রদেয় হয় সেই কাল শেষ হওয়ার পরবর্তী সাত কর্মদিবসের মধ্যে",
+        "claim" : "মজুরী ৭ কর্মদিবসের মধ্যে পরিশোধ করতে হবে"
+      } ]
+    }, {
+      "party" : "EMPLOYER",
+      "obligation" : "বিশ্রাম বা আহারের বিরতি দেওয়া",
+      "trigger" : "দৈনিক কাজের সময়ে",
+      "deadline" : null,
+      "source" : "STATUTE",
+      "status" : "CONFLICTS_WITH_CONTRACT",
+      "clause_ids" : [ "c4" ],
+      "citations" : [ {
+        "section_key" : "BLA-2006:101@amend-2013",
+        "quote" : "যদি না উক্ত দিনে তাহাকে বিশ্রাম বা আহারের জন্য এক ঘণ্টা বিরতি দেওয়া হয়",
+        "claim" : "দীর্ঘ কাজের দিনে বিরতি বাধ্যতামূলক; চুক্তিতে নেই"
+      } ]
+    }, {
+      "party" : "EMPLOYER",
+      "obligation" : "কর্মস্থলে প্রাথমিক চিকিৎসা সরঞ্জাম রাখা",
+      "trigger" : "সর্বদা কর্মকালে",
+      "deadline" : null,
+      "source" : "STATUTE",
+      "status" : "STATUTORY_NOT_IN_CONTRACT",
+      "clause_ids" : [ "c7" ],
+      "citations" : [ {
+        "section_key" : "BLA-2006:89@amend-2013",
+        "quote" : "প্রত্যেক প্রতিষ্ঠানে সকল কর্ম সময়ে যাহাতে সহজে পাওয়া যায় এমনভাবে প্রাথমিক চিকিৎসা সরঞ্জাম",
+        "claim" : "প্রাথমিক চিকিৎসা বাক্স রাখতে হবে; চুক্তি এড়িয়ে গেছে"
+      } ]
+    } ]
+  }
+}

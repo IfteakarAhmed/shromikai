@@ -1,0 +1,59 @@
+{
+  "fixtureVersion" : 1,
+  "promptId" : "clause-facts",
+  "promptVersion" : 1,
+  "caseId" : "syn-en-02-worker",
+  "modelId" : "claude-haiku-5-5",
+  "requestSha256" : "f28178e4b3b03696a170e3835ad1fcf3c7617303d2864937accd875378fb0210",
+  "provenance" : "synthetic",
+  "source" : "recorded from a live call",
+  "recordedAt" : "2026-11-16T03:57:33.419091Z",
+  "stopReason" : "end_turn",
+  "usage" : {
+    "inputTokens" : 227,
+    "outputTokens" : 314,
+    "cacheReadTokens" : 0
+  },
+  "response" : {
+    "status" : "OK",
+    "reason" : "NONE",
+    "clauses" : [ {
+      "id" : "c5",
+      "facts" : [ {
+        "parameter" : "WEEKLY_REST_DAYS",
+        "value" : 0,
+        "unit" : "COUNT",
+        "confidence" : 0.9
+      }, {
+        "parameter" : "FESTIVAL_HOLIDAYS",
+        "value" : 0,
+        "unit" : "DAYS",
+        "confidence" : 0.6
+      } ]
+    }, {
+      "id" : "c6",
+      "facts" : [ {
+        "parameter" : "PROBATION_LENGTH",
+        "value" : 9,
+        "unit" : "MONTHS",
+        "confidence" : 0.97
+      } ]
+    }, {
+      "id" : "c7",
+      "facts" : [ ]
+    }, {
+      "id" : "c8",
+      "facts" : [ {
+        "parameter" : "TERMINATION_WITHOUT_NOTICE_ALLOWED",
+        "value" : 1,
+        "unit" : "BOOLEAN",
+        "confidence" : 0.95
+      }, {
+        "parameter" : "NOTICE_BY_WORKER",
+        "value" : 0,
+        "unit" : "DAYS",
+        "confidence" : 0.3
+      } ]
+    } ]
+  }
+}

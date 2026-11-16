@@ -1,0 +1,68 @@
+{
+  "fixtureVersion" : 1,
+  "promptId" : "risk-analysis",
+  "promptVersion" : 2,
+  "caseId" : "syn-en-02-worker",
+  "modelId" : "claude-sonnet-5-5",
+  "requestSha256" : "74630e901d0b86e81cd2a3300fc2570a2c3852c00f48f7f2604c53eb4ca08918",
+  "provenance" : "synthetic",
+  "source" : "recorded from a live call",
+  "recordedAt" : "2026-11-16T03:57:44.757591Z",
+  "stopReason" : "end_turn",
+  "usage" : {
+    "inputTokens" : 13782,
+    "outputTokens" : 1273,
+    "cacheReadTokens" : 0
+  },
+  "response" : {
+    "status" : "OK",
+    "reason" : "NONE",
+    "findings" : [ {
+      "title" : "ইউনিফর্ম ও সরঞ্জামের খরচ কর্তন",
+      "kind" : "CONFLICT",
+      "severity" : "CRITICAL",
+      "non_obvious" : false,
+      "clause_type" : "WAGE_PAYMENT_AND_DEDUCTIONS",
+      "clause_ids" : [ "c3" ],
+      "explanation" : "প্রতি মাসে ইউনিফর্ম ও সরঞ্জামের খরচ কাটা হয়। আইনে অনুমোদিত তালিকার বাইরে কর্তন নিষিদ্ধ, ফলে মজুরী কমে যাওয়ার ঝুঁকি।",
+      "citations" : [ {
+        "section_key" : "BLA-2006:125@amend-2013",
+        "quote" : "এই আইন দ্বারা অনুমোদিত কর্তনের ক্ষেত্র ব্যতীত অন্য কোন ৰেত্রে কোন শ্রমিকের মজুরী হইতে কিছুই কর্তন করা যাইবে না",
+        "claim" : "অনুমোদিত খাত ছাড়া মজুরী থেকে কর্তন করা যায় না।"
+      }, {
+        "section_key" : "BLA-2006:132@amend-2026",
+        "quote" : "শ্রম আদালতে দরখাসত্দ করিতে পারিবেন",
+        "claim" : "অবৈধ কর্তনকৃত মজুরী ফেরতের জন্য শ্রম আদালতে আবেদন করা যায়।"
+      } ],
+      "confidence" : 0.85
+    }, {
+      "title" : "দেশের যেকোনো স্থানে যখন-তখন বদলি",
+      "kind" : "AMBIGUITY",
+      "severity" : "MEDIUM",
+      "non_obvious" : true,
+      "clause_type" : "TRANSFER_AND_DEPLOYMENT",
+      "clause_ids" : [ "c2" ],
+      "explanation" : "কোম্পানি সারাদেশে যেকোনো সময় পোস্টিং দিতে পারে; কোনো নোটিশ, ভাতা বা সীমা নেই। এতে শ্রমিকের অধিকার ক্ষুণ্ন হওয়ার ঝুঁকি।",
+      "citations" : [ {
+        "section_key" : "BLA-2006:3@amend-2026",
+        "quote" : "কিন্তু এই প্রকার কোন বিধি কোন শ্রমিকের জন্য এই অধ্যায়ের কোন বিধান হইতে কম অনুকূল হইতে পারিবে না",
+        "claim" : "চাকুরীর শর্ত আইনের বিধানের চেয়ে কম অনুকূল হতে পারে না।"
+      } ],
+      "confidence" : 0.5
+    }, {
+      "title" : "শর্তাবলীতে মজুরী পরিশোধের সময় অনুল্লিখিত",
+      "kind" : "OMISSION",
+      "severity" : "MEDIUM",
+      "non_obvious" : true,
+      "clause_type" : "WAGE_PAYMENT_AND_DEDUCTIONS",
+      "clause_ids" : [ "c3" ],
+      "explanation" : "চুক্তিতে মজুরী পরিশোধের সময়সীমা নেই। বিলম্ব হলে আইনি সময়সীমা (সাত কর্মদিবস) মানা না হওয়ার ঝুঁকি।",
+      "citations" : [ {
+        "section_key" : "BLA-2006:123@amend-2013",
+        "quote" : "পরবর্তী সাত কর্মদিবসের মধ্যে তাহার মজুরী পরিশোধ করিতে হইবে",
+        "claim" : "মজুরীকাল শেষের সাত কর্মদিবসের মধ্যে মজুরী পরিশোধ বাধ্যতামূলক।"
+      } ],
+      "confidence" : 0.55
+    } ]
+  }
+}

@@ -1,0 +1,22 @@
+{
+  "fixtureVersion" : 1,
+  "promptId" : "verify-support-claude",
+  "promptVersion" : 2,
+  "caseId" : "syn-en-02-worker",
+  "modelId" : "claude-haiku-5-5",
+  "requestSha256" : "017159722c4318c9d2c3847c0d5a6227b2bcdc1e018937569c9f408393270424",
+  "provenance" : "synthetic",
+  "source" : "recorded from a live call",
+  "recordedAt" : "2026-11-16T03:57:57.698971Z",
+  "stopReason" : "end_turn",
+  "usage" : {
+    "inputTokens" : 1168,
+    "outputTokens" : 70,
+    "cacheReadTokens" : 982
+  },
+  "response" : {
+    "label" : "SUPPORTS",
+    "confidence" : 0.9,
+    "reason" : "Section 26(1) allows terminating a permanent worker's service only by giving written notice, matching the claim's requirement of written notice."
+  }
+}

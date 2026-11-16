@@ -1,0 +1,27 @@
+{
+  "fixtureVersion" : 1,
+  "schemaInvalidAsRecorded" : true,
+  "promptId" : "risk-citation-repair",
+  "promptVersion" : 2,
+  "caseId" : "syn-en-02-worker",
+  "modelId" : "claude-sonnet-5-5",
+  "requestSha256" : "a1fb612b434f47d4822bd6b24a602b9638ba637d0c8fc0a5db969385184f7912",
+  "provenance" : "synthetic",
+  "source" : "recorded from a live call",
+  "recordedAt" : "2026-11-16T03:58:04.335350Z",
+  "stopReason" : "end_turn",
+  "usage" : {
+    "inputTokens" : 12023,
+    "outputTokens" : 215,
+    "cacheReadTokens" : 0
+  },
+  "response" : {
+    "status" : "OK",
+    "reason" : "NONE",
+    "citations" : [ {
+      "section_key" : "BLA-2006:108@amend-2018",
+      "quote" : "অধিকাল কাজের জন্য তাহার মূল মজুরী ও মহার্ঘভাতা এবং এডহক বা অন্তবর্তী মজুরী, যদি থাকে, এর সাধারণ হারের দ্বিগুণ হারে ভাতা পাইবেন",
+      "claim" : "অধিকাল কাজের জন্য সাধারণ মজুরী হারের দ্বিগুণ হারে ভাতা প্রাপ্য।"
+    } ]
+  }
+}

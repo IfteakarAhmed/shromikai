@@ -1,0 +1,54 @@
+{
+  "fixtureVersion" : 1,
+  "promptId" : "risk-analysis",
+  "promptVersion" : 2,
+  "caseId" : "syn-en-02-worker",
+  "modelId" : "claude-sonnet-5-5",
+  "requestSha256" : "d0e48951b40035ca190ae14b85b7feb6a3e1639b8ca272fa8d6e5de300cef0f0",
+  "provenance" : "synthetic",
+  "source" : "recorded from a live call",
+  "recordedAt" : "2026-11-16T03:57:50.071180Z",
+  "stopReason" : "end_turn",
+  "usage" : {
+    "inputTokens" : 12954,
+    "outputTokens" : 807,
+    "cacheReadTokens" : 2996
+  },
+  "response" : {
+    "status" : "OK",
+    "reason" : "NONE",
+    "findings" : [ {
+      "title" : "ম্যানেজারের সিদ্ধান্তই চূড়ান্ত",
+      "kind" : "CONFLICT",
+      "severity" : "HIGH",
+      "non_obvious" : false,
+      "clause_type" : "DISPUTE_RESOLUTION",
+      "clause_ids" : [ "c10" ],
+      "explanation" : "যেকোনো বিরোধ কোম্পানির ম্যানেজার নিষ্পত্তি করবেন ও তা চূড়ান্ত। এতে শ্রম আদালতে যাওয়ার অধিকার বাধাগ্রস্ত হয়।",
+      "citations" : [ {
+        "section_key" : "CA-1872:28@original",
+        "quote" : "restricted absolutely from enforcing his rights under or in respect of any contract",
+        "claim" : "আদালতে অধিকার প্রয়োগে পূর্ণ বাধা দেওয়ার চুক্তি সেই পরিমাণে বাতিল।"
+      }, {
+        "section_key" : "BLA-2006:214@amend-2013",
+        "quote" : "কোন শ্রম আদালত নিম্নলিখিত বিষয়ে অনন্য এখতিয়ারের অধিকারী হইবে",
+        "claim" : "শ্রম বিরোধের বিচারের অনন্য এখতিয়ার শ্রম আদালতের।"
+      } ],
+      "confidence" : 0.85
+    }, {
+      "title" : "আপিল ও অভিযোগ প্রক্রিয়া বাদ",
+      "kind" : "INTERACTION",
+      "severity" : "MEDIUM",
+      "non_obvious" : true,
+      "clause_type" : "DISPUTE_RESOLUTION",
+      "clause_ids" : [ "c10", "c8" ],
+      "explanation" : "চূড়ান্ত ম্যানেজার-সিদ্ধান্ত ও বিনা নোটিশে ছাঁটাইয়ের ধারা মিলে ধারা ৩৩-এর আদালত-প্রতিকার অকার্যকর হতে পারে।",
+      "citations" : [ {
+        "section_key" : "BLA-2006:33@amend-2013",
+        "quote" : "শ্রম আদালতে লিখিতভাবে অভিযোগ পেশ করিতে পারিবেন",
+        "claim" : "অসন্তুষ্ট শ্রমিক শ্রম আদালতে অভিযোগ করতে পারেন।"
+      } ],
+      "confidence" : 0.6
+    } ]
+  }
+}

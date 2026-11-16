@@ -1,0 +1,72 @@
+{
+  "fixtureVersion" : 1,
+  "promptId" : "risk-analysis",
+  "promptVersion" : 2,
+  "caseId" : "syn-en-02-worker",
+  "modelId" : "claude-sonnet-5-5",
+  "requestSha256" : "5d261af0ebf79c4ced29cf3cf23bbbb03e9c955e8adb219c816aafaf3ca31d76",
+  "provenance" : "synthetic",
+  "source" : "recorded from a live call",
+  "recordedAt" : "2026-11-16T03:57:44.760062Z",
+  "stopReason" : "end_turn",
+  "usage" : {
+    "inputTokens" : 25011,
+    "outputTokens" : 1363,
+    "cacheReadTokens" : 0
+  },
+  "response" : {
+    "status" : "OK",
+    "reason" : "NONE",
+    "findings" : [ {
+      "title" : "আঘাত ও অসুস্থতায় চিকিৎসা ব্যয় অস্বীকার",
+      "kind" : "CONFLICT",
+      "severity" : "CRITICAL",
+      "non_obvious" : false,
+      "clause_type" : "HEALTH_AND_SAFETY",
+      "clause_ids" : [ "c7" ],
+      "explanation" : "কোম্পানি চিকিৎসা ব্যয় ও মজুরি দিতে অস্বীকার করে। আইনে কর্মকালীন আঘাতে মালিকের নিজ খরচে চিকিৎসা ও ক্ষতিপূরণ বাধ্যতামূলক।",
+      "citations" : [ {
+        "section_key" : "BLA-2006:89@amend-2013",
+        "quote" : "মালিকের নিজ খরচে ও দায়িত্বে উক্ত রোগ, আঘাত বা অসুস্থতা উপযুক্ত বা বিশেষজ্ঞ চিকিৎসক",
+        "claim" : "কর্মকালীন আঘাতে চিকিৎসার ব্যয় মালিককে বহন করতে হবে।"
+      }, {
+        "section_key" : "BLA-2006:150@original",
+        "quote" : "মালিক তাহাকে এই অধ্যায়ের বিধান অনুযায়ী ৰতিপূরণ দিতে বাধ্য থাকিবেন",
+        "claim" : "কর্মকালীন দুর্ঘটনায় জখমে মালিক ক্ষতিপূরণ দিতে বাধ্য।"
+      } ],
+      "confidence" : 0.85
+    }, {
+      "title" : "বিনা নোটিশে অবসান ও ইস্তফায় অনুমতি",
+      "kind" : "CONFLICT",
+      "severity" : "CRITICAL",
+      "non_obvious" : false,
+      "clause_type" : "NOTICE_AND_RESIGNATION",
+      "clause_ids" : [ "c8" ],
+      "explanation" : "মালিক বিনা নোটিশে অবসান করতে পারেন, ক্ষতিপূরণ নেই। শ্রমিকের ইস্তফায় অনুমতি লাগে; আইনে নোটিশ বা মজুরি দিয়ে ইস্তফা দেওয়া যায়।",
+      "citations" : [ {
+        "section_key" : "BLA-2006:26@original",
+        "quote" : "লিখিত নোটিশ প্রদান করিয়া কোন স্থায়ী শ্রমিকের চাকুরীর অবসান করিতে পারিবেন",
+        "claim" : "মালিককে লিখিত নোটিশ বা নোটিশের মজুরি দিয়ে অবসান করতে হয়।"
+      }, {
+        "section_key" : "BLA-2006:27@amend-2026",
+        "quote" : "নোটিশ মেয়াদের জন্য মজুরীর সমপরিমাণ অর্থ মালিককে প্রদান করিয়া ইহা করিতে পারিবেন",
+        "claim" : "শ্রমিক নোটিশ বা নোটিশের মজুরি দিয়ে ইস্তফা দিতে পারেন।"
+      } ],
+      "confidence" : 0.85
+    }, {
+      "title" : "তিন বছরের প্রতিযোগিতা-নিষেধ",
+      "kind" : "CONFLICT",
+      "severity" : "HIGH",
+      "non_obvious" : false,
+      "clause_type" : "NON_COMPETE",
+      "clause_ids" : [ "c9" ],
+      "explanation" : "চাকরি ছাড়ার পর তিন বছর কোনো নিরাপত্তা কোম্পানিতে কাজ নিষিদ্ধ। এটি বৈধ পেশা করার অধিকার সীমিত করে, তাই অকার্যকর।",
+      "citations" : [ {
+        "section_key" : "CA-1872:27@original",
+        "quote" : "Every agreement by which any one is restrained from exercising a lawful profession",
+        "claim" : "পেশা বা ব্যবসা নিষিদ্ধকারী চুক্তি সেই পরিমাণে বাতিল।"
+      } ],
+      "confidence" : 0.88
+    } ]
+  }
+}

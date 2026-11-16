@@ -1,0 +1,24 @@
+{
+  "fixtureVersion" : 1,
+  "promptId" : "counter-offer",
+  "promptVersion" : 2,
+  "caseId" : "syn-en-02-worker",
+  "modelId" : "claude-sonnet-5-5",
+  "requestSha256" : "e20eb6302a03329101bf8a3d8fe932782325cb3c84709217098338890b4ecc9d",
+  "provenance" : "synthetic",
+  "source" : "recorded from a live call",
+  "recordedAt" : "2026-11-16T03:58:13.523113Z",
+  "stopReason" : "end_turn",
+  "usage" : {
+    "inputTokens" : 492,
+    "outputTokens" : 381,
+    "cacheReadTokens" : 0
+  },
+  "response" : {
+    "status" : "OK",
+    "reason" : "NONE",
+    "action" : "REPLACE",
+    "proposed_text" : "১. নিয়োগ: কোম্পানি গার্ডকে নিরাপত্তা প্রহরী হিসেবে নিয়োগ দেয় এবং ন্যায্য প্রয়োজনে দেশের যেকোনো ক্লায়েন্ট সাইটে পোস্টিং দিতে পারে। বদলির অন্তত ৭ দিন আগে লিখিত নোটিশ দিতে হবে এবং বদলির কারণে বাড়তি খরচের জন্য যুক্তিসংগত ভাতা দিতে হবে। বদলিতে বেতন ও সুবিধা কমানো যাবে না।",
+    "rationale" : "বদলিতে নোটিশ, ভাতা ও বেতন-সুবিধার সুরক্ষা যোগ হওয়ায় শ্রমিকের অধিকার ক্ষুণ্ন হয় না, কোম্পানির পোস্টিংয়ের ক্ষমতাও থাকে।"
+  }
+}

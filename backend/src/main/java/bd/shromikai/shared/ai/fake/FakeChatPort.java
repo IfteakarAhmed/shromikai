@@ -238,6 +238,11 @@ public final class FakeChatPort implements ChatPort {
       problems.add("response is required");
     } else {
       String schema = schemaLocation(promptId, promptVersion);
+      if (fixture.path("schemaInvalidAsRecorded").asBoolean(false)) {
+        // A first answer that broke its schema, kept as the model gave it so the gateway's repair
+        // call replays; the gateway validates it again and asks for the repair.
+        return problems;
+      }
       if (!schemas.exists(schema)) {
         problems.add("no output schema at " + schema);
       } else {

@@ -1,0 +1,69 @@
+{
+  "fixtureVersion" : 1,
+  "schemaInvalidAsRecorded" : true,
+  "promptId" : "risk-analysis",
+  "promptVersion" : 2,
+  "caseId" : "syn-en-02-worker",
+  "modelId" : "claude-sonnet-5-5",
+  "requestSha256" : "140fc36c494299e9c02534ec85081f9f92ba3c8c4419959a9b8ee27020984d87",
+  "provenance" : "synthetic",
+  "source" : "recorded from a live call",
+  "recordedAt" : "2026-11-16T03:57:43.945112Z",
+  "stopReason" : "end_turn",
+  "usage" : {
+    "inputTokens" : 12895,
+    "outputTokens" : 1240,
+    "cacheReadTokens" : 0
+  },
+  "response" : {
+    "status" : "OK",
+    "reason" : "NONE",
+    "findings" : [ {
+      "title" : "মালিকের ম্যানেজারের সিদ্ধান্ত চূড়ান্ত",
+      "kind" : "CONFLICT",
+      "severity" : "HIGH",
+      "non_obvious" : false,
+      "clause_type" : "DISPUTE_RESOLUTION",
+      "clause_ids" : [ "c10" ],
+      "explanation" : "চুক্তিতে ম্যানেজারের সিদ্ধান্ত চূড়ান্ত। এতে শ্রমিকের আদালতে যাওয়ার অধিকার বাধাগ্রস্ত হয় এবং ধারাটি আংশিক বাতিলযোগ্য।",
+      "citations" : [ {
+        "section_key" : "CA-1872:28@original",
+        "quote" : "restricted absolutely from enforcing his rights under or in respect of any contract",
+        "claim" : "আইনি প্রতিকার থেকে সম্পূর্ণ বঞ্চিতকারী চুক্তি বাতিল।"
+      }, {
+        "section_key" : "BLA-2006:214@amend-2013",
+        "quote" : "কোন শিল্প বিরোধ অথবা অন্য কোন বিরোধ অথবা কোন প্রশ্নের বিচারও নিষ্পত্তি",
+        "claim" : "শ্রম বিরোধের নিষ্পত্তিতে শ্রম আদালতের এখতিয়ার রয়েছে।"
+      } ],
+      "confidence" : 0.85
+    }, {
+      "title" : "শ্রম আদালত ও আপিলের অধিকার বাদ",
+      "kind" : "INTERACTION",
+      "severity" : "HIGH",
+      "non_obvious" : true,
+      "clause_type" : "DISPUTE_RESOLUTION",
+      "clause_ids" : [ "c10", "c8" ],
+      "explanation" : "ম্যানেজারের চূড়ান্ত সিদ্ধান্তের ফলে ৩০ দিনের অভিযোগ-পদ্ধতি ও ট্রাইব্যুনালে আপিলের সুযোগ অকার্যকর হতে পারে।",
+      "citations" : [ {
+        "section_key" : "BLA-2006:33@amend-2013",
+        "quote" : "ত্রিশ দিনের মধ্যে অথবা, ক্ষেত্রমত, মালিকের সিদ্ধান্তের তারিখ হইতে ত্রিশ দিনের মধ্যে শ্রম আদালতে লিখিতভাবে অভিযোগ পেশ করিতে পারিবেন",
+        "claim" : "অসন্তুষ্ট শ্রমিক শ্রম আদালতে অভিযোগ করতে পারেন।"
+      } ],
+      "confidence" : 0.7
+    }, {
+      "title" : "নিরপেক্ষ বিকল্প বিরোধ নিষ্পত্তির অভাব",
+      "kind" : "OMISSION",
+      "severity" : "MEDIUM",
+      "non_obvious" : true,
+      "clause_type" : "DISPUTE_RESOLUTION",
+      "clause_ids" : [ ],
+      "explanation" : "চুক্তিতে নিরপেক্ষ সালিশ বা মধ্যস্থতার ব্যবস্থা নেই; কেবল মালিকপক্ষের ম্যানেজার সিদ্ধান্ত দেন।",
+      "citations" : [ {
+        "section_key" : "BLA-2006:348C@amend-2026",
+        "quote" : "নিরপেক্ষ ও ন্যায্যতার ভিত্তিতে কার্যক্রম পরিচালনা করিবে",
+        "claim" : "শ্রম বিরোধ নিষ্পত্তির কর্তৃপক্ষ নিরপেক্ষ হতে হবে।"
+      } ],
+      "confidence" : 0.6
+    } ]
+  }
+}

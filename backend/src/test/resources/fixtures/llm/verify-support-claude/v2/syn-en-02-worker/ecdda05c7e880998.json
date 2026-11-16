@@ -1,0 +1,22 @@
+{
+  "fixtureVersion" : 1,
+  "promptId" : "verify-support-claude",
+  "promptVersion" : 2,
+  "caseId" : "syn-en-02-worker",
+  "modelId" : "claude-haiku-5-5",
+  "requestSha256" : "ecdda05c7e8809981e0ec12e0e4849548df098685a06f8425cdcfb03ab523e49",
+  "provenance" : "synthetic",
+  "source" : "recorded from a live call",
+  "recordedAt" : "2026-11-16T03:57:58.378939Z",
+  "stopReason" : "end_turn",
+  "usage" : {
+    "inputTokens" : 367,
+    "outputTokens" : 72,
+    "cacheReadTokens" : 982
+  },
+  "response" : {
+    "label" : "SUPPORTS",
+    "confidence" : 0.92,
+    "reason" : "Section 100 states adult workers generally shall not work more than eight hours daily, matching the claim's element of an eight-hour normal limit."
+  }
+}

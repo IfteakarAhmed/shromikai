@@ -1,0 +1,22 @@
+{
+  "fixtureVersion" : 1,
+  "promptId" : "query-rewrite",
+  "promptVersion" : 1,
+  "caseId" : "syn-en-02-worker",
+  "modelId" : "claude-haiku-5-5",
+  "requestSha256" : "69c2d174c9d70399f0efadc3dd8b69158ea6631e846dd96cb664772c78b685a6",
+  "provenance" : "synthetic",
+  "source" : "recorded from a live call",
+  "recordedAt" : "2026-11-16T03:57:32.989697Z",
+  "stopReason" : "end_turn",
+  "usage" : {
+    "inputTokens" : 60,
+    "outputTokens" : 125,
+    "cacheReadTokens" : 0
+  },
+  "response" : {
+    "status" : "OK",
+    "reason" : "NONE",
+    "queries" : [ "Bangladesh labour law wage deductions for uniform and equipment costs", "বাংলাদেশ শ্রম আইন মজুরি থেকে কর্মসংস্থান সরঞ্জাম কর্তন", "minimum wage protection and unlawful deductions from salary in Bangladesh" ]
+  }
+}

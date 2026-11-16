@@ -1,0 +1,26 @@
+{
+  "fixtureVersion" : 1,
+  "promptId" : "risk-citation-repair",
+  "promptVersion" : 2,
+  "caseId" : "syn-en-02-worker",
+  "modelId" : "claude-sonnet-5-5",
+  "requestSha256" : "e023736efff772f0e4add64575d1483f83f5d77a74f736ac6b32e71127537b41",
+  "provenance" : "synthetic",
+  "source" : "recorded from a live call",
+  "recordedAt" : "2026-11-16T03:58:03.250088Z",
+  "stopReason" : "end_turn",
+  "usage" : {
+    "inputTokens" : 12783,
+    "outputTokens" : 142,
+    "cacheReadTokens" : 0
+  },
+  "response" : {
+    "status" : "OK",
+    "reason" : "NONE",
+    "citations" : [ {
+      "section_key" : "BLA-2006:4@amend-2026",
+      "quote" : "অন্যান্য শ্রমিকের জন্য এই সময় হইবে তিন মাসঃ",
+      "claim" : "শিক্ষানবিশীকাল সাধারণ শ্রমিকের জন্য তিন মাস, এর বেশি নয়।"
+    } ]
+  }
+}

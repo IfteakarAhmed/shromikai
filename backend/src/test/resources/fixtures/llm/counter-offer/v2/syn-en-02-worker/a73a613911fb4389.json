@@ -1,0 +1,24 @@
+{
+  "fixtureVersion" : 1,
+  "promptId" : "counter-offer",
+  "promptVersion" : 2,
+  "caseId" : "syn-en-02-worker",
+  "modelId" : "claude-sonnet-5-5",
+  "requestSha256" : "a73a613911fb4389625e3452ed29c53694022d595e5ad2ee32640736a074047e",
+  "provenance" : "synthetic",
+  "source" : "recorded from a live call",
+  "recordedAt" : "2026-11-16T03:58:12.611535Z",
+  "stopReason" : "end_turn",
+  "usage" : {
+    "inputTokens" : 432,
+    "outputTokens" : 310,
+    "cacheReadTokens" : 0
+  },
+  "response" : {
+    "status" : "OK",
+    "reason" : "NONE",
+    "action" : "REPLACE",
+    "proposed_text" : "২. মজুরী: মাসিক মজুরী ১১,০০০ টাকা। প্রতিটি মজুরীকাল শেষ হওয়ার পরবর্তী ৭ কর্মদিবসের মধ্যে সম্পূর্ণ মজুরী পরিশোধ করা হবে। ইউনিফর্ম ও সরঞ্জামের খরচ কেবল আইনে অনুমোদিত হলে এবং লিখিতভাবে জানিয়ে কর্তন করা যাবে।",
+    "rationale" : "মজুরী পরিশোধের সময়সীমা ৭ কর্মদিবস স্পষ্ট করা হয়েছে এবং কর্তন আইনসম্মত শর্তে সীমিত রাখা হয়েছে।"
+  }
+}

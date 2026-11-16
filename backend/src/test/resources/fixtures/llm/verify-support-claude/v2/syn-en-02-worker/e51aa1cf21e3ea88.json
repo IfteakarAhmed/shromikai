@@ -1,0 +1,22 @@
+{
+  "fixtureVersion" : 1,
+  "promptId" : "verify-support-claude",
+  "promptVersion" : 2,
+  "caseId" : "syn-en-02-worker",
+  "modelId" : "claude-haiku-5-5",
+  "requestSha256" : "e51aa1cf21e3ea88c2128342166b4f49401508dcbd0590c0d754713c9245bbe5",
+  "provenance" : "synthetic",
+  "source" : "recorded from a live call",
+  "recordedAt" : "2026-11-16T03:57:57.644459Z",
+  "stopReason" : "end_turn",
+  "usage" : {
+    "inputTokens" : 767,
+    "outputTokens" : 69,
+    "cacheReadTokens" : 982
+  },
+  "response" : {
+    "label" : "PARTIAL",
+    "confidence" : 0.8,
+    "reason" : "Section bars over six hours daily work without a rest break, but sets different limits for other cases; claim is broader than the section's specific rules."
+  }
+}

@@ -1,0 +1,24 @@
+{
+  "fixtureVersion" : 1,
+  "promptId" : "counter-offer",
+  "promptVersion" : 2,
+  "caseId" : "syn-en-02-worker",
+  "modelId" : "claude-sonnet-5-5",
+  "requestSha256" : "71885cf44d2516a7859dfda6c895a95b3b7ac6f0c745bc7133085ff4997ec841",
+  "provenance" : "synthetic",
+  "source" : "recorded from a live call",
+  "recordedAt" : "2026-11-16T03:58:12.744716Z",
+  "stopReason" : "end_turn",
+  "usage" : {
+    "inputTokens" : 528,
+    "outputTokens" : 378,
+    "cacheReadTokens" : 0
+  },
+  "response" : {
+    "status" : "OK",
+    "reason" : "NONE",
+    "action" : "REPLACE",
+    "proposed_text" : "৭. নোটিশ ও অবসান: কোম্পানি আইন অনুযায়ী লিখিত নোটিশ দিয়ে, অথবা আইনে অনুমোদিত ক্ষেত্রে নোটিশের পরিবর্তে নোটিশ মেয়াদের মজুরি প্রদান করে, চুক্তি অবসান করতে পারিবে। গার্ড কোম্পানির অনুমতি ছাড়াই লিখিত নোটিশ দিয়ে, অথবা নোটিশ মেয়াদের মজুরির সমপরিমাণ অর্থ প্রদান করিয়া, ইস্তফা দিতে পারিবেন।",
+    "rationale" : "বিনা নোটিশে অবসান ও ইস্তফায় অনুমতির শর্ত বাদ দিয়ে ধারা ২৭ অনুযায়ী নোটিশ বা মজুরির বিকল্প রাখা হয়েছে।"
+  }
+}

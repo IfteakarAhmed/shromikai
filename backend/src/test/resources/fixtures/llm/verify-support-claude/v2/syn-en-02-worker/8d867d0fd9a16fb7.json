@@ -1,0 +1,22 @@
+{
+  "fixtureVersion" : 1,
+  "promptId" : "verify-support-claude",
+  "promptVersion" : 2,
+  "caseId" : "syn-en-02-worker",
+  "modelId" : "claude-haiku-5-5",
+  "requestSha256" : "8d867d0fd9a16fb7338b0b0734a228b64c313942d746e730618072e340e6e2d0",
+  "provenance" : "synthetic",
+  "source" : "recorded from a live call",
+  "recordedAt" : "2026-11-16T03:57:52.243932Z",
+  "stopReason" : "end_turn",
+  "usage" : {
+    "inputTokens" : 370,
+    "outputTokens" : 79,
+    "cacheReadTokens" : 0
+  },
+  "response" : {
+    "label" : "PARTIAL",
+    "confidence" : 0.7,
+    "reason" : "Section sets 8 hours as the general daily limit and allows up to 10 hours only under a proviso subject to s.108; claim omits the 8-hour rule."
+  }
+}

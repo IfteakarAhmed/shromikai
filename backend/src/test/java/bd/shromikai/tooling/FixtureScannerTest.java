@@ -102,6 +102,26 @@ class FixtureScannerTest {
   }
 
   @Test
+  void shouldAcceptAnAnswerThatBrokeItsSchemaOnlyWhenItIsMarkedAsRecorded() throws IOException {
+    Path dir = Files.createDirectories(fixtures.resolve("llm/xx-echo/v1"));
+    String body =
+        """
+        {"fixtureVersion":1,"promptId":"xx-echo","promptVersion":1,"caseId":"case-1",
+         "modelId":"m","requestSha256":"%s","provenance":"synthetic","recordedAt":"2026-11-10",
+         %s "response":{"echo":"x","unexpected":1}}
+        """;
+    Files.writeString(dir.resolve("case-1.json"), body.formatted("a".repeat(64), ""));
+    assertThat(scanner().scan()).anyMatch(v -> v.contains("case-1.json: response:"));
+
+    // A real model sometimes breaks its schema; the gateway then repairs it with a second call.
+    // The first answer is kept as it came (that is what replays the repair), and marked.
+    Files.writeString(
+        dir.resolve("case-1.json"),
+        body.formatted("a".repeat(64), "\"schemaInvalidAsRecorded\":true,"));
+    assertThat(scanner().scan()).noneMatch(v -> v.contains("case-1.json: response:"));
+  }
+
+  @Test
   void shouldReportMissingCanaryFile() throws IOException {
     Files.delete(fixtures.resolve("canaries.yml"));
 

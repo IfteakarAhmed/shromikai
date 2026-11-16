@@ -1,0 +1,22 @@
+{
+  "fixtureVersion" : 1,
+  "promptId" : "query-rewrite",
+  "promptVersion" : 1,
+  "caseId" : "syn-en-02-worker",
+  "modelId" : "claude-haiku-5-5",
+  "requestSha256" : "71b6ed1ab3a7b3d13eb0f68407362eed430a02ff406544deecffc13336df5ba2",
+  "provenance" : "synthetic",
+  "source" : "recorded from a live call",
+  "recordedAt" : "2026-11-16T03:57:32.861126Z",
+  "stopReason" : "end_turn",
+  "usage" : {
+    "inputTokens" : 62,
+    "outputTokens" : 98,
+    "cacheReadTokens" : 0
+  },
+  "response" : {
+    "status" : "OK",
+    "reason" : "NONE",
+    "queries" : [ "নোটিশ ছাড়া চাকরি থেকে অব্যাহতি ও চাকরির অবসান", "termination of employment without notice by employer", "employee resignation requires employer written permission Bangladesh labour law" ]
+  }
+}

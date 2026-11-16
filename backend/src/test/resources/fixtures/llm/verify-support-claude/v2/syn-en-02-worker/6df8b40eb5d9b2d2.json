@@ -1,0 +1,22 @@
+{
+  "fixtureVersion" : 1,
+  "promptId" : "verify-support-claude",
+  "promptVersion" : 2,
+  "caseId" : "syn-en-02-worker",
+  "modelId" : "claude-haiku-5-5",
+  "requestSha256" : "6df8b40eb5d9b2d2f38c67adc173efafd09443482599a0f31ec7ec838e0e7dc4",
+  "provenance" : "synthetic",
+  "source" : "recorded from a live call",
+  "recordedAt" : "2026-11-16T03:57:52.381516Z",
+  "stopReason" : "end_turn",
+  "usage" : {
+    "inputTokens" : 575,
+    "outputTokens" : 102,
+    "cacheReadTokens" : 0
+  },
+  "response" : {
+    "label" : "PARTIAL",
+    "confidence" : 0.8,
+    "reason" : "Section s.108(1) grants double-rate overtime allowance on basic wage plus dearness/ad hoc pay; claim omits the mahargha bhata and ad hoc components and s.108(2) piece-rate exclusion."
+  }
+}

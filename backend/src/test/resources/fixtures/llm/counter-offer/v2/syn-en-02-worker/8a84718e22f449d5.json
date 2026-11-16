@@ -1,0 +1,24 @@
+{
+  "fixtureVersion" : 1,
+  "promptId" : "counter-offer",
+  "promptVersion" : 2,
+  "caseId" : "syn-en-02-worker",
+  "modelId" : "claude-sonnet-5-5",
+  "requestSha256" : "8a84718e22f449d5c90247fdf9f35a225fe2d45e56c7cccbed98108828ab8b12",
+  "provenance" : "synthetic",
+  "source" : "recorded from a live call",
+  "recordedAt" : "2026-11-16T03:58:13.430125Z",
+  "stopReason" : "end_turn",
+  "usage" : {
+    "inputTokens" : 713,
+    "outputTokens" : 372,
+    "cacheReadTokens" : 0
+  },
+  "response" : {
+    "status" : "OK",
+    "reason" : "NONE",
+    "action" : "REPLACE",
+    "proposed_text" : "৬. আঘাত ও অসুস্থতা: কর্মকালীন দুর্ঘটনা বা পেশাগত রোগে আক্রান্ত হলে কোম্পানি নিজ খরচে ও দায়িত্বে গার্ডের সম্পূর্ণ সুস্থ হওয়া পর্যন্ত চিকিৎসা করাবে এবং আইন অনুযায়ী ক্ষতিপূরণ দেবে। কর্মসংশ্লিষ্ট নয় এমন অসুস্থতায় ছুটি ও মজুরি আইন ও কোম্পানির নীতি অনুযায়ী হবে।",
+    "rationale" : "ধারাটি এখন কর্মকালীন আঘাতে মালিকের খরচে চিকিৎসা ও ক্ষতিপূরণ নিশ্চিত করে এবং অন্য অসুস্থতায় আইনানুগ ছুটি রাখে।"
+  }
+}
