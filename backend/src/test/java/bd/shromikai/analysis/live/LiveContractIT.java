@@ -47,29 +47,45 @@ class LiveContractIT extends LiveBase {
   @Autowired LiveSpendLedger ledger;
   @Autowired JdbcClient jdbc;
 
+  /**
+   * The daily budget of the product counts replayed recordings at their original cost, so it is
+   * used up by earlier runs (an accounting artefact). It is raised for this test only; the real
+   * limit here is the ledger cap below, which the test insists on.
+   */
+  @org.springframework.test.context.DynamicPropertySource
+  static void dailyBudgetForThisTestOnly(
+      org.springframework.test.context.DynamicPropertyRegistry registry) {
+    registry.add("shromikai.budget.daily-usd", () -> "100000");
+  }
+
   @BeforeAll
   static void optIn() {
     assumeTrue(LiveEnv.optedIn("record"), "live recording: run with -PliveOk=record");
     Run.purpose = "record:" + CONTRACT;
     Run.caseId = CONTRACT + "-worker";
-    Run.maxCalls = 90;
-    // The sample text lost its leak-test marker, so every request hash changes and all seven
-    // prompts are recorded again (a call an existing recording answers is replayed for free). The
-    // limits bound the calls of a clean run (about 58 in all) with some room for one retry.
+    Run.maxCalls = 40;
+    // Record-missing only (after the rules became active, 2026-11-16): every request that an
+    // existing recording answers is replayed for free and nothing is deleted or overwritten. The
+    // prompts whose requests must not have changed have a limit of 0, so a request that no longer
+    // matches stops the run instead of costing money.
     Run.perPromptLimits =
         java.util.Map.ofEntries(
-            java.util.Map.entry("clause-classify", 4),
-            java.util.Map.entry("clause-facts", 14),
-            java.util.Map.entry("query-rewrite", 14),
-            java.util.Map.entry("risk-analysis", 6),
-            java.util.Map.entry("risk-citation-repair", 6),
-            java.util.Map.entry("verify-support-claude", 30),
+            java.util.Map.entry("clause-classify", 0),
+            java.util.Map.entry("clause-facts", 0),
+            java.util.Map.entry("query-rewrite", 0),
+            java.util.Map.entry("obligations", 2),
+            java.util.Map.entry("risk-analysis", 3),
+            java.util.Map.entry("risk-citation-repair", 4),
+            java.util.Map.entry("verify-support-claude", 20),
             java.util.Map.entry("counter-offer", 12));
     Run.contractPrefix = "record:" + CONTRACT;
-    // Never more than US$1.60 in total in the ledger (the user's instruction for this recording).
-    Run.contractCapMicros =
-        new LiveSpendLedger().spentOn("record:" + CONTRACT)
-            + Math.max(0, 1_600_000 - new LiveSpendLedger().spentMicros());
+    // Abort when the new spend of this step reaches US$0.60 (ledger total near US$2.25).
+    Run.contractCapMicros = new LiveSpendLedger().spentOn("record:" + CONTRACT) + 600_000;
+    long cap = Run.contractCapMicros;
+    long newSpend = cap - new LiveSpendLedger().spentOn("record:" + CONTRACT);
+    if (cap == Long.MAX_VALUE || newSpend <= 0 || newSpend > 600_000) {
+      throw new IllegalStateException("The ledger cap for new spend must be set (at most US$0.60)");
+    }
     Run.record = true;
     Run.localPiiStandInFor = CONTRACT;
   }

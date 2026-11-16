@@ -1,0 +1,22 @@
+{
+  "fixtureVersion" : 1,
+  "promptId" : "verify-support-claude",
+  "promptVersion" : 2,
+  "caseId" : "syn-en-02-worker",
+  "modelId" : "claude-haiku-5-5",
+  "requestSha256" : "4231391ac93edaa5f38a3a5cbb15dc2aeb32f9cde8fc61443556a0a746d10544",
+  "provenance" : "synthetic",
+  "source" : "recorded from a live call",
+  "recordedAt" : "2026-11-16T05:32:17.886634Z",
+  "stopReason" : "end_turn",
+  "usage" : {
+    "inputTokens" : 2339,
+    "outputTokens" : 81,
+    "cacheReadTokens" : 0
+  },
+  "response" : {
+    "label" : "PARTIAL",
+    "confidence" : 0.8,
+    "reason" : "Section sets 3-month probation for non-clerical workers; the extension of 3 more months for skilled workers is only in the proviso, so total 6 months is partially supported."
+  }
+}

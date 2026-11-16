@@ -1,0 +1,68 @@
+{
+  "fixtureVersion" : 1,
+  "promptId" : "risk-analysis",
+  "promptVersion" : 2,
+  "caseId" : "syn-en-02-worker",
+  "modelId" : "claude-sonnet-5-5",
+  "requestSha256" : "c465f60d1157518c4dd34175d48e128a9c990f2a83bd744a87cd2af99a835794",
+  "provenance" : "synthetic",
+  "source" : "recorded from a live call",
+  "recordedAt" : "2026-11-16T05:32:07.926705Z",
+  "stopReason" : "end_turn",
+  "usage" : {
+    "inputTokens" : 18265,
+    "outputTokens" : 1237,
+    "cacheReadTokens" : 0
+  },
+  "response" : {
+    "status" : "OK",
+    "reason" : "NONE",
+    "findings" : [ {
+      "title" : "ওভারটাইম ভাতা সম্পূর্ণ বাদ",
+      "kind" : "CONFLICT",
+      "severity" : "CRITICAL",
+      "non_obvious" : false,
+      "clause_type" : "OVERTIME",
+      "clause_ids" : [ "c4" ],
+      "explanation" : "ধারা ৩-এ অতিরিক্ত সময়ের জন্য কোনো অর্থ দেওয়া হয় না। আইনে অধিকাল কাজের জন্য সাধারণ হারের দ্বিগুণ ভাতা বাধ্যতামূলক।",
+      "citations" : [ {
+        "section_key" : "BLA-2006:108@amend-2018",
+        "quote" : "অধিকাল কাজের জন্য তাহার মূল মজুরী ও মহার্ঘভাতা এবং এডহক বা অন্তবর্তী মজুরী, যদি থাকে, এর সাধারণ হারের দ্বিগুণ হারে ভাতা পাইবেন",
+        "claim" : "অধিকাল কাজে মূল মজুরীর দ্বিগুণ হারে ভাতা প্রাপ্য"
+      } ],
+      "confidence" : 0.95
+    }, {
+      "title" : "দৈনিক ১২ ঘণ্টা কাজ, সাপ্তাহিক ছুটি নেই",
+      "kind" : "INTERACTION",
+      "severity" : "HIGH",
+      "non_obvious" : true,
+      "clause_type" : "WORKING_HOURS",
+      "clause_ids" : [ "c4", "c5" ],
+      "explanation" : "মাসে ৩০ দিন ১২ ঘণ্টা কাজ এবং সাপ্তাহিক ছুটি নেই। এতে সীমা ও ছুটির অধিকার একসঙ্গে লঙ্ঘিত হয়।",
+      "citations" : [ {
+        "section_key" : "BLA-2006:100@original",
+        "quote" : "সাধারণতঃ দৈনিক আট ঘণ্টার অধিক সময় কাজ করিবেন না",
+        "claim" : "দৈনিক কর্মঘণ্টা সাধারণত আটের বেশি হইবে না"
+      }, {
+        "section_key" : "BLA-2006:103@amend-2018",
+        "quote" : "প্রতি সপ্তাহে কারখানা ও শিল্পের ক্ষেত্রে একদিন এবং দোকান ও প্রতিষ্ঠানের ক্ষেত্রে দেড় দিন ছুটি পাইবেন",
+        "claim" : "সাপ্তাহিক ছুটি বাধ্যতামূলক"
+      } ],
+      "confidence" : 0.9
+    }, {
+      "title" : "উৎসব ছুটি অস্বীকার",
+      "kind" : "CONFLICT",
+      "severity" : "HIGH",
+      "non_obvious" : false,
+      "clause_type" : "REST_AND_HOLIDAYS",
+      "clause_ids" : [ "c5" ],
+      "explanation" : "ধারা ৪-এ কোনো উৎসব ছুটি নেই, শুধু সাইট বন্ধ থাকলে ছুটি। আইনে বছরে ১৩ দিন মজুরীসহ উৎসব ছুটি প্রাপ্য।",
+      "citations" : [ {
+        "section_key" : "BLA-2006:118@amend-2026",
+        "quote" : "প্রতি পঞ্জিকা বৎসরে [১৩ (তের)] দিনের মজুরীসহ উৎসব ছুটি মঞ্জুর করিতে হইবে",
+        "claim" : "প্রত্যেক শ্রমিক ১৩ দিন মজুরীসহ উৎসব ছুটি পাইবেন"
+      } ],
+      "confidence" : 0.9
+    } ]
+  }
+}

@@ -1,0 +1,72 @@
+{
+  "fixtureVersion" : 1,
+  "promptId" : "risk-analysis",
+  "promptVersion" : 2,
+  "caseId" : "syn-en-02-worker",
+  "modelId" : "claude-sonnet-5-5",
+  "requestSha256" : "8cfe5b3b83342f05ccf28bf74cfcc6bece9c7a9ad989edef2deced6969ddae6c",
+  "provenance" : "synthetic",
+  "source" : "recorded from a live call",
+  "recordedAt" : "2026-11-16T05:32:15.723911Z",
+  "stopReason" : "end_turn",
+  "usage" : {
+    "inputTokens" : 18324,
+    "outputTokens" : 1190,
+    "cacheReadTokens" : 3168
+  },
+  "response" : {
+    "status" : "OK",
+    "reason" : "NONE",
+    "findings" : [ {
+      "title" : "ওভারটাইম ভাতা নেই",
+      "kind" : "CONFLICT",
+      "severity" : "CRITICAL",
+      "non_obvious" : false,
+      "clause_type" : "WORKING_HOURS",
+      "clause_ids" : [ "c4" ],
+      "explanation" : "দৈনিক ১২ ঘণ্টা কাজ, অতিরিক্ত ঘণ্টা বা রাতের জন্য কোনো ভাতা নেই। আইনে অধিকালের জন্য দ্বিগুণ হারে ভাতা প্রাপ্য।",
+      "citations" : [ {
+        "section_key" : "BLA-2006:108@amend-2018",
+        "quote" : "অধিকাল কাজের জন্য তাহার মূল মজুরী ও মহার্ঘভাতা",
+        "claim" : "অধিকাল কাজের জন্য দ্বিগুণ হারে ভাতা প্রাপ্য।"
+      }, {
+        "section_key" : "BLA-2006:100@original",
+        "quote" : "দৈনিক আট ঘণ্টার অধিক সময় কাজ করিবেন না",
+        "claim" : "দৈনিক কর্মঘণ্টা সাধারণত আট ঘণ্টার বেশি নয়।"
+      } ],
+      "confidence" : 0.95
+    }, {
+      "title" : "সাপ্তাহিক ও উৎসব ছুটি নেই",
+      "kind" : "CONFLICT",
+      "severity" : "HIGH",
+      "non_obvious" : false,
+      "clause_type" : "REST_AND_HOLIDAYS",
+      "clause_ids" : [ "c5" ],
+      "explanation" : "সাপ্তাহিক ছুটি ও উৎসব ছুটি অস্বীকার করা হয়েছে। আইনে সপ্তাহে ছুটি এবং বছরে ১৩ দিন মজুরীসহ উৎসব ছুটি বাধ্যতামূলক।",
+      "citations" : [ {
+        "section_key" : "BLA-2006:103@amend-2018",
+        "quote" : "প্রতি সপ্তাহে কারখানা ও শিল্পের ক্ষেত্রে একদিন",
+        "claim" : "শ্রমিক প্রতি সপ্তাহে ছুটি পাবেন।"
+      }, {
+        "section_key" : "BLA-2006:118@amend-2026",
+        "quote" : "প্রতি পঞ্জিকা বৎসরে [১৩ (তের)] দিনের মজুরীসহ উৎসব ছুটি",
+        "claim" : "বছরে ১৩ দিন মজুরীসহ উৎসব ছুটি প্রাপ্য।"
+      } ],
+      "confidence" : 0.93
+    }, {
+      "title" : "৯ মাস শিক্ষানবিশকাল ও কম বেতন",
+      "kind" : "CONFLICT",
+      "severity" : "HIGH",
+      "non_obvious" : true,
+      "clause_type" : "PROBATION",
+      "clause_ids" : [ "c6" ],
+      "explanation" : "৯ মাস শিক্ষানবিশী ও ৭০% বেতন। আইনে শিক্ষানবিশকাল সাধারণত তিন মাস, সর্বোচ্চ ছয় মাস।",
+      "citations" : [ {
+        "section_key" : "BLA-2006:4@amend-2026",
+        "quote" : "অন্যান্য শ্রমিকের জন্য এই সময় হইবে তিন মাস",
+        "claim" : "অকেরানি শ্রমিকের শিক্ষানবিশকাল তিন মাস, বর্ধিতসহ ছয় মাস।"
+      } ],
+      "confidence" : 0.85
+    } ]
+  }
+}
