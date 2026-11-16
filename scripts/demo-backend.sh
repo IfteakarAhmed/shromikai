@@ -33,6 +33,13 @@ if [ "${E2E:-}" = "1" ]; then
   export SHROMIKAI_QUOTAS_GUEST_PER_DEVICE_PER_DAY=100000
 fi
 
+# DEMO_RULES=off loads no rule file, so the earlier recordings (made before the rules were active)
+# replay: the result then has UNCERTAIN findings and the "no active rule applied" notice. The
+# default is on. Only this script reads the flag (DemoRulesFlagTest); production never does.
+if [ "${DEMO_RULES:-on}" = "off" ]; then
+  export SHROMIKAI_RULES_FILES=
+fi
+
 export SPRING_PROFILES_ACTIVE="demo,fake-models,local-embeddings"
 export SHROMIKAI_FAKE_MODELS_DEFAULT_CASE="syn-en-02-worker"
 cd backend
