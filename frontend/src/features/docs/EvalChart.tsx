@@ -22,6 +22,7 @@ export default function EvalChart({
       <div aria-hidden="true" className="h-80 w-full">
         <ResponsiveContainer width="100%" height="100%">
           <BarChart
+            accessibilityLayer={false}
             data={rows}
             layout="vertical"
             margin={{ top: 4, right: 16, left: 8, bottom: 0 }}

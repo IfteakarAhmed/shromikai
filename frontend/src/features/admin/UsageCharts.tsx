@@ -42,7 +42,11 @@ export default function UsageCharts({
         <figcaption className="mb-2 font-semibold">{t('admin.usage.chartPerDay')}</figcaption>
         <div aria-hidden="true" className="h-72 w-full">
           <ResponsiveContainer width="100%" height="100%">
-            <BarChart data={rows} margin={{ top: 8, right: 8, left: 0, bottom: 0 }}>
+            <BarChart
+              accessibilityLayer={false}
+              data={rows}
+              margin={{ top: 8, right: 8, left: 0, bottom: 0 }}
+            >
               <CartesianGrid stroke="var(--border)" strokeDasharray="3 3" />
               <XAxis dataKey="label" tick={tick} minTickGap={12} />
               <YAxis
@@ -91,7 +95,11 @@ export default function UsageCharts({
         <figcaption className="mb-2 font-semibold">{t('admin.usage.chartCost')}</figcaption>
         <div aria-hidden="true" className="h-72 w-full">
           <ResponsiveContainer width="100%" height="100%">
-            <BarChart data={rows} margin={{ top: 8, right: 8, left: 0, bottom: 0 }}>
+            <BarChart
+              accessibilityLayer={false}
+              data={rows}
+              margin={{ top: 8, right: 8, left: 0, bottom: 0 }}
+            >
               <CartesianGrid stroke="var(--border)" strokeDasharray="3 3" />
               <XAxis dataKey="label" tick={tick} minTickGap={12} />
               <YAxis tick={tick} width={56} tickFormatter={(v: number) => formatUsd(v, language)} />

@@ -15,7 +15,15 @@ for (const locale of LOCALES) {
       await inLocale(page, locale)
     })
 
-    for (const route of ['/', '/login', '/docs']) {
+    for (const route of [
+      '/',
+      '/login',
+      '/docs',
+      '/docs/architecture',
+      '/docs/data',
+      '/docs/evaluation',
+      '/docs/known-gaps',
+    ]) {
       test(`NFR-08 ${route} has no horizontal scroll`, async ({ page }) => {
         await page.goto(route)
         await page.waitForLoadState('networkidle')

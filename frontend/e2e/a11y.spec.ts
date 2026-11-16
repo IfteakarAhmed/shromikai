@@ -21,6 +21,15 @@ async function expectNoSeriousViolations(page: Page, where: string) {
   ).toEqual([])
 }
 
+/** The key of each admin address in `admin.nav`. */
+const NAV: Record<string, string> = {
+  '/admin/review': 'review',
+  '/admin/playbooks': 'playbooks',
+  '/admin/api-keys': 'keys',
+  '/admin/usage': 'usage',
+  '/admin/traces': 'trace',
+}
+
 async function inTheme(page: Page, theme: 'dark' | 'light') {
   await page.addInitScript((value) => {
     window.localStorage.setItem('shromikai.theme', value)
@@ -35,7 +44,20 @@ for (const locale of LOCALES) {
         await inTheme(page, theme)
       })
 
-      for (const route of ['/', '/login', '/docs']) {
+      for (const route of [
+        '/',
+        '/login',
+        '/docs',
+        '/docs/architecture',
+        '/docs/data',
+        '/docs/security',
+        '/docs/audit',
+        '/docs/evaluation',
+        '/docs/prompts',
+        '/docs/prompts/risk-analysis',
+        '/docs/mcp',
+        '/docs/known-gaps',
+      ]) {
         test(`NFR-08 ${route}`, async ({ page }) => {
           await page.goto(route)
           await page.waitForLoadState('networkidle')
@@ -76,6 +98,39 @@ for (const locale of LOCALES) {
           await page.getByRole('tab', { name: text(locale, `tabs.${tab}`) }).click()
           await expectNoSeriousViolations(page, `results tab ${tab}`)
         }
+      })
+
+      test('NFR-08 the admin console', async ({ page }) => {
+        await page.goto('/demo-admin')
+        await expect(page.getByRole('heading', { name: text(locale, 'admin.title') })).toBeVisible()
+        await expect(page.getByTestId('kpi-value').first()).toBeVisible()
+        await expectNoSeriousViolations(page, '/admin')
+        for (const route of [
+          '/admin/review',
+          '/admin/playbooks',
+          '/admin/api-keys',
+          '/admin/usage',
+          '/admin/traces',
+        ]) {
+          await page
+            .getByRole('navigation', { name: text(locale, 'admin.nav.label') })
+            .getByRole('link', { name: text(locale, `admin.nav.${NAV[route] ?? 'overview'}`) })
+            .click()
+          await page.waitForLoadState('networkidle')
+          await expect(page).toHaveURL(new RegExp(`${route}$`))
+          await expectNoSeriousViolations(page, route)
+        }
+      })
+
+      test('NFR-08 the playbook form', async ({ page }) => {
+        await page.goto('/demo-hr')
+        await expect(
+          page.getByRole('heading', { name: text(locale, 'upload.title') }),
+        ).toBeVisible()
+        await page.goto('/app/playbooks')
+        await page.getByRole('button', { name: text(locale, 'admin.playbooks.new') }).click()
+        await page.getByRole('button', { name: text(locale, 'admin.playbooks.save') }).click()
+        await expectNoSeriousViolations(page, 'playbook form with errors')
       })
 
       test('NFR-08 compare and the review ticket', async ({ page }) => {

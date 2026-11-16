@@ -29,7 +29,7 @@ export default function DocsLayout() {
             end={page.end}
             className={({ isActive }) =>
               cx(
-                'inline-flex min-h-11 items-center rounded-lg border px-4 py-2 font-semibold transition-colors',
+                'inline-flex min-h-11 items-center rounded-lg border px-4 py-2 font-semibold',
                 isActive
                   ? 'border-primary bg-primary text-primary-foreground'
                   : 'border-border bg-secondary/60 text-foreground hover:bg-secondary',

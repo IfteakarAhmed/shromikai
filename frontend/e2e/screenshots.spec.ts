@@ -30,6 +30,7 @@ test.describe('screenshots', () => {
   test('increment pictures: landing, upload, progress, results, uncertain card and citation sheet', async ({
     page,
   }) => {
+    test.skip(prefix === 'C', 'increment C has its own pictures')
     await page.goto('/')
     await page.waitForLoadState('networkidle')
     await page.waitForTimeout(1500) // let the 3D scene fade in where the browser allows it
@@ -91,6 +92,7 @@ test.describe('screenshots', () => {
   })
 
   test('increment pictures: English and light theme', async ({ page }) => {
+    test.skip(prefix === 'C', 'increment C has its own pictures')
     await inLocale(page, 'en')
     await page.addInitScript(() => {
       window.localStorage.setItem('shromikai.theme', 'light')
@@ -164,5 +166,84 @@ test.describe('screenshots', () => {
       window.scrollBy(0, 500)
     })
     await shot(page, 'compare-claims')
+  })
+
+  test('increment C pictures: admin console and docs hub', async ({ page }) => {
+    test.skip(prefix !== 'C', 'only for increment C')
+    const nav = (key: string) =>
+      page
+        .getByRole('navigation', { name: text('bn', 'admin.nav.label') })
+        .getByRole('link', { name: text('bn', `admin.nav.${key}`) })
+
+    // A worker's sample run sends its uncertain findings to the review queue.
+    await page.goto('/demo-user')
+    await expect(page.getByRole('heading', { name: text('bn', 'upload.title') })).toBeVisible()
+    await page.getByRole('button', { name: text('bn', 'upload.sample') }).click()
+    await expect(page.getByRole('heading', { name: text('bn', 'results.title') })).toBeVisible({
+      timeout: 60_000,
+    })
+    const analysisId = /\/app\/analyses\/([0-9a-f-]{36})/.exec(page.url())?.[1] ?? ''
+
+    await page.goto('/demo-admin')
+    await expect(page.getByTestId('kpi-value').first()).toBeVisible()
+    await page.waitForTimeout(500)
+    await shot(page, 'admin-overview')
+
+    await nav('review').click()
+    await expect(
+      page.getByRole('heading', { name: text('bn', 'admin.review.title'), level: 2 }),
+    ).toBeVisible()
+    await page.waitForTimeout(500)
+    await shot(page, 'admin-review-queue')
+    const open = page.getByRole('button', { name: new RegExp(text('bn', 'admin.review.open')) })
+    const link = page.getByRole('link', { name: new RegExp(text('bn', 'admin.review.open')) })
+    await ((await open.count()) > 0 ? open : link).first().click()
+    await page.getByRole('button', { name: text('bn', 'admin.review.claimButton') }).click()
+    await expect(page.getByText(text('bn', 'admin.review.decide.claimed'))).toBeVisible()
+    await page.getByRole('radio', { name: text('bn', 'admin.review.decide.REJECTED') }).check()
+    await page.getByRole('button', { name: text('bn', 'admin.review.decide.submit') }).click()
+    await expect(page.getByText(text('bn', 'admin.review.decide.noteRequired'))).toBeVisible()
+    await page.getByLabel(text('bn', 'admin.review.decide.note')).scrollIntoViewIfNeeded()
+    await shot(page, 'admin-review-note-required')
+    await page.getByRole('button', { name: text('bn', 'admin.review.release') }).click()
+
+    await nav('playbooks').click()
+    await page.getByRole('button', { name: text('bn', 'admin.playbooks.new') }).click()
+    await page.waitForTimeout(300)
+    await shot(page, 'admin-playbook-form')
+
+    await nav('keys').click()
+    await page.getByLabel(text('bn', 'admin.keys.name')).fill('ডেমো কী')
+    await page.getByRole('button', { name: text('bn', 'admin.keys.submit') }).click()
+    await expect(page.getByTestId('api-key-secret')).toBeVisible()
+    await shot(page, 'admin-api-key-secret')
+    await page.getByRole('button', { name: text('bn', 'admin.keys.done') }).click()
+
+    await nav('usage').click()
+    await expect(page.locator('.recharts-responsive-container').first()).toBeVisible({
+      timeout: 20_000,
+    })
+    await page.waitForTimeout(800)
+    await shot(page, 'admin-usage')
+
+    await nav('trace').click()
+    await page.getByLabel(text('bn', 'admin.trace.idLabel')).fill(analysisId)
+    await page.getByRole('button', { name: text('bn', 'admin.trace.open') }).click()
+    await expect(page.getByRole('table')).toBeVisible()
+    await shot(page, 'admin-trace')
+
+    for (const [route, name] of [
+      ['/docs', 'docs-index'],
+      ['/docs/architecture', 'docs-architecture'],
+      ['/docs/audit', 'docs-audit'],
+      ['/docs/evaluation', 'docs-evaluation'],
+      ['/docs/data', 'docs-data'],
+      ['/docs/security', 'docs-security'],
+    ] as const) {
+      await page.goto(route)
+      await page.waitForLoadState('networkidle')
+      await page.waitForTimeout(500)
+      await shot(page, name)
+    }
   })
 })
