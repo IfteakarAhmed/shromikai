@@ -27,7 +27,7 @@ test.describe('screenshots', () => {
     await inLocale(page, 'bn')
   })
 
-  test('increment pictures: landing, upload, progress, results, uncertain card and citation sheet', async ({
+  test('increment pictures: landing, upload, progress, results, uncertain card and citation sheet @rules-off', async ({
     page,
   }) => {
     test.skip(prefix === 'C', 'increment C has its own pictures')
@@ -91,7 +91,7 @@ test.describe('screenshots', () => {
     await shot(page, 'citation-sheet')
   })
 
-  test('increment pictures: English and light theme', async ({ page }) => {
+  test('increment pictures: English and light theme @rules-off', async ({ page }) => {
     test.skip(prefix === 'C', 'increment C has its own pictures')
     await inLocale(page, 'en')
     await page.addInitScript(() => {
@@ -102,7 +102,7 @@ test.describe('screenshots', () => {
     await shot(page, 'landing-en-light')
   })
 
-  test('increment B pictures: why drawer, redline, duties, memo, compare and the ticket', async ({
+  test('increment B pictures: why drawer, redline, duties, memo, compare and the ticket @rules-off', async ({
     page,
   }) => {
     test.skip(prefix !== 'B', 'only for increment B')
@@ -231,6 +231,19 @@ test.describe('screenshots', () => {
     await page.getByRole('button', { name: text('bn', 'admin.trace.open') }).click()
     await expect(page.getByRole('table')).toBeVisible()
     await shot(page, 'admin-trace')
+
+    // The default demo: the rules produce findings of their own, labelled as fixed legal limits.
+    await page.goto('/demo-user')
+    await page.getByRole('button', { name: text('bn', 'upload.sample') }).click()
+    await expect(page.getByRole('heading', { name: text('bn', 'results.title') })).toBeVisible({
+      timeout: 60_000,
+    })
+    const ruleCard = page
+      .locator('article')
+      .filter({ hasText: text('bn', 'finding.source.RULE_ENGINE') })
+      .first()
+    await ruleCard.scrollIntoViewIfNeeded()
+    await shot(page, 'results-rule-finding')
 
     for (const [route, name] of [
       ['/docs', 'docs-index'],
