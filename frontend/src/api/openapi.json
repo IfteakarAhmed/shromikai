@@ -634,6 +634,7 @@
           },
           "lastUsedAt" : {
             "format" : "date-time",
+            "nullable" : true,
             "type" : "string"
           },
           "name" : {
@@ -648,6 +649,7 @@
           },
           "revokedAt" : {
             "format" : "date-time",
+            "nullable" : true,
             "type" : "string"
           },
           "scopes" : {
@@ -968,6 +970,7 @@
           },
           "lastUsedAt" : {
             "format" : "date-time",
+            "nullable" : true,
             "type" : "string"
           },
           "name" : {
@@ -982,6 +985,7 @@
           },
           "revokedAt" : {
             "format" : "date-time",
+            "nullable" : true,
             "type" : "string"
           },
           "scopes" : {
@@ -1627,6 +1631,7 @@
         "properties" : {
           "archivedAt" : {
             "format" : "date-time",
+            "nullable" : true,
             "type" : "string"
           },
           "createdAt" : {
@@ -1728,14 +1733,19 @@
             "type" : "string"
           },
           "statuteSectionKey" : {
+            "default" : "",
+            "nullable" : true,
             "type" : "string"
           },
           "unit" : {
+            "default" : "",
             "enum" : [ "DAYS", "WEEKS", "MONTHS", "HOURS_PER_DAY", "HOURS_PER_WEEK", "MULTIPLIER", "PERCENT", "BDT_PER_MONTH", "COUNT", "BOOLEAN" ],
+            "nullable" : true,
             "type" : "string"
           },
           "value" : {
             "format" : "double",
+            "nullable" : true,
             "type" : "number"
           }
         },

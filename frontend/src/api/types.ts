@@ -735,13 +735,13 @@ export interface components {
       /** Format: uuid */
       id: string
       /** Format: date-time */
-      lastUsedAt: string
+      lastUsedAt: string | null
       name: string
       /** Format: uuid */
       orgId: string
       prefix: string
       /** Format: date-time */
-      revokedAt: string
+      revokedAt: string | null
       scopes: string[]
     }
     Clause: {
@@ -859,13 +859,13 @@ export interface components {
       id: string
       key: string
       /** Format: date-time */
-      lastUsedAt: string
+      lastUsedAt: string | null
       name: string
       /** Format: uuid */
       orgId: string
       prefix: string
       /** Format: date-time */
-      revokedAt: string
+      revokedAt: string | null
       scopes: string[]
     }
     /** @enum {string} */
@@ -1116,7 +1116,7 @@ export interface components {
     }
     Playbook: {
       /** Format: date-time */
-      archivedAt: string
+      archivedAt: string | null
       /** Format: date-time */
       createdAt: string
       /** Format: uuid */
@@ -1180,8 +1180,12 @@ export interface components {
       messageEn: string
       /** @enum {string} */
       severity: 'CRITICAL' | 'HIGH' | 'MEDIUM' | 'LOW'
-      statuteSectionKey: string
-      /** @enum {string} */
+      /** @default  */
+      statuteSectionKey: string | null
+      /**
+       * @default
+       * @enum {string|null}
+       */
       unit:
         | 'DAYS'
         | 'WEEKS'
@@ -1193,8 +1197,9 @@ export interface components {
         | 'BDT_PER_MONTH'
         | 'COUNT'
         | 'BOOLEAN'
+        | null
       /** Format: double */
-      value: number
+      value: number | null
     }
     /** @description RFC 9457 problem document (api.md §5.14) */
     Problem: {

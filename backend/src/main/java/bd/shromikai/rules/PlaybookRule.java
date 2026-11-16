@@ -1,5 +1,6 @@
 package bd.shromikai.rules;
 
+import io.swagger.v3.oas.annotations.media.Schema;
 import org.jspecify.annotations.Nullable;
 
 /**
@@ -13,9 +14,9 @@ public record PlaybookRule(
     String clauseType,
     FactParameter fact,
     RuleComparator comparator,
-    @Nullable Double value,
-    @Nullable Unit unit,
+    @Schema(nullable = true) @Nullable Double value,
+    @Schema(nullable = true) @Nullable Unit unit,
     Severity severity,
     String messageBn,
     String messageEn,
-    @Nullable String statuteSectionKey) {}
+    @Schema(nullable = true) @Nullable String statuteSectionKey) {}

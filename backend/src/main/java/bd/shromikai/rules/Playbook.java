@@ -1,5 +1,6 @@
 package bd.shromikai.rules;
 
+import io.swagger.v3.oas.annotations.media.Schema;
 import java.time.Instant;
 import java.util.List;
 import java.util.UUID;
@@ -13,7 +14,7 @@ public record Playbook(
     String side,
     int version,
     Instant createdAt,
-    @Nullable Instant archivedAt,
+    @Schema(nullable = true) @Nullable Instant archivedAt,
     List<PlaybookRule> rules) {
 
   public Playbook {

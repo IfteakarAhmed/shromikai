@@ -15,7 +15,13 @@ import { LoginPage } from './pages/LoginPage'
 import { NotFoundPage } from './pages/NotFoundPage'
 
 // Areas most visitors never open are separate chunks (architecture §17: route-level splitting).
+const AdminLayout = lazy(() => import('./features/admin/AdminLayout'))
 const AdminHome = lazy(() => import('./features/admin/AdminHome'))
+const ReviewPage = lazy(() => import('./features/admin/ReviewPage'))
+const PlaybooksPage = lazy(() => import('./features/admin/PlaybooksPage'))
+const ApiKeysPage = lazy(() => import('./features/admin/ApiKeysPage'))
+const UsagePage = lazy(() => import('./features/admin/UsagePage'))
+const TracePage = lazy(() => import('./features/admin/TracePage'))
 const DocsHub = lazy(() => import('./features/docs/DocsHub'))
 
 function RouteFallback() {
@@ -52,21 +58,40 @@ export default function App() {
           <Route path="compare/:id" element={<CompareResultPage />} />
         </Route>
         <Route
-          path="admin/*"
+          path="admin"
           element={
             <ProtectedRoute roles={['ADMIN']}>
               <Suspense fallback={<RouteFallback />}>
-                <AdminHome />
+                <AdminLayout />
               </Suspense>
             </ProtectedRoute>
           }
-        />
+        >
+          <Route index element={<AdminHome />} />
+          <Route path="review/:id?" element={<ReviewPage />} />
+          <Route path="playbooks" element={<PlaybooksPage />} />
+          <Route path="api-keys" element={<ApiKeysPage />} />
+          <Route path="usage" element={<UsagePage />} />
+          <Route path="traces/:analysisId?" element={<TracePage />} />
+        </Route>
         <Route
           path="docs/*"
           element={
             <Suspense fallback={<RouteFallback />}>
               <DocsHub />
             </Suspense>
+          }
+        />
+        <Route
+          path="app/playbooks"
+          element={
+            <ProtectedRoute roles={['HR', 'ADMIN']}>
+              <div className="mx-auto max-w-6xl px-(--gutter) py-8">
+                <Suspense fallback={<RouteFallback />}>
+                  <PlaybooksPage />
+                </Suspense>
+              </div>
+            </ProtectedRoute>
           }
         />
         <Route path="*" element={<NotFoundPage />} />

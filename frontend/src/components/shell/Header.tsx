@@ -77,6 +77,11 @@ export function Header() {
               {t('nav.profile')}
             </NavLink>
           )}
+          {role === 'HR' && (
+            <NavLink to="/app/playbooks" className={linkClass}>
+              {t('nav.playbooks')}
+            </NavLink>
+          )}
           {role === 'ADMIN' && (
             <NavLink to="/admin" className={linkClass}>
               {t('nav.admin')}
@@ -148,6 +153,11 @@ export function Header() {
           {user !== null && (
             <NavLink to="/app/profile" className={linkClass}>
               {t('nav.profile')}
+            </NavLink>
+          )}
+          {role === 'HR' && (
+            <NavLink to="/app/playbooks" className={linkClass}>
+              {t('nav.playbooks')}
             </NavLink>
           )}
           {role === 'ADMIN' && (

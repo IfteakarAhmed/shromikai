@@ -40,7 +40,7 @@ describe('demo login', () => {
 
     renderApp(<App />, '/demo-admin')
 
-    expect(await screen.findByText('প্রশাসনের পাতা শীঘ্রই আসছে।')).toBeInTheDocument()
+    expect(await screen.findByRole('heading', { name: 'অ্যাডমিন কনসোল' })).toBeInTheDocument()
   })
 
   it('FR-08 shows a Bangla message and a way out when demo sign-in is not available', async () => {

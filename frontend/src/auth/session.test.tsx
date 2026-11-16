@@ -18,7 +18,7 @@ describe('session', () => {
     renderApp(<App />, '/admin')
 
     expect(await screen.findByRole('heading', { name: 'সাইন ইন' })).toBeInTheDocument()
-    expect(screen.queryByText('প্রশাসনের পাতা শীঘ্রই আসছে।')).not.toBeInTheDocument()
+    expect(screen.queryByRole('heading', { name: 'অ্যাডমিন কনসোল' })).not.toBeInTheDocument()
   })
 
   it('FR-05 logs in and returns to the page that was asked for', async () => {
@@ -27,7 +27,7 @@ describe('session', () => {
 
     await signIn('admin@example.test')
 
-    expect(await screen.findByText('প্রশাসনের পাতা শীঘ্রই আসছে।')).toBeInTheDocument()
+    expect(await screen.findByRole('heading', { name: 'অ্যাডমিন কনসোল' })).toBeInTheDocument()
     expect(screen.getByText(/admin@example.test হিসেবে ঢুকেছেন/)).toBeInTheDocument()
   })
 
@@ -120,7 +120,7 @@ describe('session', () => {
 
     expect(await screen.findByRole('heading', { name: 'অনুমতি নেই' })).toBeInTheDocument()
     expect(screen.getByRole('alert')).toHaveTextContent('এই পাতাটি দেখার অনুমতি আপনার নেই')
-    expect(screen.queryByText('প্রশাসনের পাতা শীঘ্রই আসছে।')).not.toBeInTheDocument()
+    expect(screen.queryByRole('heading', { name: 'অ্যাডমিন কনসোল' })).not.toBeInTheDocument()
   })
 
   it('FR-06 lets an admin open /admin and shows the admin link only to an admin', async () => {
@@ -128,7 +128,7 @@ describe('session', () => {
 
     renderApp(<App />, '/admin')
 
-    expect(await screen.findByText('প্রশাসনের পাতা শীঘ্রই আসছে।')).toBeInTheDocument()
+    expect(await screen.findByRole('heading', { name: 'অ্যাডমিন কনসোল' })).toBeInTheDocument()
     expect(screen.getByRole('link', { name: 'প্রশাসন' })).toBeInTheDocument()
   })
 

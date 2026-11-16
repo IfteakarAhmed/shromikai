@@ -1,5 +1,6 @@
 package bd.shromikai.auth;
 
+import io.swagger.v3.oas.annotations.media.Schema;
 import java.time.Instant;
 import java.util.List;
 import java.util.UUID;
@@ -13,5 +14,5 @@ public record ApiKeyView(
     String name,
     List<String> scopes,
     Instant createdAt,
-    @Nullable Instant lastUsedAt,
-    @Nullable Instant revokedAt) {}
+    @Schema(nullable = true) @Nullable Instant lastUsedAt,
+    @Schema(nullable = true) @Nullable Instant revokedAt) {}

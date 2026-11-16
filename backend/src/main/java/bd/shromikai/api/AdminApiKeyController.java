@@ -9,6 +9,7 @@ import bd.shromikai.trace.ActorKind;
 import bd.shromikai.trace.AuditAction;
 import bd.shromikai.trace.AuditEvent;
 import bd.shromikai.trace.AuditService;
+import io.swagger.v3.oas.annotations.media.Schema;
 import java.time.Instant;
 import java.util.List;
 import java.util.Map;
@@ -55,8 +56,8 @@ public class AdminApiKeyController {
       List<String> scopes,
       String key,
       Instant createdAt,
-      @Nullable Instant lastUsedAt,
-      @Nullable Instant revokedAt) {}
+      @Schema(nullable = true) @Nullable Instant lastUsedAt,
+      @Schema(nullable = true) @Nullable Instant revokedAt) {}
 
   @PostMapping
   @ResponseStatus(HttpStatus.CREATED)

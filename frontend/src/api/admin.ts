@@ -64,7 +64,13 @@ export function patchReviewItem(
   language: string,
   token: string | null,
 ): Promise<ReviewItem> {
-  return apiSend<ReviewItem>('PATCH', `/api/v1/review-items/${id}`, language, patch, token ?? undefined)
+  return apiSend<ReviewItem>(
+    'PATCH',
+    `/api/v1/review-items/${id}`,
+    language,
+    patch,
+    token ?? undefined,
+  )
 }
 
 /** E-26 */
@@ -96,8 +102,14 @@ export function archivePlaybook(
   id: string,
   language: string,
   token: string | null,
-): Promise<void> {
-  return apiSend<void>('DELETE', `/api/v1/playbooks/${id}`, language, undefined, token ?? undefined)
+): Promise<undefined> {
+  return apiSend<undefined>(
+    'DELETE',
+    `/api/v1/playbooks/${id}`,
+    language,
+    undefined,
+    token ?? undefined,
+  )
 }
 
 /** E-37 */
@@ -120,8 +132,12 @@ export function createApiKey(
 }
 
 /** E-38: revokes the key. */
-export function revokeApiKey(id: string, language: string, token: string | null): Promise<void> {
-  return apiSend<void>(
+export function revokeApiKey(
+  id: string,
+  language: string,
+  token: string | null,
+): Promise<undefined> {
+  return apiSend<undefined>(
     'DELETE',
     `/api/v1/admin/api-keys/${id}`,
     language,
@@ -149,9 +165,5 @@ export function getAdminTrace(
   language: string,
   token: string | null,
 ): Promise<AnalysisTrace> {
-  return apiGet<AnalysisTrace>(
-    `/api/v1/admin/traces/${analysisId}`,
-    language,
-    token ?? undefined,
-  )
+  return apiGet<AnalysisTrace>(`/api/v1/admin/traces/${analysisId}`, language, token ?? undefined)
 }
