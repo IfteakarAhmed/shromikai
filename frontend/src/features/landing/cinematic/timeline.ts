@@ -106,22 +106,22 @@ export function beatsAt(t: number): Beats {
 export const STAGES = {
   /** The floating contract sheets. */
   hero: [2.6, 0, 0] as Vec3,
-  /** The lattice of law-section cards. */
-  lattice: [0.5, 0.6, -12] as Vec3,
-  /** The check rings and the seal. */
-  verify: [-5.6, 0.2, -9] as Vec3,
-  /** The coral and the emerald card. */
-  invented: [6.2, 0.2, -9] as Vec3,
+  /** The wide lattice of law-section cards behind the sheets, seen when the camera pulls back. */
+  lattice: [0.5, 0.6, -8] as Vec3,
+  /** The check rings and the seal, in front of the lattice on the left. */
+  verify: [-8, 0.4, -3] as Vec3,
+  /** The coral and the emerald card, in front of the lattice on the right. */
+  invented: [10.5, 0.4, -3.2] as Vec3,
 } as const
 
 /** One camera pose per chapter; the text sits on the left, so each subject sits right of centre. */
 export const KEYFRAMES: readonly CameraPose[] = [
-  { position: [0, 0.4, 10], target: [0.4, 0, 0] },
-  { position: [0.9, 0.3, 6.4], target: [1.3, 0, 0.6] },
-  { position: [-1.2, 3.4, 5.5], target: [-0.6, 0.4, -11] },
-  { position: [-4.2, 0.6, -3.6], target: [-6.9, 0.2, -9] },
-  { position: [7.4, 0.7, -3.6], target: [5, 0.2, -9] },
-  { position: [0.6, 0.8, 14], target: [1.6, 0, -1] },
+  { position: [-0.2, 0.4, 11], target: [-0.1, 0, 0] },
+  { position: [1.4, 0.2, 8.8], target: [1.0, 0, 0.6] },
+  { position: [-1, 2.2, 21], target: [0.5, 0.3, -4] },
+  { position: [-6.2, 0.7, 5.8], target: [-10.2, 0.4, -3] },
+  { position: [13.4, 0.8, 5.6], target: [7.2, 0.4, -3.2] },
+  { position: [0.2, 0.9, 15], target: [0.6, 0, -1] },
 ]
 
 const lerp3 = (a: Vec3, b: Vec3, s: number): Vec3 => [
@@ -150,7 +150,7 @@ export function cameraAt(t: number): CameraPose {
   const index = Math.min(COUNT - 2, Math.floor((x - centre(0)) / WIDTH))
   const from = KEYFRAMES[index] ?? first
   const to = KEYFRAMES[index + 1] ?? last
-  const s = ramp((x - centre(index)) / WIDTH, 0.15, 0.85)
+  const s = ramp((x - centre(index)) / WIDTH, 0.1, 0.9)
   return {
     position: lerp3(from.position, to.position, s),
     target: lerp3(from.target, to.target, s),
