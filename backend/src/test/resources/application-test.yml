@@ -1,5 +1,9 @@
 # Test-only overrides loaded on top of application.yml for the test profile.
 shromikai:
+  rules:
+    # No rule file in tests: the Bangladesh rules are verified against the real corpus (checkRules);
+    # tests that need rules load the fictional pack xx themselves (R-10).
+    files: []
   retrieval:
     # Fictional pack xx (R-10): topic map for fixture sections only.
     topic-map-file: src/test/resources/fixtures/retrieval/xx-topics.yaml

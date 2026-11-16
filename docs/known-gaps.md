@@ -78,7 +78,7 @@ Item numbers are those of the review report.
 | M-19 latency per stage not measured as a distribution | NFR-01, ADR-0016, ADR-0017 | One live run (36 s) is a sample. The budgets are planning numbers. |
 | Three findings per risk request | M-06, M-09 | `risk-analysis` v2 reports at most three findings per batch and four batches per contract; the live run did not report the non-compete clause. Recall loss is unmeasured. |
 | Only one contract recorded live | M-01 to M-14 | `syn-en-02`, worker side. No side-swap run, no Bangla contract, no `test` split. |
-| Rules are drafts | FR-36, R-10 | All eight rules in `data/rules/bd-labour.yaml` are `draft`; none is evaluated until a team member reviews it (`docs/rules-review-checklist.md`). No worker-category terms exist in the corpus, so exemptions are not applied. |
+| Rules reviewed by a team member, not a lawyer; lawyer review pending | FR-36, R-10 | The eight rules in `data/rules/bd-labour.yaml` are `active` since 2026-11-16, reviewed against the official portal by a team member (not a lawyer); an AI-assisted cross-check was done as an extra signal and is not a legal review. No rule knows the worker category, so the exemptions in `docs/rules-review-checklist.md` are not applied (accepted). A lawyer's review is pending. |
 | ILO mapping unreviewed and unused | FR-16, FR-39 | No ILO reference is produced; `iloReferences` is empty. |
 | Statute sections are not prompt-cached | cost | Only the system prompt is marked cacheable; the sections sit in the user turn. |
 | Prompts are `experimental` | AGENTS.md §7 item 6 | No dev-split evaluation report is attached to any P6 prompt yet (P10). |

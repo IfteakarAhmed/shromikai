@@ -369,6 +369,10 @@ tasks.register('embedLaws', JavaExec) {
 }
 
 tasks.named('check') {
+    // Needs the ingested statute corpus in the local database, so it is opt-in: ./gradlew check -PcheckRules
+    if (project.hasProperty('checkRules')) {
+        dependsOn tasks.named('checkRules')
+    }
     dependsOn tasks.named('integrationTest'),
             tasks.named('jacocoTestCoverageVerification'),
             tasks.named('promptLint'),
