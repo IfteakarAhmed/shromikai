@@ -14,7 +14,7 @@ import { ThemeToggle } from './ThemeToggle'
 
 const linkClass = ({ isActive }: { isActive: boolean }) =>
   cx(
-    'inline-flex min-h-14 items-center rounded-xl px-3 font-semibold transition-colors lg:min-h-11',
+    'inline-flex min-h-14 shrink-0 items-center whitespace-nowrap rounded-xl px-3 font-semibold transition-colors xl:min-h-11',
     isActive ? 'bg-accent text-foreground' : 'text-muted-foreground hover:text-foreground',
   )
 
@@ -77,7 +77,7 @@ export function Header() {
       <div className="mx-auto flex max-w-6xl items-center justify-between gap-3 px-(--gutter) py-2">
         <Link
           to="/"
-          className="inline-flex min-h-14 items-center gap-2 rounded-lg text-xl font-bold lg:min-h-11"
+          className="inline-flex min-h-14 shrink-0 items-center gap-2 whitespace-nowrap rounded-lg text-xl font-bold xl:min-h-11"
         >
           <span className="flex size-9 items-center justify-center rounded-lg bg-primary text-primary-foreground">
             <Icon name="shield" size={20} />
@@ -85,7 +85,7 @@ export function Header() {
           <span>{t('app.name')}</span>
         </Link>
 
-        <nav aria-label={t('nav.label')} className="hidden items-center gap-1 lg:flex">
+        <nav aria-label={t('nav.label')} className="hidden min-w-0 items-center gap-1 xl:flex">
           <NavItem to="/app" end className={linkClass}>
             {t('nav.analyse')}
           </NavItem>
@@ -112,8 +112,8 @@ export function Header() {
           )}
         </nav>
 
-        <div className="flex items-center gap-2">
-          <div className="hidden items-center gap-2 lg:flex">
+        <div className="flex shrink-0 items-center gap-2">
+          <div className="hidden items-center gap-2 xl:flex">
             <LowBandwidthToggle />
             <ThemeToggle />
           </div>
@@ -121,19 +121,23 @@ export function Header() {
           {user === null ? (
             <Link
               to="/login"
-              className="hidden min-h-11 items-center rounded-xl border border-border px-4 font-semibold hover:bg-accent lg:inline-flex"
+              className="hidden min-h-11 shrink-0 items-center whitespace-nowrap rounded-xl border border-border px-4 font-semibold hover:bg-accent xl:inline-flex"
             >
               {t('nav.signIn')}
             </Link>
           ) : (
-            <div className="hidden lg:block">
-              <Button variant="outline" onClick={() => void signOut()}>
+            <div className="hidden xl:block">
+              <Button
+                variant="outline"
+                className="whitespace-nowrap"
+                onClick={() => void signOut()}
+              >
                 <Icon name="logout" />
                 {t('nav.signOut')}
               </Button>
             </div>
           )}
-          <div className="lg:hidden">
+          <div className="xl:hidden">
             <Button
               variant="outline"
               size="icon"
@@ -161,7 +165,7 @@ export function Header() {
       <div
         id={menuId}
         hidden={!open}
-        className="border-t border-border px-(--gutter) py-3 lg:hidden"
+        className="border-t border-border px-(--gutter) py-3 xl:hidden"
       >
         <nav aria-label={t('nav.label')} className="mx-auto flex max-w-6xl flex-col gap-1">
           <NavItem to="/app" end className={linkClass}>
@@ -189,17 +193,21 @@ export function Header() {
             </NavItem>
           )}
           <div className="mt-2 flex flex-wrap gap-2">
-            <LowBandwidthToggle />
+            <LowBandwidthToggle compact={false} />
             <ThemeToggle />
             {user === null ? (
               <Link
                 to="/login"
-                className="inline-flex min-h-14 items-center rounded-xl border border-border px-4 font-semibold hover:bg-accent lg:min-h-11"
+                className="inline-flex min-h-14 items-center whitespace-nowrap rounded-xl border border-border px-4 font-semibold hover:bg-accent"
               >
                 {t('nav.signIn')}
               </Link>
             ) : (
-              <Button variant="outline" onClick={() => void signOut()}>
+              <Button
+                variant="outline"
+                className="whitespace-nowrap"
+                onClick={() => void signOut()}
+              >
                 <Icon name="logout" />
                 {t('nav.signOut')}
               </Button>

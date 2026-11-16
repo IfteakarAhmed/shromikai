@@ -11,6 +11,7 @@ export function LanguageToggle() {
   return (
     <Button
       variant="outline"
+      className="whitespace-nowrap"
       onClick={() => {
         setLocale(target)
       }}
