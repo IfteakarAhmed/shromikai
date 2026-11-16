@@ -27,38 +27,46 @@ test.use({
  * Share of the worst 32 × 32 block of the screenshot that is pure black (every channel at most
  * 2). The ink background is about rgb(9, 13, 24), so only NaN-black pixels count.
  */
-async function worstBlackBlock(page: Page): Promise<number> {
+async function worstBlock(page: Page, mode: 'black' | 'white'): Promise<number> {
   const png = (await page.screenshot()).toString('base64')
-  return page.evaluate(async (data) => {
-    const image = await createImageBitmap(
-      await (await fetch(`data:image/png;base64,${data}`)).blob(),
-    )
-    const canvas = document.createElement('canvas')
-    canvas.width = image.width
-    canvas.height = image.height
-    const context = canvas.getContext('2d')
-    if (context === null) {
-      throw new Error('no 2D canvas')
-    }
-    context.drawImage(image, 0, 0)
-    const { data: pixels } = context.getImageData(0, 0, image.width, image.height)
-    let worst = 0
-    for (let by = 0; by + 32 <= image.height; by += 32) {
-      for (let bx = 0; bx + 32 <= image.width; bx += 32) {
-        let black = 0
-        for (let y = by; y < by + 32; y += 1) {
-          for (let x = bx; x < bx + 32; x += 1) {
-            const i = (y * image.width + x) * 4
-            if ((pixels[i] ?? 0) <= 2 && (pixels[i + 1] ?? 0) <= 2 && (pixels[i + 2] ?? 0) <= 2) {
-              black += 1
+  return page.evaluate(
+    async ([data, kind]) => {
+      const image = await createImageBitmap(
+        await (await fetch(`data:image/png;base64,${data}`)).blob(),
+      )
+      const canvas = document.createElement('canvas')
+      canvas.width = image.width
+      canvas.height = image.height
+      const context = canvas.getContext('2d')
+      if (context === null) {
+        throw new Error('no 2D canvas')
+      }
+      context.drawImage(image, 0, 0)
+      const { data: pixels } = context.getImageData(0, 0, image.width, image.height)
+      let worst = 0
+      for (let by = 0; by + 32 <= image.height; by += 32) {
+        for (let bx = 0; bx + 32 <= image.width; bx += 32) {
+          let black = 0
+          for (let y = by; y < by + 32; y += 1) {
+            for (let x = bx; x < bx + 32; x += 1) {
+              const i = (y * image.width + x) * 4
+              const r = pixels[i] ?? 0
+              const g = pixels[i + 1] ?? 0
+              const b = pixels[i + 2] ?? 0
+              const hit =
+                kind === 'black' ? r <= 2 && g <= 2 && b <= 2 : r >= 253 && g >= 253 && b >= 253
+              if (hit) {
+                black += 1
+              }
             }
           }
+          worst = Math.max(worst, black / 1024)
         }
-        worst = Math.max(worst, black / 1024)
       }
-    }
-    return worst
-  }, png)
+      return worst
+    },
+    [png, mode] as const,
+  )
 }
 
 const shots = process.env['P9_SHOTS'] === 'D'
@@ -195,21 +203,34 @@ test.describe('cinematic landing', () => {
     await waitForCamera(page, await scrollToTimeline(page, 0.5))
   })
 
-  test('FR-68 with bloom pinned on, no frame of the journey has a large pure-black region', async ({
-    page,
-  }, info) => {
-    test.skip(info.project.name !== 'desktop-chromium', 'desktop width only')
-    test.setTimeout(300_000)
-    await page.goto('/?scene=cinematic&quality=3')
-    await expect(page.locator('[data-scene="cinematic"] canvas')).toBeAttached({ timeout: 30_000 })
-    for (const t of [0.1, 0.25, 0.42, 0.58, 0.75, 1]) {
-      await waitForCamera(page, await scrollToTimeline(page, t))
-      await page.waitForTimeout(500)
-      expect(await worstBlackBlock(page), `pure-black block at timeline ${String(t)}`).toBeLessThan(
-        0.9,
-      )
-    }
-  })
+  for (const theme of ['dark', 'light'] as const) {
+    test(`FR-68 with bloom pinned on, no frame of the journey has a large NaN-black or blown-out region (${theme})`, async ({
+      page,
+    }, info) => {
+      test.skip(info.project.name !== 'desktop-chromium', 'desktop width only')
+      test.setTimeout(300_000)
+      await inTheme(page, theme)
+      await page.goto('/?scene=cinematic&quality=3')
+      await expect(page.locator('[data-scene="cinematic"] canvas')).toBeAttached({
+        timeout: 30_000,
+      })
+      // The scene follows the theme: night sky in dark, dawn in light.
+      await expect(page.locator('[data-scene="cinematic"]')).toHaveAttribute('data-scheme', theme)
+      for (const t of [0.1, 0.25, 0.42, 0.58, 0.75, 1]) {
+        await waitForCamera(page, await scrollToTimeline(page, t))
+        await page.waitForTimeout(500)
+        // Night: the ink sky is never pure black. Dawn: the sky is never pure white either.
+        expect(await worstBlock(page, 'black'), `pure-black block at ${String(t)}`).toBeLessThan(
+          0.9,
+        )
+        if (theme === 'light') {
+          expect(await worstBlock(page, 'white'), `pure-white block at ${String(t)}`).toBeLessThan(
+            0.9,
+          )
+        }
+      }
+    })
+  }
 
   test('NFR-08 keyboard only: the skip link comes first, then every control is reachable and in view', async ({
     page,
@@ -273,6 +294,28 @@ test.describe('cinematic landing', () => {
     }
     const quality = await page.locator('[data-scene="cinematic"]').getAttribute('data-quality')
     test.info().annotations.push({ type: 'quality level at the end', description: quality ?? '?' })
+  })
+
+  test('report frames of the dawn scene: hero and three scroll points', async ({ page }, info) => {
+    test.skip(process.env['P9_SHOTS'] !== 'C2a', 'set P9_SHOTS=C2a to take the dawn frames')
+    test.setTimeout(600_000)
+    mkdirSync(folder, { recursive: true })
+    const width = info.project.name === 'mobile-chromium' ? 390 : 1280
+    for (const theme of ['light', 'dark'] as const) {
+      await inTheme(page, theme)
+      await page.goto('/?scene=cinematic')
+      await expect(page.locator('[data-scene="cinematic"] canvas')).toBeAttached({
+        timeout: 30_000,
+      })
+      for (const percent of [0, 25, 42, 75]) {
+        await waitForCamera(page, await scrollToTimeline(page, percent / 100))
+        await page.waitForTimeout(1200)
+        const name = theme === 'light' ? 'dawn' : 'night'
+        await page.screenshot({
+          path: resolve(folder, `C2a-${name}-${String(percent)}-${String(width)}.png`),
+        })
+      }
+    }
   })
 
   test('report pictures of the lite and standard landing', async ({ page }, info) => {
