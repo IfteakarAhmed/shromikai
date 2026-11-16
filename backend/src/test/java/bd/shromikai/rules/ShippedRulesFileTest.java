@@ -18,7 +18,7 @@ import org.yaml.snakeyaml.constructor.SafeConstructor;
  * FR-36, R-10: the shipped rule file keeps its review trail. Every active rule names a reviewer who
  * is not its author, says the reviewer is not a lawyer, and carries a verbatim quote. The quote is
  * compared with the statute text by {@code ./gradlew checkRules}, which needs the ingested corpus
- * and so is not part of CI (run it locally, or {@code ./gradlew check -PcheckRules}).
+ * and so is not part of CI (run it locally, or {@code ./gradlew check -PcorpusCheck}).
  */
 @Tag("unit")
 @Requirement("FR-36")
