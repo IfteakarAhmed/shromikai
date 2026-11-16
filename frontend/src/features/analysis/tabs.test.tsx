@@ -114,6 +114,69 @@ function DutiesHost({ result }: { result: ReturnType<typeof makeResult> }) {
   )
 }
 
+describe('RedlineView across languages', () => {
+  const bangla = 'মাসিক বেতন ১১,০০০ টাকা এবং আইনে অনুমোদিত কর্তন ছাড়া অন্য কর্তন হবে না।'
+
+  it('FR-71 shows old and new side by side, each in its own language, when the languages differ', () => {
+    render(
+      <PreferencesProvider>
+        <RedlineView
+          result={makeResult({
+            redlines: [makeRedline({ proposedText: bangla, language: 'bn' })],
+          })}
+          onOpenCitation={noop}
+        />
+      </PreferencesProvider>,
+    )
+
+    expect(document.querySelector('del')).toBeNull()
+    expect(document.querySelector('ins')).toBeNull()
+    const old = screen.getByRole('group', { name: 'আগের লেখা' })
+    const added = screen.getByRole('group', { name: 'নতুন প্রস্তাব' })
+    expect(old).toHaveTextContent('The company may end this contract at any time without notice.')
+    expect(old.querySelector('[lang="en"]')).not.toBeNull()
+    expect(added).toHaveTextContent(bangla)
+    expect(added.querySelector('[lang="bn"]')).not.toBeNull()
+    expect(screen.getByText(/ভাষা আলাদা/)).toBeInTheDocument()
+  })
+
+  it('FR-71 keeps the word-level diff when both clauses are in one language', () => {
+    render(
+      <PreferencesProvider>
+        <RedlineView result={makeResult()} onOpenCitation={noop} />
+      </PreferencesProvider>,
+    )
+
+    expect(document.querySelector('del')).not.toBeNull()
+    expect(document.querySelector('ins')).not.toBeNull()
+    expect(screen.queryByText(/ভাষা আলাদা/)).not.toBeInTheDocument()
+  })
+
+  it('FR-71 a newly added clause with no old text shows only the new one', () => {
+    render(
+      <PreferencesProvider>
+        <RedlineView
+          result={makeResult({
+            redlines: [
+              makeRedline({
+                action: 'INSERT',
+                clauseId: null,
+                originalText: null,
+                proposedText: bangla,
+                diff: [{ op: 'INSERT', text: bangla }],
+                language: 'bn',
+              }),
+            ],
+          })}
+          onOpenCitation={noop}
+        />
+      </PreferencesProvider>,
+    )
+
+    expect(screen.queryByRole('group', { name: 'আগের লেখা' })).not.toBeInTheDocument()
+  })
+})
+
 describe('DutiesView', () => {
   const result = makeResult({
     obligations: [

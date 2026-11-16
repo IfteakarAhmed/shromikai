@@ -47,7 +47,11 @@ export function BaselineColumn({ baseline, language }: { baseline: Baseline; lan
           <li key={`${finding.title}-${index}`}>
             <GlassCard as="article" className="p-4">
               <div className="flex flex-wrap items-center gap-2">
-                <Badge tone="neutral">{finding.severity}</Badge>
+                <Badge tone="neutral">
+                  {t(`severity.${finding.severity.toLowerCase()}`, {
+                    defaultValue: finding.severity,
+                  })}
+                </Badge>
               </div>
               <div lang={language}>
                 <h3 className="mt-2 text-lg font-bold">{finding.title}</h3>

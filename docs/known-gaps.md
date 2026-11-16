@@ -3,6 +3,19 @@
 A running list of what is not done, not measured or not proven, so nothing is claimed by accident
 (R-07, R-12). Each phase report in `docs/dev-log.md` links here. Newest first.
 
+## P9 (web experience, found while building and reviewing it)
+
+| Gap | Where it matters | Detail |
+| --- | --- | --- |
+| Finding f9 (unlimited transfer) cites a section whose quote does not clearly support the claim | FR-47, R-01 | In the recorded sample, f9 ("any site, any time" transfer) is `VERIFIED` against `BLA-2006:3`, but the quoted passage does not clearly support the claim. The verifier passed it: the support check is done by a model of the same family as the risk agent (`verifierIndependence: SAME_FAMILY`, ADR-0018). A cross-family or stricter judge, or a rule that the support label needs a higher confidence than the risk agent's own, is future work. Until then do not describe a verified citation as proof that the section supports the claim |
+| The statute portal text contains the Assamese letter ra in some quotes | FR-12, FR-70 | The official Bangla text of the portal uses the Assamese ra (U+09F0, ৰ) in some words where Bangla usually writes the ordinary ra. Quotes and section text are shown verbatim, so these glyphs appear in citations and in the sheet. Nothing is normalised on purpose: a quote must match the official text character for character (R-01). A reader may see two forms of the same letter |
+| The obligations list of the recorded demo has two scripted rows | R-12, FR-53 | `obligations` was never recorded. In the `fake-models` profile it is a scripted stand-in with two generic rows (the employer pays the stated salary, the worker works the stated hours). Results from that profile say `recorded` as a whole, and the stand-ins name their model `scripted-demo-standin`; the memo's method section and the compare page say so too. The same holds for the local-PII step, the memo summary and next steps, and the compare baseline |
+| The sample contract carries the test canary line | R-02, FR-69 | The bundled sample is `syn-en-02` of the evaluation set, copied at build time. Its lines end in the leak-test marker `ZQXJ-CANARY-7B8C9D0E`, which therefore appears in the clause text, in the memo and in a counter-offer. It is invented and harmless, but it looks odd. A canary-free copy changes every recorded request, so all recordings would have to be made again (about US$0.29 for one clean run, 58 calls; see the P9 report). Nothing is removed from the text silently |
+| The 3D hero scene's frame loop is not verified in an automated browser | FR-68 | The scene is created and draws a first frame on a real GPU (Apple M3, checked in the app browser pane); headless Chromium shows the poster. Animation frames do not fire in the app browser pane, so the running animation was not observed |
+| Memo PDF depends on the Gotenberg deny-list fix | FR-55, ADR-0020 | The compose deny list blocked the render's own page, so no PDF could be made before P9. It now allows `file:///tmp/`. `MemoPdfIT` is still `slow` and not in CI (P7 review #16), so only the Playwright download test covers it |
+| Demo accounts cannot save a profile | FR-56 | `PATCH /auth/me` is not allowed for demo accounts (api.md §2), so the profile page is covered by unit tests only, not by the demo end-to-end |
+| Admin users and account deletion, `/docs/pitch`, `/docs/team`, Mermaid diagrams | FR-73, FR-74, FR-78 | Agreed to defer for P9: no admin user CRUD, no `DELETE /auth/me`, no pitch or team pages; the architecture page is a hand-drawn SVG |
+
 ## P8 acceptance (MCP Inspector CLI, 2026-11-12)
 
 | Gap | Where it matters | Detail |

@@ -7,6 +7,7 @@ import { Button } from '../../components/ui/Button'
 import { EmptyState } from '../../components/ui/EmptyState'
 import { GlassCard } from '../../components/ui/GlassCard'
 import { Icon } from '../../components/ui/Icon'
+import { differentLanguages, scriptOf } from '../../lib/script'
 import { groupCitations, type CitationGroup } from '../../lib/citations'
 import type { Language } from '../../i18n'
 
@@ -67,6 +68,7 @@ function RedlineCard({
   const { t } = useTranslation()
   const [copied, setCopied] = useState(false)
   const proposed = redline.proposedText
+  const sideBySide = differentLanguages(redline.originalText, proposed)
 
   return (
     <GlassCard as="article" className="p-5" aria-labelledby={`redline-${redline.id}`}>
@@ -80,45 +82,91 @@ function RedlineCard({
         {t('redline.forFinding', { title })}
       </h3>
 
-      <div lang={redline.language} className="mt-3">
-        <h4 className="text-sm font-semibold text-muted-foreground">{t('redline.changes')}</h4>
-        <p className="mt-1 whitespace-pre-line rounded-lg border border-border bg-background/50 p-4 leading-relaxed">
-          {redline.diff.map((part, index) => {
-            if (part.op === 'DELETE') {
-              return (
-                <del key={index} className="bg-rejected/15 text-rejected">
-                  <span className="sr-only">{t('redline.removed')}: </span>
-                  {part.text}
-                </del>
-              )
-            }
-            if (part.op === 'INSERT') {
-              return (
-                <ins key={index} className="bg-verified/15 text-verified underline">
-                  <span className="sr-only">{t('redline.added')}: </span>
-                  {part.text}
-                </ins>
-              )
-            }
-            return <span key={index}>{part.text}</span>
-          })}
-        </p>
-        {redline.rationale !== '' && (
-          <p className="mt-3 text-muted-foreground">
-            <strong className="text-foreground">{t('redline.rationale')}: </strong>
-            {redline.rationale}
-          </p>
-        )}
-      </div>
+      {sideBySide ? (
+        <div className="mt-3">
+          <p className="text-sm text-muted-foreground">{t('redline.differentLanguages')}</p>
+          <div className="mt-2 grid gap-3 md:grid-cols-2">
+            <div
+              role="group"
+              aria-label={t('redline.original')}
+              className="rounded-lg border border-border bg-background/50 p-4"
+            >
+              <h4 className="text-sm font-semibold text-muted-foreground">
+                {t('redline.original')}
+              </h4>
+              <p
+                lang={scriptOf(redline.originalText ?? '') ?? 'en'}
+                className="mt-1 whitespace-pre-line leading-relaxed"
+              >
+                {redline.originalText}
+              </p>
+            </div>
+            <div
+              role="group"
+              aria-label={t('redline.proposed')}
+              className="rounded-lg border border-verified/40 bg-verified/5 p-4"
+            >
+              <h4 className="text-sm font-semibold text-muted-foreground">
+                {t('redline.proposed')}
+              </h4>
+              <p
+                lang={scriptOf(proposed ?? '') ?? redline.language}
+                className="mt-1 whitespace-pre-line leading-relaxed"
+              >
+                {proposed}
+              </p>
+            </div>
+          </div>
+          {redline.rationale !== '' && (
+            <p lang={redline.language} className="mt-3 text-muted-foreground">
+              <strong className="text-foreground">{t('redline.rationale')}: </strong>
+              {redline.rationale}
+            </p>
+          )}
+        </div>
+      ) : (
+        <>
+          <div lang={redline.language} className="mt-3">
+            <h4 className="text-sm font-semibold text-muted-foreground">{t('redline.changes')}</h4>
+            <p className="mt-1 whitespace-pre-line rounded-lg border border-border bg-background/50 p-4 leading-relaxed">
+              {redline.diff.map((part, index) => {
+                if (part.op === 'DELETE') {
+                  return (
+                    <del key={index} className="bg-rejected/15 text-rejected">
+                      <span className="sr-only">{t('redline.removed')}: </span>
+                      {part.text}
+                    </del>
+                  )
+                }
+                if (part.op === 'INSERT') {
+                  return (
+                    <ins key={index} className="bg-verified/15 text-verified underline">
+                      <span className="sr-only">{t('redline.added')}: </span>
+                      {part.text}
+                    </ins>
+                  )
+                }
+                return <span key={index}>{part.text}</span>
+              })}
+            </p>
+            {redline.rationale !== '' && (
+              <p className="mt-3 text-muted-foreground">
+                <strong className="text-foreground">{t('redline.rationale')}: </strong>
+                {redline.rationale}
+              </p>
+            )}
+          </div>
 
-      <details className="mt-3">
-        <summary className="flex min-h-11 cursor-pointer items-center font-semibold">
-          {t('redline.proposed')}
-        </summary>
-        <p lang={redline.language} className="mt-1 whitespace-pre-line leading-relaxed">
-          {proposed ?? t('redline.none')}
-        </p>
-      </details>
+          <details className="mt-3">
+            <summary className="flex min-h-11 cursor-pointer items-center font-semibold">
+              {t('redline.proposed')}
+            </summary>
+            <p lang={redline.language} className="mt-1 whitespace-pre-line leading-relaxed">
+              {proposed ?? t('redline.none')}
+            </p>
+          </details>
+        </>
+      )}
 
       {redline.citations.length > 0 && (
         <div className="mt-3 flex flex-wrap gap-2">

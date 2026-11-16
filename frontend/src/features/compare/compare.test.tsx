@@ -106,7 +106,7 @@ describe('CompareResultView', () => {
         })}
       />,
     )
-    expect(screen.getByText(/স্ক্রিপ্ট করা উদাহরণ/)).toBeInTheDocument()
+    expect(screen.getAllByText(/স্ক্রিপ্ট করা উদাহরণ/).length).toBeGreaterThan(0)
     scripted.unmount()
 
     renderApp(
@@ -122,6 +122,45 @@ describe('CompareResultView', () => {
       />,
     )
     expect(screen.getByText('সাধারণ এআইয়ের উত্তর এখন পাওয়া যায়নি।')).toBeInTheDocument()
+  })
+})
+
+describe('CompareResultView scripted baseline', () => {
+  const scripted = () =>
+    makeCompare({ baseline: { ...makeCompare().baseline, modelId: 'scripted-demo-standin' } })
+
+  it('R-12 says the numbers come from a scripted illustration, not a measured result', () => {
+    wide(true)
+    renderApp(<CompareResultView compare={scripted()} />)
+
+    expect(screen.getByText(/স্ক্রিপ্ট করা উদাহরণ থেকে নেওয়া, মাপা ফলাফল নয়/)).toBeInTheDocument()
+    expect(screen.getByTestId('compare-summary')).toHaveTextContent(
+      'এই উদাহরণে সাধারণ এআইয়ের ৫টি উদ্ধৃতির মধ্যে ৩টি বাতিল',
+    )
+  })
+
+  it('R-12 a real baseline answer gets no such notice and the plain sentence', () => {
+    wide(true)
+    renderApp(<CompareResultView compare={makeCompare()} />)
+
+    expect(screen.queryByText(/মাপা ফলাফল নয়/)).not.toBeInTheDocument()
+    expect(screen.getByTestId('compare-summary')).not.toHaveTextContent('উদাহরণে')
+  })
+
+  it('FR-72 shows no percentage anywhere on the page', () => {
+    wide(true)
+    renderApp(<CompareResultView compare={scripted()} />)
+
+    expect(document.body.textContent).not.toMatch(/%|শতাংশ|percent/i)
+  })
+
+  it('FR-75 shows the severity of a baseline finding in words of the page language', () => {
+    wide(true)
+    renderApp(<CompareResultView compare={scripted()} />)
+
+    const column = screen.getByRole('region', { name: 'সাধারণ এআইয়ের উত্তর' })
+    expect(within(column).getByText('উচ্চ ঝুঁকি')).toBeInTheDocument()
+    expect(within(column).queryByText('HIGH')).not.toBeInTheDocument()
   })
 })
 

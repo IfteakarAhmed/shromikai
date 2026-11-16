@@ -485,7 +485,8 @@
     "copied": "Copied",
     "none": "No proposals.",
     "noneBody": "A new clause is proposed only for a verified risk.",
-    "newClause": "New clause"
+    "newClause": "New clause",
+    "differentLanguages": "The old text and the new proposal are in different languages, so they are shown side by side instead of word by word."
   },
   "duties": {
     "title": "Duties",
@@ -554,7 +555,10 @@
     "noFindings": "The plain AI gave no risks.",
     "tabBaseline": "Plain AI",
     "tabOurs": "Verified",
-    "tabsLabel": "The two results"
+    "tabsLabel": "The two results",
+    "scriptedNotice": "Important: the numbers below come from a scripted illustration, not from a measured result. They do not tell how often a plain AI is really wrong.",
+    "illustration": "Illustration",
+    "summaryScripted": "In this illustration, {{rejected}} of the plain AI's {{total}} citations are rejected"
   },
   "ticket": {
     "title": "Status of the human review",

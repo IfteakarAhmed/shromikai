@@ -27,6 +27,7 @@ export function CompareResultView({ compare }: { compare: CompareResult }) {
   const [why, setWhy] = useState<RiskFinding | null>(null)
   const { summary, shromikai } = compare
   const n = (value: number) => formatNumber(value, language)
+  const scripted = compare.baseline.modelId?.startsWith('scripted-') === true
 
   const ours = (
     <section aria-labelledby="ours-heading">
@@ -63,9 +64,17 @@ export function CompareResultView({ compare }: { compare: CompareResult }) {
   return (
     <div className="mx-auto max-w-6xl px-(--gutter) py-8">
       <h1 className="text-3xl font-bold">{t('compare.title')}</h1>
+      {scripted && (
+        <p
+          role="note"
+          className="mt-4 rounded-xl border border-uncertain/50 bg-uncertain/10 px-4 py-3 font-semibold"
+        >
+          {t('compare.scriptedNotice')}
+        </p>
+      )}
       <div className="mt-4 rounded-xl border border-rejected/40 bg-rejected/5 p-4" role="status">
         <p className="text-xl font-bold" data-testid="compare-summary">
-          {t('compare.summary', {
+          {t(scripted ? 'compare.summaryScripted' : 'compare.summary', {
             total: n(summary.baselineCitations),
             rejected: n(summary.baselineRejected),
           })}
