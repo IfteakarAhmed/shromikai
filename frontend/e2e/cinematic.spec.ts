@@ -307,7 +307,7 @@ test.describe('cinematic landing', () => {
       await expect(page.locator('[data-scene="cinematic"] canvas')).toBeAttached({
         timeout: 30_000,
       })
-      for (const percent of [0, 25, 42, 75]) {
+      for (const percent of [0, 25, 42, 58.4, 75]) {
         await waitForCamera(page, await scrollToTimeline(page, percent / 100))
         await page.waitForTimeout(1200)
         const name = theme === 'light' ? 'dawn' : 'night'
