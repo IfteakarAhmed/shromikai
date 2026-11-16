@@ -84,6 +84,8 @@
   --glass: oklch(0.2 0.045 263 / 64%);
   --glass-border: oklch(0.86 0.04 230 / 13%);
   --glass-highlight: oklch(1 0 0 / 7%);
+  --edge-light: oklch(1 0 0 / 40%);
+  --edge-light-soft: oklch(0.82 0.16 163 / 32%);
   --glow-primary: oklch(0.82 0.17 163 / 34%);
   --glow-uncertain: oklch(0.82 0.15 73 / 26%);
   --orb-1: oklch(0.6 0.15 163 / 30%);
@@ -136,6 +138,8 @@
   --glass: oklch(1 0 0 / 72%);
   --glass-border: oklch(0.4 0.05 262 / 14%);
   --glass-highlight: oklch(1 0 0 / 90%);
+  --edge-light: oklch(1 0 0 / 100%);
+  --edge-light-soft: oklch(0.55 0.11 163 / 38%);
   --glow-primary: oklch(0.6 0.13 163 / 28%);
   --glow-uncertain: oklch(0.7 0.13 73 / 24%);
   --orb-1: oklch(0.82 0.1 163 / 34%);
@@ -281,14 +285,20 @@
 
 @utility glass-interactive {
   transition:
-    transform var(--motion-smooth),
+    translate var(--motion-smooth),
     border-color var(--motion-smooth),
     box-shadow var(--motion-smooth);
 
   &:hover {
     border-color: color-mix(in oklab, var(--primary) 38%, var(--border));
     box-shadow: var(--shadow-glass-hover);
-    transform: translateY(-2px);
+    translate: 0 -2px;
+  }
+
+  /* On a depth card the glass is a layer: the hover glow lives there. */
+  &:hover > .depth-glass {
+    border-color: color-mix(in oklab, var(--primary) 38%, var(--border));
+    box-shadow: var(--shadow-glass-hover);
   }
 }
 
@@ -332,22 +342,114 @@
 
 /* Slow reveal on scroll, where the browser supports scroll-driven animations. Only a vertical
    move is animated: never opacity (content stays readable for contrast checks) and never scale
-   (touch targets keep their full size while a card scrolls in). */
+   (touch targets keep their size while a card scrolls in). It uses `translate`, not `transform`,
+   and does not hold its end value, so the pointer tilt and the hover lift stay free. */
 @keyframes reveal-rise {
   from {
-    transform: translateY(22px);
+    translate: 0 22px;
   }
 
   to {
-    transform: none;
+    translate: 0 0;
   }
 }
 
 @supports (animation-timeline: view()) {
   .reveal {
-    animation: reveal-rise linear both;
+    animation: reveal-rise linear backwards;
     animation-timeline: view();
     animation-range: entry 0% entry 70%;
+  }
+}
+
+/* Depth cards (C2b): the glass and the glow are hidden layers behind the content, so the blur
+   never sits on the element that tilts (a blur or an overflow would flatten the 3D scene). */
+@layer components {
+  .depth-card {
+    position: relative;
+    z-index: 0;
+    border-color: var(--glass-border);
+  }
+
+  .depth-card[data-tilt='on'] {
+    transform-style: preserve-3d;
+    transition: transform var(--dur-base) var(--ease-out);
+  }
+
+  .depth-card[data-tilting='true']:not(:focus-within) {
+    transform: perspective(1000px) rotateX(var(--rx, 0deg)) rotateY(var(--ry, 0deg));
+    transition-duration: 120ms;
+    will-change: transform;
+  }
+
+  .depth-glass {
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    margin: 0 !important;
+    border: 1px solid;
+    border-color: inherit;
+    border-radius: inherit;
+    background: linear-gradient(180deg, var(--glass-highlight), transparent 38%), var(--glass);
+    box-shadow: var(--shadow-glass);
+    backdrop-filter: blur(22px) saturate(140%);
+    pointer-events: none;
+    translate: 0 0 -1px;
+  }
+
+  /* A light edge: bright at the top left, a touch of emerald at the bottom right. */
+  .depth-glass::after {
+    position: absolute;
+    inset: -1px;
+    padding: 1px;
+    border-radius: inherit;
+    background: linear-gradient(
+      135deg,
+      var(--edge-light) 0%,
+      transparent 36%,
+      transparent 64%,
+      var(--edge-light-soft) 100%
+    );
+    content: '';
+    mask:
+      linear-gradient(#000 0 0) content-box,
+      linear-gradient(#000 0 0);
+    mask-composite: exclude;
+    -webkit-mask:
+      linear-gradient(#000 0 0) content-box,
+      linear-gradient(#000 0 0);
+    -webkit-mask-composite: xor;
+    pointer-events: none;
+  }
+
+  .depth-glow {
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    margin: 0 !important;
+    border-radius: inherit;
+    background: radial-gradient(
+      420px circle at calc(var(--gx, 0.5) * 100%) calc(var(--gy, 0.2) * 100%),
+      var(--glow-primary),
+      transparent 62%
+    );
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity var(--dur-base) var(--ease-out);
+    translate: 0 0 -0.5px;
+  }
+
+  .depth-card[data-tilting='true'] > .depth-glow {
+    opacity: 0.6;
+  }
+
+  /* Children that stand out in front of the glass while the card leans (translate takes a z). */
+  .lift-1 {
+    translate: 0 0 12px;
+  }
+
+  .lift-2 {
+    translate: 0 0 22px;
   }
 }
 
@@ -358,6 +460,11 @@
   z-index: -1;
   overflow: hidden;
   pointer-events: none;
+}
+
+.ambient [data-parallax] {
+  position: absolute;
+  inset: 0;
 }
 
 .ambient [data-orb] {
@@ -409,6 +516,57 @@
   }
 }
 
+/* Scroll parallax (C2b): the orbs drift at different speeds and page headers rise a little, only
+   with a fine pointer and where the browser supports scroll-driven animations. */
+@keyframes orb-drift-up {
+  to {
+    translate: 0 -16vh;
+  }
+}
+
+@keyframes orb-drift-down {
+  to {
+    translate: 0 10vh;
+  }
+}
+
+@keyframes parallax-drift {
+  from {
+    translate: 0 16px;
+  }
+
+  to {
+    translate: 0 -16px;
+  }
+}
+
+@media (hover: hover) and (pointer: fine) {
+  @supports (animation-timeline: scroll()) {
+    .ambient[data-motion='float'] [data-parallax='1'] {
+      animation: orb-drift-up linear both;
+      animation-timeline: scroll(root);
+    }
+
+    .ambient[data-motion='float'] [data-parallax='2'] {
+      animation: orb-drift-down linear both;
+      animation-timeline: scroll(root);
+    }
+
+    .ambient[data-motion='float'] [data-parallax='3'] {
+      animation: orb-drift-up linear both;
+      animation-timeline: scroll(root);
+    }
+  }
+
+  @supports (animation-timeline: view()) {
+    .parallax {
+      animation: parallax-drift linear both;
+      animation-timeline: view();
+      animation-range: cover 0% cover 100%;
+    }
+  }
+}
+
 /* Route changes cross-fade with a short rise; the header stays put. */
 header.site-header {
   view-transition-name: site-header;
@@ -437,10 +595,28 @@ header.site-header {
 }
 
 /* Low-bandwidth mode (FR-76): flat surfaces, no blur, no motion, no decoration. */
-:root[data-lowbw='true'] .glass-panel {
+:root[data-lowbw='true'] .glass-panel,
+:root[data-lowbw='true'] .depth-glass {
   backdrop-filter: none;
   background: var(--card);
   box-shadow: none;
+}
+
+:root[data-lowbw='true'] .depth-card,
+:root[data-lowbw='true'] .depth-card[data-tilting='true'] {
+  transform: none !important;
+}
+
+:root[data-lowbw='true'] .depth-glow,
+:root[data-lowbw='true'] .depth-glass::after {
+  display: none;
+}
+
+:root[data-lowbw='true'] .lift-1,
+:root[data-lowbw='true'] .lift-2,
+:root[data-lowbw='true'] .parallax {
+  translate: none !important;
+  animation: none !important;
 }
 
 :root[data-lowbw='true'] .texture-grid,
@@ -538,8 +714,24 @@ header.site-header {
 
   .pipeline-line::after,
   .reveal,
-  .ambient [data-orb] {
+  .parallax,
+  .ambient [data-orb],
+  .ambient [data-parallax] {
     animation: none !important;
+  }
+
+  .depth-card,
+  .depth-card[data-tilting='true'] {
+    transform: none !important;
+  }
+
+  .lift-1,
+  .lift-2 {
+    translate: none !important;
+  }
+
+  .depth-glow {
+    display: none;
   }
 
   ::view-transition-group(*),
@@ -556,7 +748,7 @@ header.site-header {
 
 @media (hover: none) {
   .glass-interactive:hover {
-    transform: none;
+    translate: none;
   }
 }
 
@@ -628,6 +820,20 @@ dialog.sheet::backdrop {
 
   .memo-print .no-print {
     display: none !important;
+  }
+
+  .depth-glass,
+  .depth-glow {
+    display: none !important;
+  }
+
+  .depth-card,
+  .lift-1,
+  .lift-2,
+  .parallax {
+    transform: none !important;
+    translate: none !important;
+    animation: none !important;
   }
 
   .memo-print mark.quote {

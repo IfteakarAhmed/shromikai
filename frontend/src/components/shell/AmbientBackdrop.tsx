@@ -18,9 +18,15 @@ export function AmbientBackdrop() {
       data-motion={reducedMotion ? 'still' : 'float'}
       className="ambient"
     >
-      <span data-orb="1" />
-      <span data-orb="2" />
-      <span data-orb="3" />
+      <span data-parallax="1">
+        <span data-orb="1" />
+      </span>
+      <span data-parallax="2">
+        <span data-orb="2" />
+      </span>
+      <span data-parallax="3">
+        <span data-orb="3" />
+      </span>
     </div>
   )
 }

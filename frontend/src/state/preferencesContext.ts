@@ -21,3 +21,11 @@ export function usePreferences(): PreferencesApi {
   }
   return value
 }
+
+/**
+ * The preferences if a provider is above, or null. Presentational components (cards) use it so
+ * they also work in isolation; the app always has the provider.
+ */
+export function usePreferencesOptional(): PreferencesApi | null {
+  return useContext(PreferencesContext)
+}

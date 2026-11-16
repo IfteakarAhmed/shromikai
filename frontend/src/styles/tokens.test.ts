@@ -77,6 +77,8 @@ describe('design tokens', () => {
       'glass',
       'glass-border',
       'glow-primary',
+      'edge-light',
+      'edge-light-soft',
       'glow-uncertain',
       'orb-1',
       'orb-2',
