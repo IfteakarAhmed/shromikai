@@ -156,6 +156,14 @@ export function LandingPage() {
                   {t('hero.adminDemo')}
                 </LinkButton>
               </div>
+              {!cinematic && (
+                <SceneToggle
+                  tier={tier}
+                  canEnable={optIn !== null}
+                  onChoose={choose}
+                  floating={false}
+                />
+              )}
               <ul aria-label={t('trust.label')} className="mt-8 grid gap-3">
                 {TRUST.map(({ key, icon }) => (
                   <li key={key} className="flex items-center gap-3">
@@ -281,7 +289,7 @@ export function LandingPage() {
         </section>
       </div>
 
-      <SceneToggle tier={tier} canEnable={optIn !== null} onChoose={choose} />
+      {cinematic && <SceneToggle tier={tier} canEnable onChoose={choose} floating />}
     </div>
   )
 }

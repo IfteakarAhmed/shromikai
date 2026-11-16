@@ -11,10 +11,13 @@ export function SceneToggle({
   tier,
   canEnable,
   onChoose,
+  floating,
 }: {
   tier: Tier
   canEnable: boolean
   onChoose: (choice: 'lite' | 'scene') => void
+  /** Fixed in the corner over the full-screen scene; inline in the hero otherwise (phones). */
+  floating: boolean
 }) {
   const { t } = useTranslation()
   if (tier === 'lite' && !canEnable) {
@@ -22,10 +25,14 @@ export function SceneToggle({
   }
   const still = tier !== 'lite'
   return (
-    <div className="fixed bottom-4 right-4 z-20" role="group" aria-label={t('scene.label')}>
+    <div
+      className={floating ? 'fixed bottom-4 right-4 z-20' : 'mt-4'}
+      role="group"
+      aria-label={t('scene.label')}
+    >
       <Button
         variant="outline"
-        className="bg-background/90 shadow-glass backdrop-blur"
+        className={floating ? 'bg-background/90 shadow-glass backdrop-blur' : undefined}
         onClick={() => {
           onChoose(still ? 'lite' : 'scene')
         }}
