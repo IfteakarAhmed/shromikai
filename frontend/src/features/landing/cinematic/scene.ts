@@ -31,9 +31,9 @@ import {
   type IUniform,
   type Texture,
 } from 'three'
-import type { Palette } from '../scene3d'
 import { damp } from './damp'
 import { DEFAULT_FLAGS, type DevFlags } from './devFlags'
+import type { ScenePalette } from './palette'
 import { frameStats } from './perfStats'
 import { INITIAL_QUALITY, nextQuality, qualitySettings, type QualityState } from './quality'
 import * as glsl from './shaders'
@@ -87,7 +87,7 @@ type Uniforms = Record<string, IUniform>
  */
 export function createCinematicScene(
   host: HTMLElement,
-  palette: Palette,
+  palette: ScenePalette,
   options: CinematicOptions = {},
 ): CinematicHandle {
   const renderer = new WebGLRenderer({
@@ -107,12 +107,16 @@ export function createCinematicScene(
   host.appendChild(canvas)
 
   const colour = (hex: string) => new Color(hex)
-  const ink = colour(palette.ink)
-  const paper = colour(palette.paper)
+  const ink = colour(palette.bar)
+  const glassColour = colour(palette.glass)
+  const strokeColour = colour(palette.stroke)
+  const rimColour = colour(palette.rim)
   const verified = colour(palette.verified)
+  const glowColour = colour(palette.glow)
   const amber = colour(palette.uncertain)
   const coral = colour(palette.rejected)
-  renderer.setClearColor(ink, 1)
+  const glowBlending = palette.glowBlending === 'additive' ? AdditiveBlending : NormalBlending
+  renderer.setClearColor(colour(palette.skyBottom), 1)
 
   const scene = new Scene()
   const camera = new PerspectiveCamera(38, 1, 0.1, 80)
@@ -139,11 +143,33 @@ export function createCinematicScene(
         transparent: true,
         depthWrite: false,
         side: DoubleSide,
-        blending: additive ? AdditiveBlending : NormalBlending,
+        blending: additive ? glowBlending : NormalBlending,
       }),
     )
   }
   const glow = track(glowTexture())
+
+  // The sky: drawn first, behind everything (night or dawn).
+  const sky = new Mesh(
+    track(new PlaneGeometry(2, 2)),
+    track(
+      new ShaderMaterial({
+        vertexShader: glsl.skyVertex,
+        fragmentShader: glsl.skyFragment,
+        uniforms: {
+          uTop: { value: colour(palette.skyTop) },
+          uBottom: { value: colour(palette.skyBottom) },
+          uGlow: { value: colour(palette.sun) },
+          uGlowAmount: { value: palette.scheme === 'dark' ? 0.35 : 0.75 },
+        },
+        depthTest: false,
+        depthWrite: false,
+      }),
+    ),
+  )
+  sky.frustumCulled = false
+  sky.renderOrder = -100
+  scene.add(sky)
   const sheetMeshes: Mesh[] = []
   const shaftMeshes: Mesh[] = []
   const textures: Texture[] = [1, 2, 3].map((seed) => track(contractSheetTexture(seed * 7919)))
@@ -169,11 +195,12 @@ export function createCinematicScene(
       track(new PlaneGeometry(width, height, 12, 16)),
       material(glsl.sheetVertex, glsl.sheetFragment, {
         uMap: { value: map },
-        uPaper: { value: paper },
+        uGlass: { value: glassColour },
+        uStroke: { value: strokeColour },
         uInk: { value: ink },
         uRim: { value: rim },
         uSweep: { value: verified },
-        uOpacity: { value: opacity },
+        uOpacity: { value: opacity * palette.glassOpacity },
         uRedact: redact,
         uFade: fade,
         uSeed: { value: seed },
@@ -196,7 +223,7 @@ export function createCinematicScene(
       layout.size[0],
       layout.size[1],
       textures[index % textures.length] ?? glow,
-      index === sheetLayout.length - 1 ? verified.clone().lerp(paper, 0.5) : paper,
+      index === sheetLayout.length - 1 ? verified.clone().lerp(rimColour, 0.5) : rimColour,
       layout.opacity,
       index * 1.7,
       heroFade,
@@ -218,9 +245,9 @@ export function createCinematicScene(
       glsl.shaftVertex,
       glsl.shaftFragment,
       {
-        uColour: { value: paper.clone().lerp(verified, 0.25) },
+        uColour: { value: colour(palette.shaft) },
         uSeed: { value: seed },
-        uIntensity: { value: 0.11 },
+        uIntensity: { value: 0.11 * palette.shaftIntensity },
       },
       true,
     )
@@ -267,7 +294,7 @@ export function createCinematicScene(
         {
           uShield: shieldProgress,
           uSize: { value: 5.5 },
-          uColour: { value: verified },
+          uColour: { value: glowColour },
           uFade: heroFade,
         },
         true,
@@ -359,11 +386,13 @@ export function createCinematicScene(
     const mesh = new InstancedMesh(
       track(new PlaneGeometry(1.35, 0.86)),
       material(glsl.latticeVertex, glsl.latticeFragment, {
-        uPaper: { value: paper },
+        uGlass: { value: glassColour },
+        uStroke: { value: strokeColour },
         uVerified: { value: verified },
         uAmber: { value: amber },
         uSearch: search,
         uFade: latticeFade,
+        uOpacityScale: { value: Math.min(palette.glassOpacity, 2.5) },
       }),
       count,
     )
@@ -437,10 +466,11 @@ export function createCinematicScene(
       glsl.edgeVertex,
       glsl.edgeFragment,
       {
-        uPaper: { value: paper },
+        uStroke: { value: strokeColour },
         uVerified: { value: verified },
         uSearch: search,
         uFade: latticeFade,
+        uOpacityScale: { value: Math.min(palette.glassOpacity, 2.5) },
       },
       true,
     ),
@@ -457,7 +487,12 @@ export function createCinematicScene(
     material(
       glsl.pulseVertex,
       glsl.pulseFragment,
-      { uSearch: search, uSize: { value: 9 }, uHot: { value: verified }, uCold: { value: paper } },
+      {
+        uSearch: search,
+        uSize: { value: 9 },
+        uHot: { value: glowColour },
+        uCold: { value: strokeColour },
+      },
       true,
     ),
   )
@@ -469,9 +504,9 @@ export function createCinematicScene(
   verify.position.set(...STAGES.verify)
   verify.lookAt(new Vector3(...(KEYFRAMES[3]?.position ?? [0, 0, 10])))
   scene.add(verify)
-  const verifySheet = sheet(2.1, 2.8, textures[1] ?? glow, paper, 0.1, 3.1)
+  const verifySheet = sheet(2.1, 2.8, textures[1] ?? glow, rimColour, 0.1, 3.1)
   verify.add(verifySheet)
-  const dim = paper.clone().lerp(ink, 0.55)
+  const dim = strokeColour.clone().lerp(glassColour, 0.5)
   const rings = [1.7, 1.98, 2.26].map((radius) => {
     const ringMaterial = material(
       glsl.flatVertex,
@@ -511,8 +546,8 @@ export function createCinematicScene(
     track(
       new SpriteMaterial({
         map: glow,
-        color: verified,
-        blending: AdditiveBlending,
+        color: glowColour,
+        blending: glowBlending,
         transparent: true,
         depthWrite: false,
         opacity: 0,
@@ -524,7 +559,7 @@ export function createCinematicScene(
   const shockMaterial = material(
     glsl.flatVertex,
     glsl.flatFragment,
-    { uColour: { value: verified }, uOpacity: { value: 0 } },
+    { uColour: { value: glowColour }, uOpacity: { value: 0 } },
     true,
   )
   const shock = new Mesh(track(new RingGeometry(0.92, 1, 96)), shockMaterial)
@@ -546,8 +581,8 @@ export function createCinematicScene(
     track(
       new SpriteMaterial({
         map: glow,
-        color: verified,
-        blending: AdditiveBlending,
+        color: glowColour,
+        blending: glowBlending,
         transparent: true,
         depthWrite: false,
         opacity: 0.35,
@@ -567,7 +602,7 @@ export function createCinematicScene(
       material(glsl.sheetVertex, glsl.crackFragment, {
         uMap: { value: textures[0] ?? glow },
         uCoral: { value: coral },
-        uPaper: { value: paper },
+        uGlass: { value: glassColour },
         uCrack: crack,
         uDissolve: dissolve,
         uFade: { value: 1 },
@@ -610,7 +645,7 @@ export function createCinematicScene(
           uDissolve: dissolve,
           uSize: { value: 6 },
           uColour: { value: coral },
-          uHotColour: { value: coral.clone().lerp(paper, 0.5) },
+          uHotColour: { value: coral.clone().lerp(rimColour, 0.5) },
         },
         true,
       ),
@@ -649,7 +684,7 @@ export function createCinematicScene(
         {
           uSize: { value: 4.2 },
           uFade: { value: 0.85 },
-          uColour: { value: paper.clone().lerp(verified, 0.15) },
+          uColour: { value: colour(palette.dust) },
         },
         true,
       ),
@@ -681,7 +716,10 @@ export function createCinematicScene(
     passScene.add(new Mesh(screenGeometry, passMaterial))
     return { scene: passScene, material: passMaterial }
   }
-  const bright = pass(glsl.brightFragment, { uScene: { value: null }, uThreshold: { value: 0.72 } })
+  const bright = pass(glsl.brightFragment, {
+    uScene: { value: null },
+    uThreshold: { value: palette.bloomThreshold },
+  })
   const blur = pass(glsl.blurFragment, {
     uInput: { value: null },
     uDirection: { value: new Vector2() },
@@ -690,7 +728,8 @@ export function createCinematicScene(
     uScene: { value: null },
     uBloom: { value: null },
     uBloomWide: { value: null },
-    uStrength: { value: 0.75 },
+    uStrength: { value: palette.bloomStrength },
+    uVignetteFloor: { value: palette.vignetteFloor },
   })
 
   function runBlur(targets: WebGLRenderTarget[], spread: number) {
@@ -816,7 +855,7 @@ export function createCinematicScene(
     shafts.forEach((shaft) => {
       const intensity = shaft.uniforms['uIntensity']
       if (intensity !== undefined) {
-        intensity.value = (0.1 + 0.07 * beats.finale) * heroFade.value
+        intensity.value = (0.1 + 0.07 * beats.finale) * heroFade.value * palette.shaftIntensity
       }
     })
 
@@ -846,7 +885,7 @@ export function createCinematicScene(
       const uColour = ringMaterial.uniforms['uColour']
       const uOpacity = ringMaterial.uniforms['uOpacity']
       if (uColour !== undefined && uOpacity !== undefined) {
-        ;(uColour.value as Color).copy(dim).lerp(verified, lock)
+        ;(uColour.value as Color).copy(dim).lerp(glowColour, lock)
         uOpacity.value = 0.35 + 0.6 * lock
       }
     })

@@ -1,20 +1,21 @@
 import { useEffect, useRef } from 'react'
+import { usePreferences } from '../../../state/preferencesContext'
 import { cssColorToHex } from '../oklch'
-import type { Palette } from '../scene3d'
+import { scenePalette, type ScenePalette, type Scheme } from './palette'
 import { parseDevFlags } from './devFlags'
 import { createCinematicScene, type CinematicHandle } from './scene'
 import { timelineFromScroll } from './timeline'
 
-function readPalette(element: HTMLElement): Palette {
+function readPalette(element: HTMLElement, scheme: Scheme): ScenePalette {
   const style = getComputedStyle(element)
   const token = (name: string) => cssColorToHex(style.getPropertyValue(name))
-  return {
-    paper: token('--foreground'),
+  return scenePalette(scheme, {
+    foreground: token('--foreground'),
+    background: token('--background'),
     verified: token('--verified'),
     uncertain: token('--uncertain'),
     rejected: token('--rejected'),
-    ink: token('--background'),
-  }
+  })
 }
 
 /**
@@ -25,6 +26,7 @@ function readPalette(element: HTMLElement): Palette {
  */
 export default function CinematicScene({ onFailure }: { onFailure: () => void }) {
   const host = useRef<HTMLDivElement>(null)
+  const { theme } = usePreferences()
   const failure = useRef(onFailure)
   useEffect(() => {
     failure.current = onFailure
@@ -37,7 +39,9 @@ export default function CinematicScene({ onFailure }: { onFailure: () => void })
     }
     let handle: CinematicHandle
     try {
-      handle = createCinematicScene(element, readPalette(element), {
+      // The theme attribute is set synchronously when the theme changes, so these are its colours.
+      element.dataset['scheme'] = theme
+      handle = createCinematicScene(element, readPalette(element, theme), {
         onContextLost: () => {
           failure.current()
         },
@@ -98,7 +102,7 @@ export default function CinematicScene({ onFailure }: { onFailure: () => void })
       document.removeEventListener('visibilitychange', sync)
       handle.dispose()
     }
-  }, [])
+  }, [theme])
 
   return (
     <div

@@ -1,7 +1,7 @@
 // Renders stills of the cinematic landing scene with headless Chromium and SwiftShader (software
 // WebGL), so the lite poster and the social preview image come from the scene itself (ADR-0023).
 //
-//   node scripts/render-scene.mjs                 # poster + og image into the repo
+//   node scripts/render-scene.mjs                 # night and dawn posters + og image into the repo
 //   node scripts/render-scene.mjs --frames DIR    # timeline frames 0, 25, 50, 75, 100 % into DIR
 //   node scripts/render-scene.mjs --frames DIR --at 41.7,58.3   # other timeline values
 //
@@ -15,6 +15,9 @@ import { createServer } from 'vite'
 const root = resolve(dirname(fileURLToPath(import.meta.url)), '..')
 const framesAt = process.argv.indexOf('--frames')
 const framesDir = framesAt > 0 ? resolve(process.argv[framesAt + 1] ?? '.') : null
+// --theme light renders the dawn scene for --frames.
+const themeIndex = process.argv.indexOf('--theme')
+const frameTheme = themeIndex > 0 && process.argv[themeIndex + 1] === 'light' ? 'light' : 'dark'
 // Optional timeline values for --frames, as percentages: --at 0,25,41.7
 const atIndex = process.argv.indexOf('--at')
 const percents =
@@ -32,14 +35,14 @@ const browser = await chromium.launch({
   args: ['--use-angle=swiftshader', '--enable-unsafe-swiftshader', '--ignore-gpu-blocklist'],
 })
 
-async function render(t, width, height, type, centred = false) {
+async function render(t, width, height, type, centred = false, theme = 'dark') {
   const page = await browser.newPage({ viewport: { width, height } })
   const errors = []
   page.on('pageerror', (error) => errors.push(error.message))
   page.on('console', (message) => {
     if (message.type() === 'error') errors.push(message.text())
   })
-  await page.goto(`http://localhost:${port}/scene-render.html`)
+  await page.goto(`http://localhost:${port}/scene-render.html?theme=${theme}`)
   await page.waitForSelector('body[data-ready="true"]', { state: 'attached', timeout: 60_000 })
   const dataUrl = await page.evaluate(
     ([at, w, h, kind, centre]) => globalThis.renderStill(at, w, h, kind, centre),
@@ -62,8 +65,8 @@ try {
   if (framesDir !== null) {
     for (const percent of percents) {
       save(
-        resolve(framesDir, `scene-${percent}.png`),
-        await render(percent / 100, 1280, 800, 'image/png'),
+        resolve(framesDir, `scene-${frameTheme}-${percent}.png`),
+        await render(percent / 100, 1280, 800, 'image/png', false, frameTheme),
       )
     }
   } else {
@@ -71,6 +74,11 @@ try {
     save(
       resolve(root, 'src/assets/contract-poster.webp'),
       await render(0, 960, 768, 'image/webp', true),
+    )
+    // The dawn poster for the light theme.
+    save(
+      resolve(root, 'src/assets/contract-poster-light.webp'),
+      await render(0, 960, 768, 'image/webp', true, 'light'),
     )
     // The social preview (1200 × 630): the closing pull-back.
     save(resolve(root, 'public/og-image.jpg'), await render(1, 1200, 630, 'image/jpeg'))

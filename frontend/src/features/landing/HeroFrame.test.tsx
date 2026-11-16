@@ -121,4 +121,20 @@ describe('HeroFrame', () => {
     expect(await screen.findByTestId('scene')).toBeInTheDocument()
     expect(container.querySelector('[data-hero]')).toHaveAttribute('data-hero', 'scene')
   })
+
+  it('NFR-08 shows the dawn poster in the light theme and the night poster in the dark one', () => {
+    withWebGl(false)
+    withReducedMotion(false)
+    writePreference('theme', 'light')
+    const { unmount } = hero()
+    expect(screen.getByRole('img', { name: 'contract picture' }).getAttribute('src')).toMatch(
+      /contract-poster-light/,
+    )
+    unmount()
+    writePreference('theme', 'dark')
+    hero()
+    expect(screen.getByRole('img', { name: 'contract picture' }).getAttribute('src')).not.toMatch(
+      /contract-poster-light/,
+    )
+  })
 })

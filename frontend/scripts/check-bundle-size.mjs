@@ -66,14 +66,19 @@ function lazyBytes(source) {
 
 // 2. The standard hero: scene chunk(s) and the poster it fades in over (a webp does not gzip).
 const hero = lazyBytes('src/features/landing/ContractScene.tsx')
-const poster = Object.values(manifest)
-  .flatMap((item) => item.assets ?? [])
-  .find((file) => /contract-poster-.*\.webp$/.test(file))
-if (poster === undefined) {
-  console.error('check-bundle-size: the poster is missing from the build')
+// Night and dawn posters: a visit downloads only the one for its theme, so the larger one counts.
+const posters = [
+  ...new Set(
+    Object.values(manifest)
+      .flatMap((item) => item.assets ?? [])
+      .filter((file) => /contract-poster-.*\.webp$/.test(file)),
+  ),
+]
+if (posters.length < 2) {
+  console.error('check-bundle-size: the night and dawn posters are not both in the build')
   process.exit(1)
 }
-const posterBytes = readFileSync(join(dist, poster)).length
+const posterBytes = Math.max(...posters.map((file) => readFileSync(join(dist, file)).length))
 console.log(
   `standard hero: ${kb(hero.bytes)} scene (${hero.parts.map((p) => `${p.file} ${kb(p.bytes)}`).join(', ')}) + ${kb(posterBytes)} poster = ${kb(hero.bytes + posterBytes)} (limit 200 KB)`,
 )

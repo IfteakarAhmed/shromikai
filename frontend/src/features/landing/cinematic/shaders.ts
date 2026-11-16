@@ -92,7 +92,8 @@ void main() {
 export const sheetFragment = /* glsl */ `
 ${SAFE}
 uniform sampler2D uMap;
-uniform vec3 uPaper;
+uniform vec3 uGlass;
+uniform vec3 uStroke;
 uniform vec3 uInk;
 uniform vec3 uRim;
 uniform vec3 uSweep;
@@ -111,19 +112,19 @@ void main() {
   float local = smoothstep(m.b * 0.6, m.b * 0.6 + 0.4, uRedact);
   float bar = m.g * local;
   float stroke = m.r * (1.0 - bar);
-  vec3 colour = mix(uPaper, uRim, 0.25) * 0.26;
+  vec3 colour = uGlass;
   float alpha = uOpacity;
-  colour = mix(colour, uPaper * 0.8, stroke);
+  colour = mix(colour, uStroke, stroke);
   alpha = mix(alpha, 0.66, stroke * 0.85);
   colour = mix(colour, uInk, bar);
   alpha = mix(alpha, 0.98, bar);
   float edge = m.g * local * (1.0 - local) * 4.0;
-  colour += uSweep * edge * 1.4;
+  colour = mix(colour, uSweep, clamp(edge * 1.4, 0.0, 1.0));
   alpha = max(alpha, edge * 0.85);
   float d = min(min(vUv.x, 1.0 - vUv.x), min(vUv.y, 1.0 - vUv.y));
   float border = 1.0 - smoothstep(0.0, 0.008, d);
-  colour += uRim * (fres * 0.9 + border * 0.7);
-  colour += uPaper * 0.08 * smoothstep(0.35, 1.2, vUv.y + vUv.x * 0.4);
+  colour = mix(colour, uRim, clamp(fres * 0.7 + border * 0.7, 0.0, 1.0));
+  colour = mix(colour, uRim, 0.08 * smoothstep(0.35, 1.2, vUv.y + vUv.x * 0.4));
   alpha += 0.06 * smoothstep(0.7, 1.4, vUv.y + vUv.x * 0.4);
   alpha = clamp(alpha + fres * 0.3 + border * 0.55, 0.0, 1.0);
   alpha *= uFade * clamp(1.4 - vDepth / 40.0, 0.25, 1.0);
@@ -138,7 +139,7 @@ ${SAFE}
 ${NOISE}
 uniform sampler2D uMap;
 uniform vec3 uCoral;
-uniform vec3 uPaper;
+uniform vec3 uGlass;
 uniform float uCrack;
 uniform float uDissolve;
 uniform float uFade;
@@ -159,13 +160,13 @@ void main() {
   float crack = crackLine * spread;
   float burn = 1.0 - smoothstep(0.0, 0.07, n - threshold);
   burn *= step(0.001, uDissolve);
-  vec3 colour = uCoral * 0.45 + uPaper * 0.08;
+  vec3 colour = mix(uGlass, uCoral, 0.55);
   float alpha = 0.3;
-  colour = mix(colour, uCoral * 1.1 + uPaper * 0.15, m.r * 0.8);
+  colour = mix(colour, uCoral, m.r * 0.8);
   alpha = mix(alpha, 0.85, m.r * 0.7);
   float d = min(min(vUv.x, 1.0 - vUv.x), min(vUv.y, 1.0 - vUv.y));
   float border = 1.0 - smoothstep(0.0, 0.01, d);
-  colour += uCoral * (fres * 0.8 + border * 0.7 + crack * 2.2 + burn * 3.0);
+  colour = mix(colour, uCoral, clamp(fres * 0.6 + border * 0.7 + crack * 1.2 + burn * 1.5, 0.0, 1.0));
   alpha = clamp(alpha + fres * 0.3 + border * 0.5 + crack * 0.6 + burn, 0.0, 1.0);
   gl_FragColor = vec4(colour, alpha * uFade);
   #include <colorspace_fragment>
@@ -317,11 +318,13 @@ void main() {
 }
 `
 export const latticeFragment = /* glsl */ `
-uniform vec3 uPaper;
+uniform vec3 uGlass;
+uniform vec3 uStroke;
 uniform vec3 uVerified;
 uniform vec3 uAmber;
 uniform float uSearch;
 uniform float uFade;
+uniform float uOpacityScale;
 varying vec2 vUv;
 varying float vMatch;
 varying float vAmber;
@@ -338,14 +341,15 @@ void main() {
   line *= step(0.5, row) * step(row, 4.5);
   float match = vMatch * smoothstep(0.55, 1.0, uSearch);
   float amber = vAmber * smoothstep(0.4, 0.9, uSearch);
-  vec3 colour = uPaper * 0.22;
+  vec3 colour = uGlass;
   float alpha = 0.035 + line * 0.3 + border * 0.4;
-  colour = mix(colour, uPaper * 0.75, line);
+  colour = mix(colour, uStroke, line);
   colour = mix(colour, uVerified, match * 0.8);
   colour = mix(colour, uAmber, amber * 0.6);
-  colour += (uVerified * match * (border * 2.2 + 0.35) + uAmber * amber * border * 1.2) * uFade;
+  colour = mix(colour, uVerified, clamp(match * (border * 2.2 + 0.35), 0.0, 1.0) * uFade);
+  colour = mix(colour, uAmber, clamp(amber * border * 1.2, 0.0, 1.0) * uFade);
   alpha += match * 0.35 + amber * 0.2;
-  alpha *= uFade * clamp(1.5 - vDepth / 30.0, 0.2, 1.0);
+  alpha *= uFade * uOpacityScale * clamp(1.5 - vDepth / 30.0, 0.2, 1.0);
   gl_FragColor = vec4(colour, clamp(alpha, 0.0, 1.0));
   #include <colorspace_fragment>
 }
@@ -370,11 +374,12 @@ void main() {
 }
 `
 export const edgeFragment = /* glsl */ `
-uniform vec3 uPaper;
+uniform vec3 uStroke;
 uniform vec3 uVerified;
 uniform float uTime;
 uniform float uSearch;
 uniform float uFade;
+uniform float uOpacityScale;
 varying float vT;
 varying float vHot;
 varying float vOffset;
@@ -382,10 +387,10 @@ varying float vDepth;
 void main() {
   float x = fract(uTime * 0.45 + vOffset) - vT;
   float pulse = exp(-x * x * 49.0);
-  vec3 colour = mix(uPaper * 0.7, uVerified * 1.4, vHot * uSearch);
+  vec3 colour = mix(uStroke, uVerified, vHot * uSearch);
   float alpha = 0.07 + uSearch * (0.06 + 0.3 * vHot) + pulse * uSearch * (0.2 + 0.7 * vHot);
-  alpha *= uFade * clamp(1.5 - vDepth / 30.0, 0.2, 1.0);
-  gl_FragColor = vec4(colour, alpha);
+  alpha *= uFade * uOpacityScale * clamp(1.5 - vDepth / 30.0, 0.2, 1.0);
+  gl_FragColor = vec4(colour, clamp(alpha, 0.0, 1.0));
   #include <colorspace_fragment>
 }
 `
@@ -426,6 +431,29 @@ void main() {
 }
 `
 
+/** The sky behind the scene: night or dawn gradient with a soft glow near the top. */
+export const skyVertex = /* glsl */ `
+varying vec2 vUv;
+void main() {
+  vUv = uv;
+  gl_Position = vec4(position.xy, 0.9999, 1.0);
+}
+`
+export const skyFragment = /* glsl */ `
+uniform vec3 uTop;
+uniform vec3 uBottom;
+uniform vec3 uGlow;
+uniform float uGlowAmount;
+varying vec2 vUv;
+void main() {
+  vec3 colour = mix(uBottom, uTop, smoothstep(0.0, 1.0, vUv.y));
+  float glow = 1.0 - smoothstep(0.0, 0.85, length((vUv - vec2(0.78, 0.95)) * vec2(1.4, 1.0)));
+  colour = mix(colour, uGlow, clamp(glow * uGlowAmount, 0.0, 1.0));
+  gl_FragColor = vec4(colour, 1.0);
+  #include <colorspace_fragment>
+}
+`
+
 /** Full-screen passes of the bloom. */
 export const screenVertex = /* glsl */ `
 varying vec2 vUv;
@@ -462,13 +490,14 @@ uniform sampler2D uScene;
 uniform sampler2D uBloom;
 uniform sampler2D uBloomWide;
 uniform float uStrength;
+uniform float uVignetteFloor;
 varying vec2 vUv;
 void main() {
   vec3 c = clamp(texture2D(uScene, vUv).rgb, 0.0, 16.0);
   vec3 bloom = texture2D(uBloom, vUv).rgb * 0.7 + texture2D(uBloomWide, vUv).rgb * 0.9;
   c += clamp(bloom, 0.0, 16.0) * uStrength;
   float vignette = 1.0 - smoothstep(0.35, 1.25, length((vUv - 0.5) * vec2(1.35, 1.0)));
-  c *= mix(0.72, 1.0, vignette);
+  c *= mix(uVignetteFloor, 1.0, vignette);
   gl_FragColor = vec4(c, 1.0);
   #include <colorspace_fragment>
 }

@@ -27,4 +27,10 @@ describe('Layout', () => {
     await screen.findByText('page')
     expect(container.querySelector('[data-backdrop]')).toBeNull()
   })
+
+  it('NFR-08 the landing follows the chosen theme like every other page', async () => {
+    const { container } = at('/')
+    await screen.findByText('page')
+    expect(container.querySelector('[data-surface="ink"]')).toBeNull()
+  })
 })

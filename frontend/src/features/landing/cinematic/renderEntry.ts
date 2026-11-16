@@ -5,11 +5,17 @@
  */
 import '../../../index.css'
 import { cssColorToHex } from '../oklch'
+import { scenePalette } from './palette'
 import { createCinematicScene } from './scene'
 
 function token(name: string): string {
   return cssColorToHex(getComputedStyle(document.documentElement).getPropertyValue(name))
 }
+
+// ?theme=light renders the dawn scene (the light poster); the default is the night scene.
+const scheme =
+  new URLSearchParams(window.location.search).get('theme') === 'light' ? 'light' : 'dark'
+document.documentElement.dataset['theme'] = scheme
 
 const host = document.getElementById('stage')
 if (host === null) {
@@ -17,13 +23,13 @@ if (host === null) {
 }
 const scene = createCinematicScene(
   host,
-  {
-    paper: token('--foreground'),
+  scenePalette(scheme, {
+    foreground: token('--foreground'),
+    background: token('--background'),
     verified: token('--verified'),
     uncertain: token('--uncertain'),
     rejected: token('--rejected'),
-    ink: token('--background'),
-  },
+  }),
   { preserveDrawingBuffer: true, autoStart: false },
 )
 

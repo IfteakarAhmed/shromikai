@@ -1,5 +1,6 @@
 import { Suspense, lazy, useEffect, useState } from 'react'
 import posterUrl from '../../assets/contract-poster.webp'
+import lightPosterUrl from '../../assets/contract-poster-light.webp'
 import { usePreferences } from '../../state/preferencesContext'
 import { useMediaQuery, useWebGl } from './useCapabilities'
 
@@ -8,9 +9,10 @@ const ContractScene = lazy(() => import('./ContractScene'))
 
 /** The static picture of the scene: the fallback in every case where 3D is not shown. */
 export function HeroPoster({ alt }: { alt: string }) {
+  const { theme } = usePreferences()
   return (
     <img
-      src={posterUrl}
+      src={theme === 'light' ? lightPosterUrl : posterUrl}
       alt={alt}
       width={960}
       height={768}
