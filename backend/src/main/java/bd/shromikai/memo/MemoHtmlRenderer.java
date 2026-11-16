@@ -37,6 +37,7 @@ public final class MemoHtmlRenderer {
     Index index = new Index(result);
     StringBuilder out = new StringBuilder(8192);
     String lang = memo.path("language").asText("bn");
+    MemoStrings strings = new MemoStrings(lang);
     out.append("<!doctype html>\n<html lang=\"").append(esc(lang)).append("\">\n<head>\n");
     out.append("<meta charset=\"utf-8\">\n<title>").append(esc(memo.path("title").asText()));
     out.append("</title>\n<style>").append(CSS).append("</style>\n</head>\n<body>\n");
@@ -44,7 +45,7 @@ public final class MemoHtmlRenderer {
     for (JsonNode section : memo.path("sections")) {
       out.append("<section>\n<h2>").append(esc(section.path("heading").asText())).append("</h2>\n");
       for (JsonNode block : section.path("blocks")) {
-        block(out, block, index, lang);
+        block(out, block, index, strings);
       }
       out.append("</section>\n");
     }
@@ -61,7 +62,7 @@ public final class MemoHtmlRenderer {
     return out.toString();
   }
 
-  private void block(StringBuilder out, JsonNode block, Index index, String lang) {
+  private void block(StringBuilder out, JsonNode block, Index index, MemoStrings strings) {
     switch (block.path("type").asText()) {
       case "paragraph" ->
           out.append("<p>").append(esc(block.path("text").asText())).append("</p>\n");
@@ -72,7 +73,7 @@ public final class MemoHtmlRenderer {
             .forEach(i -> out.append("<li>").append(esc(i.asText())).append("</li>"));
         out.append("</ul>\n");
       }
-      case "riskTable" -> riskTable(out, block, index);
+      case "riskTable" -> riskTable(out, block, index, strings);
       case "findingRef" -> {
         JsonNode f = index.findings.get(block.path("findingId").asText());
         if (f != null) {
@@ -81,7 +82,7 @@ public final class MemoHtmlRenderer {
               .append(" · ")
               .append(esc(f.path("title").asText()))
               .append(" (")
-              .append(esc(f.path("severity").asText()))
+              .append(esc(strings.severity(f.path("severity").asText())))
               .append(")</h3>\n");
         }
       }
@@ -97,16 +98,23 @@ public final class MemoHtmlRenderer {
           redline(out, r);
         }
       }
-      case "obligationTable" -> obligationTable(out, block, index);
+      case "obligationTable" -> obligationTable(out, block, index, strings);
       default -> {
         // unknown block types render nothing
       }
     }
   }
 
-  private void riskTable(StringBuilder out, JsonNode block, Index index) {
-    out.append(
-        "<table><thead><tr><th>#</th><th>Risk</th><th>Severity</th><th>Status</th></tr></thead><tbody>");
+  private void riskTable(StringBuilder out, JsonNode block, Index index, MemoStrings strings) {
+    out.append("<table><thead><tr><th>")
+        .append(esc(strings.numberHeading()))
+        .append("</th><th>")
+        .append(esc(strings.riskColumn()))
+        .append("</th><th>")
+        .append(esc(strings.severityColumn()))
+        .append("</th><th>")
+        .append(esc(strings.statusColumn()))
+        .append("</th></tr></thead><tbody>");
     for (JsonNode id : block.path("findingIds")) {
       JsonNode f = index.findings.get(id.asText());
       if (f == null) {
@@ -120,11 +128,11 @@ public final class MemoHtmlRenderer {
           .append("</td><td>")
           .append(esc(f.path("title").asText()))
           .append("</td><td>")
-          .append(esc(f.path("severity").asText()))
+          .append(esc(strings.severity(f.path("severity").asText())))
           .append("</td><td class=\"")
           .append(css)
           .append("\">")
-          .append(esc(status))
+          .append(esc(strings.verification(status)))
           .append("</td></tr>");
     }
     out.append("</tbody></table>\n");
@@ -157,9 +165,19 @@ public final class MemoHtmlRenderer {
     out.append("</p>\n<p>").append(esc(r.path("rationale").asText())).append("</p>\n");
   }
 
-  private void obligationTable(StringBuilder out, JsonNode block, Index index) {
-    out.append(
-        "<table><thead><tr><th>#</th><th>Party</th><th>Obligation</th><th>When</th><th>Basis</th></tr></thead><tbody>");
+  private void obligationTable(
+      StringBuilder out, JsonNode block, Index index, MemoStrings strings) {
+    out.append("<table><thead><tr><th>")
+        .append(esc(strings.numberHeading()))
+        .append("</th><th>")
+        .append(esc(strings.partyColumn()))
+        .append("</th><th>")
+        .append(esc(strings.obligationColumn()))
+        .append("</th><th>")
+        .append(esc(strings.whenColumn()))
+        .append("</th><th>")
+        .append(esc(strings.basisColumn()))
+        .append("</th></tr></thead><tbody>");
     for (JsonNode id : block.path("obligationIds")) {
       JsonNode o = index.obligations.get(id.asText());
       if (o == null) {
@@ -172,9 +190,9 @@ public final class MemoHtmlRenderer {
                   ? " "
                       + trim(deadline.path("value").asDouble())
                       + " "
-                      + deadline.path("unit").asText()
+                      + strings.unit(deadline.path("unit").asText())
                   : "");
-      StringBuilder basis = new StringBuilder(o.path("source").asText());
+      StringBuilder basis = new StringBuilder(strings.basis(o.path("source").asText()));
       for (JsonNode c : o.path("citations")) {
         basis
             .append(" · ")
@@ -185,7 +203,7 @@ public final class MemoHtmlRenderer {
       out.append("<tr><td>")
           .append(esc(o.path("id").asText()))
           .append("</td><td>")
-          .append(esc(o.path("party").asText()))
+          .append(esc(strings.party(o.path("party").asText())))
           .append("</td><td>")
           .append(esc(o.path("obligation").asText()))
           .append("</td><td>")

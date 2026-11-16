@@ -96,15 +96,18 @@ public final class MemoComposer {
     in.nextSteps().forEach(items::add);
 
     MemoInput.Verification v = in.verification();
-    section(sections, "VERIFICATION_AND_METHOD", s.methodHeading())
-        .add(
-            paragraph(
-                s.method(
-                    v.verifiedCitations(),
-                    v.uncertainFindings(),
-                    v.policyFindings(),
-                    v.independence(),
-                    in.footer().corpusRelease())));
+    ArrayNode method = section(sections, "VERIFICATION_AND_METHOD", s.methodHeading());
+    method.add(
+        paragraph(
+            s.method(
+                v.verifiedCitations(),
+                v.uncertainFindings(),
+                v.policyFindings(),
+                v.independence(),
+                in.footer().corpusRelease())));
+    if (v.recorded()) {
+      method.add(paragraph(s.demoNote()));
+    }
     section(sections, "DISCLAIMER", s.disclaimerHeading()).add(paragraph(s.disclaimer()));
 
     ObjectNode summary = memo.putObject("verificationSummary");

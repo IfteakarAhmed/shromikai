@@ -309,7 +309,8 @@ public class AnalysisResults {
                 summary.path("verifiedCitations").asInt(),
                 summary.path("uncertainFindings").asInt(),
                 summary.path("policyFindings").asInt(),
-                outcome.verifierIndependence()),
+                outcome.verifierIndependence(),
+                recorded),
             new MemoInput.Footer(
                 outcome.corpusRelease(), AnalysisPipeline.PIPELINE_VERSION, codec.keyId()));
     ObjectNode memo = composer.compose(memoInput);

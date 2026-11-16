@@ -48,7 +48,7 @@ class MemoComposerContractTest {
         findings,
         List.of("r1"),
         List.of("o1", "o2"),
-        new MemoInput.Verification(2, 1, 1, "SAME_FAMILY"),
+        new MemoInput.Verification(2, 1, 1, "SAME_FAMILY", false),
         new MemoInput.Footer("2026.11.01-1", "p7-1", "k1"));
   }
 

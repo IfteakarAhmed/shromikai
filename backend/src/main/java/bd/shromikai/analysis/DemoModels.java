@@ -120,24 +120,27 @@ public class DemoModels {
   }
 
   private JsonNode baseline() {
+    // Bangla, like the recorded sample (the recording is in Bangla). Both claims are fabricated on
+    // purpose: the first cites a section number that does not exist, the second a real key with
+    // words that are not in it. The real verifier rejects both.
     ObjectNode out = mapper.createObjectNode().put("status", "OK").put("reason", "NONE");
     ArrayNode findings = out.putArray("findings");
     findings.add(
         finding(
-            "Dismissal without notice",
+            "নোটিশ ছাড়াই চাকরিচ্যুতি",
             "HIGH",
-            "A plain model says the law lets an employer end the contract at once.",
+            "একটি সাধারণ মডেল বলছে, আইন নিয়োগকর্তাকে নোটিশ ছাড়াই সঙ্গে সঙ্গে চুক্তি শেষ করতে দেয়।",
             "BLA-2006:999@original",
-            "An employer may end a worker's service at once and without any notice at all.",
-            "The Act lets an employer dismiss a worker without notice."));
+            "নিয়োগকর্তা যেকোনো শ্রমিকের চাকরি নোটিশ ছাড়াই সঙ্গে সঙ্গে শেষ করতে পারেন।",
+            "আইন নোটিশ ছাড়া চাকরিচ্যুতির অনুমতি দেয়।"));
     findings.add(
         finding(
-            "Unlimited working hours",
+            "কর্মঘণ্টার কোনো সীমা নেই",
             "MEDIUM",
-            "A plain model says the law sets no limit on daily hours.",
+            "একটি সাধারণ মডেল বলছে, আইনে দৈনিক কাজের ঘণ্টার কোনো সীমা নেই।",
             "BLA-2006:2@amend-2026",
-            "No worker shall have any limit on the hours of work in any day or any week.",
-            "The Act sets no limit on the hours of work."));
+            "কোনো শ্রমিকের দৈনিক বা সাপ্তাহিক কর্মঘণ্টার কোনো সীমা থাকবে না।",
+            "আইনে কর্মঘণ্টার কোনো সীমা নেই।"));
     return out;
   }
 

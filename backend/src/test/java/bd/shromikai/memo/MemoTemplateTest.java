@@ -42,7 +42,7 @@ class MemoTemplateTest {
                     "r1")),
             List.of("r1"),
             List.of("o1"),
-            new MemoInput.Verification(1, 0, 0, "NONE"),
+            new MemoInput.Verification(1, 0, 0, "NONE", false),
             new MemoInput.Footer("2026.11.01-1", "p7-1", "k1"));
     var memo = new MemoComposer(MAPPER).compose(input);
     return MAPPER.readTree(

@@ -57,7 +57,11 @@ public record MemoInput(
   }
 
   public record Verification(
-      int verifiedCitations, int uncertainFindings, int policyFindings, String independence) {}
+      int verifiedCitations,
+      int uncertainFindings,
+      int policyFindings,
+      String independence,
+      boolean recorded) {}
 
   public record Footer(String corpusRelease, String pipelineVersion, String keyId) {}
 }

@@ -105,6 +105,14 @@ class DemoModelsTest {
         .path("findings")
         .forEach(
             finding ->
+                assertThat(finding.path("title").asText() + finding.path("explanation").asText())
+                    .as("the scripted baseline is in Bangla")
+                    .containsPattern("[\\u0980-\\u09FF]")
+                    .doesNotContainPattern("[A-Za-z]"));
+    baseline
+        .path("findings")
+        .forEach(
+            finding ->
                 assertThat(finding.path("citations").get(0).path("quote").asText())
                     .as("a fabricated quote, never statute text")
                     .isNotBlank());
