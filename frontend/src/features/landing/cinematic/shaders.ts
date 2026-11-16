@@ -5,6 +5,18 @@
  * the same material is right on screen and inside the bloom render target.
  */
 
+/**
+ * Guards shared by every shader. A real GPU (ANGLE on Metal, for one) returns NaN for pow() of a
+ * negative base or normalize() of a zero vector; the half-float bloom then spreads one NaN pixel
+ * into large black shapes (the D1 review bug, traced to the light shafts). The shader lint test
+ * rejects unguarded pow, sqrt, normalize, reversed smoothstep and division by a variable.
+ */
+const SAFE = /* glsl */ `
+vec3 safeNormalize(vec3 v) {
+  return v * (1.0 / max(length(v), 1e-6));
+}
+`
+
 const NOISE = /* glsl */ `
 float hash12(vec2 p) {
   vec3 p3 = fract(vec3(p.xyx) * 0.1031);
@@ -50,12 +62,13 @@ vec2 voronoi(vec2 p) {
       if (d < f1) { f2 = f1; f1 = d; } else if (d < f2) { f2 = d; }
     }
   }
-  return vec2(sqrt(f1), sqrt(f2));
+  return vec2(sqrt(max(f1, 0.0)), sqrt(max(f2, 0.0)));
 }
 `
 
 /** Glass sheet: fresnel rim, ruled lines from a canvas texture, redaction bars by progress. */
 export const sheetVertex = /* glsl */ `
+${SAFE}
 uniform float uTime;
 uniform float uSeed;
 uniform float uBend;
@@ -68,8 +81,8 @@ void main() {
   vec3 p = position;
   p.z += sin(uv.y * 3.14159) * uBend + sin(uv.x * 2.0 + uTime * 0.6 + uSeed) * 0.02;
   vec4 world = modelMatrix * vec4(p, 1.0);
-  vNormal = normalize(mat3(modelMatrix) * normal);
-  vView = normalize(cameraPosition - world.xyz);
+  vNormal = safeNormalize(mat3(modelMatrix) * normal);
+  vView = safeNormalize(cameraPosition - world.xyz);
   vec4 mv = viewMatrix * world;
   vDepth = -mv.z;
   gl_Position = projectionMatrix * mv;
@@ -77,6 +90,7 @@ void main() {
 `
 
 export const sheetFragment = /* glsl */ `
+${SAFE}
 uniform sampler2D uMap;
 uniform vec3 uPaper;
 uniform vec3 uInk;
@@ -91,8 +105,8 @@ varying vec3 vView;
 varying float vDepth;
 void main() {
   vec4 m = texture2D(uMap, vUv);
-  float facing = abs(dot(normalize(vNormal), normalize(vView)));
-  float fres = pow(1.0 - facing, 2.2);
+  float facing = clamp(abs(dot(safeNormalize(vNormal), safeNormalize(vView))), 0.0, 1.0);
+  float fres = pow(clamp(1.0 - facing, 0.0, 1.0), 2.2);
   // Each redacted span closes at its own moment (blue channel), left to right inside the row.
   float local = smoothstep(m.b * 0.6, m.b * 0.6 + 0.4, uRedact);
   float bar = m.g * local;
@@ -120,6 +134,7 @@ void main() {
 
 /** The coral card: cracks from a Voronoi pattern, then a noise-threshold dissolve with a hot edge. */
 export const crackFragment = /* glsl */ `
+${SAFE}
 ${NOISE}
 uniform sampler2D uMap;
 uniform vec3 uCoral;
@@ -136,8 +151,8 @@ void main() {
   float threshold = uDissolve * 1.1 - 0.05;
   if (n < threshold) discard;
   vec4 m = texture2D(uMap, vUv);
-  float facing = abs(dot(normalize(vNormal), normalize(vView)));
-  float fres = pow(1.0 - facing, 2.2);
+  float facing = clamp(abs(dot(safeNormalize(vNormal), safeNormalize(vView))), 0.0, 1.0);
+  float fres = pow(clamp(1.0 - facing, 0.0, 1.0), 2.2);
   vec2 cell = voronoi(vUv * vec2(4.0, 5.4) + 3.0);
   float crackLine = 1.0 - smoothstep(0.0, 0.05, cell.y - cell.x);
   float spread = smoothstep(n * 0.85, n * 0.85 + 0.2, uCrack);
@@ -163,7 +178,7 @@ varying float vAlpha;
 varying vec3 vColour;
 void main() {
   vec2 c = gl_PointCoord - 0.5;
-  float a = smoothstep(0.5, 0.0, length(c));
+  float a = 1.0 - smoothstep(0.0, 0.5, length(c));
   a *= a;
   gl_FragColor = vec4(vColour, a * vAlpha);
   #include <colorspace_fragment>
@@ -188,7 +203,7 @@ void main() {
   p.x += cos(uTime * 0.11 * aSpeed + aPhase * 1.3) * 0.2;
   vec4 mv = modelViewMatrix * vec4(p, 1.0);
   gl_Position = projectionMatrix * mv;
-  gl_PointSize = min(48.0, uSize * aScale * uPixelRatio * (10.0 / -mv.z));
+  gl_PointSize = min(48.0, uSize * aScale * uPixelRatio * (10.0 / max(-mv.z, 0.1)));
   float twinkle = 0.5 + 0.5 * sin(uTime * aSpeed * 1.7 + aPhase * 6.2831);
   vAlpha = (0.2 + 0.8 * twinkle * twinkle * twinkle) * uFade * smoothstep(0.6, 2.5, -mv.z);
   vColour = uColour;
@@ -210,7 +225,7 @@ varying float vAlpha;
 varying vec3 vColour;
 void main() {
   float e = clamp(uShield * 1.6 - aDelay * 0.6, 0.0, 1.0);
-  e = 1.0 - pow(1.0 - e, 3.0);
+  e = 1.0 - pow(max(1.0 - e, 0.0), 3.0);
   float angle = uTime * 0.12 * e + aDelay * 0.4 * (1.0 - e);
   mat2 r = mat2(cos(angle), -sin(angle), sin(angle), cos(angle));
   vec3 ring = position;
@@ -218,7 +233,7 @@ void main() {
   vec3 p = mix(aStart, ring, e);
   vec4 mv = modelViewMatrix * vec4(p, 1.0);
   gl_Position = projectionMatrix * mv;
-  gl_PointSize = min(40.0, uSize * uPixelRatio * (10.0 / -mv.z) * (0.6 + 0.6 * e));
+  gl_PointSize = min(40.0, uSize * uPixelRatio * (10.0 / max(-mv.z, 0.1)) * (0.6 + 0.6 * e));
   vAlpha = step(0.0001, uShield) * (0.15 + 0.85 * e) * (0.75 + 0.25 * sin(uTime * 2.0 + aDelay * 40.0));
   vAlpha *= uFade;
   vColour = uColour;
@@ -244,7 +259,7 @@ void main() {
   vec3 p = mix(aStart, position, f);
   vec4 mv = modelViewMatrix * vec4(p, 1.0);
   gl_Position = projectionMatrix * mv;
-  gl_PointSize = min(40.0, uSize * uPixelRatio * (10.0 / -mv.z) * (0.7 + 0.8 * aHot));
+  gl_PointSize = min(40.0, uSize * uPixelRatio * (10.0 / max(-mv.z, 0.1)) * (0.7 + 0.8 * aHot));
   vAlpha = uSearch * (0.3 + 0.7 * aHot) * sin(3.14159 * f);
   vColour = mix(uCold, uHot, aHot);
 }
@@ -273,7 +288,7 @@ void main() {
   p += vec3(sin(uTime * 0.7 + aPhase), cos(uTime * 0.5 + aPhase * 1.7), 0.0) * 0.08 * release;
   vec4 mv = modelViewMatrix * vec4(p, 1.0);
   gl_Position = projectionMatrix * mv;
-  gl_PointSize = min(36.0, uSize * uPixelRatio * (10.0 / -mv.z) * (1.2 - 0.6 * release));
+  gl_PointSize = min(36.0, uSize * uPixelRatio * (10.0 / max(-mv.z, 0.1)) * (1.2 - 0.6 * release));
   vAlpha = step(0.0001, release) * (1.0 - 0.7 * release);
   vColour = mix(uHotColour, uColour, release);
 }
@@ -391,11 +406,11 @@ uniform float uSeed;
 uniform float uIntensity;
 varying vec2 vUv;
 void main() {
-  float x = abs(vUv.x - 0.5) * 2.0;
-  float core = pow(1.0 - x, 2.5);
-  float fall = smoothstep(0.0, 0.7, vUv.y) * smoothstep(1.0, 0.85, vUv.y);
+  float x = clamp(abs(vUv.x - 0.5) * 2.0, 0.0, 1.0);
+  float core = pow(max(1.0 - x, 0.0), 2.5);
+  float fall = smoothstep(0.0, 0.7, vUv.y) * (1.0 - smoothstep(0.85, 1.0, vUv.y));
   float flicker = 0.7 + 0.3 * vnoise(vec2(vUv.y * 3.0 - uTime * 0.08, uSeed));
-  gl_FragColor = vec4(uColour, core * fall * flicker * uIntensity);
+  gl_FragColor = vec4(uColour, clamp(core * fall * flicker * uIntensity, 0.0, 1.0));
   #include <colorspace_fragment>
 }
 `
@@ -424,7 +439,7 @@ uniform sampler2D uScene;
 uniform float uThreshold;
 varying vec2 vUv;
 void main() {
-  vec3 c = texture2D(uScene, vUv).rgb;
+  vec3 c = clamp(texture2D(uScene, vUv).rgb, 0.0, 16.0);
   float l = max(c.r, max(c.g, c.b));
   gl_FragColor = vec4(c * smoothstep(uThreshold, uThreshold + 0.3, l), 1.0);
 }
@@ -439,7 +454,7 @@ void main() {
   sum += texture2D(uInput, vUv - uDirection * 1.3846153846).rgb * 0.3162162162;
   sum += texture2D(uInput, vUv + uDirection * 3.2307692308).rgb * 0.0702702703;
   sum += texture2D(uInput, vUv - uDirection * 3.2307692308).rgb * 0.0702702703;
-  gl_FragColor = vec4(sum, 1.0);
+  gl_FragColor = vec4(clamp(sum, 0.0, 16.0), 1.0);
 }
 `
 export const compositeFragment = /* glsl */ `
@@ -449,9 +464,10 @@ uniform sampler2D uBloomWide;
 uniform float uStrength;
 varying vec2 vUv;
 void main() {
-  vec3 c = texture2D(uScene, vUv).rgb;
-  c += (texture2D(uBloom, vUv).rgb * 0.7 + texture2D(uBloomWide, vUv).rgb * 0.9) * uStrength;
-  float vignette = smoothstep(1.25, 0.35, length((vUv - 0.5) * vec2(1.35, 1.0)));
+  vec3 c = clamp(texture2D(uScene, vUv).rgb, 0.0, 16.0);
+  vec3 bloom = texture2D(uBloom, vUv).rgb * 0.7 + texture2D(uBloomWide, vUv).rgb * 0.9;
+  c += clamp(bloom, 0.0, 16.0) * uStrength;
+  float vignette = 1.0 - smoothstep(0.35, 1.25, length((vUv - 0.5) * vec2(1.35, 1.0)));
   c *= mix(0.72, 1.0, vignette);
   gl_FragColor = vec4(c, 1.0);
   #include <colorspace_fragment>
