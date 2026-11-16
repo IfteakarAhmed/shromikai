@@ -17,6 +17,9 @@ const scheme =
   new URLSearchParams(window.location.search).get('theme') === 'light' ? 'light' : 'dark'
 document.documentElement.dataset['theme'] = scheme
 
+// ?seconds=N sets the scene clock of the still (the shockwave repeats every 2.9 s).
+const seconds = Number(new URLSearchParams(window.location.search).get('seconds') ?? 6)
+
 const host = document.getElementById('stage')
 if (host === null) {
   throw new Error('no stage')
@@ -50,7 +53,7 @@ const CENTRED = { position: [2.3, 0.3, 11.5], target: [2.5, 0, 0] } as const
 
 window.renderStill = (t, width, height, type, centred = false) =>
   new Promise((resolve, reject) => {
-    const canvas = scene.renderStill(t, width, height, 6, centred ? CENTRED : undefined)
+    const canvas = scene.renderStill(t, width, height, seconds, centred ? CENTRED : undefined)
     canvas.toBlob(
       (blob) => {
         if (blob === null) {

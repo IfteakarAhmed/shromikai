@@ -73,4 +73,63 @@ describe('scenePalette', () => {
       }
     }
   })
+
+  function saturation(hex: string): number {
+    const [r, g, b] = [1, 3, 5].map((i) => parseInt(hex.slice(i, i + 2), 16) / 255)
+    const max = Math.max(r ?? 0, g ?? 0, b ?? 0)
+    const min = Math.min(r ?? 0, g ?? 0, b ?? 0)
+    return max === 0 ? 0 : (max - min) / max
+  }
+  const sky = (palette: ReturnType<typeof scenePalette>) =>
+    [palette.skyTop, palette.skyBottom] as const
+
+  it('FR-68 the check mark on the seal reaches AA (4.5:1) against the seal, in both themes', () => {
+    for (const [scheme, tokens] of [
+      ['dark', DARK],
+      ['light', LIGHT],
+    ] as const) {
+      const palette = scenePalette(scheme, tokens)
+      expect(contrast(palette.sealMark, palette.sealFill), `${scheme} seal`).toBeGreaterThanOrEqual(
+        4.5,
+      )
+    }
+  })
+
+  it('FR-68 picks a readable mark colour for any seal green, light or dark', () => {
+    for (const green of ['#0f7a52', '#0b6b45', '#3ee0a5', '#19b27d', '#2f9e6f', '#a7f3d0']) {
+      for (const scheme of ['dark', 'light'] as const) {
+        const palette = scenePalette(scheme, {
+          ...(scheme === 'dark' ? DARK : LIGHT),
+          verified: green,
+        })
+        expect(
+          contrast(palette.sealMark, palette.sealFill),
+          `${scheme} ${green}`,
+        ).toBeGreaterThanOrEqual(4.5)
+      }
+    }
+  })
+
+  it('FR-68 the law lattice stands out from the sky at dawn (lines 3:1, cards brighter than the sky)', () => {
+    const palette = scenePalette('light', LIGHT)
+    for (const colour of sky(palette)) {
+      expect(contrast(palette.latticeLine, colour)).toBeGreaterThanOrEqual(3)
+    }
+    expect(palette.latticeOpacity).toBeGreaterThanOrEqual(2.5)
+    expect(palette.latticeDepthFade).toBeLessThanOrEqual(0.5)
+  })
+
+  it('FR-68 the shockwave is a coloured light ring, not a grey one, visible on both skies', () => {
+    for (const [scheme, tokens] of [
+      ['dark', DARK],
+      ['light', LIGHT],
+    ] as const) {
+      const palette = scenePalette(scheme, tokens)
+      expect(saturation(palette.shockwave), `${scheme} saturation`).toBeGreaterThanOrEqual(0.4)
+      for (const colour of sky(palette)) {
+        expect(contrast(palette.shockwave, colour), `${scheme} on sky`).toBeGreaterThanOrEqual(1.8)
+      }
+      expect(palette.shockwaveAlpha).toBeGreaterThanOrEqual(0.5)
+    }
+  })
 })

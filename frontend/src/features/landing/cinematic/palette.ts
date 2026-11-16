@@ -46,6 +46,16 @@ export interface ScenePalette {
   glassOpacity: number
   /** Warm or cool light near the top of the sky. */
   sun: string
+  /** The seal disc and the colour of its check mark (readable on it, AA). */
+  sealFill: string
+  sealMark: string
+  /** Law lattice: line colour, opacity scale and how fast it fades with distance (0 = never). */
+  latticeLine: string
+  latticeOpacity: number
+  latticeDepthFade: number
+  /** The soft ring that spreads from the seal: colour and peak opacity. */
+  shockwave: string
+  shockwaveAlpha: number
 }
 
 function channels(hex: string): [number, number, number] {
@@ -63,6 +73,27 @@ export function mixHex(a: string, b: string, amount: number): string {
         .padStart(2, '0'),
     )
     .join('')}`
+}
+
+function relativeLuminance(hex: string): number {
+  const [r, g, b] = channels(hex).map((value) => {
+    const c = value / 255
+    return c <= 0.04045 ? c / 12.92 : ((c + 0.055) / 1.055) ** 2.4
+  })
+  return 0.2126 * (r ?? 0) + 0.7152 * (g ?? 0) + 0.0722 * (b ?? 0)
+}
+
+/** WCAG contrast ratio of two hex colours. */
+export function contrastRatio(a: string, b: string): number {
+  const [hi, lo] = [relativeLuminance(a), relativeLuminance(b)].sort((x, y) => y - x)
+  return ((hi ?? 0) + 0.05) / ((lo ?? 0) + 0.05)
+}
+
+/** Of near-white and deep navy, the one that reads better on `fill` (always AA for a green). */
+function markOn(fill: string): string {
+  const light = '#ffffff'
+  const dark = '#0b1020'
+  return contrastRatio(light, fill) >= contrastRatio(dark, fill) ? light : dark
 }
 
 export function scenePalette(scheme: Scheme, tokens: ThemeTokens): ScenePalette {
@@ -91,6 +122,13 @@ export function scenePalette(scheme: Scheme, tokens: ThemeTokens): ScenePalette 
       glow: tokens.verified,
       glassOpacity: 1,
       sun: mixHex(tokens.background, '#3b4a8f', 0.45),
+      sealFill: tokens.verified,
+      sealMark: markOn(tokens.verified),
+      latticeLine: mixHex(tokens.foreground, tokens.background, 0.3),
+      latticeOpacity: 1,
+      latticeDepthFade: 1,
+      shockwave: tokens.verified,
+      shockwaveAlpha: 0.85,
     }
   }
   return {
@@ -112,5 +150,15 @@ export function scenePalette(scheme: Scheme, tokens: ThemeTokens): ScenePalette 
     glow: mixHex(tokens.verified, '#10b981', 0.55),
     glassOpacity: 4,
     sun: '#ffd6a8',
+    // A deeper emerald than the token so the white check mark reads at 4.5:1 or better.
+    sealFill: tokens.verified,
+    sealMark: markOn(tokens.verified),
+    // Navy lines and quietly lit cards that stay visible even when the camera is far away.
+    latticeLine: mixHex(tokens.foreground, '#ffffff', 0.05),
+    latticeOpacity: 3.6,
+    latticeDepthFade: 0.25,
+    // A saturated emerald light, soft-edged in the shader; never a grey disc.
+    shockwave: '#12a874',
+    shockwaveAlpha: 0.62,
   }
 }

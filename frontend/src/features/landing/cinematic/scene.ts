@@ -387,12 +387,13 @@ export function createCinematicScene(
       track(new PlaneGeometry(1.35, 0.86)),
       material(glsl.latticeVertex, glsl.latticeFragment, {
         uGlass: { value: glassColour },
-        uStroke: { value: strokeColour },
+        uStroke: { value: colour(palette.latticeLine) },
+        uDepthFade: { value: palette.latticeDepthFade },
         uVerified: { value: verified },
         uAmber: { value: amber },
         uSearch: search,
         uFade: latticeFade,
-        uOpacityScale: { value: Math.min(palette.glassOpacity, 2.5) },
+        uOpacityScale: { value: palette.latticeOpacity },
       }),
       count,
     )
@@ -466,9 +467,10 @@ export function createCinematicScene(
       glsl.edgeVertex,
       glsl.edgeFragment,
       {
-        uStroke: { value: strokeColour },
+        uStroke: { value: colour(palette.latticeLine) },
         uVerified: { value: verified },
         uSearch: search,
+        uDepthFade: { value: palette.latticeDepthFade },
         uFade: latticeFade,
         uOpacityScale: { value: Math.min(palette.glassOpacity, 2.5) },
       },
@@ -522,14 +524,14 @@ export function createCinematicScene(
   seal.position.set(0.55, -0.7, 0.35)
   verify.add(seal)
   const sealMaterial = material(glsl.flatVertex, glsl.flatFragment, {
-    uColour: { value: verified },
+    uColour: { value: colour(palette.sealFill) },
     uOpacity: { value: 0 },
   })
   const disc = new Mesh(track(new CylinderGeometry(0.62, 0.62, 0.06, 72)), sealMaterial)
   disc.rotation.x = Math.PI / 2
   seal.add(disc)
   const markMaterial = material(glsl.flatVertex, glsl.flatFragment, {
-    uColour: { value: ink },
+    uColour: { value: colour(palette.sealMark) },
     uOpacity: { value: 0 },
   })
   const innerRing = new Mesh(track(new RingGeometry(0.47, 0.52, 72)), markMaterial)
@@ -557,12 +559,17 @@ export function createCinematicScene(
   sealGlow.position.z = -0.05
   seal.add(sealGlow)
   const shockMaterial = material(
-    glsl.flatVertex,
-    glsl.flatFragment,
-    { uColour: { value: glowColour }, uOpacity: { value: 0 } },
+    glsl.shaftVertex,
+    glsl.ringFragment,
+    {
+      uColour: { value: colour(palette.shockwave) },
+      uOpacity: { value: 0 },
+      uRadius: { value: 0.78 },
+      uWidth: { value: 0.1 },
+    },
     true,
   )
-  const shock = new Mesh(track(new RingGeometry(0.92, 1, 96)), shockMaterial)
+  const shock = new Mesh(track(new PlaneGeometry(2, 2)), shockMaterial)
   shock.position.z = 0.02
   seal.add(shock)
 
@@ -906,7 +913,7 @@ export function createCinematicScene(
     const landed = ramp(beats.seal, 0.6, 1)
     const phase = beats.seal >= 1 ? (seconds * 0.35) % 1 : landed
     shock.scale.setScalar(0.7 + phase * 3.6)
-    setOpacity(shockMaterial, beats.seal > 0.6 ? (1 - phase) ** 2 * 0.85 : 0)
+    setOpacity(shockMaterial, beats.seal > 0.6 ? (1 - phase) ** 2 * palette.shockwaveAlpha : 0)
 
     heroFade.value = 1 - ramp(t, 0.62, 0.7) + ramp(t, 0.8, 0.9)
     hero.visible = heroFade.value > 0.01

@@ -18,6 +18,9 @@ const framesDir = framesAt > 0 ? resolve(process.argv[framesAt + 1] ?? '.') : nu
 // --theme light renders the dawn scene for --frames.
 const themeIndex = process.argv.indexOf('--theme')
 const frameTheme = themeIndex > 0 && process.argv[themeIndex + 1] === 'light' ? 'light' : 'dark'
+// --seconds N sets the scene clock for --frames (the shockwave repeats every 2.9 s).
+const secondsIndex = process.argv.indexOf('--seconds')
+const frameSeconds = secondsIndex > 0 ? Number(process.argv[secondsIndex + 1] ?? 6) : 6
 // Optional timeline values for --frames, as percentages: --at 0,25,41.7
 const atIndex = process.argv.indexOf('--at')
 const percents =
@@ -42,7 +45,9 @@ async function render(t, width, height, type, centred = false, theme = 'dark') {
   page.on('console', (message) => {
     if (message.type() === 'error') errors.push(message.text())
   })
-  await page.goto(`http://localhost:${port}/scene-render.html?theme=${theme}`)
+  await page.goto(
+    `http://localhost:${port}/scene-render.html?theme=${theme}&seconds=${frameSeconds}`,
+  )
   await page.waitForSelector('body[data-ready="true"]', { state: 'attached', timeout: 60_000 })
   const dataUrl = await page.evaluate(
     ([at, w, h, kind, centre]) => globalThis.renderStill(at, w, h, kind, centre),
