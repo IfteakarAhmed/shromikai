@@ -11,8 +11,11 @@
  */
 export type Tier = 'cinematic' | 'standard' | 'lite'
 
-/** The in-memory choice from the landing toggle; it is never stored (R-02, AGENTS.md §6). */
-export type SceneChoice = 'auto' | 'lite' | 'scene'
+/**
+ * The in-memory choice from the landing toggle (`lite` or `scene`), or a tier forced by the
+ * `?scene=` address for review and screenshots. It is never stored (R-02, AGENTS.md §6).
+ */
+export type SceneChoice = 'auto' | 'lite' | 'scene' | 'standard' | 'cinematic'
 
 export interface Capabilities {
   webgl: boolean
@@ -81,6 +84,10 @@ export function resolveTier(caps: Capabilities, choice: SceneChoice): Tier {
       return 'lite'
     case 'scene':
       return optInTier(caps) ?? 'lite'
+    case 'standard':
+      return caps.webgl ? 'standard' : 'lite'
+    case 'cinematic':
+      return caps.webgl2 ? 'cinematic' : caps.webgl ? 'standard' : 'lite'
     case 'auto':
       return selectTier(caps)
   }

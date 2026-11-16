@@ -334,7 +334,7 @@
     "title": "Your job contract, through the eyes of the law.",
     "description": "Share your contract. In minutes, see where the risks are, which sections of the law they conflict with, and what to ask to change. Every legal citation is checked against the official source.",
     "scope": "No guesswork. If we cannot verify it, we say: uncertain.",
-    "sceneAlt": "A floating glass contract: an emerald seal on a verified clause, and a broken red glass fragment.",
+    "sceneAlt": "Floating glass contract sheets with unreadable lines of text, in soft light from above.",
     "sample": "Try a sample contract",
     "own": "Share your own contract",
     "workerDemo": "Demo as a worker",
@@ -347,28 +347,7 @@
     "privateStored": "Your contract is not stored",
     "officialLink": "An official-source link with every citation"
   },
-  "howItWorks": {
-    "eyebrow": "Four simple steps",
-    "title": "How it works",
-    "description": "From the words of the contract to a verified official source: clear and private at every step.",
-    "stepNumber": "Step {{number}}",
-    "digit1": "1",
-    "digit2": "2",
-    "digit3": "3",
-    "digit4": "4",
-    "upload": "Share the contract",
-    "uploadBody": "A PDF, photos or text. A camera photo is fine.",
-    "privacy": "Privacy protection",
-    "privacyBody": "Names, addresses, phone and national ID numbers are removed on our server, then the analysis starts.",
-    "review": "Finding risks",
-    "reviewBody": "Every clause is checked against the law corpus.",
-    "verify": "Verification",
-    "verifyBody": "A citation is shown only after three checks: the section exists, the quoted words match, and the section supports the claim."
-  },
   "comparison": {
-    "eyebrow": "Why verification matters",
-    "title": "Made-up sections stop here.",
-    "description": "A plain AI can name a section number that is not in the law. We check every citation against the law corpus; one that does not match is rejected.",
     "cta": "See the comparison"
   },
   "audience": {
@@ -1098,5 +1077,30 @@
     "verifier-same-family": "Citations were checked by a model of the same family.",
     "instruction-like-text": "A clause looked like an instruction and was analysed as data.",
     "obligations-unavailable": "The obligations checklist could not be produced."
+  },
+  "story": {
+    "privacyEyebrow": "Privacy first",
+    "privacyTitle": "Personal details are removed first",
+    "privacyBody": "Names, addresses, phone and national ID numbers are removed on our own server before the analysis starts. Your contract is not stored.",
+    "searchEyebrow": "Searching the law",
+    "searchTitle": "The relevant sections of the law, next to each clause",
+    "searchBody": "Every clause is matched against a collection of the law taken from official sources; related sections come along with it.",
+    "verifyEyebrow": "Checked three ways",
+    "verifyTitle": "A citation appears only after three checks",
+    "verifyBody": "A citation is shown only after three checks: the section exists, the quoted words match, and the section supports the claim.",
+    "inventedEyebrow": "Why verification matters",
+    "inventedTitle": "Made-up sections stop here.",
+    "inventedBody": "A plain AI can name a section that is not in the law. Here every citation is checked against the law collection; one that does not match is not shown, and we say: uncertain.",
+    "illustration": "This scene is a drawn illustration, not a measured result.",
+    "finaleEyebrow": "Get started",
+    "finaleTitle": "Check your own contract",
+    "finaleBody": "A PDF, photos or text. A camera photo is fine.",
+    "finaleSample": "Start with the sample",
+    "finaleOwn": "Upload my contract"
+  },
+  "scene": {
+    "label": "Landing scene",
+    "enable": "Turn on the scene",
+    "still": "Still picture"
   }
 }

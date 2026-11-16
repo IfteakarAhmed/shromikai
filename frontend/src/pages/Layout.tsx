@@ -15,8 +15,11 @@ export function Layout() {
     window.scrollTo(0, 0)
   }, [pathname])
 
+  // The landing keeps the ink palette in either theme: its scene is drawn on ink (D1 plan).
+  const ink = pathname === '/'
+
   return (
-    <div className="flex min-h-dvh flex-col">
+    <div className="flex min-h-dvh flex-col" data-surface={ink ? 'ink' : undefined}>
       <a
         href="#main"
         className="sr-only z-50 rounded-lg bg-primary px-4 py-3 font-semibold text-primary-foreground focus:not-sr-only focus:fixed focus:left-4 focus:top-4"

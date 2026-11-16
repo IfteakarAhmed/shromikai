@@ -26,10 +26,10 @@ function withReducedMotion(reduced: boolean) {
   })) as unknown as typeof window.matchMedia
 }
 
-function hero() {
+function hero(mode?: 'auto' | 'scene' | 'poster') {
   return render(
     <PreferencesProvider>
-      <HeroFrame alt="contract picture" />
+      <HeroFrame alt="contract picture" mode={mode} />
     </PreferencesProvider>,
   )
 }
@@ -98,5 +98,27 @@ describe('HeroFrame', () => {
     expect(await screen.findByTestId('scene')).toBeInTheDocument()
     expect(container.querySelector('[data-hero]')).toHaveAttribute('data-hero', 'scene')
     expect(screen.getByRole('img', { name: 'contract picture' })).toBeInTheDocument()
+  })
+
+  it('FR-76 never loads the scene when the landing asks for the poster', async () => {
+    withWebGl(true)
+    withReducedMotion(false)
+
+    const { container } = hero('poster')
+    await act(() => vi.advanceTimersByTimeAsync(2000))
+
+    expect(screen.queryByTestId('scene')).not.toBeInTheDocument()
+    expect(container.querySelector('[data-hero]')).toHaveAttribute('data-hero', 'poster')
+  })
+
+  it('FR-68 shows the scene when the visitor turned it on, even with reduced motion', async () => {
+    withWebGl(true)
+    withReducedMotion(true)
+
+    const { container } = hero('scene')
+    await act(() => vi.advanceTimersByTimeAsync(1000))
+
+    expect(await screen.findByTestId('scene')).toBeInTheDocument()
+    expect(container.querySelector('[data-hero]')).toHaveAttribute('data-hero', 'scene')
   })
 })

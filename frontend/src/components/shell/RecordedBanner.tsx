@@ -13,13 +13,16 @@ export function RecordedBanner() {
     return null
   }
   return (
-    <div role="note" className="border-b border-uncertain/30 bg-uncertain/10 text-sm">
-      <p className="mx-auto flex max-w-6xl items-start gap-2 px-(--gutter) py-2">
-        <Icon name="info" className="mt-1 shrink-0 text-uncertain" />
-        <span>
-          <strong>{t('common.recorded')}</strong> {t('common.recordedExplain')}
-        </span>
-      </p>
+    // Opaque underneath, so the landing scene never shows through the banner.
+    <div role="note" className="relative z-10 bg-background text-sm">
+      <div className="border-b border-uncertain/30 bg-uncertain/10">
+        <p className="mx-auto flex max-w-6xl items-start gap-2 px-(--gutter) py-2">
+          <Icon name="info" className="mt-1 shrink-0 text-uncertain" />
+          <span>
+            <strong>{t('common.recorded')}</strong> {t('common.recordedExplain')}
+          </span>
+        </p>
+      </div>
     </div>
   )
 }

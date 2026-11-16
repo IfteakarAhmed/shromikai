@@ -92,3 +92,18 @@ describe('resolveTier', () => {
     expect(resolveTier(with_({ webgl: false, webgl2: false }), 'scene')).toBe('lite')
   })
 })
+
+describe('resolveTier with a forced tier (the ?scene= address, for review and screenshots)', () => {
+  it('FR-68 forces the cinematic scene when WebGL2 exists, else the best that does', () => {
+    expect(resolveTier(with_({ width: 390, hardwareConcurrency: 2 }), 'cinematic')).toBe(
+      'cinematic',
+    )
+    expect(resolveTier(with_({ webgl2: false }), 'cinematic')).toBe('standard')
+    expect(resolveTier(with_({ webgl: false, webgl2: false }), 'cinematic')).toBe('lite')
+  })
+
+  it('FR-68 forces the standard scene when WebGL exists, else lite', () => {
+    expect(resolveTier(DESKTOP, 'standard')).toBe('standard')
+    expect(resolveTier(with_({ webgl: false, webgl2: false }), 'standard')).toBe('lite')
+  })
+})

@@ -24,14 +24,24 @@ export function HeroPoster({ alt }: { alt: string }) {
  * The hero picture. It is the poster unless the browser can do WebGL, the visitor has not asked for
  * reduced motion and low-bandwidth mode is off; then a procedural 3D scene loads after the page is
  * idle and fades in over the poster. If the scene fails, the poster stays (FR-68, FR-76).
+ *
+ * `mode` lets the landing decide instead: `poster` never loads the scene, `scene` loads it because
+ * the visitor turned it on (still only with WebGL); `auto` keeps the rules above.
  */
-export function HeroFrame({ alt }: { alt: string }) {
+export function HeroFrame({
+  alt,
+  mode = 'auto',
+}: {
+  alt: string
+  mode?: 'auto' | 'scene' | 'poster' | undefined
+}) {
   const { lowBandwidth } = usePreferences()
   const reducedMotion = useMediaQuery('(prefers-reduced-motion: reduce)')
   const webgl = useWebGl()
   const [failed, setFailed] = useState(false)
   const [idle, setIdle] = useState(false)
-  const wanted = webgl && !reducedMotion && !lowBandwidth && !failed
+  const allowed = mode === 'scene' || (mode === 'auto' && !reducedMotion && !lowBandwidth)
+  const wanted = webgl && allowed && !failed
 
   useEffect(() => {
     if (!wanted) {

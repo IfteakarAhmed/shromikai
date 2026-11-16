@@ -42,7 +42,8 @@
   --shadow-glass-hover: var(--shadow-glass-hover);
 }
 
-:root {
+:root,
+[data-surface='ink'] {
   color-scheme: dark;
   --gutter: clamp(1rem, 4vw, 3rem);
   --background: oklch(0.15 0.0208 264.34);
@@ -104,6 +105,12 @@
   --shadow-glass: 0 22px 64px -34px oklch(0.25 0.04 258 / 22%), 0 1px 0 oklch(1 0 0 / 90%) inset;
   --shadow-glass-hover:
     0 28px 68px -34px oklch(0.25 0.04 258 / 28%), 0 1px 0 oklch(1 0 0 / 90%) inset;
+}
+
+/* The landing is drawn on ink in both themes; the app pages follow the theme. */
+[data-surface='ink'] {
+  background-color: var(--background);
+  color: var(--foreground);
 }
 
 @layer base {

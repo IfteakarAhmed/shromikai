@@ -5,7 +5,7 @@ import { Disclaimer } from '../ui/Disclaimer'
 export function Footer() {
   const { t } = useTranslation()
   return (
-    <footer className="mt-12 border-t border-border">
+    <footer className="relative z-10 mt-12 border-t border-border bg-background">
       <div className="mx-auto flex max-w-6xl flex-col gap-4 px-(--gutter) py-8">
         <Disclaimer />
         <nav
