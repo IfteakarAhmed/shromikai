@@ -6,6 +6,8 @@ import tailwindcss from '@tailwindcss/vite'
 export default defineConfig({
   plugins: [react(), tailwindcss()],
   server: {
+    // The docs hub reads ../docs and ../eval/reports at build time (FR-74).
+    fs: { allow: ['..'] },
     // Forward API calls to the Spring Boot backend during development.
     proxy: {
       '/api': 'http://localhost:8080',

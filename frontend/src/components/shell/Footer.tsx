@@ -15,6 +15,18 @@ export function Footer() {
           <Link to="/docs" className="inline-flex min-h-11 items-center hover:text-foreground">
             {t('footer.docs')}
           </Link>
+          <Link
+            to="/docs/security"
+            className="inline-flex min-h-11 items-center hover:text-foreground"
+          >
+            {t('footer.security')}
+          </Link>
+          <Link
+            to="/docs/known-gaps"
+            className="inline-flex min-h-11 items-center hover:text-foreground"
+          >
+            {t('footer.knownGaps')}
+          </Link>
         </nav>
         <p className="text-sm text-muted-foreground">{t('footer.copyright')}</p>
       </div>

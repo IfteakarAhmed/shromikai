@@ -10,19 +10,6 @@
     "bangla": "বাংলা",
     "english": "English"
   },
-  "status": {
-    "heading": "System status",
-    "loading": "Loading…",
-    "backend": "Backend",
-    "running": "Running (version {{version}})",
-    "acts": "Acts",
-    "sections": "Sections (current)",
-    "embedded": "Embedded",
-    "count": "{{count}}",
-    "down": "Cannot reach the backend. Check that it is running, then try again.",
-    "error": "The backend reported an error: {{title}}",
-    "retry": "Try again"
-  },
   "common": {
     "loading": "Loading…",
     "home": "Home",
@@ -152,7 +139,9 @@
     "docs": "Documentation",
     "privacy": "Privacy and security",
     "gaps": "What is not done yet",
-    "copyright": "Made for workers in Bangladesh. A sample, experimental version."
+    "copyright": "Made for workers in Bangladesh. A sample, experimental version.",
+    "security": "Privacy and security",
+    "knownGaps": "Known gaps"
   },
   "clauseType": {
     "APPOINTMENT_AND_ROLE": "Appointment and role",
@@ -898,5 +887,202 @@
     "EQ": "exactly",
     "REQUIRED": "must be present",
     "PROHIBITED": "must not be present"
+  },
+  "docs": {
+    "title": "Documentation",
+    "intro": "How ShromikAI works, what it checks and what it has not measured yet. Everything here is read from the project's own files or from the running system.",
+    "navLabel": "Documentation sections",
+    "nav": {
+      "index": "Overview",
+      "architecture": "Architecture",
+      "data": "Data",
+      "security": "Privacy and security",
+      "audit": "Live audit",
+      "evaluation": "Evaluation",
+      "prompts": "Prompts",
+      "mcp": "Model context server",
+      "gaps": "Known gaps"
+    },
+    "cards": {
+      "architecture": "Where each part runs and the steps one analysis goes through.",
+      "data": "Which laws are in the corpus, where they come from and how complete they are.",
+      "security": "How personal data is hidden, what is stored and for how long, and the threats we planned for.",
+      "audit": "A report from the running system: models, corpus, privacy checks and open reviews.",
+      "evaluation": "What has been measured, with the count beside every number, and what has not.",
+      "prompts": "Every prompt the system uses, one page each.",
+      "mcp": "How another AI agent can use the law search and the citation checker.",
+      "gaps": "What does not work yet, and what we chose not to do."
+    },
+    "englishOnly": "This page shows the project's own documentation, which is written in English.",
+    "table": "Table",
+    "mermaid": "The diagram of this part is drawn on the architecture page.",
+    "loading": "Loading the document…",
+    "missing": "This document is not part of this build.",
+    "backToPrompts": "All prompts",
+    "promptLibrary": "Prompt library",
+    "promptsIntro": "Each page explains one prompt: what it asks, which model runs it and how it is checked.",
+    "provenance": {
+      "title": "Where these numbers come from",
+      "file": "Report file",
+      "generated": "Generated",
+      "commit": "Commit",
+      "release": "Corpus release"
+    },
+    "architecture": {
+      "title": "Architecture",
+      "intro": "Two pictures and the principles behind them. Personal data is hidden on our own machine before anything reaches a cloud model.",
+      "containersTitle": "Where the parts run",
+      "containersDesc": "The browser and API clients reach the backend. The backend uses the database, the local models and the PDF maker inside the private network, and sends only redacted text to cloud models.",
+      "pipelineTitle": "The steps of one analysis",
+      "pipelineDesc": "Read the document, hide personal data, sort the clauses, find the laws and check the fixed limits, find the risks, check every citation, fix a failed one once, then write the answer. A step that fails stops the analysis.",
+      "privateNetwork": "Private network",
+      "cloud": "Outside: cloud models",
+      "redactedOnly": "redacted text only",
+      "browser": "Browser",
+      "clients": "API and model context clients",
+      "backend": "Backend",
+      "database": "Database and law corpus",
+      "local": "Local models",
+      "localNote": "search vectors, personal data",
+      "pdf": "PDF maker",
+      "cloudModels": "Cloud models",
+      "sources": "Official law sources",
+      "stage": {
+        "intake": "Read the document",
+        "ocr": "Read photos on this machine",
+        "redact": "Hide personal data",
+        "classify": "Sort the clauses",
+        "retrieve": "Find the laws",
+        "rules": "Check the fixed limits",
+        "risk": "Find the risks",
+        "verify": "Check every citation",
+        "correct": "Fix a failed citation once",
+        "compose": "Write the answer"
+      },
+      "principles": "The principles and the verification rules, from the specification"
+    },
+    "data": {
+      "title": "Data",
+      "intro": "The statute corpus the citations are checked against. The figures are from the latest quality report; nothing here is typed by hand.",
+      "noReport": "No corpus quality report is part of this build.",
+      "status": "Quality check",
+      "statuses": {
+        "PASSED": "Passed",
+        "FAILED": "Failed"
+      },
+      "actsTitle": "Acts in the corpus",
+      "caption": "Acts, their sections and where each comes from",
+      "colAct": "Act",
+      "colLang": "Authoritative language",
+      "colSections": "Sections in force",
+      "colVersions": "Versions kept",
+      "colNoTranslation": "Without a translation",
+      "colSource": "Official source",
+      "source": "Open the source",
+      "langs": {
+        "bn": "Bangla",
+        "en": "English"
+      },
+      "edgesTitle": "Links between sections",
+      "edges": {
+        "REFERS_TO": "A section refers to another",
+        "USES_DEFINITION": "A section uses a definition",
+        "AMENDED_BY": "Amended by",
+        "ALIGNS_WITH": "Aligned with an international standard"
+      },
+      "unresolved": "References that could not be resolved",
+      "iloTitle": "International labour standards",
+      "iloNote": "A link to an international standard is shown as checked only after a person has reviewed it. Until then it is held back.",
+      "iloStatuses": {
+        "SKIPPED_UNREVIEWED": "Held back: not yet reviewed"
+      },
+      "missingTitle": "Left out on purpose",
+      "missingNone": "Nothing is left out."
+    },
+    "security": {
+      "title": "Privacy and security",
+      "intro": "The promises the system keeps and how each is enforced. The full text follows from the specification.",
+      "cards": {
+        "noStorage": "No contract text is stored",
+        "noStorageBody": "The text lives in memory for at most 30 minutes after the analysis. It is never written to the database, logs or files.",
+        "redacted": "Personal data is hidden first",
+        "redactedBody": "Names, numbers and addresses are replaced on our own machine. If that cannot be done, the analysis stops and sends nothing.",
+        "verified": "Only checked citations are shown",
+        "verifiedBody": "A citation reaches you only after three checks. Otherwise the finding is marked uncertain and goes to a person."
+      },
+      "sections": "From the specification"
+    },
+    "audit": {
+      "title": "Live audit",
+      "intro": "A report from the running system, read now.",
+      "loading": "Reading the system…",
+      "version": "Version",
+      "models": "Models in use",
+      "modelRoles": {
+        "reasoning": "Reasoning",
+        "fast": "Fast tasks",
+        "verifier": "Citation support check",
+        "verifierFallback": "Support check, fallback",
+        "judge": "Explanation judge",
+        "localPii": "Personal data, on this machine",
+        "embedding": "Search vectors"
+      },
+      "none": "not set",
+      "corpus": "Law corpus",
+      "release": "Release",
+      "acts": "Acts",
+      "sections": "Sections",
+      "currentSections": "Sections in force",
+      "embedded": "Sections with search vectors",
+      "lastRefresh": "Last refresh",
+      "never": "never",
+      "checks": "Privacy and review",
+      "privacyBlocks": "Requests stopped by the privacy guard in the last 7 days",
+      "openReviews": "Review items waiting for a person",
+      "auditOff": "The system does not report audit counters here.",
+      "evalTitle": "Latest evaluation",
+      "noEval": "No contract evaluation has been run yet, so there is no number to show.",
+      "evalCases": "Cases",
+      "evalRecall": "Risks found",
+      "evalPrecision": "Citations that were correct",
+      "evalFabricated": "Invented citations shown",
+      "evalDate": "Report date",
+      "recordedDemo": "This is a demo with recorded answers. Only the sample contract can be analysed.",
+      "retrievalTitle": "Law search, from the latest report file",
+      "print": "Print this report",
+      "error": "The system could not be reached."
+    },
+    "evaluation": {
+      "title": "Evaluation",
+      "intro": "Only numbers from a generated report are shown, each with its count. What has not been run says so.",
+      "retrievalTitle": "Finding the right section",
+      "retrievalIntro": "{{questions}} questions, each with a known right section. A question counts as found when that section is among the first five results.",
+      "noRetrieval": "No retrieval report is part of this build.",
+      "caption": "Retrieval methods compared",
+      "colMethod": "Method",
+      "colFound": "Found in the first five",
+      "colRank": "Average rank score",
+      "colRecall": "Right sections in the first eight",
+      "colTime": "Average time",
+      "found": "{{count}} of {{n}}",
+      "ms": "{{value}} ms",
+      "methods": {
+        "VECTOR_ONLY": "Meaning search only",
+        "TEXT_ONLY": "Word search only",
+        "HYBRID": "Both together",
+        "HYBRID_GRAPH": "Both, plus linked sections",
+        "HYBRID_GRAPH_REWRITE": "Both, linked, with rewritten queries",
+        "UNTUNED_TEXT_ONLY": "Word search before tuning",
+        "UNTUNED_HYBRID_GRAPH": "Both, linked, before tuning"
+      },
+      "notRun": "Not run",
+      "notRunReason": "Reason in the report file",
+      "chartTitle": "Found in the first five, per method",
+      "chartLowBandwidth": "The chart is off in low-bandwidth mode. The table has the same numbers.",
+      "contractsTitle": "Contracts: risks and citations",
+      "contractsNotRun": "Not yet run. The evaluation of risks found, correct citations and invented citations on the contract set has not been run, so no number is shown and none should be quoted.",
+      "contractsHow": "The numbers will appear here when the evaluation has produced a report file.",
+      "contractsFound": "A report file exists, but this page does not show it yet."
+    }
   }
 }

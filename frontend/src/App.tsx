@@ -22,7 +22,16 @@ const PlaybooksPage = lazy(() => import('./features/admin/PlaybooksPage'))
 const ApiKeysPage = lazy(() => import('./features/admin/ApiKeysPage'))
 const UsagePage = lazy(() => import('./features/admin/UsagePage'))
 const TracePage = lazy(() => import('./features/admin/TracePage'))
-const DocsHub = lazy(() => import('./features/docs/DocsHub'))
+const DocsLayout = lazy(() => import('./features/docs/DocsLayout'))
+const DocsIndex = lazy(() => import('./features/docs/DocsIndex'))
+const ArchitecturePage = lazy(() => import('./features/docs/ArchitecturePage'))
+const DataPage = lazy(() => import('./features/docs/DataPage'))
+const SecurityPage = lazy(() => import('./features/docs/SecurityPage'))
+const AuditPage = lazy(() => import('./features/docs/AuditPage'))
+const EvaluationPage = lazy(() => import('./features/docs/EvaluationPage'))
+const PromptsPage = lazy(() => import('./features/docs/PromptsPage'))
+const McpPage = lazy(() => import('./features/docs/McpPage'))
+const KnownGapsPage = lazy(() => import('./features/docs/KnownGapsPage'))
 
 function RouteFallback() {
   return (
@@ -75,13 +84,23 @@ export default function App() {
           <Route path="traces/:analysisId?" element={<TracePage />} />
         </Route>
         <Route
-          path="docs/*"
+          path="docs"
           element={
             <Suspense fallback={<RouteFallback />}>
-              <DocsHub />
+              <DocsLayout />
             </Suspense>
           }
-        />
+        >
+          <Route index element={<DocsIndex />} />
+          <Route path="architecture" element={<ArchitecturePage />} />
+          <Route path="data" element={<DataPage />} />
+          <Route path="security" element={<SecurityPage />} />
+          <Route path="audit" element={<AuditPage />} />
+          <Route path="evaluation" element={<EvaluationPage />} />
+          <Route path="prompts/:id?" element={<PromptsPage />} />
+          <Route path="mcp" element={<McpPage />} />
+          <Route path="known-gaps" element={<KnownGapsPage />} />
+        </Route>
         <Route
           path="app/playbooks"
           element={
