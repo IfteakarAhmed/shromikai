@@ -75,6 +75,17 @@ class DemoModelsTest {
   }
 
   @Test
+  void theScriptedObligationsAreInBanglaBecauseTheRecordedDemoIsBangla() {
+    JsonNode items = ask("obligations", 1, "text").output().path("items");
+
+    assertThat(items).isNotEmpty();
+    for (JsonNode item : items) {
+      assertThat(item.path("obligation").asText()).doesNotContainPattern("[A-Za-z]");
+      assertThat(item.path("trigger").asText()).doesNotContainPattern("[A-Za-z]");
+    }
+  }
+
+  @Test
   void aStandInNamesItselfAsScriptedAndNeverAsARealModel() {
     for (String prompt : List.of("pii-extract", "obligations", "memo-bn", "memo-en", "baseline")) {
       assertThat(ask(prompt, 1, "text").modelId()).as(prompt).isEqualTo(DemoModels.STAND_IN_MODEL);

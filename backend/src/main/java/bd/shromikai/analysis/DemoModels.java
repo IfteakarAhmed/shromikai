@@ -85,15 +85,12 @@ public class DemoModels {
     ArrayNode items = out.putArray("items");
     items.add(
         item(
-            "EMPLOYER",
-            "Pay the monthly salary stated in the contract",
-            "Each month",
-            "STATED_IN_CONTRACT"));
+            "EMPLOYER", "চুক্তিতে লেখা মাসিক বেতন পরিশোধ করা", "প্রতি মাসে", "STATED_IN_CONTRACT"));
     items.add(
         item(
             "WORKER",
-            "Work the hours and at the sites set in the contract",
-            "During the engagement",
+            "চুক্তিতে নির্ধারিত সময়ে ও স্থানে কাজ করা",
+            "কাজের মেয়াদে",
             "STATED_IN_CONTRACT"));
     return out;
   }
