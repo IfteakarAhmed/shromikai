@@ -1,0 +1,22 @@
+{
+  "fixtureVersion" : 1,
+  "promptId" : "query-rewrite",
+  "promptVersion" : 1,
+  "caseId" : "syn-en-02-worker",
+  "modelId" : "claude-haiku-5-5",
+  "requestSha256" : "eb6b0427e9dcf9f35e998524bb1fbb8d06dc2b3ae866c306a8d1d19a7e382884",
+  "provenance" : "synthetic",
+  "source" : "recorded from a live call",
+  "recordedAt" : "2026-11-16T05:38:04.744608Z",
+  "stopReason" : "end_turn",
+  "usage" : {
+    "inputTokens" : 128,
+    "outputTokens" : 113,
+    "cacheReadTokens" : 0
+  },
+  "response" : {
+    "status" : "OK",
+    "reason" : "NONE",
+    "queries" : [ "শিক্ষানবিশকাল সর্বোচ্চ মেয়াদ এবং শিক্ষানবিশের বেতন", "probation period maximum duration and reduced pay for trainees", "Bangladesh labour law apprenticeship probation employment terms" ]
+  }
+}

@@ -1,0 +1,24 @@
+{
+  "fixtureVersion" : 1,
+  "promptId" : "counter-offer",
+  "promptVersion" : 2,
+  "caseId" : "syn-en-02-worker",
+  "modelId" : "claude-sonnet-5-5",
+  "requestSha256" : "c2c850c1268380158f8d4bede7f4c7a5be125e7a33a86561ee43cf26e5e377e8",
+  "provenance" : "synthetic",
+  "source" : "recorded from a live call",
+  "recordedAt" : "2026-11-16T07:54:42.112227Z",
+  "stopReason" : "end_turn",
+  "usage" : {
+    "inputTokens" : 621,
+    "outputTokens" : 344,
+    "cacheReadTokens" : 0
+  },
+  "response" : {
+    "status" : "OK",
+    "reason" : "NONE",
+    "action" : "REPLACE",
+    "proposed_text" : "৪. সাপ্তাহিক বিশ্রাম ও ছুটি: নিরাপত্তারক্ষী প্রতি সপ্তাহে কমপক্ষে ১ দিন মজুরিসহ সাপ্তাহিক বিশ্রাম পাবেন এবং প্রতি পঞ্জিকা বছরে মজুরিসহ ১৩ দিন উৎসব ছুটি পাবেন। ক্লায়েন্ট সাইট বন্ধ থাকলে সেই দিন এই ছুটির অংশ হিসেবে গণ্য হতে পারে।",
+    "rationale" : "ধারাটিতে এখন আইনসম্মত ১ দিন সাপ্তাহিক বিশ্রাম ও ১৩ দিন মজুরিসহ উৎসব ছুটি নিশ্চিত করা হয়েছে।"
+  }
+}

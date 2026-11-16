@@ -1,0 +1,24 @@
+{
+  "fixtureVersion" : 1,
+  "promptId" : "counter-offer",
+  "promptVersion" : 2,
+  "caseId" : "syn-en-02-worker",
+  "modelId" : "claude-sonnet-5-5",
+  "requestSha256" : "8456dffb05991750e43373df054584f656f76f58057d0fb1eafb503cb2e997ba",
+  "provenance" : "synthetic",
+  "source" : "recorded from a live call",
+  "recordedAt" : "2026-11-16T05:38:13.424192Z",
+  "stopReason" : "end_turn",
+  "usage" : {
+    "inputTokens" : 626,
+    "outputTokens" : 230,
+    "cacheReadTokens" : 0
+  },
+  "response" : {
+    "status" : "OK",
+    "reason" : "NONE",
+    "action" : "REPLACE",
+    "proposed_text" : "3. Hours of work: The Guard works 8 hours a day and no more than 48 hours a week, with weekly rest as the law requires. Any work beyond these hours is overtime and is paid at double the ordinary rate. Night shifts are allotted fairly.",
+    "rationale" : "দৈনিক ৮ ঘণ্টা ও সাপ্তাহিক ৪৮ ঘণ্টার সীমা এবং অধিকালের দ্বিগুণ ভাতা যুক্ত হওয়ায় ধারাটি আইনসম্মত হয়েছে।"
+  }
+}

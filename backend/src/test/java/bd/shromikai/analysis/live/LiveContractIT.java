@@ -71,17 +71,17 @@ class LiveContractIT extends LiveBase {
     Run.perPromptLimits =
         java.util.Map.ofEntries(
             java.util.Map.entry("clause-classify", 0),
-            java.util.Map.entry("clause-facts", 0),
-            java.util.Map.entry("query-rewrite", 4),
-            java.util.Map.entry("obligations", 2),
+            java.util.Map.entry("clause-facts", 12),
+            java.util.Map.entry("query-rewrite", 2),
+            java.util.Map.entry("obligations", 0),
             java.util.Map.entry("risk-analysis", 0),
             java.util.Map.entry("risk-citation-repair", 2),
-            java.util.Map.entry("verify-support-claude", 20),
-            java.util.Map.entry("counter-offer", 12));
+            java.util.Map.entry("verify-support-claude", 4),
+            java.util.Map.entry("counter-offer", 4));
     Run.contractPrefix = "record:" + CONTRACT;
     // Abort when the new spend of this step reaches US$0.60 (ledger total near US$2.25).
-    // The whole step may spend US$0.45 at most (US$0.1061 is spent): stop and report beyond it.
-    Run.contractCapMicros = new LiveSpendLedger().spentOn("record:" + CONTRACT) + 343_900;
+    // The whole step may spend US$0.45 at most (US$0.1582 is spent): stop and report beyond it.
+    Run.contractCapMicros = new LiveSpendLedger().spentOn("record:" + CONTRACT) + 291_800;
     long cap = Run.contractCapMicros;
     long newSpend = cap - new LiveSpendLedger().spentOn("record:" + CONTRACT);
     if (cap == Long.MAX_VALUE || newSpend <= 0 || newSpend > 600_000) {

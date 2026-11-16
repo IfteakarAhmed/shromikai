@@ -1,0 +1,24 @@
+{
+  "fixtureVersion" : 1,
+  "promptId" : "counter-offer",
+  "promptVersion" : 2,
+  "caseId" : "syn-en-02-worker",
+  "modelId" : "claude-sonnet-5-5",
+  "requestSha256" : "49c0dc59642bbff57820f0858e6ecece7529d1896b55a934c0b2279b255f5fb0",
+  "provenance" : "synthetic",
+  "source" : "recorded from a live call",
+  "recordedAt" : "2026-11-16T05:38:13.776070Z",
+  "stopReason" : "end_turn",
+  "usage" : {
+    "inputTokens" : 691,
+    "outputTokens" : 317,
+    "cacheReadTokens" : 0
+  },
+  "response" : {
+    "status" : "OK",
+    "reason" : "NONE",
+    "action" : "REPLACE",
+    "proposed_text" : "৩. কাজের সময়: গার্ড আইনে নির্ধারিত সময়ের মধ্যে কাজ করবেন। নির্ধারিত সময়ের অতিরিক্ত কাজ অধিকাল কাজ গণ্য হবে এবং এর জন্য মূল মজুরী, মহার্ঘভাতা ও এডহক বা অন্তবর্তী মজুরী (যদি থাকে) এর সাধারণ হারের দ্বিগুণ হারে ভাতা দেওয়া হবে।",
+    "rationale" : "১২ ঘণ্টার বিনা-ভাতার শর্ত বাদ দিয়ে অধিকাল কাজে সাধারণ হারের দ্বিগুণ ভাতা নিশ্চিত করা হয়েছে।"
+  }
+}

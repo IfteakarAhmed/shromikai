@@ -1,0 +1,30 @@
+{
+  "fixtureVersion" : 1,
+  "promptId" : "clause-facts",
+  "promptVersion" : 1,
+  "caseId" : "syn-en-02-worker",
+  "modelId" : "claude-haiku-5-5",
+  "requestSha256" : "51193b758667a35f7fd1a985ea2ef72de6f2598e2323c2a414c71c318cafb300",
+  "provenance" : "synthetic",
+  "source" : "recorded from a live call",
+  "recordedAt" : "2026-11-16T07:54:42.097922Z",
+  "stopReason" : "end_turn",
+  "usage" : {
+    "inputTokens" : 267,
+    "outputTokens" : 85,
+    "cacheReadTokens" : 2595
+  },
+  "response" : {
+    "status" : "OK",
+    "reason" : "NONE",
+    "clauses" : [ {
+      "id" : "proposal",
+      "facts" : [ {
+        "parameter" : "NOTICE_BY_EMPLOYER",
+        "value" : 7,
+        "unit" : "DAYS",
+        "confidence" : 0.8
+      } ]
+    } ]
+  }
+}
