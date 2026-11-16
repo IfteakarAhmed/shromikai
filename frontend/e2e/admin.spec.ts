@@ -85,7 +85,8 @@ for (const locale of LOCALES) {
       // KPI-12: a percentage with its count beside it once an analysis has finished (R-07).
       await expect(tiles.first()).toHaveText(/%/)
       await expect(
-        page.getByText(/^(\d|[০-৯])+(টির মধ্যে|টির মধ্যে|\s+of\s)/).first(),
+        // The count may carry a thousands separator once the demo has run over 999 analyses.
+        page.getByText(/^[\d,০-৯]+(টির মধ্যে|\s+of\s)/).first(),
       ).toBeVisible()
 
       await sections(page, locale)
