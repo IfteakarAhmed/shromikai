@@ -2,9 +2,10 @@
 // - the initial JavaScript of the production build: at most 200 KB gzip;
 // - the standard 3D hero (its lazy chunk with the shared three.js chunk, plus the poster): 200 KB;
 // - the cinematic landing scene (its lazy chunk with everything it imports, three.js included):
-//   300 KB gzip.
+//   300 KB gzip;
+// - the self-hosted fonts: 320 KB of woff2 at most, only the subsets and weights of the pairing.
 // Lazy chunks are followed through the Vite manifest, so a shared chunk counts for each scene.
-import { existsSync, readFileSync } from 'node:fs'
+import { existsSync, readFileSync, readdirSync } from 'node:fs'
 import { join } from 'node:path'
 import { gzipSync } from 'node:zlib'
 
@@ -92,6 +93,28 @@ if (cinematic.bytes > 300 * KB) {
 }
 if (initial.some((file) => /CinematicScene|three\.module/.test(file))) {
   console.error('check-bundle-size: cinematic code leaked into the initial JavaScript')
+  failed = true
+}
+// 4. Fonts (C1, ADR-0023): every self-hosted woff2 in the build. A page fetches only the subsets
+// it uses, so this is the upper bound of what a visit can download in fonts.
+const fontFiles = readdirSync(join(dist, 'assets')).filter((name) => name.endsWith('.woff2'))
+const fontBytes = fontFiles.reduce(
+  (sum, name) => sum + readFileSync(join(dist, 'assets', name)).length,
+  0,
+)
+console.log(`fonts: ${kb(fontBytes)} in ${String(fontFiles.length)} woff2 files (limit 320 KB)`)
+if (fontBytes > 320 * KB) {
+  console.error('check-bundle-size: self-hosted fonts exceed 320 KB (ADR-0023)')
+  failed = true
+}
+if (
+  fontFiles.some(
+    (name) =>
+      /latin-ext|cyrillic|vietnamese|greek|italic|-700-/.test(name) &&
+      !/space-grotesk-latin-700/.test(name),
+  )
+) {
+  console.error('check-bundle-size: a font subset or weight outside the pairing was bundled')
   failed = true
 }
 process.exit(failed ? 1 : 0)

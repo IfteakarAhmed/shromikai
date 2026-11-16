@@ -83,6 +83,29 @@ ink palette in either theme (`data-surface="ink"`), because the scene is drawn o
 tests can draw the scene only through SwiftShader, which is slow; the adaptive quality lowers it
 there, so the report pictures show the reduced levels.
 
+## Amendment 2026-11-16 (C1): self-hosted type pairing and the app-wide visual language
+
+**Decision.** Two runtime dependencies are added, both font files only: `@fontsource/tiro-bangla`
+(headings, Bengali and Latin subsets, weight 400, its only weight) and `@fontsource/space-grotesk`
+(numerals and interface labels, Latin 500 and 700). Hind Siliguri stays for body text, now 400
+and 600 only (700 is dropped; bold body text uses 600). All are woff2 subsets bundled by Vite;
+no page requests a font CDN. Headings use Tiro Bangla from 24 px up, with `font-synthesis: none`
+so the browser never fakes a bold; smaller headings use Hind Siliguri 600, because Tiro Bangla is
+thin at about 20 px.
+
+The cinematic look of the app pages (layered ink-navy surfaces, glass, glow orbs, scroll reveals,
+route transitions) is CSS and SVG only. Route transitions use the browser's View Transitions API
+directly (`document.startViewTransition` with `flushSync`) because the app uses `BrowserRouter`,
+where React Router's `viewTransition` prop does not apply; no new library. Reveals animate
+transform only, never opacity, so content stays readable at rest and for contrast checks. Reduced
+motion and low-bandwidth mode switch all of it off; low-bandwidth mode also removes the orbs.
+
+**Budget.** `check:bundle` limits the bundled woff2 files to 320 KB and rejects subsets or weights
+outside the pairing (measured 302.8 KB in 8 files; a page fetches only the subsets it uses).
+
+**Alternatives.** Pairing A (Anek Bangla, Hind Siliguri, Inter) and pairing B (Noto Serif Bengali,
+Noto Sans Bengali, Inter) were shown to the team on a specimen page; the team chose C.
+
 ## Alternatives
 
 - **Keep r3f, drei and the shadcn/Radix kit** as in the prototype: faster to write, but several
