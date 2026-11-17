@@ -154,7 +154,7 @@
 
 সব নিয়মের সাধারণ সীমাবদ্ধতা:
 
-- No rule knows the worker category (the corpus has no worker-category terms), so exemptions listed above are not applied. A draft rule that flags an exempt worker would be a wrong finding; decide whether to activate such a rule or to leave it as a draft.
+- No rule knows the worker category (the corpus has no worker-category terms), so exemptions listed above are not applied. An active rule that flags an exempt worker would be a wrong finding; decide whether to activate such a rule or to leave it as a draft.
 - Rules read only facts the contract states. A contract that is silent produces no rule finding; omissions are found by the risk agent.
 
 নিয়মগুলোর যে বিষয়গুলো ইচ্ছা করে বাদ রাখা হয়েছে (কারণসহ): নোটিশের মেয়াদ (শ্রমিকের শ্রেণিভেদে ভিন্ন, বদলে মজুরি দেওয়ার সুযোগ আছে); শিক্ষানবিশকালের দৈর্ঘ্য (বাড়ানোর ভাষা বিচারসাপেক্ষ); মজুরি পরিশোধের সময় (কর্মদিবস বনাম পঞ্জিকা-দিন); বার্ষিক ছুটি (অনুপাত, নির্দিষ্ট দিন নয়)। এগুলো বাদ দেওয়া ঠিক হয়েছে কি? হ্যাঁ / না / মন্তব্য: ____________________

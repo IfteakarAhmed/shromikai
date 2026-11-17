@@ -70,7 +70,7 @@ Item numbers are those of the review report.
 | Repair query reason codes; repair runs for `VERIFIER_UNAVAILABLE` | FR-47, cost | The repair query is built from the finding's title and explanation without the failed reason code, and repair is attempted when the verifier itself was unavailable, which spends a call that cannot succeed. It should skip repair for `VERIFIER_UNAVAILABLE`. Review item #8. |
 | Budget race | FR-62, NFR-06 | `ModelSession` checks the budget before a call and charges after it, so parallel batches can overshoot the per-job cap by the cost of the calls in flight. Review item #9. |
 | Clock, dead code and executor clean-up | maintenance | Mixed `Clock` and `System.currentTimeMillis()` use in the pipeline, some unused members, and per-call virtual-thread executors in `CounterOfferAgent` and the pipeline. Review item #12. |
-| Counter-offers are unchecked when no rule applies | FR-41 | Handled by a `counter-offer-unchecked` warning (fixed in the P6 review fixes). The Bangladesh rules are all draft, so every Bangladesh redline carries it today. |
+| Counter-offers are unchecked when no rule applies | FR-41 | Handled by a `counter-offer-unchecked` warning (fixed in the P6 review fixes). The eight Bangladesh rules are active (reviewed by a team member, not a lawyer), so only a redline for a clause that no rule covers carries it. |
 
 ## P6 (intelligence core)
 
@@ -127,5 +127,5 @@ a lawyer's review is pending. All eight claims checked were corroborated by the 
 **Fix plan (after 20 Nov):** add a new counter-offer prompt version (`counter-offer` v{n+1}) that
 receives the relevant section text (s.118(3), s.26(4), s.27(4)); re-record the demo
 (record-missing only, see "Changing a rule file changes the recorded request hashes"); run the
-dev-split evaluation; then ask the lawyer to review the changes. Rules stay draft until a
-different reviewer signs them off.
+dev-split evaluation; then ask the lawyer to review the changes. Rules 4 and 7 stay coarse until
+then, and any rule change needs a reviewer other than the author to sign it off.

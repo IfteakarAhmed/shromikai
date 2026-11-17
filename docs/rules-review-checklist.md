@@ -1,8 +1,11 @@
 # Rules review checklist (P6)
 
-Reviewer: a team member (not a lawyer). The author of every rule is Claude (draft, phase P6).
+Reviewer: a team member (not a lawyer). The author of every rule is Claude (drafted in phase P6).
 A rule is evaluated only when `status: active` and `reviewed_by` names a person other than the author
-(FR-36, R-10). **All rules below are `draft`.** The drafter never sets `reviewed_by`.
+(FR-36, R-10). **Status as of 2026-11-17: all 8 rules in `data/rules/bd-labour.yaml` are `active`**
+with `reviewed_by` set to the team member who reviewed them (a person, not a lawyer); a lawyer's
+review is still pending. The drafter never sets `reviewed_by`. Rules 4 (`bd-weekly-rest-min`) and
+7 (`bd-festival-holidays-min`) are coarse; see `docs/known-gaps.md`.
 
 ## How to review one rule
 
@@ -15,7 +18,8 @@ A rule is evaluated only when `status: active` and `reviewed_by` names a person 
    wages, benefits or employment protection; HIGH = conflicts with a mandatory provision with another
    effect; MEDIUM = omission, ambiguity or interaction; LOW = ILO or drafting practice only.
 6. Tell Claude "rule <id> reviewed". Claude then sets `reviewed_by` to your name with the note
-   "team member, not a lawyer" and `status: active`. Claude does not do this on its own.
+   "team member, not a lawyer" and `status: active`. Claude does not do this on its own. (Done for
+   all 8 current rules; keep this step for any new or changed rule.)
 
 The application refuses to start if an active rule's quote is not in the current section text, so a
 mistake here is caught at startup, not in a user's result. `./gradlew checkRules` runs the same
@@ -155,5 +159,5 @@ would sometimes be wrong. The risk agent still looks at them and its citations a
 
 ## Known limits of all rules
 
-- No rule knows the worker category (the corpus has no worker-category terms), so exemptions listed above are not applied. A draft rule that flags an exempt worker would be a wrong finding; decide whether to activate such a rule or to leave it as a draft.
+- No rule knows the worker category (the corpus has no worker-category terms), so exemptions listed above are not applied. An active rule can flag an exempt worker, which would be a wrong finding; the reviewer accepted this for the demo, and the lawyer review should look at it.
 - Rules read only facts the contract states. A contract that is silent produces no rule finding; omissions are found by the risk agent.
