@@ -102,7 +102,8 @@ class EgressGuardTest {
         .doesNotThrowAnyException();
 
     verify(audit, never()).record(any());
-    assertThat(meters.find("shromikai_privacy_blocks_total").counter()).isNull();
+    // The counter is registered up front (FR-82, MetricsIT); no block may have been counted.
+    assertThat(meters.find("shromikai_privacy_blocks_total").counter().count()).isZero();
   }
 
   @Test

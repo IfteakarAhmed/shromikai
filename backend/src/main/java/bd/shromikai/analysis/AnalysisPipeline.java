@@ -93,6 +93,7 @@ public class AnalysisPipeline {
   private final AnalysisProperties properties;
   private final DailyBudget dailyBudget;
   private final Clock clock;
+  private final bd.shromikai.trace.AnalysisMetrics metrics;
   private final ExecutorService executor = Executors.newVirtualThreadPerTaskExecutor();
 
   public AnalysisPipeline(
@@ -116,7 +117,9 @@ public class AnalysisPipeline {
       AnalysisTraceStore traces,
       AnalysisProperties properties,
       DailyBudget dailyBudget,
-      Clock clock) {
+      Clock clock,
+      bd.shromikai.trace.AnalysisMetrics metrics) {
+    this.metrics = metrics;
     this.facts = facts;
     this.engine = engine;
     this.rules = rules;
@@ -488,6 +491,7 @@ public class AnalysisPipeline {
             narrative,
             opened.ticket());
     d.job.analysed(outcome);
+    metrics.analysis("SUCCEEDED", d.job.inputKind(), clientKind(d.job), "none");
     record(
         d,
         Stage.COMPLETE,
@@ -682,7 +686,13 @@ public class AnalysisPipeline {
     persist(d.job, event);
   }
 
+  private static String clientKind(AnalysisJob job) {
+    AnalysisSubject owner = job.owner();
+    return owner == null ? "unknown" : owner.clientKind();
+  }
+
   private void persist(AnalysisJob job, TraceEvent e) {
+    metrics.stage(e.stage().name(), job.inputKind(), e.durationMs());
     traces.append(
         job.id(),
         e.stage().name(),
@@ -729,6 +739,7 @@ public class AnalysisPipeline {
     } catch (RuntimeException storeFailure) {
       LOG.error("could not store the failed run: {}", storeFailure.getClass().getSimpleName());
     }
+    metrics.analysis("FAILED", job.inputKind(), clientKind(job), problem.type().code());
     job.fail(problem);
   }
 

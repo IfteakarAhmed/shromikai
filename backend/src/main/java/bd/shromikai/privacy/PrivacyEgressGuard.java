@@ -42,6 +42,8 @@ public final class PrivacyEgressGuard implements EgressGuard {
     this.detector = detector;
     this.audit = audit;
     this.meters = meters;
+    // Registered up front so the series exists before the first block (FR-82).
+    meters.counter("shromikai_privacy_blocks_total");
   }
 
   @Override

@@ -39,11 +39,26 @@ public class CitationVerifier {
   private final ExecutorService executor = Executors.newVirtualThreadPerTaskExecutor();
   private final Semaphore slots;
 
+  private final io.micrometer.core.instrument.@org.jspecify.annotations.Nullable MeterRegistry
+      meters;
+
   public CitationVerifier(
       bd.shromikai.verify.internal.SectionLookupPort sections,
       SupportVerifier support,
       VerifyProperties properties,
       Clock clock) {
+    this(sections, support, properties, clock, null);
+  }
+
+  /** With {@code shromikai_verification_total} by status, independence and reason (FR-82). */
+  @org.springframework.beans.factory.annotation.Autowired
+  public CitationVerifier(
+      bd.shromikai.verify.internal.SectionLookupPort sections,
+      SupportVerifier support,
+      VerifyProperties properties,
+      Clock clock,
+      io.micrometer.core.instrument.@org.jspecify.annotations.Nullable MeterRegistry meters) {
+    this.meters = meters;
     this.existenceCheck = new ExistenceCheck(sections);
     this.quoteCheck = new QuoteCheck(properties);
     this.support = support;
@@ -148,6 +163,23 @@ public class CitationVerifier {
         existence.lookup());
   }
 
+  private void count(VerificationResult result) {
+    if (meters == null) {
+      return;
+    }
+    var independence = result.checks().support().independence();
+    meters
+        .counter(
+            "shromikai_verification_total",
+            "status",
+            result.status().name(),
+            "independence",
+            independence == null ? "NONE" : independence.name(),
+            "reason_code",
+            result.reasonCodes().isEmpty() ? "NONE" : result.reasonCodes().getFirst().name())
+        .increment();
+  }
+
   /** Verifies claims in parallel on virtual threads, at most {@code parallelism} at a time. */
   public List<Verdict> verifyAll(List<ClaimedCitation> claims, VerificationContext context) {
     List<Future<Verdict>> futures = new ArrayList<>();
@@ -199,6 +231,7 @@ public class CitationVerifier {
             reasons,
             clock.instant(),
             context.corpusRelease());
+    count(result);
     if (decision.status() != VerificationStatus.VERIFIED) {
       return new Verdict(result, null);
     }

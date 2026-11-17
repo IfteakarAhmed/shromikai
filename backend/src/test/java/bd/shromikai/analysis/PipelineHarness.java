@@ -128,7 +128,10 @@ final class PipelineHarness {
             traces,
             properties,
             dailyBudget,
-            clock);
+            clock,
+            new bd.shromikai.trace.AnalysisMetrics(
+                new io.micrometer.core.instrument.simple.SimpleMeterRegistry(),
+                AnalysisFixtures.cost()));
   }
 
   static AnalysisProperties properties() {

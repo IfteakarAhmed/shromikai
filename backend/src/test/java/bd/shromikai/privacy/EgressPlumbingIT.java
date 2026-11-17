@@ -124,7 +124,8 @@ class EgressPlumbingIT {
           .doesNotContain(BanglaNormalizer.toLatinDigits(entity.value()));
     }
     assertThat(unescaped).contains("[PERSON_1]");
-    assertThat(h.meters.find("shromikai_privacy_blocks_total").counter()).isNull();
+    // The counter is registered up front (FR-82, MetricsIT); no block may have been counted.
+    assertThat(h.meters.find("shromikai_privacy_blocks_total").counter().count()).isZero();
   }
 
   @ParameterizedTest(name = "{0}")
