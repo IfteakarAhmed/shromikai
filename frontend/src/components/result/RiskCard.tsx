@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom'
 import type { RiskFinding } from '../../api/analyses'
 import { groupCitations, type CitationGroup } from '../../lib/citations'
 import { localizeDigits } from '../../lib/format'
+import { firstSentence } from '../../lib/resultSummary'
 import type { Language } from '../../i18n'
 import { Badge } from '../ui/Badge'
 import { Button } from '../ui/Button'
@@ -23,9 +24,11 @@ interface RiskCardProps {
 }
 
 /**
- * One risk. A verified finding shows its citations; an uncertain one shows none and says it was
- * sent for human review (R-01): the card ignores citations unless the finding is `VERIFIED`, so a
- * malformed response cannot put a claim in front of a reader.
+ * One risk, compact (C3): the marks, the title, the first sentence, the verified citation chips
+ * and, for an uncertain finding, the human-review message stay in view; the rest of the
+ * explanation, the clause numbers and the why button sit under বিস্তারিত. The card ignores
+ * citations unless the finding is `VERIFIED`, so a malformed response cannot put a claim in front
+ * of a reader (R-01).
  */
 export function RiskCard({
   finding,
@@ -41,15 +44,13 @@ export function RiskCard({
   const uncertain = finding.verificationStatus === 'UNCERTAIN'
   const clauses = finding.clauseIds.map((id) => localizeDigits(id.replace('c', ''), uiLanguage))
 
+  const { first, rest } = firstSentence(finding.explanation)
+
   return (
     <GlassCard as="article" className="p-5" aria-labelledby={`finding-${finding.id}`}>
       <div className="lift-2 flex flex-wrap items-center gap-2">
         <SeverityTag severity={finding.severity} />
         <VerificationBadge status={finding.verificationStatus} />
-        {finding.nonObvious && <Badge tone="neutral">{t('finding.nonObvious')}</Badge>}
-        <Badge tone="neutral" className="text-muted-foreground">
-          {t(`kind.${finding.kind}`)}
-        </Badge>
         {finding.source !== 'LLM_ANALYSIS' && (
           <Badge tone="neutral" data-testid="finding-source">
             {t(`finding.source.${finding.source}`)}
@@ -61,26 +62,8 @@ export function RiskCard({
         <h3 id={`finding-${finding.id}`} className="text-xl font-bold leading-snug">
           {finding.title}
         </h3>
-        <p className="mt-2">{finding.explanation}</p>
-        {finding.whyItMatters !== '' && (
-          <p className="mt-2 text-muted-foreground">
-            <strong className="text-foreground">{t('finding.whyItMatters')}: </strong>
-            {finding.whyItMatters}
-          </p>
-        )}
-        {finding.sideNote !== null && finding.sideNote !== '' && (
-          <p className="mt-2 text-muted-foreground">
-            <strong className="text-foreground">{t('finding.forYou')}: </strong>
-            {finding.sideNote}
-          </p>
-        )}
+        <p className="mt-2">{first}</p>
       </div>
-
-      {clauses.length > 0 && (
-        <p className="mt-3 text-sm text-muted-foreground">
-          {t('finding.clauses')}: {clauses.join(', ')}
-        </p>
-      )}
 
       {verified && finding.citations.length > 0 && (
         <div className="lift-2 mt-4">
@@ -109,36 +92,74 @@ export function RiskCard({
         </div>
       )}
 
-      <div className="lift-1 mt-4 flex flex-wrap items-center gap-2">
-        <Button
-          variant="outline"
-          onClick={() => {
-            onOpenWhy(finding)
-          }}
-        >
-          <Icon name="help" />
-          {t('finding.why')}
-        </Button>
-        {onOpenProposal !== undefined && finding.redlineId !== null && verified && (
+      {((onOpenProposal !== undefined && finding.redlineId !== null && verified) ||
+        (uncertain && ticketHref !== undefined)) && (
+        <div className="lift-1 mt-4 flex flex-wrap items-center gap-2">
+          {onOpenProposal !== undefined && finding.redlineId !== null && verified && (
+            <Button
+              variant="ghost"
+              onClick={() => {
+                onOpenProposal(finding)
+              }}
+            >
+              {t('finding.seeProposal')}
+              <Icon name="arrowRight" />
+            </Button>
+          )}
+          {uncertain && ticketHref !== undefined && (
+            <Link
+              to={ticketHref}
+              className="inline-flex min-h-11 items-center gap-1 rounded-lg px-3 font-semibold text-uncertain underline underline-offset-4"
+            >
+              {t('finding.ticketLink')}
+            </Link>
+          )}
+        </div>
+      )}
+
+      <details className="details-fold mt-4 border-t border-border pt-2">
+        <summary className="flex min-h-11 cursor-pointer items-center gap-2 font-semibold text-muted-foreground">
+          <Icon name="chevronRight" className="details-chevron shrink-0" />
+          {t('finding.details')}
+        </summary>
+        <div className="mt-2 space-y-2">
+          <div className="flex flex-wrap gap-2">
+            {finding.nonObvious && <Badge tone="neutral">{t('finding.nonObvious')}</Badge>}
+            <Badge tone="neutral" className="text-muted-foreground">
+              {t(`kind.${finding.kind}`)}
+            </Badge>
+          </div>
+          <div lang={language}>
+            {rest !== '' && <p>{rest}</p>}
+            {finding.whyItMatters !== '' && (
+              <p className="mt-2 text-muted-foreground">
+                <strong className="text-foreground">{t('finding.whyItMatters')}: </strong>
+                {finding.whyItMatters}
+              </p>
+            )}
+            {finding.sideNote !== null && finding.sideNote !== '' && (
+              <p className="mt-2 text-muted-foreground">
+                <strong className="text-foreground">{t('finding.forYou')}: </strong>
+                {finding.sideNote}
+              </p>
+            )}
+          </div>
+          {clauses.length > 0 && (
+            <p className="text-sm text-muted-foreground">
+              {t('finding.clauses')}: {clauses.join(', ')}
+            </p>
+          )}
           <Button
-            variant="ghost"
+            variant="outline"
             onClick={() => {
-              onOpenProposal(finding)
+              onOpenWhy(finding)
             }}
           >
-            {t('finding.seeProposal')}
-            <Icon name="arrowRight" />
+            <Icon name="help" />
+            {t('finding.why')}
           </Button>
-        )}
-        {uncertain && ticketHref !== undefined && (
-          <Link
-            to={ticketHref}
-            className="inline-flex min-h-11 items-center gap-1 rounded-lg px-3 font-semibold text-uncertain underline underline-offset-4"
-          >
-            {t('finding.ticketLink')}
-          </Link>
-        )}
-      </div>
+        </div>
+      </details>
     </GlassCard>
   )
 }

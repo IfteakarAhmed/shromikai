@@ -186,10 +186,10 @@
     "policyMeaning": "This is the organisation's own policy, not the law."
   },
   "kind": {
-    "CONFLICT": "Conflicts with the law",
-    "OMISSION": "Something that should be there",
+    "CONFLICT": "Does not match the law",
+    "OMISSION": "Left out of the contract",
     "AMBIGUITY": "Unclear term",
-    "INTERACTION": "Terms that clash",
+    "INTERACTION": "Two clauses clash",
     "POLICY_DEVIATION": "Departs from the policy"
   },
   "finding": {
@@ -197,8 +197,8 @@
     "why": "Why?",
     "whyItMatters": "Why it matters",
     "forYou": "For you",
-    "clauses": "Contract clauses",
-    "seeProposal": "See the proposed clause",
+    "clauses": "Contract clause numbers",
+    "seeProposal": "See the suggested change",
     "citations": "Legal citations",
     "noCitation": "No citation is shown.",
     "ticketLink": "See the review status",
@@ -206,7 +206,8 @@
     "source": {
       "RULE_ENGINE": "Fixed legal limit",
       "PLAYBOOK": "Your organisation's policy"
-    }
+    },
+    "details": "Details"
   },
   "citation": {
     "section": "Section {{number}}",
@@ -254,6 +255,15 @@
       "tooManyImages": "At most {{max}} photos can be sent.",
       "textTooShort": "The text is too short. Give at least {{min}} characters.",
       "textTooLong": "The text is too long. At most {{max}} characters can be sent."
+    },
+    "steps": {
+      "label": "Share your contract in three steps",
+      "contract": "Add the contract",
+      "side": "Whose side to take",
+      "start": "Start",
+      "contractHint": "A PDF, photos or text, whatever you have.",
+      "startHint": "Once you start, the next page shows each step.",
+      "number": "Step {{n}}"
     }
   },
   "progress": {
@@ -276,7 +286,15 @@
     "expiredTitle": "This result is gone",
     "expiredBody": "Results are deleted after a short while. Share the contract again to analyse it.",
     "again": "Try again",
-    "warning": "Warning"
+    "warning": "Warning",
+    "sentences": {
+      "reading": "Reading the text of your contract",
+      "redacting": "Removing names, phone numbers, addresses and ID numbers on our own server",
+      "classifying": "Working out what each clause is about",
+      "searching": "Looking for the relevant sections of the law",
+      "analyzing": "Looking for the risks",
+      "verifying": "Checking every citation against the official source"
+    }
   },
   "results": {
     "title": "Review of your contract",
@@ -309,7 +327,27 @@
     "coverage": "Limits of this review",
     "expires": "This result stays until {{time}}.",
     "ticket": "Status of the human review",
-    "compareShort": "Compare"
+    "compareShort": "Compare",
+    "summary": {
+      "big": "Big problems in your contract: {{count}}",
+      "noBig": "No big problems were found in your contract",
+      "meaning": "Big problems are the ones marked “{{critical}}” or “{{high}}”.",
+      "total": "{{count}} findings in all.",
+      "uncertain": "{{count}} could not be confirmed and went to human review."
+    },
+    "next": {
+      "title": "What to do now",
+      "proposals": "See the suggested change to {{count}} clauses",
+      "review": "See the review status of {{count}} uncertain findings",
+      "duties": "See the list of {{count}} duties of both sides",
+      "memo": "Read or download the whole review as a memo",
+      "note": "These are parts of this review. This is not legal advice."
+    },
+    "seal": {
+      "title": "Verification finished",
+      "detail": "{{verified}} verified, {{uncertain}} uncertain",
+      "detailVerified": "{{verified}} verified"
+    }
   },
   "citationSheet": {
     "title": "Legal citation",
@@ -433,8 +471,8 @@
   "tabs": {
     "label": "Parts of the result",
     "risks": "Risks",
-    "proposals": "Proposed new clauses",
-    "duties": "Duties",
+    "proposals": "Suggested changes",
+    "duties": "Who does what",
     "memo": "Memo"
   },
   "redline": {

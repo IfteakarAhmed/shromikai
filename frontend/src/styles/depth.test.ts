@@ -97,4 +97,14 @@ describe('depth system CSS', () => {
     expect(print).toMatch(/\.depth-glow/)
     expect(print).toMatch(/\.depth-card/)
   })
+
+  it('FR-70 sheets float in with a 3D entrance that reduced motion switches off', () => {
+    expect(block('@keyframes sheet-in')).toMatch(/rotateX\(/)
+    expect(block('@media (prefers-reduced-motion: reduce)')).toMatch(/dialog\.sheet/)
+  })
+
+  it('R-01 the verification seal drops in once and stands still with reduced motion', () => {
+    expect(block('@keyframes seal-drop')).toMatch(/translate|transform/)
+    expect(block('@media (prefers-reduced-motion: reduce)')).toMatch(/\.seal-moment/)
+  })
 })

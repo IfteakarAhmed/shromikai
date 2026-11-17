@@ -734,6 +734,14 @@ header.site-header {
     display: none;
   }
 
+  dialog.sheet[open],
+  .seal-moment svg,
+  .seal-moment circle,
+  .seal-moment path,
+  .progress-rail .stage-node {
+    animation: none !important;
+  }
+
   ::view-transition-group(*),
   ::view-transition-old(*),
   ::view-transition-new(*) {
@@ -763,13 +771,167 @@ dialog.sheet {
 }
 
 dialog.sheet[open] {
-  animation: sheet-in var(--dur-base) var(--ease-out) both;
+  box-shadow:
+    0 50px 140px -40px oklch(0.04 0.03 260 / 70%),
+    0 0 0 1px var(--glass-border),
+    0 1px 0 var(--glass-highlight) inset;
+  animation: sheet-in var(--dur-slow) var(--ease-out) backwards;
 }
 
+/* Sheets float in: a slight 3D swing up from below the viewer's eye line. */
 @keyframes sheet-in {
   from {
-    transform: translateY(24px);
+    transform: perspective(1200px) rotateX(9deg) translateY(36px);
   }
+
+  to {
+    transform: none;
+  }
+}
+
+/* A light edge along the top of a sheet. */
+dialog.sheet::before {
+  position: absolute;
+  inset: 0 0 auto;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, var(--edge-light), transparent);
+  content: '';
+  pointer-events: none;
+}
+
+/* The "verification finished" seal (C3): drops in once, its check draws itself, a ring of light
+   spreads. Every animation rests in the finished state, so reduced motion shows the seal as is. */
+.seal-moment svg {
+  filter: drop-shadow(0 12px 28px var(--glow-primary));
+  animation: seal-drop 900ms var(--ease-out) backwards;
+}
+
+.seal-ring {
+  fill: none;
+  stroke: var(--verified);
+  stroke-width: 2;
+  opacity: 0.45;
+  transform-origin: 48px 48px;
+  animation: seal-ring 1600ms var(--ease-out) 350ms backwards;
+}
+
+.seal-disc {
+  fill: var(--primary);
+}
+
+.seal-inner {
+  fill: none;
+  stroke: var(--primary-foreground);
+  stroke-width: 1.5;
+  opacity: 0.4;
+}
+
+.seal-check {
+  fill: none;
+  stroke: var(--primary-foreground);
+  stroke-width: 7;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  stroke-dasharray: 48;
+  stroke-dashoffset: 0;
+  animation: seal-check 520ms var(--ease-out) 620ms backwards;
+}
+
+@keyframes seal-drop {
+  from {
+    translate: 0 -48px;
+    scale: 1.35;
+    opacity: 0;
+  }
+}
+
+@keyframes seal-ring {
+  from {
+    scale: 0.6;
+    opacity: 0.9;
+  }
+}
+
+@keyframes seal-check {
+  from {
+    stroke-dashoffset: 48;
+  }
+}
+
+/* The lit timeline of the progress screen: a rail that fills as steps finish. */
+.progress-rail > li::before {
+  position: absolute;
+  top: 2.5rem;
+  bottom: 0;
+  left: calc(1.25rem - 1px);
+  width: 2px;
+  background: var(--border);
+  content: '';
+}
+
+.progress-rail > li:last-child::before {
+  display: none;
+}
+
+.progress-rail > li[data-state='done']::before {
+  background: var(--verified);
+  box-shadow: 0 0 12px var(--glow-primary);
+}
+
+.progress-rail > li[data-state='done'] .stage-node {
+  box-shadow: 0 0 20px -4px var(--glow-primary);
+}
+
+.progress-rail > li[data-state='active'] .stage-node {
+  animation: stage-pulse 1.8s ease-in-out infinite;
+}
+
+@keyframes stage-pulse {
+  0%,
+  100% {
+    box-shadow: 0 0 0 0 var(--glow-primary);
+  }
+
+  50% {
+    box-shadow: 0 0 0 10px transparent;
+  }
+}
+
+/* The three upload steps hang on one rail. */
+.upload-step {
+  position: relative;
+}
+
+.upload-step + .upload-step {
+  margin-top: 2.25rem;
+}
+
+.upload-step:not(:last-child)::before {
+  position: absolute;
+  top: 2.75rem;
+  bottom: -2rem;
+  left: calc(1.25rem - 1px);
+  width: 2px;
+  background: linear-gradient(var(--primary), transparent);
+  content: '';
+  opacity: 0.5;
+}
+
+/* বিস্তারিত: a plain disclosure with a turning chevron. */
+.details-fold > summary {
+  list-style: none;
+}
+
+.details-fold > summary::-webkit-details-marker {
+  display: none;
+}
+
+.details-chevron {
+  transition: rotate var(--dur-fast) var(--ease-out);
+}
+
+.details-fold[open] .details-chevron {
+  rotate: 90deg;
 }
 
 dialog.sheet::backdrop {

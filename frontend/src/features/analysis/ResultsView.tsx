@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { useSearchParams } from 'react-router-dom'
+import { Link, useSearchParams } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
 import { warningText } from '../../lib/warnings'
 import type { AnalysisResult, RiskFinding } from '../../api/analyses'
@@ -10,6 +10,14 @@ import { Icon } from '../../components/ui/Icon'
 import { LinkButton } from '../../components/ui/Button'
 import { Disclaimer } from '../../components/ui/Disclaimer'
 import { RiskCard } from '../../components/result/RiskCard'
+import { SealMoment } from '../../components/result/SealMoment'
+import { DisplayText } from '../../components/ui/DisplayText'
+import {
+  bigProblemCount,
+  nextSteps,
+  verificationFinished,
+  type NextStep,
+} from '../../lib/resultSummary'
 import { SeverityTag, type Severity } from '../../components/result/SeverityTag'
 import { VerificationLegend } from '../../components/result/VerificationLegend'
 import { sortFindings } from '../../lib/findings'
@@ -24,6 +32,25 @@ import { RedlineView } from './RedlineView'
 import { WhySheet } from './WhySheet'
 
 const SEVERITIES: readonly Severity[] = ['CRITICAL', 'HIGH', 'MEDIUM', 'LOW']
+
+const STEP_ICONS = {
+  proposals: 'file',
+  review: 'help',
+  duties: 'list',
+  memo: 'printer',
+} as const
+
+/** Where a next step leads: a tab of this result, or the review ticket. */
+function stepTarget(step: NextStep): string {
+  switch (step.id) {
+    case 'review':
+      return `/app/tickets/${step.ticketId}`
+    case 'proposals':
+    case 'duties':
+    case 'memo':
+      return `?tab=${step.id}`
+  }
+}
 
 interface ResultsViewProps {
   result: AnalysisResult
@@ -53,6 +80,8 @@ export function ResultsView({ result }: ResultsViewProps) {
   const findings = sortFindings(result.findings)
   const { summary } = result
   const n = (value: number) => formatNumber(value, language)
+  const big = bigProblemCount(summary)
+  const steps = nextSteps(result)
 
   return (
     <div className="mx-auto max-w-6xl px-(--gutter) pb-28 pt-8 lg:pb-12">
@@ -76,7 +105,68 @@ export function ResultsView({ result }: ResultsViewProps) {
         </div>
       </header>
 
-      <section aria-labelledby="summary-heading" className="mt-6">
+      <section
+        aria-labelledby="plain-summary"
+        className="mt-6 grid items-center gap-6 lg:grid-cols-[1fr_auto]"
+      >
+        <div>
+          <h2 id="plain-summary" className="text-3xl leading-tight sm:text-4xl">
+            <DisplayText
+              text={
+                big > 0 ? t('results.summary.big', { count: n(big) }) : t('results.summary.noBig')
+              }
+            />
+          </h2>
+          <p className="mt-2 text-muted-foreground">
+            {t('results.summary.meaning', {
+              critical: t('severity.critical'),
+              high: t('severity.high'),
+            })}
+          </p>
+          <p className="mt-1">
+            {t('results.summary.total', { count: n(result.findings.length) })}{' '}
+            {summary.uncertainFindings > 0 &&
+              t('results.summary.uncertain', { count: n(summary.uncertainFindings) })}
+          </p>
+        </div>
+        {verificationFinished(result) && (
+          <SealMoment verified={summary.verifiedFindings} uncertain={summary.uncertainFindings} />
+        )}
+      </section>
+
+      <section aria-labelledby="next-title" className="mt-8">
+        <h2 id="next-title" className="text-2xl">
+          {t('results.next.title')}
+        </h2>
+        <ol className="mt-4 grid gap-3 md:grid-cols-2">
+          {steps.map((step) => (
+            <li key={step.id}>
+              <Link
+                to={stepTarget(step)}
+                onClick={() => {
+                  if (step.id !== 'review') {
+                    document.getElementById('results-tabs')?.scrollIntoView({ block: 'start' })
+                  }
+                }}
+                className="glass-panel glass-interactive flex min-h-14 items-center gap-3 rounded-2xl px-4 py-3 font-semibold"
+              >
+                <span className="flex size-10 shrink-0 items-center justify-center rounded-xl bg-primary/15 text-primary">
+                  <Icon name={STEP_ICONS[step.id]} />
+                </span>
+                <span className="flex-1">
+                  {step.id === 'memo'
+                    ? t('results.next.memo')
+                    : t(`results.next.${step.id}`, { count: n(step.count) })}
+                </span>
+                <Icon name="arrowRight" className="shrink-0 text-muted-foreground" />
+              </Link>
+            </li>
+          ))}
+        </ol>
+        <p className="mt-3 text-sm text-muted-foreground">{t('results.next.note')}</p>
+      </section>
+
+      <section aria-labelledby="summary-heading" className="mt-8">
         <h2 id="summary-heading" className="sr-only">
           {t('results.summaryTitle')}
         </h2>
@@ -125,7 +215,7 @@ export function ResultsView({ result }: ResultsViewProps) {
         <VerificationLegend />
       </div>
 
-      <div className="mt-8">
+      <div id="results-tabs" className="mt-8 scroll-mt-28">
         <Tabs
           idPrefix="results"
           label={t('tabs.label')}

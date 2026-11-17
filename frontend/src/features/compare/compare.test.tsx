@@ -159,7 +159,7 @@ describe('CompareResultView scripted baseline', () => {
     renderApp(<CompareResultView compare={scripted()} />)
 
     const column = screen.getByRole('region', { name: 'সাধারণ এআইয়ের উত্তর' })
-    expect(within(column).getByText('উচ্চ ঝুঁকি')).toBeInTheDocument()
+    expect(within(column).getByText('বড় ঝুঁকি')).toBeInTheDocument()
     expect(within(column).queryByText('HIGH')).not.toBeInTheDocument()
   })
 })

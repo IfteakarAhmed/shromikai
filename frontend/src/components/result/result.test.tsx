@@ -130,8 +130,8 @@ describe('RiskCard', () => {
 
     expect(screen.getByText('Dismissal without notice')).toBeInTheDocument()
     expect(screen.getByText('✓ যাচাইকৃত')).toBeInTheDocument()
-    expect(screen.getByText('উচ্চ ঝুঁকি')).toBeInTheDocument()
-    expect(screen.getByText('চোখে পড়ে না এমন ঝুঁকি')).toBeInTheDocument()
+    expect(screen.getByText('বড় ঝুঁকি')).toBeInTheDocument()
+    expect(screen.getByText('সহজে চোখে পড়ে না এমন ঝুঁকি')).toBeInTheDocument()
     expect(screen.getAllByRole('button', { name: /ধারা \S+ খুলুন/ })).toHaveLength(2)
     expect(screen.getByText(/without any notice/)).toBeInTheDocument()
   })
@@ -205,5 +205,46 @@ describe('RiskCard', () => {
     )
 
     expect(screen.queryByText(/সংস্করণ/)).not.toBeInTheDocument()
+  })
+})
+
+/** True when the element sits inside a closed <details> (hidden until opened). */
+const folded = (element: Element) => element.closest('details:not([open])') !== null
+
+describe('RiskCard compact', () => {
+  const handlers = {
+    language: 'bn' as const,
+    onOpenCitation: () => undefined,
+    onOpenWhy: () => undefined,
+  }
+
+  it('FR-70 shows the title, the first sentence, the marks and the chips; the rest is under বিস্তারিত', () => {
+    const finding = makeFinding({
+      explanation: 'The contract ends at once. It gives no notice at all.',
+      citations: [makeCitation()],
+    })
+    render(<RiskCard finding={finding} {...handlers} />)
+    expect(folded(screen.getByText('Dismissal without notice'))).toBe(false)
+    expect(folded(screen.getByText('The contract ends at once.'))).toBe(false)
+    expect(folded(screen.getByText('It gives no notice at all.'))).toBe(true)
+    expect(folded(screen.getByText('✓ যাচাইকৃত'))).toBe(false)
+    expect(folded(screen.getByText('বড় ঝুঁকি'))).toBe(false)
+    expect(
+      folded(screen.getAllByRole('button', { name: /ধারা \S+ খুলুন/ })[0] as HTMLElement),
+    ).toBe(false)
+    expect(folded(screen.getByText(/চুক্তির শর্ত/))).toBe(true)
+    expect(folded(screen.getByRole('button', { name: 'কেন?' }))).toBe(true)
+    expect(screen.getByText('বিস্তারিত').tagName).toBe('SUMMARY')
+  })
+
+  it('FR-36 keeps the fixed-legal-limit label on the compact card', () => {
+    render(<RiskCard finding={makeFinding({ source: 'RULE_ENGINE' })} {...handlers} />)
+    expect(folded(screen.getByText('নির্দিষ্ট আইনি সীমা'))).toBe(false)
+  })
+
+  it('R-01 an uncertain card keeps অনিশ্চিত and the review message outside বিস্তারিত', () => {
+    render(<RiskCard finding={makeUncertainFinding()} {...handlers} />)
+    expect(folded(screen.getByText('? অনিশ্চিত'))).toBe(false)
+    expect(folded(screen.getByText('মানুষের পর্যালোচনার জন্য পাঠানো হয়েছে'))).toBe(false)
   })
 })

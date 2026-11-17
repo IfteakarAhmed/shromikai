@@ -364,12 +364,12 @@ describe('ResultsView tabs', () => {
     page()
 
     const tabs = screen.getAllByRole('tab').map((tab) => tab.textContent)
-    expect(tabs).toEqual(['ঝুঁকি', 'প্রস্তাবিত নতুন ধারা', 'দায়িত্ব-তালিকা', 'মেমো'])
+    expect(tabs).toEqual(['ঝুঁকি', 'বদলানোর প্রস্তাব', 'কার কী দায়িত্ব', 'মেমো'])
     expect(screen.getByRole('tabpanel', { name: 'ঝুঁকি' })).toBeVisible()
 
-    await userEvent.click(screen.getByRole('tab', { name: 'দায়িত্ব-তালিকা' }))
+    await userEvent.click(screen.getByRole('tab', { name: 'কার কী দায়িত্ব' }))
 
-    expect(screen.getByRole('tabpanel', { name: 'দায়িত্ব-তালিকা' })).toBeVisible()
+    expect(screen.getByRole('tabpanel', { name: 'কার কী দায়িত্ব' })).toBeVisible()
     expect(screen.queryByRole('tabpanel', { name: 'ঝুঁকি' })).not.toBeInTheDocument()
   })
 
@@ -379,7 +379,7 @@ describe('ResultsView tabs', () => {
 
     await userEvent.keyboard('{ArrowRight}')
 
-    expect(screen.getByRole('tab', { name: 'প্রস্তাবিত নতুন ধারা' })).toHaveAttribute(
+    expect(screen.getByRole('tab', { name: 'বদলানোর প্রস্তাব' })).toHaveAttribute(
       'aria-selected',
       'true',
     )
@@ -392,7 +392,7 @@ describe('ResultsView tabs', () => {
     fireEvent.touchStart(panel, { touches: [{ clientX: 300, clientY: 400 }] })
     fireEvent.touchEnd(panel, { changedTouches: [{ clientX: 120, clientY: 410 }] })
 
-    expect(screen.getByRole('tab', { name: 'প্রস্তাবিত নতুন ধারা' })).toHaveAttribute(
+    expect(screen.getByRole('tab', { name: 'বদলানোর প্রস্তাব' })).toHaveAttribute(
       'aria-selected',
       'true',
     )
