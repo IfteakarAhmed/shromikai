@@ -1,0 +1,22 @@
+{
+  "fixtureVersion" : 1,
+  "promptId" : "verify-support-claude",
+  "promptVersion" : 2,
+  "caseId" : "eval-syn-bn-02-worker",
+  "modelId" : "claude-haiku-5-5",
+  "requestSha256" : "3a82ddc2ebadd097b1a2a1dbeb299cc7cfc6800709046bf30b85562fedeef238",
+  "provenance" : "synthetic",
+  "source" : "recorded from a live call",
+  "recordedAt" : "2026-11-17T11:06:17.773241Z",
+  "stopReason" : "end_turn",
+  "usage" : {
+    "inputTokens" : 1821,
+    "outputTokens" : 86,
+    "cacheReadTokens" : 982
+  },
+  "response" : {
+    "label" : "PARTIAL",
+    "confidence" : 0.6,
+    "reason" : "Section sets 60-day written notice for permanent workers' resignation and compensation on resignation; it does not address penalty via security deposit (জামানত), so only part of the claim is supported."
+  }
+}

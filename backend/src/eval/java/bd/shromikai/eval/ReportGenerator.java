@@ -176,7 +176,7 @@ public final class ReportGenerator {
         .append(c.seed())
         .append('\n');
     md.append("- Hardware: ").append(c.hardware()).append('\n');
-    md.append("- Models per role: ");
+    md.append("- Models per prompt: ");
     c.models().forEach((role, model) -> md.append(role).append(" = ").append(model).append("; "));
     md.append('\n');
     md.append("- Verifier independence: ").append(c.verifierIndependence()).append('\n');

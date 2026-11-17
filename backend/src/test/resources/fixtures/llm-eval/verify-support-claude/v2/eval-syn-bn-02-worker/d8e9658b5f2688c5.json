@@ -1,0 +1,22 @@
+{
+  "fixtureVersion" : 1,
+  "promptId" : "verify-support-claude",
+  "promptVersion" : 2,
+  "caseId" : "eval-syn-bn-02-worker",
+  "modelId" : "claude-haiku-5-5",
+  "requestSha256" : "d8e9658b5f2688c5e88218dc2ae118489e5dfedccc5fd3e2004b2d396a0dbbf4",
+  "provenance" : "synthetic",
+  "source" : "recorded from a live call",
+  "recordedAt" : "2026-11-17T11:06:15.919313Z",
+  "stopReason" : "end_turn",
+  "usage" : {
+    "inputTokens" : 411,
+    "outputTokens" : 62,
+    "cacheReadTokens" : 982
+  },
+  "response" : {
+    "label" : "SUPPORTS",
+    "confidence" : 0.95,
+    "reason" : "Section requires employer to pay all dues to worker within thirty working days after separation, matching the claim's elements."
+  }
+}

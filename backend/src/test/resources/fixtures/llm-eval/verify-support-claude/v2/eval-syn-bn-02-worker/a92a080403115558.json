@@ -1,0 +1,22 @@
+{
+  "fixtureVersion" : 1,
+  "promptId" : "verify-support-claude",
+  "promptVersion" : 2,
+  "caseId" : "eval-syn-bn-02-worker",
+  "modelId" : "claude-haiku-5-5",
+  "requestSha256" : "a92a080403115558edced2344266c9e8413e145fed97d6adbff0492963732fd4",
+  "provenance" : "synthetic",
+  "source" : "recorded from a live call",
+  "recordedAt" : "2026-11-17T11:06:17.784924Z",
+  "stopReason" : "end_turn",
+  "usage" : {
+    "inputTokens" : 397,
+    "outputTokens" : 77,
+    "cacheReadTokens" : 982
+  },
+  "response" : {
+    "label" : "SUPPORTS",
+    "confidence" : 0.9,
+    "reason" : "Section 28 voids agreements that absolutely restrict enforcing contract rights through ordinary legal proceedings, to that extent, matching the claim."
+  }
+}

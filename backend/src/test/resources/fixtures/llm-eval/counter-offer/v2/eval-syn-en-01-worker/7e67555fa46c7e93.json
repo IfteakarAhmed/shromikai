@@ -1,0 +1,24 @@
+{
+  "fixtureVersion" : 1,
+  "promptId" : "counter-offer",
+  "promptVersion" : 2,
+  "caseId" : "eval-syn-en-01-worker",
+  "modelId" : "claude-sonnet-5-5",
+  "requestSha256" : "7e67555fa46c7e936cd9c137ea32d66c6d5ac07c06463eb7842b191ca013f207",
+  "provenance" : "synthetic",
+  "source" : "recorded from a live call",
+  "recordedAt" : "2026-11-17T11:04:29.621326Z",
+  "stopReason" : "end_turn",
+  "usage" : {
+    "inputTokens" : 726,
+    "outputTokens" : 374,
+    "cacheReadTokens" : 1222
+  },
+  "response" : {
+    "status" : "OK",
+    "reason" : "NONE",
+    "action" : "REPLACE",
+    "proposed_text" : "5. কর্মঘণ্টা ও অধিকাল\n(ক) শ্রমিক দৈনিক ৮ ঘণ্টা কাজ করবেন, সপ্তাহে ছয় দিন।\n(খ) দৈনিক ৮ ঘণ্টার অতিরিক্ত যে কাজ শ্রমিক করবেন তা অধিকাল গণ্য হবে এবং মূল মজুরী, মহার্ঘভাতা ও এডহক মজুরীর সাধারণ হারের দ্বিগুণ হারে আলাদা ভাতা দেওয়া হবে। [EMPLOYEE_ID_1]",
+    "rationale" : "কর্মঘণ্টা দৈনিক ৮ ঘণ্টায় নামানো হয়েছে এবং অতিরিক্ত সময়ের জন্য সাধারণ হারের দ্বিগুণ ভাতা নির্ধারিত হয়েছে।"
+  }
+}

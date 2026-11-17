@@ -1,0 +1,22 @@
+{
+  "fixtureVersion" : 1,
+  "promptId" : "verify-support-claude",
+  "promptVersion" : 2,
+  "caseId" : "eval-syn-bn-02-worker",
+  "modelId" : "claude-haiku-5-5",
+  "requestSha256" : "b43c28b851fbfa82f810393fe235549c6e610f097a4560fc8fd5c5d942403c3c",
+  "provenance" : "synthetic",
+  "source" : "recorded from a live call",
+  "recordedAt" : "2026-11-17T11:06:15.971582Z",
+  "stopReason" : "end_turn",
+  "usage" : {
+    "inputTokens" : 361,
+    "outputTokens" : 65,
+    "cacheReadTokens" : 982
+  },
+  "response" : {
+    "label" : "SUPPORTS",
+    "confidence" : 0.92,
+    "reason" : "Section 148 states every worker is entitled to wages at not less than the declared or published minimum rate, matching the claim."
+  }
+}

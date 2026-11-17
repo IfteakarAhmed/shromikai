@@ -1,0 +1,22 @@
+{
+  "fixtureVersion" : 1,
+  "promptId" : "query-rewrite",
+  "promptVersion" : 1,
+  "caseId" : "eval-syn-bn-02-worker",
+  "modelId" : "claude-haiku-5-5",
+  "requestSha256" : "15c1fa8407a4235c18dbc0f7657765dada18416fbdf0171f018b4dc9322290ac",
+  "provenance" : "synthetic",
+  "source" : "recorded from a live call",
+  "recordedAt" : "2026-11-17T11:05:56.527834Z",
+  "stopReason" : "end_turn",
+  "usage" : {
+    "inputTokens" : 107,
+    "outputTokens" : 123,
+    "cacheReadTokens" : 798
+  },
+  "response" : {
+    "status" : "OK",
+    "reason" : "NONE",
+    "queries" : [ "কর্মঘণ্টা ও দৈনিক কাজের সময়সীমা শ্রম আইন", "working hours limit overtime rules Bangladesh labour law", "মালিক কর্তৃক নির্ধারিত কাজের সময় ও বিশ্রাম বিধান" ]
+  }
+}

@@ -1,0 +1,30 @@
+{
+  "fixtureVersion" : 1,
+  "promptId" : "clause-facts",
+  "promptVersion" : 1,
+  "caseId" : "eval-syn-bn-02-worker",
+  "modelId" : "claude-haiku-5-5",
+  "requestSha256" : "9779801bbeb5ab68c28cf00f8fca377a9b32b4876a817b5982b22caf5262c5ce",
+  "provenance" : "synthetic",
+  "source" : "recorded from a live call",
+  "recordedAt" : "2026-11-17T11:06:30.242225Z",
+  "stopReason" : "end_turn",
+  "usage" : {
+    "inputTokens" : 206,
+    "outputTokens" : 86,
+    "cacheReadTokens" : 2595
+  },
+  "response" : {
+    "status" : "OK",
+    "reason" : "NONE",
+    "clauses" : [ {
+      "id" : "proposal",
+      "facts" : [ {
+        "parameter" : "GROSS_WAGE",
+        "value" : 12000,
+        "unit" : "BDT_PER_MONTH",
+        "confidence" : 0.95
+      } ]
+    } ]
+  }
+}

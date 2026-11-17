@@ -1,0 +1,22 @@
+{
+  "fixtureVersion" : 1,
+  "promptId" : "query-rewrite",
+  "promptVersion" : 1,
+  "caseId" : "eval-syn-bn-02-worker",
+  "modelId" : "claude-haiku-5-5",
+  "requestSha256" : "d5925a9e2c01008b26613756e940989f35ac4b1498a8c2ba377e94516c5f6818",
+  "provenance" : "synthetic",
+  "source" : "recorded from a live call",
+  "recordedAt" : "2026-11-17T11:05:56.451644Z",
+  "stopReason" : "end_turn",
+  "usage" : {
+    "inputTokens" : 111,
+    "outputTokens" : 127,
+    "cacheReadTokens" : 798
+  },
+  "response" : {
+    "status" : "OK",
+    "reason" : "NONE",
+    "queries" : [ "সাপ্তাহিক ছুটি নির্ধারণ শ্রমিকের নিয়োগ চুক্তি", "weekly holiday entitlement for workers in Bangladesh", "নিয়োগকর্তার সুবিধামতো ছুটি প্রদান শ্রম আইন" ]
+  }
+}

@@ -1,0 +1,24 @@
+{
+  "fixtureVersion" : 1,
+  "promptId" : "counter-offer",
+  "promptVersion" : 2,
+  "caseId" : "eval-syn-en-01-worker",
+  "modelId" : "claude-sonnet-5-5",
+  "requestSha256" : "5f8d64bd539927d5594846c911bf7a08bdb07789693284b094923377748afe16",
+  "provenance" : "synthetic",
+  "source" : "recorded from a live call",
+  "recordedAt" : "2026-11-17T11:04:29.353297Z",
+  "stopReason" : "end_turn",
+  "usage" : {
+    "inputTokens" : 737,
+    "outputTokens" : 239,
+    "cacheReadTokens" : 1222
+  },
+  "response" : {
+    "status" : "OK",
+    "reason" : "NONE",
+    "action" : "REPLACE",
+    "proposed_text" : "9. Dispute resolution: The parties shall first try to settle any dispute by discussion or by a mutually agreed arbitrator. This does not limit the Worker's or the Employer's right to apply to the Labour Court under the Bangladesh Labour Act for any right under the law or this contract.",
+    "rationale" : "শ্রম আদালতে যাওয়ার অধিকার বহাল রেখে পারস্পরিক সম্মত সালিশকে প্রাথমিক পথ করায় শর্তটি আইনসম্মত ও উভয়পক্ষের জন্য ন্যায্য হয়।"
+  }
+}

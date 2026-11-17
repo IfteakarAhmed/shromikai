@@ -439,12 +439,57 @@ public final class ReportAssembler {
         "Retrieval (M-15) uses draft questions written from the statute text by the team; none is checked yet.");
     out.add(
         "Latency was measured on a development Mac with the local PII model in Docker without a GPU, which dominates the REDACT stage; the p95 is over very few live analyses.");
+    List<AnalysisCase> baseline =
+        EvalResults.latest(in.results().analyses()).stream()
+            .filter(a -> a.system().equals("baseline"))
+            .toList();
+    if (!baseline.isEmpty()) {
+      MetricResult b = Metrics.objectiveFabrication(baseline, "BASELINE");
+      out.add(
+          "Read the baseline's M-03 with its breakdown: a citation counts as fabricated when its"
+              + " section is not in the corpus, and the baseline's unresolved citations point at "
+              + b.extra().get("unresolvedByKeyShape")
+              + " (contract-clause-reference = it cited the contract's own clause, not a law;"
+              + " malformed-statute-reference = a statute named in a key the corpus cannot resolve,"
+              + " for example several sections in one key). This shows that the plain model's"
+              + " citations cannot be checked against the law, not that it invented that many"
+              + " sections.");
+      out.add(
+          "The baseline prompt was never reviewed by a team member who did not write the ShromikAI"
+              + " prompts (evaluation.md §8), and it does not give the model the corpus's act codes"
+              + " or key format; the comparison may be unfair to the baseline in that respect.");
+    }
     out.addAll(in.extraLimitations());
     return out;
   }
 
   private static List<String> knownFailures(Inputs in, Map<String, MetricResult> m) {
     List<String> out = new ArrayList<>(in.extraKnownFailures());
+    for (AnalysisCase a : EvalResults.latest(in.results().analyses())) {
+      if (!"ANALYSED".equals(a.outcome())) {
+        out.add(
+            a.contractId()
+                + " / "
+                + a.system()
+                + ": "
+                + a.outcome()
+                + " ("
+                + a.failureCode()
+                + ")");
+      }
+    }
+    for (EvalResults.CitationCase c : in.results().citations()) {
+      if (!c.fabricated() && !"VERIFIED".equals(c.actualStatus())) {
+        out.add(
+            "Valid control "
+                + c.id()
+                + " ended "
+                + c.actualStatus()
+                + " "
+                + c.reasonCodes()
+                + " (the drafted claim is unreviewed: the verifier or the claim may be at fault)");
+      }
+    }
     Object missed = m.get("M-04").extra().get("missedCases");
     if (missed instanceof List<?> list && !list.isEmpty()) {
       out.add("Fabricated citations that ended VERIFIED: " + list);

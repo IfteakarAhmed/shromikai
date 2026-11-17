@@ -1,0 +1,24 @@
+{
+  "fixtureVersion" : 1,
+  "promptId" : "counter-offer",
+  "promptVersion" : 2,
+  "caseId" : "eval-syn-bn-02-worker",
+  "modelId" : "claude-sonnet-5-5",
+  "requestSha256" : "1dbef7dd244cb68515a7de6ef9eca244c2808836c885563eb2f47356c1c27aeb",
+  "provenance" : "synthetic",
+  "source" : "recorded from a live call",
+  "recordedAt" : "2026-11-17T11:06:29.114185Z",
+  "stopReason" : "end_turn",
+  "usage" : {
+    "inputTokens" : 702,
+    "outputTokens" : 337,
+    "cacheReadTokens" : 1222
+  },
+  "response" : {
+    "status" : "OK",
+    "reason" : "NONE",
+    "action" : "REPLACE",
+    "proposed_text" : "৩. কর্মঘণ্টা কর্মচারীর সাধারণ কর্মঘণ্টা দিনে সর্বোচ্চ ৮ ঘণ্টা এবং সপ্তাহে সর্বোচ্চ ৪৮ ঘণ্টা হবে। এর অতিরিক্ত কাজ কেবল অধিকাল কাজের আইনি নিয়ম মেনে এবং আইনানুগ মজুরিসহ করানো যাবে। [EMPLOYEE_ID_1]",
+    "rationale" : "ধারা ১০০ অনুযায়ী কর্মঘণ্টা দৈনিক ৮ ও সাপ্তাহিক ৪৮ ঘণ্টায় সীমিত করা হয়েছে এবং অধিকাল আইনি নিয়মে রাখা হয়েছে।"
+  }
+}

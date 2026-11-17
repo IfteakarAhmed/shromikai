@@ -1,0 +1,22 @@
+{
+  "fixtureVersion" : 1,
+  "promptId" : "verify-support-claude",
+  "promptVersion" : 2,
+  "caseId" : "eval-syn-bn-02-worker",
+  "modelId" : "claude-haiku-5-5",
+  "requestSha256" : "7f637944d98bbba2971446ff5674234717783f54864110efae138531d4c62f71",
+  "provenance" : "synthetic",
+  "source" : "recorded from a live call",
+  "recordedAt" : "2026-11-17T11:06:16.192283Z",
+  "stopReason" : "end_turn",
+  "usage" : {
+    "inputTokens" : 1169,
+    "outputTokens" : 62,
+    "cacheReadTokens" : 982
+  },
+  "response" : {
+    "label" : "SUPPORTS",
+    "confidence" : 0.9,
+    "reason" : "Section 26(3) lets the employer end service without notice by paying wages for the notice period, matching the claim."
+  }
+}

@@ -1,0 +1,24 @@
+{
+  "fixtureVersion" : 1,
+  "promptId" : "counter-offer",
+  "promptVersion" : 2,
+  "caseId" : "eval-syn-bn-02-worker",
+  "modelId" : "claude-sonnet-5-5",
+  "requestSha256" : "0e3c5c63c97d7789338b5c2c292bb6ab07470b8311c404c0b703fbbb069b83e1",
+  "provenance" : "synthetic",
+  "source" : "recorded from a live call",
+  "recordedAt" : "2026-11-17T11:06:27.142820Z",
+  "stopReason" : "end_turn",
+  "usage" : {
+    "inputTokens" : 607,
+    "outputTokens" : 54,
+    "cacheReadTokens" : 1222
+  },
+  "response" : {
+    "status" : "ABSTAIN",
+    "reason" : "CANNOT_RESOLVE",
+    "action" : "REPLACE",
+    "proposed_text" : "",
+    "rationale" : ""
+  }
+}

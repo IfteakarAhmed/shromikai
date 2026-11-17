@@ -1,0 +1,24 @@
+{
+  "fixtureVersion" : 1,
+  "promptId" : "counter-offer",
+  "promptVersion" : 2,
+  "caseId" : "eval-syn-en-01-worker",
+  "modelId" : "claude-sonnet-5-5",
+  "requestSha256" : "a7e27198da261c0815b1d12e23360f21851b1b15cdd5c23c7ef9a206833e4dbf",
+  "provenance" : "synthetic",
+  "source" : "recorded from a live call",
+  "recordedAt" : "2026-11-17T11:04:30.031260Z",
+  "stopReason" : "end_turn",
+  "usage" : {
+    "inputTokens" : 398,
+    "outputTokens" : 368,
+    "cacheReadTokens" : 1222
+  },
+  "response" : {
+    "status" : "OK",
+    "reason" : "NONE",
+    "action" : "REPLACE",
+    "proposed_text" : "৮. গোপনীয়তা: চাকরি ছাড়ার পরও শ্রমিক নিয়োগকর্তার গোপনীয় ব্যবসায়িক তথ্য প্রকাশ বা অপব্যবহার করবেন না। এই চুক্তিতে শ্রমিকের কোনো পেশা, ব্যবসা বা অন্য প্রতিষ্ঠানে চাকরির উপর কোনো নিষেধাজ্ঞা থাকবে না এবং কোনো মজুরি বাজেয়াপ্ত করা হবে না। [EMPLOYEE_ID_1]",
+    "rationale" : "পেশা-নিষেধ ও মজুরি বাজেয়াপ্ত বাদ দিয়ে শুধু গোপনীয়তা রাখা হয়েছে, ফলে ধারাটি আইনসম্মত ও উভয়পক্ষের জন্য ন্যায্য।"
+  }
+}

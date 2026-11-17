@@ -1,0 +1,22 @@
+{
+  "fixtureVersion" : 1,
+  "promptId" : "query-rewrite",
+  "promptVersion" : 1,
+  "caseId" : "eval-syn-bn-02-worker",
+  "modelId" : "claude-haiku-5-5",
+  "requestSha256" : "dd21829f73ae3aa75c849b716824464afc2f1753e145e1d4e63d993f814d682d",
+  "provenance" : "synthetic",
+  "source" : "recorded from a live call",
+  "recordedAt" : "2026-11-17T11:06:21.696380Z",
+  "stopReason" : "end_turn",
+  "usage" : {
+    "inputTokens" : 137,
+    "outputTokens" : 136,
+    "cacheReadTokens" : 798
+  },
+  "response" : {
+    "status" : "OK",
+    "reason" : "NONE",
+    "queries" : [ "বেতন থেকে কর্তিত অফেরতযোগ্য জামানত অর্থ শ্রম আইন", "চাকরি ছাড়ার সময় জামানত ফেরত না দেওয়া শ্রমিকের অধিকার", "employee security deposit forfeiture on resignation Bangladesh labour law" ]
+  }
+}

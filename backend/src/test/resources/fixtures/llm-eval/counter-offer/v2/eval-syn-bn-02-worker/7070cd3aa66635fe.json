@@ -1,0 +1,24 @@
+{
+  "fixtureVersion" : 1,
+  "promptId" : "counter-offer",
+  "promptVersion" : 2,
+  "caseId" : "eval-syn-bn-02-worker",
+  "modelId" : "claude-sonnet-5-5",
+  "requestSha256" : "7070cd3aa66635fe51bc9a90f88e44084659edcc0398b427869cd4f5da890d01",
+  "provenance" : "synthetic",
+  "source" : "recorded from a live call",
+  "recordedAt" : "2026-11-17T11:06:28.661645Z",
+  "stopReason" : "end_turn",
+  "usage" : {
+    "inputTokens" : 668,
+    "outputTokens" : 297,
+    "cacheReadTokens" : 1222
+  },
+  "response" : {
+    "status" : "OK",
+    "reason" : "NONE",
+    "action" : "REPLACE",
+    "proposed_text" : "৪. সাপ্তাহিক ছুটি: শ্রমিক প্রতি সপ্তাহে দেড় দিন সাপ্তাহিক ছুটি পাবেন। ছুটির দিন নিয়োগকর্তা পূর্বে জানিয়ে নির্ধারণ করবেন। এছাড়া বছরে অন্তত ১৩ দিন উৎসব ছুটি প্রাপ্য হবেন।",
+    "rationale" : "ধারাটি এখন দোকান ও প্রতিষ্ঠানের জন্য আইনি দেড় দিন ছুটি নিশ্চিত করে এবং দিন নির্ধারণের সুযোগ নিয়োগকর্তার হাতে রাখে।"
+  }
+}

@@ -1,0 +1,24 @@
+{
+  "fixtureVersion" : 1,
+  "promptId" : "counter-offer",
+  "promptVersion" : 2,
+  "caseId" : "eval-syn-bn-02-worker",
+  "modelId" : "claude-sonnet-5-5",
+  "requestSha256" : "8e091103b60f14ad2152306ca9fee454d9f2d49a2ef1ced018933787e0afffb4",
+  "provenance" : "synthetic",
+  "source" : "recorded from a live call",
+  "recordedAt" : "2026-11-17T11:06:28.407908Z",
+  "stopReason" : "end_turn",
+  "usage" : {
+    "inputTokens" : 806,
+    "outputTokens" : 317,
+    "cacheReadTokens" : 1222
+  },
+  "response" : {
+    "status" : "OK",
+    "reason" : "NONE",
+    "action" : "REPLACE",
+    "proposed_text" : "৭. চাকরি অবসান: নিয়োগকর্তা আইন অনুযায়ী লিখিত নোটিশ প্রদান করে, অথবা নোটিশের পরিবর্তে নোটিশ মেয়াদের মজুরি প্রদান করে চাকরি অবসান করতে পারবেন। অবসানের পর সর্বোচ্চ ত্রিশ কর্ম দিবসের মধ্যে শ্রমিকের প্রাপ্য সকল পাওনা পরিশোধ করতে হবে।",
+    "rationale" : "নোটিশ বা নোটিশের মজুরি ও ৩০ কর্ম দিবসে পাওনা পরিশোধ যোগ করায় অবসানের অধিকার বজায় থেকে আইন মানা হয়।"
+  }
+}

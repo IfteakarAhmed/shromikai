@@ -1,0 +1,24 @@
+{
+  "fixtureVersion" : 1,
+  "promptId" : "counter-offer",
+  "promptVersion" : 2,
+  "caseId" : "eval-syn-en-01-worker",
+  "modelId" : "claude-sonnet-5-5",
+  "requestSha256" : "ca88a0e9fc4e03d66eaf889cdfa697747b155f367919572d49bbbc5f8c59c810",
+  "provenance" : "synthetic",
+  "source" : "recorded from a live call",
+  "recordedAt" : "2026-11-17T11:04:29.454395Z",
+  "stopReason" : "end_turn",
+  "usage" : {
+    "inputTokens" : 515,
+    "outputTokens" : 254,
+    "cacheReadTokens" : 1222
+  },
+  "response" : {
+    "status" : "OK",
+    "reason" : "NONE",
+    "action" : "REPLACE",
+    "proposed_text" : "1. Appointment and duties\n(a) The Employer appoints the Worker as a quality inspector at the Fakeville factory.\n(b) The Employer may assign the Worker other reasonable duties related to the Worker's grade, skills and the establishment's work, at the Fakeville factory or another location within reasonable distance, without reducing the Worker's grade, wages or benefits.",
+    "rationale" : "কাজ ও স্থান যুক্তিসঙ্গত সীমায় বেঁধে দেওয়ায় অনিশ্চয়তা কমে, আর মালিকের প্রয়োজনীয় নমনীয়তাও থাকে।"
+  }
+}

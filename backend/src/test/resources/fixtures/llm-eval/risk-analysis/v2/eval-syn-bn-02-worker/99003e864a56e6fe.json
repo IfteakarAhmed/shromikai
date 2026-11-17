@@ -1,0 +1,64 @@
+{
+  "fixtureVersion" : 1,
+  "promptId" : "risk-analysis",
+  "promptVersion" : 2,
+  "caseId" : "eval-syn-bn-02-worker",
+  "modelId" : "claude-sonnet-5-5",
+  "requestSha256" : "99003e864a56e6fe7954ede05f76252e9f08d12c8777276ab7568394524ee49c",
+  "provenance" : "synthetic",
+  "source" : "recorded from a live call",
+  "recordedAt" : "2026-11-17T11:06:07.723657Z",
+  "stopReason" : "end_turn",
+  "usage" : {
+    "inputTokens" : 15987,
+    "outputTokens" : 1001,
+    "cacheReadTokens" : 0
+  },
+  "response" : {
+    "status" : "OK",
+    "reason" : "NONE",
+    "findings" : [ {
+      "title" : "মাতৃত্বকালীন ছুটি সম্পূর্ণ অস্বীকার",
+      "kind" : "CONFLICT",
+      "severity" : "CRITICAL",
+      "non_obvious" : false,
+      "clause_type" : "MATERNITY_BENEFIT",
+      "clause_ids" : [ "c6" ],
+      "explanation" : "চুক্তিতে নারী কর্মচারীর মাতৃত্বকালীন ছুটি নেই। আইনে প্রসবের আগে-পরে ৬০+৬০ দিনের সুবিধা বাধ্যতামূলক।",
+      "citations" : [ {
+        "section_key" : "BLA-2006:46@amend-2026",
+        "quote" : "এবং তাহার মালিক তাহাকে এই সুবিধা প্রদান করিতে বাধ্য থাকিবেন",
+        "claim" : "মালিক প্রসূতি কল্যাণ সুবিধা দিতে বাধ্য।"
+      } ],
+      "confidence" : 0.95
+    }, {
+      "title" : "অসুস্থতায় বেতন কর্তন",
+      "kind" : "CONFLICT",
+      "severity" : "CRITICAL",
+      "non_obvious" : false,
+      "clause_type" : "LEAVE",
+      "clause_ids" : [ "c6" ],
+      "explanation" : "অসুস্থতায় অনুপস্থিতির বেতন কাটা হবে। আইনে বছরে ১৪ দিন পূর্ণ মজুরিতে পীড়া ছুটি পাওনা।",
+      "citations" : [ {
+        "section_key" : "BLA-2006:116@original",
+        "quote" : "পূর্ণ মজুরীতে চৌদ্দ দিনের পীড়া ছুটি পাইবার অধিকারী হইবেন",
+        "claim" : "শ্রমিক বছরে ১৪ দিন পূর্ণ মজুরিতে পীড়া ছুটি পান।"
+      } ],
+      "confidence" : 0.9
+    }, {
+      "title" : "সাপ্তাহিক ছুটি নেই; দৈনিক ১৪ ঘণ্টা",
+      "kind" : "INTERACTION",
+      "severity" : "HIGH",
+      "non_obvious" : true,
+      "clause_type" : "REST_AND_HOLIDAYS",
+      "clause_ids" : [ "c4", "c5" ],
+      "explanation" : "সকাল ৮টা–রাত ১০টা উপস্থিতি এবং নির্দিষ্ট ছুটিহীনতা মিলে বিশ্রামের অধিকার ক্ষুণ্ন হয়। দোকানে দেড় দিন ছুটি প্রাপ্য।",
+      "citations" : [ {
+        "section_key" : "BLA-2006:103@amend-2018",
+        "quote" : "দোকান ও প্রতিষ্ঠানের ক্ষেত্রে দেড় দিন ছুটি পাইবেন",
+        "claim" : "দোকান কর্মীর সাপ্তাহিক ছুটি দেড় দিন।"
+      } ],
+      "confidence" : 0.85
+    } ]
+  }
+}

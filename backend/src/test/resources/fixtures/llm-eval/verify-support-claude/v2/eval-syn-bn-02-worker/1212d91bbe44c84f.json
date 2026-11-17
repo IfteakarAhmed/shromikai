@@ -1,0 +1,22 @@
+{
+  "fixtureVersion" : 1,
+  "promptId" : "verify-support-claude",
+  "promptVersion" : 2,
+  "caseId" : "eval-syn-bn-02-worker",
+  "modelId" : "claude-haiku-5-5",
+  "requestSha256" : "1212d91bbe44c84f96684a409bd361806f92c787e0f3bb2ee04c50b34575aec3",
+  "provenance" : "synthetic",
+  "source" : "recorded from a live call",
+  "recordedAt" : "2026-11-17T11:06:19.491118Z",
+  "stopReason" : "end_turn",
+  "usage" : {
+    "inputTokens" : 1880,
+    "outputTokens" : 71,
+    "cacheReadTokens" : 982
+  },
+  "response" : {
+    "label" : "PARTIAL",
+    "confidence" : 0.5,
+    "reason" : "Section lets permanent workers resign with 60 days written notice, but says nothing about bonds (জামানত) or penalties for resignation."
+  }
+}

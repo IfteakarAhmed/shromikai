@@ -1,0 +1,30 @@
+{
+  "fixtureVersion" : 1,
+  "promptId" : "clause-facts",
+  "promptVersion" : 1,
+  "caseId" : "eval-syn-bn-02-worker",
+  "modelId" : "claude-haiku-5-5",
+  "requestSha256" : "92defacba393a53805e796e9f31d00f0a063814c1f7a60e564467ebf3ffff86c",
+  "provenance" : "synthetic",
+  "source" : "recorded from a live call",
+  "recordedAt" : "2026-11-17T11:06:30.240500Z",
+  "stopReason" : "end_turn",
+  "usage" : {
+    "inputTokens" : 206,
+    "outputTokens" : 81,
+    "cacheReadTokens" : 2595
+  },
+  "response" : {
+    "status" : "OK",
+    "reason" : "NONE",
+    "clauses" : [ {
+      "id" : "proposal",
+      "facts" : [ {
+        "parameter" : "MATERNITY_LEAVE",
+        "value" : 120,
+        "unit" : "DAYS",
+        "confidence" : 0.9
+      } ]
+    } ]
+  }
+}

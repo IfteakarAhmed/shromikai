@@ -1,0 +1,24 @@
+{
+  "fixtureVersion" : 1,
+  "promptId" : "counter-offer",
+  "promptVersion" : 2,
+  "caseId" : "eval-syn-bn-02-worker",
+  "modelId" : "claude-sonnet-5-5",
+  "requestSha256" : "ac56d1245432057fe570b22674884e38303721631efeca02396bbb3d8976d085",
+  "provenance" : "synthetic",
+  "source" : "recorded from a live call",
+  "recordedAt" : "2026-11-17T11:06:28.681883Z",
+  "stopReason" : "end_turn",
+  "usage" : {
+    "inputTokens" : 503,
+    "outputTokens" : 299,
+    "cacheReadTokens" : 1222
+  },
+  "response" : {
+    "status" : "OK",
+    "reason" : "NONE",
+    "action" : "REPLACE",
+    "proposed_text" : "৮. বিরোধ নিষ্পত্তি: এই চুক্তি সংক্রান্ত কোনো বিরোধ প্রথমে পারস্পরিক আলোচনার মাধ্যমে নিষ্পত্তির চেষ্টা করা হবে। তা না হলে যেকোনো পক্ষ বাংলাদেশের শ্রম আদালত বা অন্য এখতিয়ারসম্পন্ন আদালতে প্রতিকার চাইতে পারবে।",
+    "rationale" : "এখন কোনো পক্ষের আদালতে যাওয়ার অধিকার সীমিত নয়, আর প্রথমে আলোচনার ধাপ উভয় পক্ষের জন্য ন্যায্য।"
+  }
+}

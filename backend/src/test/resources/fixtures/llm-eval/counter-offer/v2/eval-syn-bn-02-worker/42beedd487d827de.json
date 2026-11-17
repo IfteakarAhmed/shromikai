@@ -1,0 +1,24 @@
+{
+  "fixtureVersion" : 1,
+  "promptId" : "counter-offer",
+  "promptVersion" : 2,
+  "caseId" : "eval-syn-bn-02-worker",
+  "modelId" : "claude-sonnet-5-5",
+  "requestSha256" : "42beedd487d827de94b60d30e4aaebad547ac18e34a974e542b23451bd4b33e7",
+  "provenance" : "synthetic",
+  "source" : "recorded from a live call",
+  "recordedAt" : "2026-11-17T11:06:28.666239Z",
+  "stopReason" : "end_turn",
+  "usage" : {
+    "inputTokens" : 616,
+    "outputTokens" : 309,
+    "cacheReadTokens" : 1222
+  },
+  "response" : {
+    "status" : "OK",
+    "reason" : "NONE",
+    "action" : "REPLACE",
+    "proposed_text" : "২. মজুরি: মাসিক মোট বেতন ১২,০০০ টাকা, যার মধ্যে সব ভাতা অন্তর্ভুক্ত। এই মোট মজুরি কোনো অবস্থাতেই আইনের অধীন ঘোষিত বা প্রকাশিত নিম্নতম মজুরির হারের কম হইবে না; কম হইলে শ্রমিক নিম্নতম হারে মজুরি পাইবেন।",
+    "rationale" : "ধারা ১৪৮-১৪৯ অনুযায়ী মজুরি নিম্নতম হারের নিচে নামিতে পারে না, ফলে এখন শ্রমিক ন্যূনতম মজুরি নিশ্চিতভাবে পাইবেন।"
+  }
+}

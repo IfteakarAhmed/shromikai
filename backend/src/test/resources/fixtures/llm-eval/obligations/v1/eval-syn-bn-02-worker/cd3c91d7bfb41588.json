@@ -1,0 +1,106 @@
+{
+  "fixtureVersion" : 1,
+  "promptId" : "obligations",
+  "promptVersion" : 1,
+  "caseId" : "eval-syn-bn-02-worker",
+  "modelId" : "claude-haiku-5-5",
+  "requestSha256" : "cd3c91d7bfb415881072ffeee9f3fbf4f37d08979c5e23f9688cc8a7e5491210",
+  "provenance" : "synthetic",
+  "source" : "recorded from a live call",
+  "recordedAt" : "2026-11-17T11:06:07.894636Z",
+  "stopReason" : "end_turn",
+  "usage" : {
+    "inputTokens" : 24958,
+    "outputTokens" : 1781,
+    "cacheReadTokens" : 0
+  },
+  "response" : {
+    "status" : "OK",
+    "reason" : "NONE",
+    "items" : [ {
+      "party" : "EMPLOYER",
+      "obligation" : "কর্মচারীকে নিয়োগপত্র প্রদান করা",
+      "trigger" : "নিয়োগের সময়",
+      "deadline" : null,
+      "source" : "STATUTE",
+      "status" : "STATUTORY_NOT_IN_CONTRACT",
+      "clause_ids" : [ "c1" ],
+      "citations" : [ {
+        "section_key" : "BLA-2006:5@original",
+        "quote" : "কোন মালিক নিয়োগপত্র প্রদান না করিয়া কোন শ্রমিককে নিয়োগ করিতে পারিবেন না, এবং নিয়োজিত প্রত্যেক শ্রমিককে ছবিসহ পরিচয়পত্র প্রদান করিতে হইবে।",
+        "claim" : "নিয়োগপত্র ও ছবিসহ পরিচয়পত্র প্রদান বাধ্যতামূলক"
+      } ]
+    }, {
+      "party" : "EMPLOYER",
+      "obligation" : "দৈনিক ৮ ঘণ্টার বেশি কাজ না করানো, বিরতি দেওয়া",
+      "trigger" : "প্রতিদিনের কাজের সময়ে",
+      "deadline" : null,
+      "source" : "BOTH",
+      "status" : "CONFLICTS_WITH_CONTRACT",
+      "clause_ids" : [ "c4" ],
+      "citations" : [ {
+        "section_key" : "BLA-2006:101@amend-2013",
+        "quote" : "দৈনিক আট ঘন্টার অধিক কাজ করিতে বাধ্য থাকিবেন না, যদি না উক্ত দিনে উক্ত উদ্দেশ্যে",
+        "claim" : "দৈনিক ৮ ঘণ্টার বেশি কাজে বিরতি বাধ্যতামূলক; চুক্তি ১৪ ঘণ্টা রাখে"
+      } ]
+    }, {
+      "party" : "EMPLOYER",
+      "obligation" : "ন্যূনতম মজুরি কম না দেওয়া",
+      "trigger" : "প্রতি মাসে বেতন প্রদানের সময়",
+      "deadline" : null,
+      "source" : "STATUTE",
+      "status" : "STATUTORY_NOT_IN_CONTRACT",
+      "clause_ids" : [ "c3" ],
+      "citations" : [ {
+        "section_key" : "BLA-2006:149@original",
+        "quote" : "কোন মালিক কোন শ্রমিককে এই অধ্যায়ের অধীন ঘোষিত বা প্রকাশিত নিম্নতম হারের কম হারে কোন মজুরী প্রদান করিতে পারিবেন না।",
+        "claim" : "ঘোষিত নিম্নতম মজুরির কম বেতন নিষিদ্ধ"
+      } ]
+    }, {
+      "party" : "EMPLOYER",
+      "obligation" : "চাকরি অবসানে নোটিশ বা নোটিশের মজুরি দেওয়া",
+      "trigger" : "স্থায়ী কর্মচারী অবসানের সময়",
+      "deadline" : {
+        "value" : 30,
+        "unit" : "DAYS"
+      },
+      "source" : "BOTH",
+      "status" : "CONFLICTS_WITH_CONTRACT",
+      "clause_ids" : [ "c8" ],
+      "citations" : [ {
+        "section_key" : "BLA-2006:26@original",
+        "quote" : "লিখিত নোটিশ প্রদান করিয়া কোন স্থায়ী শ্রমিকের চাকুরীর অবসান করিতে পারিবেন",
+        "claim" : "অবসানে লিখিত নোটিশ ও ক্ষতিপূরণ বাধ্যতামূলক"
+      } ]
+    }, {
+      "party" : "EMPLOYER",
+      "obligation" : "সার্ভিস বই তৈরি ও কর্মচারীর কাছে ফেরত দেওয়া",
+      "trigger" : "চাকরি অবসানের সময়",
+      "deadline" : null,
+      "source" : "STATUTE",
+      "status" : "STATUTORY_NOT_IN_CONTRACT",
+      "clause_ids" : [ "c1" ],
+      "citations" : [ {
+        "section_key" : "BLA-2006:6@original",
+        "quote" : "প্রত্যেক মালিক তাহার নিজস্ব খরচে তৎকর্তৃক নিযুক্ত প্রত্যেক শ্রমিকের জন্য একটি সার্ভিস বইয়ের ব্যবস্থা করিবেন।",
+        "claim" : "সার্ভিস বই ব্যবস্থা ও অবসানে ফেরত বাধ্যতামূলক"
+      } ]
+    }, {
+      "party" : "WORKER",
+      "obligation" : "ছুটির জন্য লিখিত আবেদন করা",
+      "trigger" : "ছুটি নিতে চাইলে",
+      "deadline" : {
+        "value" : 7,
+        "unit" : "DAYS"
+      },
+      "source" : "STATUTE",
+      "status" : "STATUTORY_NOT_IN_CONTRACT",
+      "clause_ids" : [ "c5" ],
+      "citations" : [ {
+        "section_key" : "BLA-2006:10@amend-2013",
+        "quote" : "কোন শ্রমিক ছুটি নিতে ইচ্ছা করিলে তাহার মালিকের নিকট লিখিতভাবে দরখাস্ত করিতে হইবে",
+        "claim" : "ছুটির জন্য লিখিত আবেদন ও মালিকের সাত দিনের মধ্যে আদেশ"
+      } ]
+    } ]
+  }
+}

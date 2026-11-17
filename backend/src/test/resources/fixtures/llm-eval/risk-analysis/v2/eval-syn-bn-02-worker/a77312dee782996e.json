@@ -1,0 +1,72 @@
+{
+  "fixtureVersion" : 1,
+  "promptId" : "risk-analysis",
+  "promptVersion" : 2,
+  "caseId" : "eval-syn-bn-02-worker",
+  "modelId" : "claude-sonnet-5-5",
+  "requestSha256" : "a77312dee782996e5acc3ad8e8a52fa3e56e4a868f1405931b1c9a85d77a0f39",
+  "provenance" : "synthetic",
+  "source" : "recorded from a live call",
+  "recordedAt" : "2026-11-17T11:06:09.774459Z",
+  "stopReason" : "end_turn",
+  "usage" : {
+    "inputTokens" : 25117,
+    "outputTokens" : 1356,
+    "cacheReadTokens" : 0
+  },
+  "response" : {
+    "status" : "OK",
+    "reason" : "NONE",
+    "findings" : [ {
+      "title" : "কারণ ও নোটিশ ছাড়া চাকরি অবসান, পাওনা নেই",
+      "kind" : "CONFLICT",
+      "severity" : "CRITICAL",
+      "non_obvious" : false,
+      "clause_type" : "TERMINATION",
+      "clause_ids" : [ "c8" ],
+      "explanation" : "নিয়োগকর্তা যেকোনো সময় কারণ ছাড়া চাকরি শেষ করতে ও পাওনা না দিতে পারেন। আইনে নোটিশ বা নোটিশের মজুরি এবং ক্ষতিপূরণ আবশ্যক।",
+      "citations" : [ {
+        "section_key" : "BLA-2006:26@original",
+        "quote" : "বিনা নোটিশে কোন শ্রমিকের চাকুরীর অবসান করিতে চাহেন সে ক্ষেত্রে",
+        "claim" : "বিনা নোটিশে অবসানে নোটিশ মেয়াদের মজুরী দিতে হয়।"
+      }, {
+        "section_key" : "BLA-2006:30@original",
+        "quote" : "ত্রিশ কর্ম দিবসের মধ্যে নিয়োগকারী কর্তৃপক্ষ কর্তৃক উক্ত শ্রমিকের প্রাপ্য সকল পাওনা পরিশোধ করিতে হইবে",
+        "claim" : "অবসানের পর ত্রিশ কর্ম দিবসে সব পাওনা পরিশোধ বাধ্যতামূলক।"
+      } ],
+      "confidence" : 0.93
+    }, {
+      "title" : "ফেরতহীন ২০,০০০ টাকা জামানত",
+      "kind" : "AMBIGUITY",
+      "severity" : "MEDIUM",
+      "non_obvious" : true,
+      "clause_type" : "WAGE_PAYMENT_AND_DEDUCTIONS",
+      "clause_ids" : [ "c7", "c3" ],
+      "explanation" : "চাকরি ছাড়লে জামানত ফেরত নেই; এটি মাসিক ১২,০০০ টাকা মজুরির প্রায় ১.৭ গুণ, ফলে পদত্যাগ আটকে যেতে পারে।",
+      "citations" : [ {
+        "section_key" : "BLA-2006:27@amend-2026",
+        "quote" : "কোন স্থায়ী শ্রমিক মালিককে ষাট দিনের লিখিত নোটিশ প্রদান করিয়া তাহার চাকুরী হইতে ইস্তফা দিতে পারিবেন",
+        "claim" : "শ্রমিকের ইস্তফার অধিকার জামানত দ্বারা শাস্তিযোগ্য হওয়া উচিত নয়।"
+      } ],
+      "confidence" : 0.6
+    }, {
+      "title" : "একতরফা বিরোধ নিষ্পত্তির স্থান",
+      "kind" : "CONFLICT",
+      "severity" : "HIGH",
+      "non_obvious" : false,
+      "clause_type" : "DISPUTE_RESOLUTION",
+      "clause_ids" : [ "c9" ],
+      "explanation" : "সব বিরোধ কেবল নিয়োগকর্তার পছন্দের স্থানে নিষ্পত্তি হবে। এতে শ্রম আদালতে যাওয়ার অধিকার সীমিত হয়।",
+      "citations" : [ {
+        "section_key" : "BLA-2006:214@amend-2013",
+        "quote" : "এই আইনের অধীন আনীত, পেশকৃত অথবা দায়েরকৃত কোন শিল্প বিরোধ অথবা অন্য কোন বিরোধ",
+        "claim" : "শ্রম আদালতের এখতিয়ার একচেটিয়া।"
+      }, {
+        "section_key" : "CA-1872:28@original",
+        "quote" : "restricted absolutely from enforcing his rights under or in respect of any contract",
+        "claim" : "আইনি প্রতিকারে পূর্ণ বাধা দেওয়া চুক্তি সেই পরিমাণে বাতিল।"
+      } ],
+      "confidence" : 0.8
+    } ]
+  }
+}

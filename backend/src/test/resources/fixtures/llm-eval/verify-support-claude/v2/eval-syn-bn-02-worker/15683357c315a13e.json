@@ -1,0 +1,22 @@
+{
+  "fixtureVersion" : 1,
+  "promptId" : "verify-support-claude",
+  "promptVersion" : 2,
+  "caseId" : "eval-syn-bn-02-worker",
+  "modelId" : "claude-haiku-5-5",
+  "requestSha256" : "15683357c315a13e5e2dfe55f634a4023d6db2b2055c49c7c7aa8bf537ee4503",
+  "provenance" : "synthetic",
+  "source" : "recorded from a live call",
+  "recordedAt" : "2026-11-17T11:06:15.929563Z",
+  "stopReason" : "end_turn",
+  "usage" : {
+    "inputTokens" : 744,
+    "outputTokens" : 75,
+    "cacheReadTokens" : 982
+  },
+  "response" : {
+    "label" : "SUPPORTS",
+    "confidence" : 0.93,
+    "reason" : "Section 116(1) grants every worker except newspaper workers 14 days of sick leave per calendar year at full wages, matching the claim's elements."
+  }
+}

@@ -1,0 +1,24 @@
+{
+  "fixtureVersion" : 1,
+  "promptId" : "counter-offer",
+  "promptVersion" : 2,
+  "caseId" : "eval-syn-bn-02-worker",
+  "modelId" : "claude-sonnet-5-5",
+  "requestSha256" : "6312e3f7b962a4e5a7567f3f9807b381e057447130e0b3240e1919ee935279c8",
+  "provenance" : "synthetic",
+  "source" : "recorded from a live call",
+  "recordedAt" : "2026-11-17T11:06:33.723372Z",
+  "stopReason" : "end_turn",
+  "usage" : {
+    "inputTokens" : 538,
+    "outputTokens" : 342,
+    "cacheReadTokens" : 1222
+  },
+  "response" : {
+    "status" : "OK",
+    "reason" : "NONE",
+    "action" : "REPLACE",
+    "proposed_text" : "১. নিয়োগ: নিয়োগকর্তা কর্মচারীকে বিক্রয় সহকারী পদে নিয়োগ দিলেন। কর্মচারী নিয়োগকর্তার বৈধ ও যুক্তিসঙ্গত কাজসংক্রান্ত নির্দেশ মানবেন। এই চুক্তি ও প্রতিষ্ঠানের চাকুরী বিধি কোনোভাবেই প্রচলিত শ্রম আইনের বিধান অপেক্ষা কম অনুকূল হইবে না।",
+    "rationale" : "নির্দেশ মানার পরিধি বৈধ ও যুক্তিসঙ্গত নির্দেশে সীমিত করায় অস্পষ্টতা কাটে এবং আইনের চেয়ে কম অনুকূল শর্ত থাকে না।"
+  }
+}

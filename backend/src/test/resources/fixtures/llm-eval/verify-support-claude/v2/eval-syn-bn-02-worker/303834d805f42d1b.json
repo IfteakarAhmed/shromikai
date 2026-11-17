@@ -1,0 +1,22 @@
+{
+  "fixtureVersion" : 1,
+  "promptId" : "verify-support-claude",
+  "promptVersion" : 2,
+  "caseId" : "eval-syn-bn-02-worker",
+  "modelId" : "claude-haiku-5-5",
+  "requestSha256" : "303834d805f42d1b45517a2d610d3517e890e3d89bd8e82032114315b4ed03a6",
+  "provenance" : "synthetic",
+  "source" : "recorded from a live call",
+  "recordedAt" : "2026-11-17T11:06:15.927307Z",
+  "stopReason" : "end_turn",
+  "usage" : {
+    "inputTokens" : 648,
+    "outputTokens" : 66,
+    "cacheReadTokens" : 982
+  },
+  "response" : {
+    "label" : "SUPPORTS",
+    "confidence" : 0.93,
+    "reason" : "Section 46(1) states the employer is bound to provide maternity welfare benefit to the female worker, matching the claim."
+  }
+}

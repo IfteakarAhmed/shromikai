@@ -1,0 +1,24 @@
+{
+  "fixtureVersion" : 1,
+  "promptId" : "counter-offer",
+  "promptVersion" : 2,
+  "caseId" : "eval-syn-bn-02-worker",
+  "modelId" : "claude-sonnet-5-5",
+  "requestSha256" : "6e72a217e8a556f6af7ee74fd3492b19b1fd7f0f68e4e2d71193d7ca2a61b871",
+  "provenance" : "synthetic",
+  "source" : "recorded from a live call",
+  "recordedAt" : "2026-11-17T11:06:30.653582Z",
+  "stopReason" : "end_turn",
+  "usage" : {
+    "inputTokens" : 449,
+    "outputTokens" : 284,
+    "cacheReadTokens" : 1222
+  },
+  "response" : {
+    "status" : "OK",
+    "reason" : "NONE",
+    "action" : "REPLACE",
+    "proposed_text" : "২. মজুরি মাসিক বেতন ১২,০০০ টাকা। এর মধ্যে সব ভাতা অন্তর্ভুক্ত। মজুরিকাল এক মাস; প্রতি মজুরিকাল শেষ হওয়ার পরবর্তী ৭ কর্মদিবসের মধ্যে মজুরি শ্রমিককে পরিশোধ করা হইবে।",
+    "rationale" : "মজুরিকাল ও ৭ কর্মদিবসের মধ্যে পরিশোধের সময় যোগ হওয়ায় আইনের শর্ত পূরণ হয়, বেতনের অঙ্ক অপরিবর্তিত থাকে।"
+  }
+}

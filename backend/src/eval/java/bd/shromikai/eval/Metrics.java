@@ -37,6 +37,25 @@ public final class Metrics {
         "M-01", bad, unique.size(), cases.size() + " analyses; every shown citation");
   }
 
+  private static final java.util.regex.Pattern STATUTE_KEY =
+      java.util.regex.Pattern.compile(
+          "^[A-Z][A-Z0-9]{1,9}-[A-Z0-9]{2,6}:[0-9A-Za-z().-]{1,32}@[a-z0-9-]{1,32}$");
+
+  /**
+   * What an unresolved citation points at, so a rejected baseline citation is not read as invented
+   * law when it is really a reference to the contract itself or a malformed statute reference.
+   */
+  public static String keyShape(String key) {
+    String act = key.contains(":") ? key.substring(0, key.indexOf(':')) : key;
+    if (act.equalsIgnoreCase("contract") || act.contains("চুক্তি")) {
+      return "contract-clause-reference";
+    }
+    if (STATUTE_KEY.matcher(key).matches()) {
+      return "statute-key";
+    }
+    return "malformed-statute-reference";
+  }
+
   private static boolean objectivelyFabricated(ClaimRecord c) {
     return c.reasonCodes().stream().anyMatch(OBJECTIVE_FABRICATION::contains);
   }
@@ -46,6 +65,7 @@ public final class Metrics {
     long n = 0;
     long fabricated = 0;
     Map<String, Long> byReason = new TreeMap<>();
+    Map<String, Long> byShape = new TreeMap<>();
     for (AnalysisCase c : cases) {
       for (ClaimRecord claim : c.claims()) {
         if (!origin.equals(claim.origin())) {
@@ -54,6 +74,9 @@ public final class Metrics {
         n++;
         if (objectivelyFabricated(claim)) {
           fabricated++;
+          if (claim.reasonCodes().contains("SECTION_NOT_FOUND")) {
+            byShape.merge(keyShape(claim.sectionKey()), 1L, Long::sum);
+          }
         }
         claim.reasonCodes().forEach(r -> byReason.merge(r, 1L, Long::sum));
       }
@@ -62,8 +85,10 @@ public final class Metrics {
         "M-03",
         fabricated,
         n,
-        origin + " claims; fabricated = section missing or quote not in it (no reviewer)",
-        Map.of("reasonCodes", byReason));
+        origin
+            + " claims; fabricated = section missing or quote not in it (no reviewer); see"
+            + " unresolvedByKeyShape for what a missing section pointed at",
+        Map.of("reasonCodes", byReason, "unresolvedByKeyShape", byShape));
   }
 
   /** M-03 for what ShromikAI shows: shown citations that are objectively fabricated. */

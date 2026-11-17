@@ -151,6 +151,43 @@ class MetricFormulaTest {
   }
 
   @Test
+  void shouldSayWhatKindOfKeyAnUnresolvedCitationHas_M03() {
+    assertThat(Metrics.keyShape("BLA-2006:108@amend-2018")).isEqualTo("statute-key");
+    assertThat(Metrics.keyShape("BLA:100-102,108,103@2006"))
+        .isEqualTo("malformed-statute-reference");
+    assertThat(Metrics.keyShape("CONTRACT:4")).isEqualTo("contract-clause-reference");
+    assertThat(Metrics.keyShape("CONTRACT:9@v1")).isEqualTo("contract-clause-reference");
+    assertThat(Metrics.keyShape("চুক্তি:৩@v1")).isEqualTo("contract-clause-reference");
+
+    var base =
+        analysis(
+            "c1",
+            "baseline",
+            List.of(),
+            List.of(),
+            List.of(
+                new ClaimRecord(
+                    "b1", "CONTRACT:4", 1, "REJECTED", List.of("SECTION_NOT_FOUND"), "BASELINE"),
+                new ClaimRecord(
+                    "b1", "BLA:1-2@2006", 1, "REJECTED", List.of("SECTION_NOT_FOUND"), "BASELINE"),
+                new ClaimRecord(
+                    "b2",
+                    "XX-LAB:99@original",
+                    1,
+                    "REJECTED",
+                    List.of("SECTION_NOT_FOUND"),
+                    "BASELINE")));
+    MetricResult m03 = Metrics.objectiveFabrication(List.of(base), "BASELINE");
+    assertThat(m03.extra())
+        .containsEntry(
+            "unresolvedByKeyShape",
+            java.util.Map.of(
+                "contract-clause-reference", 1L,
+                "malformed-statute-reference", 1L,
+                "statute-key", 1L));
+  }
+
+  @Test
   void shouldCountCaughtFabricationsAndMisses_M04() {
     List<CitationCase> adversarial =
         List.of(

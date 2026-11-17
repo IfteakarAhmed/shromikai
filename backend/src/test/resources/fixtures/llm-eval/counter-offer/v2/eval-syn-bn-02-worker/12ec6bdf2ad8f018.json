@@ -1,0 +1,24 @@
+{
+  "fixtureVersion" : 1,
+  "promptId" : "counter-offer",
+  "promptVersion" : 2,
+  "caseId" : "eval-syn-bn-02-worker",
+  "modelId" : "claude-sonnet-5-5",
+  "requestSha256" : "12ec6bdf2ad8f0181407732696b64915e599036080bf4e035f6ab4a6c61bf8cc",
+  "provenance" : "synthetic",
+  "source" : "recorded from a live call",
+  "recordedAt" : "2026-11-17T11:06:28.406393Z",
+  "stopReason" : "end_turn",
+  "usage" : {
+    "inputTokens" : 735,
+    "outputTokens" : 319,
+    "cacheReadTokens" : 1222
+  },
+  "response" : {
+    "status" : "OK",
+    "reason" : "NONE",
+    "action" : "REPLACE",
+    "proposed_text" : "৫. অসুস্থতা ও মাতৃত্বকালীন ছুটি: অসুস্থতার কারণে অনুপস্থিত থাকলে সেই দিনগুলোর বেতন কাটা হবে। আইনে যোগ্য নারী কর্মচারীকে প্রসূতি কল্যাণ সুবিধাসহ ১২০ দিন পর্যন্ত মাতৃত্বকালীন ছুটি দেওয়া হবে।",
+    "rationale" : "মাতৃত্বকালীন ছুটির অস্বীকৃতি বাদ দিয়ে ১২০ দিন সুবিধাসহ ছুটি দেওয়ায় ধারা ৪৭(৩) মানা হলো; অসুস্থতার অংশ অপরিবর্তিত।"
+  }
+}

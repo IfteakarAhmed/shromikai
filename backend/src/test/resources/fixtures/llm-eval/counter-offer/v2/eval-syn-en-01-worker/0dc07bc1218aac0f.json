@@ -1,0 +1,24 @@
+{
+  "fixtureVersion" : 1,
+  "promptId" : "counter-offer",
+  "promptVersion" : 2,
+  "caseId" : "eval-syn-en-01-worker",
+  "modelId" : "claude-sonnet-5-5",
+  "requestSha256" : "0dc07bc1218aac0fd59cfd6a4e8f02ff496631b66731aa22dc651fe60d210b91",
+  "provenance" : "synthetic",
+  "source" : "recorded from a live call",
+  "recordedAt" : "2026-11-17T11:04:30.086734Z",
+  "stopReason" : "end_turn",
+  "usage" : {
+    "inputTokens" : 786,
+    "outputTokens" : 385,
+    "cacheReadTokens" : 1222
+  },
+  "response" : {
+    "status" : "OK",
+    "reason" : "NONE",
+    "action" : "REPLACE",
+    "proposed_text" : "9. বিরোধ নিষ্পত্তি: কোনো বিরোধ হইলে উভয় পক্ষের পারস্পরিক সম্মতিতে মনোনীত একজন নিরপেক্ষ সালিশকারকের নিকট যৌথ অনুরোধপত্র পাঠানো হইবে। সম্মতি না হইলে বা সালিশে নিষ্পত্তি না হইলে যেকোনো পক্ষ আইন অনুযায়ী বিকল্প বিরোধ নিষ্পত্তি কর্তৃপক্ষ, শ্রম আদালত বা এখতিয়ারসম্পন্ন ট্রাইব্যুনালে যাইতে পারিবে।",
+    "rationale" : "সালিশকারক এখন উভয় পক্ষের স্বীকৃত হওয়ায় নিরপেক্ষতা নিশ্চিত হয় এবং আদালতে যাওয়ার অধিকার বহাল থাকে।"
+  }
+}

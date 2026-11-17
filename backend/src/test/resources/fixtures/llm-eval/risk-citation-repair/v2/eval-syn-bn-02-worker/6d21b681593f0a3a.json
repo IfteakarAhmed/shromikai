@@ -1,0 +1,22 @@
+{
+  "fixtureVersion" : 1,
+  "promptId" : "risk-citation-repair",
+  "promptVersion" : 2,
+  "caseId" : "eval-syn-bn-02-worker",
+  "modelId" : "claude-sonnet-5-5",
+  "requestSha256" : "6d21b681593f0a3a7bb0c91da4fa773cb620b0ea4362c7e21aaf05007cf00009",
+  "provenance" : "synthetic",
+  "source" : "recorded from a live call",
+  "recordedAt" : "2026-11-17T11:06:25.159919Z",
+  "stopReason" : "end_turn",
+  "usage" : {
+    "inputTokens" : 10905,
+    "outputTokens" : 40,
+    "cacheReadTokens" : 0
+  },
+  "response" : {
+    "status" : "ABSTAIN",
+    "reason" : "NO_SUPPORTING_SECTION",
+    "citations" : [ ]
+  }
+}

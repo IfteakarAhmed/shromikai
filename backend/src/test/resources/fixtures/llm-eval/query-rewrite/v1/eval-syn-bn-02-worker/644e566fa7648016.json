@@ -1,0 +1,22 @@
+{
+  "fixtureVersion" : 1,
+  "promptId" : "query-rewrite",
+  "promptVersion" : 1,
+  "caseId" : "eval-syn-bn-02-worker",
+  "modelId" : "claude-haiku-5-5",
+  "requestSha256" : "644e566fa7648016a20063caeba668777e8c786865d6682363e9e1d4cbc8954c",
+  "provenance" : "synthetic",
+  "source" : "recorded from a live call",
+  "recordedAt" : "2026-11-17T11:05:56.501100Z",
+  "stopReason" : "end_turn",
+  "usage" : {
+    "inputTokens" : 125,
+    "outputTokens" : 145,
+    "cacheReadTokens" : 798
+  },
+  "response" : {
+    "status" : "OK",
+    "reason" : "NONE",
+    "queries" : [ "বিক্রয় সহকারী নিয়োগ এবং চাকরির শর্ত শ্রম আইন", "employment appointment and employer instructions obligations Bangladesh labour law", "কর্মচারীর দায়িত্ব ও নিয়োগকর্তার নির্দেশ পালন বাংলাদেশ শ্রম আইন" ]
+  }
+}

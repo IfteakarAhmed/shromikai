@@ -1,0 +1,22 @@
+{
+  "fixtureVersion" : 1,
+  "promptId" : "verify-support-claude",
+  "promptVersion" : 2,
+  "caseId" : "eval-syn-bn-02-worker",
+  "modelId" : "claude-haiku-5-5",
+  "requestSha256" : "2b77808ff4686004d5c26dee2ec5fa6438c04c4c69e3fbcbd9b6552a6642019c",
+  "provenance" : "synthetic",
+  "source" : "recorded from a live call",
+  "recordedAt" : "2026-11-17T11:06:16.173940Z",
+  "stopReason" : "end_turn",
+  "usage" : {
+    "inputTokens" : 3187,
+    "outputTokens" : 85,
+    "cacheReadTokens" : 982
+  },
+  "response" : {
+    "label" : "PARTIAL",
+    "confidence" : 0.8,
+    "reason" : "Section 214(10) gives labour courts exclusive jurisdiction over disputes under the Act, but the quoted clause covers only disputes under this Act, not all matters broadly."
+  }
+}

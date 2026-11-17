@@ -1,0 +1,22 @@
+{
+  "fixtureVersion" : 1,
+  "promptId" : "query-rewrite",
+  "promptVersion" : 1,
+  "caseId" : "eval-syn-bn-02-worker",
+  "modelId" : "claude-haiku-5-5",
+  "requestSha256" : "42c58ce3ce7d295387d5a0c3941fbd72ddd253175bd0e2e9ae70e554c39eeab5",
+  "provenance" : "synthetic",
+  "source" : "recorded from a live call",
+  "recordedAt" : "2026-11-17T11:05:56.484923Z",
+  "stopReason" : "end_turn",
+  "usage" : {
+    "inputTokens" : 122,
+    "outputTokens" : 136,
+    "cacheReadTokens" : 798
+  },
+  "response" : {
+    "status" : "OK",
+    "reason" : "NONE",
+    "queries" : [ "নিয়োগকর্তার কারণ ছাড়া চাকরি অবসান ও ছাঁটাই", "Termination of employment without cause and employer obligation to pay dues", "বাংলাদেশ শ্রম আইন চাকরি সমাপ্তির নোটিশ ও ক্ষতিপূরণ" ]
+  }
+}
