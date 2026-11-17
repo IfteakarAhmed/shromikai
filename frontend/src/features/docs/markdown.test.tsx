@@ -4,6 +4,13 @@ import { Markdown } from './markdown'
 import { sectionOf, slug } from './markdownText'
 
 describe('Markdown (FR-74)', () => {
+  it('NFR-08 inline code may break anywhere, so a long path or key never widens a phone page', () => {
+    render(
+      <Markdown baseLevel={2} source={'See `a/very/long/path/that/has/no/spaces.json` now.'} />,
+    )
+    expect(screen.getByText(/a\/very\/long/).className).toContain('[overflow-wrap:anywhere]')
+  })
+
   it('FR-74 renders headings, lists, tables and code as elements', () => {
     render(
       <Markdown

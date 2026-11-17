@@ -1,3 +1,4 @@
+import { TableShell } from '../../components/ui/TableShell'
 import { Fragment, type ReactNode } from 'react'
 import { slug } from './markdownText'
 
@@ -189,7 +190,10 @@ function inline(text: string, key: string): ReactNode[] {
     n += 1
     if (token.startsWith('`')) {
       out.push(
-        <code key={id} className="rounded bg-secondary px-1 py-0.5 text-[0.92em]">
+        <code
+          key={id}
+          className="rounded bg-secondary px-1 py-0.5 text-[0.92em] [overflow-wrap:anywhere]"
+        >
           {token.slice(1, -1)}
         </code>,
       )
@@ -303,43 +307,35 @@ export function Markdown({
             )
           case 'table':
             return (
-              <div
+              <TableShell
                 key={key}
-                role="region"
-                aria-label={tableLabel === '' ? undefined : tableLabel}
-                tabIndex={0}
-                className="glass-panel overflow-x-auto rounded-xl"
+                label={tableLabel === '' ? undefined : tableLabel}
+                minWidth="max-content"
               >
-                <table className="w-full min-w-max border-collapse text-start">
-                  <thead>
-                    <tr className="border-b border-border">
-                      {block.header.map((cell, c) => (
-                        <th
-                          key={`${key}h${String(c)}`}
-                          scope="col"
-                          className="px-3 py-2 text-start"
-                        >
-                          {inline(cell, `${key}h${String(c)}`)}
-                        </th>
+                <thead>
+                  <tr className="border-b border-border">
+                    {block.header.map((cell, c) => (
+                      <th key={`${key}h${String(c)}`} scope="col" className="px-3 py-2 text-start">
+                        {inline(cell, `${key}h${String(c)}`)}
+                      </th>
+                    ))}
+                  </tr>
+                </thead>
+                <tbody>
+                  {block.rows.map((row, r) => (
+                    <tr
+                      key={`${key}r${String(r)}`}
+                      className="border-b border-border align-top last:border-b-0"
+                    >
+                      {row.map((cell, c) => (
+                        <td key={`${key}r${String(r)}c${String(c)}`} className="px-3 py-2">
+                          {inline(cell, `${key}r${String(r)}c${String(c)}`)}
+                        </td>
                       ))}
                     </tr>
-                  </thead>
-                  <tbody>
-                    {block.rows.map((row, r) => (
-                      <tr
-                        key={`${key}r${String(r)}`}
-                        className="border-b border-border align-top last:border-b-0"
-                      >
-                        {row.map((cell, c) => (
-                          <td key={`${key}r${String(r)}c${String(c)}`} className="px-3 py-2">
-                            {inline(cell, `${key}r${String(r)}c${String(c)}`)}
-                          </td>
-                        ))}
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </div>
+                  ))}
+                </tbody>
+              </TableShell>
             )
           case 'list':
             return renderList(block.list, key)

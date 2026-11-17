@@ -1,3 +1,5 @@
+import { cx } from '../../lib/cx'
+import { fieldClass } from '../../components/ui/field'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { useState, type SyntheticEvent } from 'react'
 import { useTranslation } from 'react-i18next'
@@ -273,8 +275,7 @@ export default function PlaybooksPage() {
   )
 }
 
-const inputClass =
-  'mt-1 block min-h-11 w-full rounded-lg border border-input bg-background/60 px-3 py-2'
+const inputClass = cx(fieldClass, 'mt-1')
 
 function PlaybookForm({
   draft,

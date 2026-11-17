@@ -1,3 +1,6 @@
+import { cx } from '../../lib/cx'
+import { fieldInlineClass } from '../../components/ui/field'
+import { TableShell } from '../../components/ui/TableShell'
 import { useQuery } from '@tanstack/react-query'
 import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
@@ -75,7 +78,7 @@ export default function ReviewPage() {
                     setStatus(event.target.value)
                     setPage(0)
                   }}
-                  className="mt-1 min-h-11 rounded-lg border border-input bg-background px-3"
+                  className={cx(fieldInlineClass, 'mt-1')}
                 >
                   <option value="">{t('admin.review.all')}</option>
                   {STATUSES.map((s) => (
@@ -93,7 +96,7 @@ export default function ReviewPage() {
                     setSeverity(event.target.value)
                     setPage(0)
                   }}
-                  className="mt-1 min-h-11 rounded-lg border border-input bg-background px-3"
+                  className={cx(fieldInlineClass, 'mt-1')}
                 >
                   <option value="">{t('admin.review.all')}</option>
                   {SEVERITIES.map((s) => (
@@ -230,64 +233,62 @@ function ItemList({
     )
   }
   return (
-    <div className="glass-panel overflow-hidden rounded-xl">
-      <table className="w-full border-collapse text-start">
-        <caption className="sr-only">{t('admin.review.caption')}</caption>
-        <thead>
-          <tr className="border-b border-border text-start">
-            <th scope="col" className="px-4 py-3 text-start">
-              {t('admin.review.colClause')}
+    <TableShell label={t('admin.review.caption')}>
+      <caption className="sr-only">{t('admin.review.caption')}</caption>
+      <thead>
+        <tr className="border-b border-border text-start">
+          <th scope="col" className="px-4 py-3 text-start">
+            {t('admin.review.colClause')}
+          </th>
+          <th scope="col" className="px-4 py-3 text-start">
+            {t('admin.review.colSeverity')}
+          </th>
+          <th scope="col" className="px-4 py-3 text-start">
+            {t('admin.review.colStatus')}
+          </th>
+          <th scope="col" className="px-4 py-3 text-start">
+            {t('admin.review.colCreated')}
+          </th>
+          <th scope="col" className="px-4 py-3 text-start">
+            {t('admin.review.colAction')}
+          </th>
+        </tr>
+      </thead>
+      <tbody>
+        {items.map((item) => (
+          <tr
+            key={item.id}
+            aria-current={item.id === selected ? 'true' : undefined}
+            className={
+              item.id === selected
+                ? 'border-b border-border bg-primary/10'
+                : 'border-b border-border last:border-b-0'
+            }
+          >
+            <th scope="row" className="px-4 py-3 text-start font-semibold">
+              {title(item)}
             </th>
-            <th scope="col" className="px-4 py-3 text-start">
-              {t('admin.review.colSeverity')}
-            </th>
-            <th scope="col" className="px-4 py-3 text-start">
-              {t('admin.review.colStatus')}
-            </th>
-            <th scope="col" className="px-4 py-3 text-start">
-              {t('admin.review.colCreated')}
-            </th>
-            <th scope="col" className="px-4 py-3 text-start">
-              {t('admin.review.colAction')}
-            </th>
+            <td className="px-4 py-3">
+              {item.severity === null ? '–' : <SeverityTag severity={item.severity} />}
+            </td>
+            <td className="px-4 py-3">
+              <ReviewStatusBadge status={item.status} />
+            </td>
+            <td className="px-4 py-3">{formatDateTime(item.createdAt, language)}</td>
+            <td className="px-4 py-3">
+              <Button
+                variant="outline"
+                onClick={() => {
+                  void navigate(`/admin/review/${item.id}`)
+                }}
+              >
+                {t('admin.review.open')}
+                <span className="sr-only"> · {title(item)}</span>
+              </Button>
+            </td>
           </tr>
-        </thead>
-        <tbody>
-          {items.map((item) => (
-            <tr
-              key={item.id}
-              aria-current={item.id === selected ? 'true' : undefined}
-              className={
-                item.id === selected
-                  ? 'border-b border-border bg-primary/10'
-                  : 'border-b border-border last:border-b-0'
-              }
-            >
-              <th scope="row" className="px-4 py-3 text-start font-semibold">
-                {title(item)}
-              </th>
-              <td className="px-4 py-3">
-                {item.severity === null ? '–' : <SeverityTag severity={item.severity} />}
-              </td>
-              <td className="px-4 py-3">
-                <ReviewStatusBadge status={item.status} />
-              </td>
-              <td className="px-4 py-3">{formatDateTime(item.createdAt, language)}</td>
-              <td className="px-4 py-3">
-                <Button
-                  variant="outline"
-                  onClick={() => {
-                    void navigate(`/admin/review/${item.id}`)
-                  }}
-                >
-                  {t('admin.review.open')}
-                  <span className="sr-only"> · {title(item)}</span>
-                </Button>
-              </td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
-    </div>
+        ))}
+      </tbody>
+    </TableShell>
   )
 }

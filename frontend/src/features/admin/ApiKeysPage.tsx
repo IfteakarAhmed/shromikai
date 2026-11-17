@@ -1,3 +1,6 @@
+import { cx } from '../../lib/cx'
+import { fieldClass } from '../../components/ui/field'
+import { TableShell } from '../../components/ui/TableShell'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { useState, type SyntheticEvent } from 'react'
 import { useTranslation } from 'react-i18next'
@@ -138,7 +141,7 @@ export default function ApiKeysPage() {
               onChange={(event) => {
                 setName(event.target.value)
               }}
-              className="mt-1 block min-h-11 w-full rounded-lg border border-input bg-background/60 px-3 py-2"
+              className={cx(fieldClass, 'mt-1')}
             />
             {touched && nameBad && (
               <p id="key-name-error" className="mt-1 font-semibold text-rejected">
@@ -200,91 +203,84 @@ export default function ApiKeysPage() {
           </GlassCard>
         )}
         {list.data !== undefined && list.data.length > 0 && (
-          <div
-            className="glass-panel overflow-x-auto rounded-xl"
-            role="region"
-            aria-label={t('admin.keys.caption')}
-            tabIndex={0}
-          >
-            <table className="w-full border-collapse text-start">
-              <caption className="sr-only">{t('admin.keys.caption')}</caption>
-              <thead>
-                <tr className="border-b border-border">
-                  <th scope="col" className="px-4 py-3 text-start">
-                    {t('admin.keys.colName')}
-                  </th>
-                  <th scope="col" className="px-4 py-3 text-start">
-                    {t('admin.keys.prefix')}
-                  </th>
-                  <th scope="col" className="px-4 py-3 text-start">
-                    {t('admin.keys.colScopes')}
-                  </th>
-                  <th scope="col" className="px-4 py-3 text-start">
-                    {t('admin.keys.created')}
-                  </th>
-                  <th scope="col" className="px-4 py-3 text-start">
-                    {t('admin.keys.lastUsed')}
-                  </th>
-                  <th scope="col" className="px-4 py-3 text-start">
-                    {t('admin.keys.status')}
-                  </th>
-                </tr>
-              </thead>
-              <tbody>
-                {list.data.map((key) => {
-                  const revoked = key.revokedAt !== null
-                  return (
-                    <tr key={key.id} className="border-b border-border last:border-b-0">
-                      <th scope="row" className="px-4 py-3 text-start font-semibold">
-                        {key.name}
-                      </th>
-                      <td className="px-4 py-3">
-                        <code lang="en" dir="ltr">
-                          {key.prefix}
-                        </code>
-                      </td>
-                      <td className="px-4 py-3">
-                        {new Intl.ListFormat(language, { style: 'narrow', type: 'unit' }).format(
-                          key.scopes.map((scope) =>
-                            t(`admin.keys.scopeNames.${scope}`, { defaultValue: scope }),
-                          ),
-                        )}
-                      </td>
-                      <td className="whitespace-nowrap px-4 py-3">
-                        {formatDateTime(key.createdAt, language)}
-                      </td>
-                      <td className="whitespace-nowrap px-4 py-3">
-                        {key.lastUsedAt === null
-                          ? t('admin.keys.neverUsed')
-                          : formatDateTime(key.lastUsedAt, language)}
-                      </td>
-                      <td className="px-4 py-3">
-                        {revoked ? (
-                          <Badge tone="rejected">{t('admin.keys.revoked')}</Badge>
-                        ) : (
-                          <div className="flex flex-wrap items-center gap-2">
-                            <Badge tone="verified">{t('admin.keys.active')}</Badge>
-                            <Button
-                              variant="outline"
-                              busy={revoke.isPending && revoke.variables === key.id}
-                              onClick={() => {
-                                if (window.confirm(t('admin.keys.revokeConfirm'))) {
-                                  revoke.mutate(key.id)
-                                }
-                              }}
-                            >
-                              {t('admin.keys.revoke')}
-                              <span className="sr-only"> · {key.name}</span>
-                            </Button>
-                          </div>
-                        )}
-                      </td>
-                    </tr>
-                  )
-                })}
-              </tbody>
-            </table>
-          </div>
+          <TableShell label={t('admin.keys.caption')}>
+            <caption className="sr-only">{t('admin.keys.caption')}</caption>
+            <thead>
+              <tr className="border-b border-border">
+                <th scope="col" className="px-4 py-3 text-start">
+                  {t('admin.keys.colName')}
+                </th>
+                <th scope="col" className="px-4 py-3 text-start">
+                  {t('admin.keys.prefix')}
+                </th>
+                <th scope="col" className="px-4 py-3 text-start">
+                  {t('admin.keys.colScopes')}
+                </th>
+                <th scope="col" className="px-4 py-3 text-start">
+                  {t('admin.keys.created')}
+                </th>
+                <th scope="col" className="px-4 py-3 text-start">
+                  {t('admin.keys.lastUsed')}
+                </th>
+                <th scope="col" className="px-4 py-3 text-start">
+                  {t('admin.keys.status')}
+                </th>
+              </tr>
+            </thead>
+            <tbody>
+              {list.data.map((key) => {
+                const revoked = key.revokedAt !== null
+                return (
+                  <tr key={key.id} className="border-b border-border last:border-b-0">
+                    <th scope="row" className="px-4 py-3 text-start font-semibold">
+                      {key.name}
+                    </th>
+                    <td className="px-4 py-3">
+                      <code lang="en" dir="ltr">
+                        {key.prefix}
+                      </code>
+                    </td>
+                    <td className="px-4 py-3">
+                      {new Intl.ListFormat(language, { style: 'narrow', type: 'unit' }).format(
+                        key.scopes.map((scope) =>
+                          t(`admin.keys.scopeNames.${scope}`, { defaultValue: scope }),
+                        ),
+                      )}
+                    </td>
+                    <td className="whitespace-nowrap px-4 py-3">
+                      {formatDateTime(key.createdAt, language)}
+                    </td>
+                    <td className="whitespace-nowrap px-4 py-3">
+                      {key.lastUsedAt === null
+                        ? t('admin.keys.neverUsed')
+                        : formatDateTime(key.lastUsedAt, language)}
+                    </td>
+                    <td className="px-4 py-3">
+                      {revoked ? (
+                        <Badge tone="rejected">{t('admin.keys.revoked')}</Badge>
+                      ) : (
+                        <div className="flex flex-wrap items-center gap-2">
+                          <Badge tone="verified">{t('admin.keys.active')}</Badge>
+                          <Button
+                            variant="outline"
+                            busy={revoke.isPending && revoke.variables === key.id}
+                            onClick={() => {
+                              if (window.confirm(t('admin.keys.revokeConfirm'))) {
+                                revoke.mutate(key.id)
+                              }
+                            }}
+                          >
+                            {t('admin.keys.revoke')}
+                            <span className="sr-only"> · {key.name}</span>
+                          </Button>
+                        </div>
+                      )}
+                    </td>
+                  </tr>
+                )
+              })}
+            </tbody>
+          </TableShell>
         )}
       </div>
     </div>

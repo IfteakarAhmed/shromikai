@@ -69,7 +69,7 @@
   --muted-foreground: oklch(0.77 0.03 262);
   --accent: oklch(0.29 0.05 263);
   --border: oklch(0.36 0.05 262 / 70%);
-  --input: oklch(0.42 0.05 262 / 85%);
+  --input: oklch(0.56 0.05 262);
   --ring: oklch(0.8226 0.1677 163.38);
   --verified: oklch(0.8226 0.1677 163.38);
   --uncertain: oklch(0.8245 0.1486 73.35);
@@ -79,6 +79,7 @@
   --sev-medium: oklch(0.79 0.1 245);
   --sev-low: oklch(0.76 0.03 262);
   --hero-tint: oklch(0.25 0.045 163 / 22%);
+  --chart-cursor: color-mix(in oklab, var(--primary) 10%, transparent);
 
   /* Glass, glow and the ambient orbs. */
   --glass: oklch(0.2 0.045 263 / 64%);
@@ -125,7 +126,7 @@
   --muted-foreground: oklch(0.42 0.035 262);
   --accent: oklch(0.92 0.025 200);
   --border: oklch(0.8 0.025 258);
-  --input: oklch(0.66 0.03 258);
+  --input: oklch(0.58 0.035 258);
   --ring: oklch(0.45 0.13 163.38);
   --verified: oklch(0.41 0.12 163.38);
   --uncertain: oklch(0.45 0.12 72);
@@ -460,6 +461,118 @@
   .lift-2 {
     translate: 0 0 22px;
   }
+}
+
+/* Forms and tables (C4): one themed look for every field and every data table. */
+@layer components {
+  .field {
+    background: color-mix(in oklab, var(--surface-2) 88%, transparent);
+    border: 1px solid var(--input);
+    color: var(--foreground);
+    transition:
+      border-color var(--dur-fast) var(--ease-out),
+      box-shadow var(--dur-fast) var(--ease-out),
+      background-color var(--dur-fast) var(--ease-out);
+  }
+
+  .field::placeholder {
+    color: var(--muted-foreground);
+    opacity: 1;
+  }
+
+  .field:hover:not(:disabled) {
+    border-color: color-mix(in oklab, var(--primary) 55%, var(--input));
+  }
+
+  .field:focus-visible {
+    border-color: var(--primary);
+    box-shadow: 0 0 0 4px var(--glow-primary);
+  }
+
+  .field[aria-invalid='true'] {
+    border-color: var(--rejected);
+  }
+
+  .field:disabled {
+    cursor: not-allowed;
+    opacity: 0.6;
+  }
+
+  .data-table {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0;
+    text-align: start;
+  }
+
+  .data-table thead th {
+    background: color-mix(in oklab, var(--surface-2) 72%, transparent);
+    border-bottom: 1px solid var(--border);
+    color: var(--muted-foreground);
+    font-family: var(--font-ui);
+    font-size: 0.875rem;
+    padding: 0.75rem 1rem;
+    white-space: nowrap;
+  }
+
+  .data-table td,
+  .data-table tbody th {
+    padding: 0.75rem 1rem;
+    vertical-align: top;
+  }
+
+  .data-table tbody tr {
+    transition: background-color var(--dur-fast) var(--ease-out);
+  }
+
+  .data-table tbody tr:hover {
+    background: color-mix(in oklab, var(--primary) 7%, transparent);
+  }
+
+  .data-table tbody tr[aria-current='true'] {
+    background: color-mix(in oklab, var(--primary) 12%, transparent);
+  }
+
+  .data-table tbody tr:last-child > * {
+    border-bottom-width: 0;
+  }
+}
+
+/* The large status code of the 403 and 404 pages: decoration, so it keeps the contrast anyway. */
+.status-code {
+  color: var(--primary);
+  line-height: 1;
+  text-shadow: 0 0 48px var(--glow-primary);
+}
+
+/* The review ticket's timeline: one rail, one node a finding (C4). */
+.ticket-rail > li {
+  position: relative;
+  padding-inline-start: 2.25rem;
+}
+
+.ticket-rail > li::before {
+  position: absolute;
+  inset-block: 1.75rem -1.25rem;
+  inset-inline-start: 0.5rem;
+  width: 2px;
+  background: var(--border);
+  content: '';
+}
+
+.ticket-rail > li:last-child::before {
+  display: none;
+}
+
+.ticket-rail .rail-node {
+  position: absolute;
+  inset-block-start: 1.1rem;
+  inset-inline-start: 0;
+  width: 1.125rem;
+  height: 1.125rem;
+  border: 3px solid var(--background);
+  border-radius: 9999px;
+  box-shadow: 0 0 0 1px var(--input);
 }
 
 /* Ambient glow orbs behind the app pages (not the landing, which has its own scene). */

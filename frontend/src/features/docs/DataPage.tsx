@@ -1,3 +1,4 @@
+import { TableShell } from '../../components/ui/TableShell'
 import { useTranslation } from 'react-i18next'
 import { GlassCard } from '../../components/ui/GlassCard'
 import type { Language } from '../../i18n'
@@ -33,69 +34,62 @@ export default function DataPage() {
           />
 
           <h2 className="mt-8 text-2xl font-bold">{t('docs.data.actsTitle')}</h2>
-          <div
-            className="glass-panel mt-3 overflow-x-auto rounded-xl"
-            role="region"
-            aria-label={t('docs.data.caption')}
-            tabIndex={0}
-          >
-            <table className="w-full min-w-max border-collapse text-start">
-              <caption className="sr-only">{t('docs.data.caption')}</caption>
-              <thead>
-                <tr className="border-b border-border">
-                  <th scope="col" className="px-3 py-2 text-start">
-                    {t('docs.data.colAct')}
+          <TableShell label={t('docs.data.caption')} minWidth="max-content" className="mt-3">
+            <caption className="sr-only">{t('docs.data.caption')}</caption>
+            <thead>
+              <tr className="border-b border-border">
+                <th scope="col" className="px-3 py-2 text-start">
+                  {t('docs.data.colAct')}
+                </th>
+                <th scope="col" className="px-3 py-2 text-start">
+                  {t('docs.data.colLang')}
+                </th>
+                <th scope="col" className="px-3 py-2 text-end">
+                  {t('docs.data.colSections')}
+                </th>
+                <th scope="col" className="px-3 py-2 text-end">
+                  {t('docs.data.colVersions')}
+                </th>
+                <th scope="col" className="px-3 py-2 text-end">
+                  {t('docs.data.colNoTranslation')}
+                </th>
+                <th scope="col" className="px-3 py-2 text-start">
+                  {t('docs.data.colSource')}
+                </th>
+              </tr>
+            </thead>
+            <tbody>
+              {quality.acts.map((act) => (
+                <tr key={act.code} className="border-b border-border align-top last:border-b-0">
+                  <th scope="row" className="px-3 py-2 text-start font-medium">
+                    <span lang={act.authoritativeLang === 'bn' ? 'bn' : 'en'}>{act.title}</span>
+                    <br />
+                    <code lang="en" dir="ltr" className="text-sm text-muted-foreground">
+                      {act.code}
+                    </code>
                   </th>
-                  <th scope="col" className="px-3 py-2 text-start">
-                    {t('docs.data.colLang')}
-                  </th>
-                  <th scope="col" className="px-3 py-2 text-end">
-                    {t('docs.data.colSections')}
-                  </th>
-                  <th scope="col" className="px-3 py-2 text-end">
-                    {t('docs.data.colVersions')}
-                  </th>
-                  <th scope="col" className="px-3 py-2 text-end">
-                    {t('docs.data.colNoTranslation')}
-                  </th>
-                  <th scope="col" className="px-3 py-2 text-start">
-                    {t('docs.data.colSource')}
-                  </th>
+                  <td className="px-3 py-2">
+                    {t(`docs.data.langs.${act.authoritativeLang}`, {
+                      defaultValue: act.authoritativeLang,
+                    })}
+                  </td>
+                  <td className="px-3 py-2 text-end">{n(act.currentSections)}</td>
+                  <td className="px-3 py-2 text-end">{n(act.versions)}</td>
+                  <td className="px-3 py-2 text-end">{n(act.missingTranslation)}</td>
+                  <td className="px-3 py-2">
+                    <a
+                      href={act.sourceUrl}
+                      rel="noopener noreferrer"
+                      className="inline-flex min-h-11 items-center underline underline-offset-4"
+                    >
+                      {t('docs.data.source')}
+                      <span className="sr-only"> · {act.code}</span>
+                    </a>
+                  </td>
                 </tr>
-              </thead>
-              <tbody>
-                {quality.acts.map((act) => (
-                  <tr key={act.code} className="border-b border-border align-top last:border-b-0">
-                    <th scope="row" className="px-3 py-2 text-start font-medium">
-                      <span lang={act.authoritativeLang === 'bn' ? 'bn' : 'en'}>{act.title}</span>
-                      <br />
-                      <code lang="en" dir="ltr" className="text-sm text-muted-foreground">
-                        {act.code}
-                      </code>
-                    </th>
-                    <td className="px-3 py-2">
-                      {t(`docs.data.langs.${act.authoritativeLang}`, {
-                        defaultValue: act.authoritativeLang,
-                      })}
-                    </td>
-                    <td className="px-3 py-2 text-end">{n(act.currentSections)}</td>
-                    <td className="px-3 py-2 text-end">{n(act.versions)}</td>
-                    <td className="px-3 py-2 text-end">{n(act.missingTranslation)}</td>
-                    <td className="px-3 py-2">
-                      <a
-                        href={act.sourceUrl}
-                        rel="noopener noreferrer"
-                        className="inline-flex min-h-11 items-center underline underline-offset-4"
-                      >
-                        {t('docs.data.source')}
-                        <span className="sr-only"> · {act.code}</span>
-                      </a>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
+              ))}
+            </tbody>
+          </TableShell>
 
           <h2 className="mt-8 text-2xl font-bold">{t('docs.data.edgesTitle')}</h2>
           <ul className="mt-3 grid gap-3 sm:grid-cols-2">
@@ -119,7 +113,7 @@ export default function DataPage() {
           <p className="mt-1 text-muted-foreground">{t('docs.data.iloNote')}</p>
           <ul className="mt-3 grid gap-2 sm:grid-cols-2">
             {quality.ilo.map((row) => (
-              <li key={row.code} className="glass-panel rounded-lg px-4 py-3">
+              <GlassCard as="li" key={row.code} className="px-4 py-3">
                 <code lang="en" dir="ltr" className="font-semibold">
                   {row.code}
                 </code>{' '}
@@ -128,7 +122,7 @@ export default function DataPage() {
                 <span className="text-sm text-muted-foreground">
                   {t(`docs.data.iloStatuses.${row.status}`, { defaultValue: row.status })}
                 </span>
-              </li>
+              </GlassCard>
             ))}
           </ul>
 
@@ -138,14 +132,14 @@ export default function DataPage() {
           ) : (
             <ul className="mt-3 space-y-2">
               {quality.missing.map((row) => (
-                <li key={row.what} className="glass-panel rounded-lg px-4 py-3">
+                <GlassCard as="li" key={row.what} className="px-4 py-3">
                   <code lang="en" dir="ltr" className="font-semibold">
                     {row.what}
                   </code>
                   <p lang="en" className="mt-1 text-sm text-muted-foreground">
                     {row.reason}
                   </p>
-                </li>
+                </GlassCard>
               ))}
             </ul>
           )}

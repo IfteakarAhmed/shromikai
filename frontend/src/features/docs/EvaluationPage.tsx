@@ -1,3 +1,4 @@
+import { TableShell } from '../../components/ui/TableShell'
 import { Suspense, lazy } from 'react'
 import { useTranslation } from 'react-i18next'
 import { GlassCard } from '../../components/ui/GlassCard'
@@ -43,73 +44,64 @@ export default function EvaluationPage() {
             provenance={retrieval.provenance}
             language={language}
           />
-          <div
-            className="glass-panel mt-4 overflow-x-auto rounded-xl"
-            role="region"
-            aria-label={t('docs.evaluation.caption')}
-            tabIndex={0}
-          >
-            <table className="w-full min-w-[34rem] border-collapse text-start">
-              <caption className="sr-only">{t('docs.evaluation.caption')}</caption>
-              <thead>
-                <tr className="border-b border-border">
-                  <th scope="col" className="px-3 py-2 text-start">
-                    {t('docs.evaluation.colMethod')}
+          <TableShell label={t('docs.evaluation.caption')} minWidth="34rem" className="mt-4">
+            <caption className="sr-only">{t('docs.evaluation.caption')}</caption>
+            <thead>
+              <tr className="border-b border-border">
+                <th scope="col" className="px-3 py-2 text-start">
+                  {t('docs.evaluation.colMethod')}
+                </th>
+                <th scope="col" className="px-3 py-2 text-end">
+                  {t('docs.evaluation.colFound')}
+                </th>
+                <th scope="col" className="px-3 py-2 text-end">
+                  {t('docs.evaluation.colRank')}
+                </th>
+                <th scope="col" className="px-3 py-2 text-end">
+                  {t('docs.evaluation.colRecall')}
+                </th>
+                <th scope="col" className="px-3 py-2 text-end">
+                  {t('docs.evaluation.colTime')}
+                </th>
+              </tr>
+            </thead>
+            <tbody>
+              {retrieval.rows.map((row) => (
+                <tr key={row.method} className="border-b border-border last:border-b-0">
+                  <th scope="row" className="px-3 py-2 text-start font-medium">
+                    {t(`docs.evaluation.methods.${row.method}`, { defaultValue: row.method })}
                   </th>
-                  <th scope="col" className="px-3 py-2 text-end">
-                    {t('docs.evaluation.colFound')}
-                  </th>
-                  <th scope="col" className="px-3 py-2 text-end">
-                    {t('docs.evaluation.colRank')}
-                  </th>
-                  <th scope="col" className="px-3 py-2 text-end">
-                    {t('docs.evaluation.colRecall')}
-                  </th>
-                  <th scope="col" className="px-3 py-2 text-end">
-                    {t('docs.evaluation.colTime')}
-                  </th>
+                  <td className="px-3 py-2 text-end">
+                    {t('docs.evaluation.found', { count: n(row.hitsAt5), n: n(row.questions) })}
+                  </td>
+                  <td className="px-3 py-2 text-end">{formatDecimal(row.mrrAt10, language, 2)}</td>
+                  <td className="px-3 py-2 text-end">
+                    {formatDecimal(row.recallAt8, language, 2)}
+                  </td>
+                  <td className="px-3 py-2 text-end">
+                    {t('docs.evaluation.ms', {
+                      value: formatDecimal(row.meanMillis, language, 0),
+                    })}
+                  </td>
                 </tr>
-              </thead>
-              <tbody>
-                {retrieval.rows.map((row) => (
-                  <tr key={row.method} className="border-b border-border last:border-b-0">
-                    <th scope="row" className="px-3 py-2 text-start font-medium">
-                      {t(`docs.evaluation.methods.${row.method}`, { defaultValue: row.method })}
-                    </th>
-                    <td className="px-3 py-2 text-end">
-                      {t('docs.evaluation.found', { count: n(row.hitsAt5), n: n(row.questions) })}
-                    </td>
-                    <td className="px-3 py-2 text-end">
-                      {formatDecimal(row.mrrAt10, language, 2)}
-                    </td>
-                    <td className="px-3 py-2 text-end">
-                      {formatDecimal(row.recallAt8, language, 2)}
-                    </td>
-                    <td className="px-3 py-2 text-end">
-                      {t('docs.evaluation.ms', {
-                        value: formatDecimal(row.meanMillis, language, 0),
-                      })}
-                    </td>
-                  </tr>
-                ))}
-                {retrieval.skipped.map((row) => (
-                  <tr key={row.method} className="border-b border-border last:border-b-0">
-                    <th scope="row" className="px-3 py-2 text-start font-medium">
-                      {t(`docs.evaluation.methods.${row.method}`, { defaultValue: row.method })}
-                    </th>
-                    <td colSpan={4} className="px-3 py-2">
-                      <strong>{t('docs.evaluation.notRun')}</strong>
-                      <span className="text-muted-foreground">
-                        {' · '}
-                        {t('docs.evaluation.notRunReason')}:{' '}
-                      </span>
-                      <span lang="en">{row.reason}</span>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
+              ))}
+              {retrieval.skipped.map((row) => (
+                <tr key={row.method} className="border-b border-border last:border-b-0">
+                  <th scope="row" className="px-3 py-2 text-start font-medium">
+                    {t(`docs.evaluation.methods.${row.method}`, { defaultValue: row.method })}
+                  </th>
+                  <td colSpan={4} className="px-3 py-2">
+                    <strong>{t('docs.evaluation.notRun')}</strong>
+                    <span className="text-muted-foreground">
+                      {' · '}
+                      {t('docs.evaluation.notRunReason')}:{' '}
+                    </span>
+                    <span lang="en">{row.reason}</span>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </TableShell>
           <div className="mt-6">
             {lowBandwidth ? (
               <p className="rounded-lg border border-border bg-secondary/60 p-3">

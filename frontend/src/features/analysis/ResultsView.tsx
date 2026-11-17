@@ -140,7 +140,7 @@ export function ResultsView({ result }: ResultsViewProps) {
         </h2>
         <ol className="mt-4 grid gap-3 md:grid-cols-2">
           {steps.map((step) => (
-            <li key={step.id}>
+            <GlassCard as="li" interactive key={step.id}>
               <Link
                 to={stepTarget(step)}
                 onClick={() => {
@@ -148,7 +148,7 @@ export function ResultsView({ result }: ResultsViewProps) {
                     document.getElementById('results-tabs')?.scrollIntoView({ block: 'start' })
                   }
                 }}
-                className="glass-panel glass-interactive flex min-h-14 items-center gap-3 rounded-2xl px-4 py-3 font-semibold"
+                className="flex min-h-14 items-center gap-3 rounded-2xl px-4 py-3 font-semibold"
               >
                 <span className="flex size-10 shrink-0 items-center justify-center rounded-xl bg-primary/15 text-primary">
                   <Icon name={STEP_ICONS[step.id]} />
@@ -160,7 +160,7 @@ export function ResultsView({ result }: ResultsViewProps) {
                 </span>
                 <Icon name="arrowRight" className="shrink-0 text-muted-foreground" />
               </Link>
-            </li>
+            </GlassCard>
           ))}
         </ol>
         <p className="mt-3 text-sm text-muted-foreground">{t('results.next.note')}</p>
@@ -316,42 +316,44 @@ export function ResultsView({ result }: ResultsViewProps) {
       </div>
 
       <section aria-labelledby="method-heading" className="mt-8">
-        <details className="glass-panel rounded-xl p-5">
-          <summary
-            id="method-heading"
-            className="flex min-h-11 cursor-pointer items-center gap-2 text-lg font-bold"
-          >
-            <Icon name="info" />
-            {t('results.method')}
-          </summary>
-          <dl className="mt-4 grid gap-x-6 gap-y-3 sm:grid-cols-[max-content_1fr]">
-            <dt className="text-muted-foreground">{t('results.methodModels')}</dt>
-            <dd>
-              <ul>
-                {Object.entries(result.provenance.models).map(([role, model]) => (
-                  <li key={role}>
-                    <span className="text-muted-foreground">{role}:</span> {model}
-                  </li>
-                ))}
-              </ul>
-            </dd>
-            <dt className="text-muted-foreground">{t('results.methodPrompts')}</dt>
-            <dd>
-              {Object.entries(result.provenance.promptVersions)
-                .map(([prompt, version]) => `${prompt} v${version}`)
-                .join(', ')}
-            </dd>
-            <dt className="text-muted-foreground">{t('results.methodCorpus')}</dt>
-            <dd>{result.provenance.corpusRelease}</dd>
-            <dt className="text-muted-foreground">{t('results.methodIndependence')}</dt>
-            <dd>{t(`results.independence.${result.provenance.verifierIndependence}`)}</dd>
-          </dl>
-          {result.provenance.recorded && (
-            <p className="mt-4 text-muted-foreground">
-              {t('results.recordedNote', { label: t('common.recorded') })}
-            </p>
-          )}
-        </details>
+        <GlassCard depth="still" className="p-5">
+          <details>
+            <summary
+              id="method-heading"
+              className="flex min-h-11 cursor-pointer items-center gap-2 text-lg font-bold"
+            >
+              <Icon name="info" />
+              {t('results.method')}
+            </summary>
+            <dl className="mt-4 grid gap-x-6 gap-y-3 sm:grid-cols-[max-content_1fr]">
+              <dt className="text-muted-foreground">{t('results.methodModels')}</dt>
+              <dd>
+                <ul>
+                  {Object.entries(result.provenance.models).map(([role, model]) => (
+                    <li key={role}>
+                      <span className="text-muted-foreground">{role}:</span> {model}
+                    </li>
+                  ))}
+                </ul>
+              </dd>
+              <dt className="text-muted-foreground">{t('results.methodPrompts')}</dt>
+              <dd>
+                {Object.entries(result.provenance.promptVersions)
+                  .map(([prompt, version]) => `${prompt} v${version}`)
+                  .join(', ')}
+              </dd>
+              <dt className="text-muted-foreground">{t('results.methodCorpus')}</dt>
+              <dd>{result.provenance.corpusRelease}</dd>
+              <dt className="text-muted-foreground">{t('results.methodIndependence')}</dt>
+              <dd>{t(`results.independence.${result.provenance.verifierIndependence}`)}</dd>
+            </dl>
+            {result.provenance.recorded && (
+              <p className="mt-4 text-muted-foreground">
+                {t('results.recordedNote', { label: t('common.recorded') })}
+              </p>
+            )}
+          </details>
+        </GlassCard>
       </section>
 
       <div className="mt-8">

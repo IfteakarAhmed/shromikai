@@ -47,7 +47,8 @@
   "demo": {
     "signingIn": "Signing in to the demo account…",
     "failed": "Demo sign-in is not available right now.",
-    "toLogin": "Go to the normal sign-in"
+    "toLogin": "Go to the normal sign-in",
+    "title": "Demo sign-in"
   },
   "nav": {
     "label": "Main menu",
@@ -71,10 +72,14 @@
   },
   "forbidden": {
     "title": "Not allowed",
-    "body": "You do not have permission to view this page. Contact an admin if you need access."
+    "body": "You do not have permission to view this page. Contact an admin if you need access.",
+    "switch": "Use another account"
   },
   "notFound": {
-    "title": "Page not found"
+    "title": "Page not found",
+    "body": "There is no page at the address you opened. The address may be wrong, or the page may have moved.",
+    "try": "Start from here",
+    "analyse": "Analyse a contract"
   },
   "pages": {
     "appSoon": "The analysis page is coming soon."
@@ -568,7 +573,14 @@
     "tabsLabel": "The two results",
     "scriptedNotice": "Important: the numbers below come from a scripted illustration, not from a measured result. They do not tell how often a plain AI is really wrong.",
     "illustration": "Illustration",
-    "summaryScripted": "In this illustration, {{rejected}} of the plain AI's {{total}} citations are rejected"
+    "summaryScripted": "In this illustration, {{rejected}} of the plain AI's {{total}} citations are rejected",
+    "statTotal": "The plain AI's citations",
+    "statRejected": "Rejected",
+    "statShown": "Citations shown in our result (all verified)",
+    "sampleTitle": "On the sample contract",
+    "sampleBody": "See the sample contract both ways with one click.",
+    "textTitle": "On your own text",
+    "textBody": "Paste the text of a contract to compare."
   },
   "ticket": {
     "title": "Status of the human review",
@@ -594,7 +606,9 @@
     "empty": "There is nothing on this ticket.",
     "notFound": "The ticket or the code did not match.",
     "back": "Back to the result",
-    "loading": "Fetching the status…"
+    "loading": "Fetching the status…",
+    "summaryCount": "{{count}} items",
+    "summaryDecided": "{{count}} decided"
   },
   "profile": {
     "title": "Your profile",
@@ -625,7 +639,15 @@
       "NGO": "NGO",
       "BANKING_FINANCE": "Banking and finance",
       "OTHER": "Other"
-    }
+    },
+    "changesTitle": "What it changes",
+    "changesLanguage": "The language of the explanation",
+    "changesStyle": "How simply it is said",
+    "changesWords": "Words that suit your sector and job",
+    "keepsTitle": "What it never changes",
+    "keepsRisks": "Which risks are found",
+    "keepsCitations": "Which sections of the law are cited",
+    "keepsVerification": "The check of every section"
   },
   "admin": {
     "title": "Admin console",

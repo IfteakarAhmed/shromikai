@@ -10,6 +10,17 @@ import {
 } from 'recharts'
 import { useTranslation } from 'react-i18next'
 import type { UsageReport } from '../../api/admin'
+import { GlassCard } from '../../components/ui/GlassCard'
+import {
+  axisTick,
+  chartGrid,
+  legendFormatter,
+  markEdge,
+  seriesColor,
+  singleSeries,
+  tooltipProps,
+  usageSeries,
+} from '../../lib/chartTheme'
 import { formatDay, formatDecimal, formatNumber, formatUsd } from '../../lib/format'
 import type { Language } from '../../i18n'
 
@@ -27,92 +38,72 @@ export default function UsageCharts({
 }) {
   const { t } = useTranslation()
   const rows = days.map((day) => ({ ...day, label: formatDay(day.date, language) }))
-  const tick = { fill: 'var(--muted-foreground)', fontSize: 12 }
-  const tooltip = {
-    contentStyle: {
-      background: 'var(--card)',
-      border: '1px solid var(--border)',
-      borderRadius: 8,
-      color: 'var(--foreground)',
-    },
-  }
   return (
     <div className="grid gap-6 lg:grid-cols-2">
-      <figure>
-        <figcaption className="mb-2 font-semibold">{t('admin.usage.chartPerDay')}</figcaption>
-        <div aria-hidden="true" className="h-72 w-full">
-          <ResponsiveContainer width="100%" height="100%">
-            <BarChart
-              accessibilityLayer={false}
-              data={rows}
-              margin={{ top: 8, right: 8, left: 0, bottom: 0 }}
-            >
-              <CartesianGrid stroke="var(--border)" strokeDasharray="3 3" />
-              <XAxis dataKey="label" tick={tick} minTickGap={12} />
-              <YAxis
-                allowDecimals={false}
-                tick={tick}
-                width={36}
-                tickFormatter={(v: number) => formatNumber(v, language)}
-              />
-              <Tooltip {...tooltip} />
-              <Legend />
-              <Bar
-                dataKey="analyses"
-                name={t('admin.usage.analyses')}
-                stackId="a"
-                fill="var(--verified)"
-              />
-              <Bar
-                dataKey="compares"
-                name={t('admin.usage.compares')}
-                stackId="a"
-                fill="var(--sev-medium)"
-              />
-              <Bar
-                dataKey="memoRenders"
-                name={t('admin.usage.memoRenders')}
-                stackId="a"
-                fill="var(--uncertain)"
-              />
-              <Bar
-                dataKey="apiCalls"
-                name={t('admin.usage.apiCalls')}
-                stackId="a"
-                fill="var(--sev-high)"
-              />
-              <Bar
-                dataKey="mcpCalls"
-                name={t('admin.usage.mcpCalls')}
-                stackId="a"
-                fill="var(--sev-low)"
-              />
-            </BarChart>
-          </ResponsiveContainer>
-        </div>
-      </figure>
-      <figure>
-        <figcaption className="mb-2 font-semibold">{t('admin.usage.chartCost')}</figcaption>
-        <div aria-hidden="true" className="h-72 w-full">
-          <ResponsiveContainer width="100%" height="100%">
-            <BarChart
-              accessibilityLayer={false}
-              data={rows}
-              margin={{ top: 8, right: 8, left: 0, bottom: 0 }}
-            >
-              <CartesianGrid stroke="var(--border)" strokeDasharray="3 3" />
-              <XAxis dataKey="label" tick={tick} minTickGap={12} />
-              <YAxis
-                tick={tick}
-                width={48}
-                tickFormatter={(v: number) => formatDecimal(v, language, 2)}
-              />
-              <Tooltip {...tooltip} formatter={(v) => formatUsd(Number(v), language)} />
-              <Bar dataKey="costUsd" name={t('admin.usage.cost')} fill="var(--primary)" />
-            </BarChart>
-          </ResponsiveContainer>
-        </div>
-      </figure>
+      <GlassCard depth="still" className="p-4">
+        <figure>
+          <figcaption className="mb-2 font-semibold">{t('admin.usage.chartPerDay')}</figcaption>
+          <div aria-hidden="true" className="h-72 w-full">
+            <ResponsiveContainer width="100%" height="100%">
+              <BarChart
+                accessibilityLayer={false}
+                data={rows}
+                margin={{ top: 8, right: 8, left: 0, bottom: 0 }}
+              >
+                <CartesianGrid {...chartGrid} />
+                <XAxis dataKey="label" tick={axisTick} minTickGap={12} />
+                <YAxis
+                  allowDecimals={false}
+                  tick={axisTick}
+                  width={36}
+                  tickFormatter={(v: number) => formatNumber(v, language)}
+                />
+                <Tooltip {...tooltipProps} />
+                <Legend formatter={legendFormatter} />
+                {usageSeries.map((series) => (
+                  <Bar
+                    key={series.key}
+                    dataKey={series.key}
+                    name={t(`admin.usage.${series.key}`)}
+                    stackId="a"
+                    fill={seriesColor(series.key)}
+                    stroke={markEdge}
+                  />
+                ))}
+              </BarChart>
+            </ResponsiveContainer>
+          </div>
+        </figure>
+      </GlassCard>
+      <GlassCard depth="still" className="p-4">
+        <figure>
+          <figcaption className="mb-2 font-semibold">{t('admin.usage.chartCost')}</figcaption>
+          <div aria-hidden="true" className="h-72 w-full">
+            <ResponsiveContainer width="100%" height="100%">
+              <BarChart
+                accessibilityLayer={false}
+                data={rows}
+                margin={{ top: 8, right: 8, left: 0, bottom: 0 }}
+              >
+                <CartesianGrid {...chartGrid} />
+                <XAxis dataKey="label" tick={axisTick} minTickGap={12} />
+                <YAxis
+                  tick={axisTick}
+                  width={48}
+                  tickFormatter={(v: number) => formatDecimal(v, language, 2)}
+                />
+                <Tooltip {...tooltipProps} formatter={(v) => formatUsd(Number(v), language)} />
+                <Bar
+                  dataKey="costUsd"
+                  name={t('admin.usage.cost')}
+                  fill={singleSeries}
+                  radius={[4, 4, 0, 0]}
+                />
+              </BarChart>
+            </ResponsiveContainer>
+          </div>
+        </figure>
+      </GlassCard>
     </div>
   )
 }

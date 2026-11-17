@@ -1,3 +1,6 @@
+import { cx } from '../../lib/cx'
+import { fieldInlineClass } from '../../components/ui/field'
+import { TableShell } from '../../components/ui/TableShell'
 import { useQuery } from '@tanstack/react-query'
 import { Suspense, lazy, useState, type SyntheticEvent } from 'react'
 import { useTranslation } from 'react-i18next'
@@ -68,7 +71,7 @@ export default function UsagePage() {
             onChange={(event) => {
               setFrom(event.target.value)
             }}
-            className="mt-1 min-h-11 rounded-lg border border-input bg-background px-3"
+            className={cx(fieldInlineClass, 'mt-1')}
           />
         </label>
         <label className="block">
@@ -79,7 +82,7 @@ export default function UsagePage() {
             onChange={(event) => {
               setTo(event.target.value)
             }}
-            className="mt-1 min-h-11 rounded-lg border border-input bg-background px-3"
+            className={cx(fieldInlineClass, 'mt-1')}
           />
         </label>
         <Button type="submit">{t('admin.usage.apply')}</Button>
@@ -148,61 +151,54 @@ export default function UsagePage() {
           </div>
 
           <h3 className="mt-8 text-xl font-bold">{t('admin.usage.tableTitle')}</h3>
-          <div
-            className="glass-panel mt-3 overflow-x-auto rounded-xl"
-            role="region"
-            aria-label={t('admin.usage.tableTitle')}
-            tabIndex={0}
-          >
-            <table className="w-full border-collapse text-start">
-              <caption className="sr-only">
-                {t('admin.usage.perDaySummary', {
-                  from: formatDay(report.from, language),
-                  to: formatDay(report.to, language),
-                })}
-              </caption>
-              <thead>
-                <tr className="border-b border-border">
-                  <th scope="col" className="px-3 py-2 text-start">
-                    {t('admin.usage.colDate')}
+          <TableShell label={t('admin.usage.tableTitle')} className="mt-3">
+            <caption className="sr-only">
+              {t('admin.usage.perDaySummary', {
+                from: formatDay(report.from, language),
+                to: formatDay(report.to, language),
+              })}
+            </caption>
+            <thead>
+              <tr className="border-b border-border">
+                <th scope="col" className="px-3 py-2 text-start">
+                  {t('admin.usage.colDate')}
+                </th>
+                <th scope="col" className="px-3 py-2 text-end">
+                  {t('admin.usage.analyses')}
+                </th>
+                <th scope="col" className="px-3 py-2 text-end">
+                  {t('admin.usage.compares')}
+                </th>
+                <th scope="col" className="px-3 py-2 text-end">
+                  {t('admin.usage.memoRenders')}
+                </th>
+                <th scope="col" className="px-3 py-2 text-end">
+                  {t('admin.usage.apiCalls')}
+                </th>
+                <th scope="col" className="px-3 py-2 text-end">
+                  {t('admin.usage.mcpCalls')}
+                </th>
+                <th scope="col" className="px-3 py-2 text-end">
+                  {t('admin.usage.cost')}
+                </th>
+              </tr>
+            </thead>
+            <tbody>
+              {report.days.map((day) => (
+                <tr key={day.date} className="border-b border-border last:border-b-0">
+                  <th scope="row" className="px-3 py-2 text-start font-medium">
+                    {formatDay(day.date, language)}
                   </th>
-                  <th scope="col" className="px-3 py-2 text-end">
-                    {t('admin.usage.analyses')}
-                  </th>
-                  <th scope="col" className="px-3 py-2 text-end">
-                    {t('admin.usage.compares')}
-                  </th>
-                  <th scope="col" className="px-3 py-2 text-end">
-                    {t('admin.usage.memoRenders')}
-                  </th>
-                  <th scope="col" className="px-3 py-2 text-end">
-                    {t('admin.usage.apiCalls')}
-                  </th>
-                  <th scope="col" className="px-3 py-2 text-end">
-                    {t('admin.usage.mcpCalls')}
-                  </th>
-                  <th scope="col" className="px-3 py-2 text-end">
-                    {t('admin.usage.cost')}
-                  </th>
+                  <td className="px-3 py-2 text-end">{n(day.analyses)}</td>
+                  <td className="px-3 py-2 text-end">{n(day.compares)}</td>
+                  <td className="px-3 py-2 text-end">{n(day.memoRenders)}</td>
+                  <td className="px-3 py-2 text-end">{n(day.apiCalls)}</td>
+                  <td className="px-3 py-2 text-end">{n(day.mcpCalls)}</td>
+                  <td className="px-3 py-2 text-end">{formatUsd(day.costUsd, language)}</td>
                 </tr>
-              </thead>
-              <tbody>
-                {report.days.map((day) => (
-                  <tr key={day.date} className="border-b border-border last:border-b-0">
-                    <th scope="row" className="px-3 py-2 text-start font-medium">
-                      {formatDay(day.date, language)}
-                    </th>
-                    <td className="px-3 py-2 text-end">{n(day.analyses)}</td>
-                    <td className="px-3 py-2 text-end">{n(day.compares)}</td>
-                    <td className="px-3 py-2 text-end">{n(day.memoRenders)}</td>
-                    <td className="px-3 py-2 text-end">{n(day.apiCalls)}</td>
-                    <td className="px-3 py-2 text-end">{n(day.mcpCalls)}</td>
-                    <td className="px-3 py-2 text-end">{formatUsd(day.costUsd, language)}</td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
+              ))}
+            </tbody>
+          </TableShell>
 
           <h3 className="mt-8 text-xl font-bold">{t('admin.usage.costByModel')}</h3>
           {Object.keys(report.totals.costByModel).length === 0 ? (
@@ -210,15 +206,16 @@ export default function UsagePage() {
           ) : (
             <ul className="mt-3 grid gap-2 sm:grid-cols-2">
               {Object.entries(report.totals.costByModel).map(([model, cost]) => (
-                <li
+                <GlassCard
+                  as="li"
                   key={model}
-                  className="glass-panel flex items-center justify-between gap-3 rounded-lg px-4 py-3"
+                  className="flex items-center justify-between gap-3 px-4 py-3"
                 >
                   <code lang="en" dir="ltr" className="break-all">
                     {model}
                   </code>
                   <span className="font-semibold">{formatUsd(cost, language)}</span>
-                </li>
+                </GlassCard>
               ))}
             </ul>
           )}

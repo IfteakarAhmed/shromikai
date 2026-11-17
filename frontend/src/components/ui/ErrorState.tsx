@@ -1,3 +1,4 @@
+import { GlassCard } from './GlassCard'
 import { useTranslation } from 'react-i18next'
 import { describeError } from '../../lib/problems'
 import type { Language } from '../../i18n'
@@ -14,9 +15,11 @@ export function ErrorState({ error, onRetry }: ErrorStateProps) {
   const { t, i18n } = useTranslation()
   const language: Language = i18n.language === 'en' ? 'en' : 'bn'
   return (
-    <div
+    <GlassCard
       role="alert"
-      className="glass-panel flex flex-col items-start gap-3 rounded-2xl border-rejected/40 p-5"
+      depth="still"
+      reveal={false}
+      className="flex flex-col items-start gap-3 border-rejected/40 p-5"
     >
       <p className="flex items-start gap-2 font-medium text-rejected">
         <Icon name="alert" className="mt-1 shrink-0" />
@@ -28,6 +31,6 @@ export function ErrorState({ error, onRetry }: ErrorStateProps) {
           {t('common.retry')}
         </Button>
       )}
-    </div>
+    </GlassCard>
   )
 }

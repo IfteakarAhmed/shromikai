@@ -1,3 +1,5 @@
+import { cx } from '../../lib/cx'
+import { fieldClass } from '../../components/ui/field'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { useRef, useState, type SyntheticEvent } from 'react'
 import { useTranslation } from 'react-i18next'
@@ -377,8 +379,7 @@ function DecisionForm({
     )
   }
 
-  const field =
-    'mt-1 block min-h-11 w-full rounded-lg border border-input bg-background/60 px-3 py-2'
+  const field = cx(fieldClass, 'mt-1')
   return (
     <form ref={formRef} onSubmit={submit} noValidate className="space-y-4">
       <h4 className="text-lg font-bold">{t('admin.review.decide.title')}</h4>

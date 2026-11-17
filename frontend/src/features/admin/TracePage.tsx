@@ -1,3 +1,6 @@
+import { cx } from '../../lib/cx'
+import { fieldClass } from '../../components/ui/field'
+import { TableShell } from '../../components/ui/TableShell'
 import { useQuery } from '@tanstack/react-query'
 import { useState, type SyntheticEvent } from 'react'
 import { useTranslation } from 'react-i18next'
@@ -57,7 +60,7 @@ export default function TracePage() {
             onChange={(event) => {
               setTyped(event.target.value)
             }}
-            className="mt-1 block min-h-11 w-full rounded-lg border border-input bg-background/60 px-3 py-2"
+            className={cx(fieldClass, 'mt-1')}
           />
           {invalid && (
             <p id="trace-id-error" className="mt-1 font-semibold text-rejected">
@@ -179,100 +182,93 @@ export function TraceView({ trace, language }: { trace: AnalysisTrace; language:
         </section>
       )}
 
-      <div
-        className="glass-panel overflow-x-auto rounded-xl"
-        role="region"
-        aria-label={t('admin.trace.caption')}
-        tabIndex={0}
-      >
-        <table className="w-full border-collapse text-start">
-          <caption className="sr-only">{t('admin.trace.caption')}</caption>
-          <thead>
-            <tr className="border-b border-border">
-              <th scope="col" className="px-3 py-2 text-start">
-                {t('admin.trace.colStage')}
+      <TableShell label={t('admin.trace.caption')}>
+        <caption className="sr-only">{t('admin.trace.caption')}</caption>
+        <thead>
+          <tr className="border-b border-border">
+            <th scope="col" className="px-3 py-2 text-start">
+              {t('admin.trace.colStage')}
+            </th>
+            <th scope="col" className="px-3 py-2 text-start">
+              {t('admin.trace.colModel')}
+            </th>
+            <th scope="col" className="px-3 py-2 text-start">
+              {t('admin.trace.colPrompt')}
+            </th>
+            <th scope="col" className="px-3 py-2 text-end">
+              {t('admin.trace.colTokens')}
+            </th>
+            <th scope="col" className="px-3 py-2 text-end">
+              {t('admin.trace.colCost')}
+            </th>
+            <th scope="col" className="px-3 py-2 text-end">
+              {t('admin.trace.colTime')}
+            </th>
+            <th scope="col" className="px-3 py-2 text-start">
+              {t('admin.trace.colOutcome')}
+            </th>
+          </tr>
+        </thead>
+        <tbody>
+          {trace.events.map((event, index) => (
+            <tr
+              key={`${event.stage}-${String(index)}`}
+              className="border-b border-border align-top last:border-b-0"
+            >
+              <th scope="row" className="px-3 py-2 text-start font-medium">
+                <code lang="en" dir="ltr">
+                  {event.stage}
+                </code>
               </th>
-              <th scope="col" className="px-3 py-2 text-start">
-                {t('admin.trace.colModel')}
-              </th>
-              <th scope="col" className="px-3 py-2 text-start">
-                {t('admin.trace.colPrompt')}
-              </th>
-              <th scope="col" className="px-3 py-2 text-end">
-                {t('admin.trace.colTokens')}
-              </th>
-              <th scope="col" className="px-3 py-2 text-end">
-                {t('admin.trace.colCost')}
-              </th>
-              <th scope="col" className="px-3 py-2 text-end">
-                {t('admin.trace.colTime')}
-              </th>
-              <th scope="col" className="px-3 py-2 text-start">
-                {t('admin.trace.colOutcome')}
-              </th>
+              <td className="px-3 py-2">
+                {event.modelId === null ? (
+                  t('admin.trace.none')
+                ) : (
+                  <code lang="en" dir="ltr" className="break-all">
+                    {event.modelId}
+                  </code>
+                )}
+              </td>
+              <td className="px-3 py-2">
+                {event.promptId === null ? (
+                  t('admin.trace.none')
+                ) : (
+                  <code lang="en" dir="ltr">
+                    {event.promptId}
+                    {event.promptVersion === null ? '' : ` v${String(event.promptVersion)}`}
+                  </code>
+                )}
+              </td>
+              <td className="px-3 py-2 text-end">
+                {n(event.tokensIn)} / {n(event.tokensOut)}
+              </td>
+              <td className="px-3 py-2 text-end">{dollars(event.costUsdMicros)}</td>
+              <td className="px-3 py-2 text-end">
+                {t('admin.trace.ms', { value: formatNumber(event.durationMs, language) })}
+              </td>
+              <td className="px-3 py-2">
+                <code lang="en" dir="ltr">
+                  {event.outcome}
+                </code>
+                <details className="mt-1">
+                  <summary className="min-h-11 cursor-pointer py-2 font-medium">
+                    {t('admin.trace.detail')}
+                    <span className="sr-only"> · {event.stage}</span>
+                  </summary>
+                  <pre
+                    lang="en"
+                    dir="ltr"
+                    className="max-w-xs overflow-x-auto text-sm"
+                    tabIndex={0}
+                  >
+                    {JSON.stringify(event.detail, null, 2)}
+                  </pre>
+                </details>
+              </td>
             </tr>
-          </thead>
-          <tbody>
-            {trace.events.map((event, index) => (
-              <tr
-                key={`${event.stage}-${String(index)}`}
-                className="border-b border-border align-top last:border-b-0"
-              >
-                <th scope="row" className="px-3 py-2 text-start font-medium">
-                  <code lang="en" dir="ltr">
-                    {event.stage}
-                  </code>
-                </th>
-                <td className="px-3 py-2">
-                  {event.modelId === null ? (
-                    t('admin.trace.none')
-                  ) : (
-                    <code lang="en" dir="ltr" className="break-all">
-                      {event.modelId}
-                    </code>
-                  )}
-                </td>
-                <td className="px-3 py-2">
-                  {event.promptId === null ? (
-                    t('admin.trace.none')
-                  ) : (
-                    <code lang="en" dir="ltr">
-                      {event.promptId}
-                      {event.promptVersion === null ? '' : ` v${String(event.promptVersion)}`}
-                    </code>
-                  )}
-                </td>
-                <td className="px-3 py-2 text-end">
-                  {n(event.tokensIn)} / {n(event.tokensOut)}
-                </td>
-                <td className="px-3 py-2 text-end">{dollars(event.costUsdMicros)}</td>
-                <td className="px-3 py-2 text-end">
-                  {t('admin.trace.ms', { value: formatNumber(event.durationMs, language) })}
-                </td>
-                <td className="px-3 py-2">
-                  <code lang="en" dir="ltr">
-                    {event.outcome}
-                  </code>
-                  <details className="mt-1">
-                    <summary className="min-h-11 cursor-pointer py-2 font-medium">
-                      {t('admin.trace.detail')}
-                      <span className="sr-only"> · {event.stage}</span>
-                    </summary>
-                    <pre
-                      lang="en"
-                      dir="ltr"
-                      className="max-w-xs overflow-x-auto text-sm"
-                      tabIndex={0}
-                    >
-                      {JSON.stringify(event.detail, null, 2)}
-                    </pre>
-                  </details>
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      </div>
+          ))}
+        </tbody>
+      </TableShell>
     </div>
   )
 }

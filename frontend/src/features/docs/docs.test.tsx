@@ -106,8 +106,9 @@ describe('docs hub (FR-74)', () => {
   it('FR-74 /docs/architecture draws both pictures as named images, not as a diagram library', () => {
     renderApp(<ArchitecturePage />, '/docs/architecture')
 
-    expect(screen.getByRole('img', { name: 'অংশগুলো কোথায় চলে' })).toBeInTheDocument()
-    expect(screen.getByRole('img', { name: 'একটি বিশ্লেষণের ধাপ' })).toBeInTheDocument()
+    // Each picture has a wide and a tall drawing (CSS shows one); both are named images.
+    expect(screen.getAllByRole('img', { name: 'অংশগুলো কোথায় চলে' })).toHaveLength(2)
+    expect(screen.getAllByRole('img', { name: 'একটি বিশ্লেষণের ধাপ' })).toHaveLength(2)
     const ids = [...document.querySelectorAll('[id]')].map((el) => el.id)
     expect(new Set(ids).size).toBe(ids.length)
   })
