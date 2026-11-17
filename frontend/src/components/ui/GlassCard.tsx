@@ -1,4 +1,4 @@
-import { useRef, type HTMLAttributes, type PointerEvent } from 'react'
+import { useLayoutEffect, useRef, useState, type HTMLAttributes, type PointerEvent } from 'react'
 import { useMediaQuery } from '../../features/landing/useCapabilities'
 import { cx } from '../../lib/cx'
 import { maxTiltDegrees, tiltAngles, tiltCapable } from '../../lib/tilt'
@@ -18,7 +18,9 @@ interface GlassCardProps extends HTMLAttributes<HTMLElement> {
 
 const round = (value: number, digits: number) => String(Number(value.toFixed(digits)))
 
-const CONTROLS = 'a, button, summary, input, select, textarea, label, [role="button"]'
+/** Anything a visitor can press, open or type into. A card holding one never leans. */
+const CONTROLS =
+  'a[href], button, summary, details, input, select, textarea, [role="button"], [role="checkbox"], [role="link"]'
 
 /**
  * A glass card with depth (C2b, CSS 3D only). The glass and the glow live on two hidden layers
@@ -41,20 +43,35 @@ export function GlassCard({
   const lowBandwidth = usePreferencesOptional()?.lowBandwidth ?? false
   const reducedMotion = useMediaQuery('(prefers-reduced-motion: reduce)')
   const finePointer = useMediaQuery('(hover: hover) and (pointer: fine)')
-  const capable = depth === 'tilt' && tiltCapable({ finePointer, reducedMotion, lowBandwidth })
   const ref = useRef<HTMLElement>(null)
+  // Usability before effect: a card that holds a control never leans (a leaning 3D card can send
+  // a click to the wrong element in Chrome); it keeps its glass, light edge and pointer glow.
+  const [hasControls, setHasControls] = useState(false)
+  useLayoutEffect(() => {
+    const element = ref.current
+    if (element === null) {
+      return undefined
+    }
+    const check = () => {
+      setHasControls(element.querySelector(CONTROLS) !== null)
+    }
+    check()
+    // Content can change after mount (a fold opens, a button appears).
+    const observer = new MutationObserver(check)
+    observer.observe(element, { childList: true, subtree: true })
+    return () => {
+      observer.disconnect()
+    }
+  }, [])
+  const motion = depth === 'tilt' && tiltCapable({ finePointer, reducedMotion, lowBandwidth })
+  const capable = motion && !hasControls
   const frame = useRef(0)
   const Tag = Element as 'div'
 
   function move(event: PointerEvent<HTMLDivElement>) {
     onPointerMove?.(event)
     const element = ref.current
-    if (!capable || element === null || event.pointerType === 'touch') {
-      return
-    }
-    // Over a control the lean holds still, so the control never slides under the pointer
-    // between pressing and releasing.
-    if ((event.target as Element).closest(CONTROLS) !== null) {
+    if (!motion || element === null || event.pointerType === 'touch') {
       return
     }
     const rect = element.getBoundingClientRect()
@@ -72,11 +89,14 @@ export function GlassCard({
     )
     cancelAnimationFrame(frame.current)
     frame.current = requestAnimationFrame(() => {
-      element.dataset['tilting'] = 'true'
-      element.style.setProperty('--rx', `${round(tilt.rx, 2)}deg`)
-      element.style.setProperty('--ry', `${round(tilt.ry, 2)}deg`)
+      element.dataset['glowing'] = 'true'
       element.style.setProperty('--gx', round(tilt.gx, 3))
       element.style.setProperty('--gy', round(tilt.gy, 3))
+      if (capable) {
+        element.dataset['tilting'] = 'true'
+        element.style.setProperty('--rx', `${round(tilt.rx, 2)}deg`)
+        element.style.setProperty('--ry', `${round(tilt.ry, 2)}deg`)
+      }
     })
   }
 
@@ -88,6 +108,7 @@ export function GlassCard({
     }
     cancelAnimationFrame(frame.current)
     delete element.dataset['tilting']
+    delete element.dataset['glowing']
     element.style.setProperty('--rx', '0deg')
     element.style.setProperty('--ry', '0deg')
   }

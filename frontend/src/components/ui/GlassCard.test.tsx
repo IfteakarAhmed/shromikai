@@ -161,24 +161,39 @@ describe('GlassCard depth', () => {
     expect(element).not.toHaveAttribute('data-tilting')
   })
 
-  it('NFR-08 holds its lean still while the pointer is over a control, so nothing slides under it', () => {
+  it('NFR-08 a card with a control never leans, but its glow still follows the pointer', () => {
     media({})
-    render(
-      <PreferencesProvider>
-        <GlassCard data-testid="card">
-          <button type="button">act</button>
-        </GlassCard>
-      </PreferencesProvider>,
-    )
-    const element = screen.getByTestId('card')
-    fireEvent.pointerMove(element, { clientX: 300, clientY: 100, pointerType: 'mouse' })
-    expect(element.style.getPropertyValue('--ry')).toBe('6deg')
-    fireEvent.pointerMove(screen.getByRole('button', { name: 'act' }), {
-      clientX: 0,
-      clientY: 200,
-      pointerType: 'mouse',
-    })
-    expect(element.style.getPropertyValue('--ry')).toBe('6deg')
-    expect(element.style.getPropertyValue('--rx')).toBe('0deg')
+    for (const control of [
+      <button key="b" type="button">
+        act
+      </button>,
+      <a key="a" href="/x">
+        go
+      </a>,
+      <details key="d">
+        <summary>more</summary>
+      </details>,
+      <input key="c" type="checkbox" aria-label="done" />,
+    ]) {
+      const { unmount } = render(
+        <PreferencesProvider>
+          <GlassCard data-testid="card">{control}</GlassCard>
+        </PreferencesProvider>,
+      )
+      const element = screen.getByTestId('card')
+      expect(element).not.toHaveAttribute('data-tilt')
+      fireEvent.pointerMove(element, { clientX: 300, clientY: 100, pointerType: 'mouse' })
+      expect(element).not.toHaveAttribute('data-tilting')
+      expect(element).toHaveAttribute('data-glowing', 'true')
+      expect(element.style.getPropertyValue('--gx')).toBe('1')
+      expect(element.children[0]).toHaveClass('depth-glass')
+      unmount()
+    }
+  })
+
+  it('FR-68 a read-only card (text only) still leans', () => {
+    media({})
+    card()
+    expect(screen.getByTestId('card')).toHaveAttribute('data-tilt', 'on')
   })
 })

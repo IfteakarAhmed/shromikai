@@ -1,14 +1,14 @@
 import { mkdirSync } from 'node:fs'
 import { resolve } from 'node:path'
 import AxeBuilder from '@axe-core/playwright'
-import { expect, test, type Page } from '@playwright/test'
+import { expect, test, type Locator, type Page } from '@playwright/test'
 import { inLocale, openDetails, openResult, text } from './support'
 
 /**
- * The CSS 3D depth system (C2b): cards float, lean towards a fine pointer and lift their badges,
- * citations and actions in front of the glass; orbs and headers drift on scroll. On touch, with
- * reduced motion and in low-bandwidth mode cards stay flat. Controls inside a leaning card stay
- * clickable and the page stays accessible.
+ * The CSS 3D depth system (C2b, C3): read-only cards float, lean towards a fine pointer and lift
+ * their marks in front of the glass; cards that hold controls never lean (usability first) but
+ * keep the glass, the light edge and the pointer glow; orbs and headers drift on scroll. On touch,
+ * with reduced motion and in low-bandwidth mode nothing leans.
  *
  * Pictures: P9_SHOTS=C2b npx playwright test e2e/depth.spec.ts
  */
@@ -32,38 +32,52 @@ async function shot(page: Page, name: string, theme: string) {
   })
 }
 
-async function transformOf(page: Page, selector: string): Promise<string> {
-  return page
-    .locator(selector)
-    .first()
-    .evaluate((element) => getComputedStyle(element).transform)
+async function transformOf(target: Locator): Promise<string> {
+  return target.first().evaluate((element) => getComputedStyle(element).transform)
 }
 
 /** Waits until the card's transform is the same in two reads 200 ms apart. */
-async function settled(page: Page, selector: string) {
+async function settled(target: Locator) {
   await expect
     .poll(
       async () => {
-        const before = await transformOf(page, selector)
-        await page.waitForTimeout(200)
-        return before === (await transformOf(page, selector))
+        const before = await transformOf(target)
+        await target.page().waitForTimeout(200)
+        return before === (await transformOf(target))
       },
       { timeout: 5_000 },
     )
     .toBe(true)
 }
 
-/** The centre of the first risk card, nudged towards its right edge. */
-async function hoverFirstRiskCard(page: Page): Promise<string> {
-  const card = page.locator('article.depth-card').first()
+/** Moves the pointer onto a card, ending near its right edge. */
+async function hover(target: Locator): Promise<Locator> {
+  const card = target.first()
   await card.scrollIntoViewIfNeeded()
   const box = await card.boundingBox()
   if (box === null) {
-    throw new Error('no risk card')
+    throw new Error('no card')
   }
+  const page = card.page()
   await page.mouse.move(box.x + box.width * 0.2, box.y + box.height * 0.2)
   await page.mouse.move(box.x + box.width * 0.85, box.y + box.height * 0.3, { steps: 6 })
-  return 'article.depth-card'
+  return card
+}
+
+/** A read-only card on the result: the stat tile with the total. */
+const statTile = (page: Page) => page.locator('.depth-card:has([data-testid="total-findings"])')
+/** A card that holds controls: the first risk card. */
+const riskCard = (page: Page) => page.locator('article.depth-card').first()
+
+/** The plain AI's first claim on the compare page: read-only, with lifted marks and text. */
+async function baselineCard(page: Page): Promise<Locator> {
+  await page.goto('/app/compare')
+  await page.getByRole('button', { name: text('bn', 'compare.start') }).click()
+  await expect(page.getByTestId('compare-summary')).toBeVisible({ timeout: 90_000 })
+  return page
+    .getByRole('region', { name: text('bn', 'compare.baselineTitle') })
+    .locator('.depth-card')
+    .first()
 }
 
 test.describe('depth system', () => {
@@ -71,110 +85,84 @@ test.describe('depth system', () => {
     await inLocale(page, 'bn')
   })
 
-  test('FR-68 a risk card leans towards a fine pointer, lifts its parts and settles flat again', async ({
+  test('FR-68 a read-only card leans towards a fine pointer, lifts its parts and settles flat', async ({
     page,
   }, info) => {
     test.skip(info.project.name !== 'desktop-chromium', 'fine pointer only')
-    await openResult(page, 'bn')
-    const selector = await hoverFirstRiskCard(page)
-    await expect.poll(() => transformOf(page, selector), { timeout: 5_000 }).toMatch(/^matrix3d/)
-    await expect(page.locator(selector).first()).toHaveAttribute('data-tilting', 'true')
-    // The badge row, the citations and the actions float in front of the glass.
-    const lifts = await page
-      .locator(`${selector} .lift-2, ${selector} .lift-1`)
+    await page.goto('/demo-user')
+    await expect(page.getByRole('heading', { name: text('bn', 'upload.title') })).toBeVisible()
+    const card = await hover(await baselineCard(page))
+    await expect(card).toHaveAttribute('data-tilt', 'on')
+    await expect.poll(() => transformOf(card), { timeout: 5_000 }).toMatch(/^matrix3d/)
+    await expect(card).toHaveAttribute('data-tilting', 'true')
+    // The marks and the text float in front of the glass.
+    const lift = await card
+      .locator('.lift-2, .lift-1')
       .first()
       .evaluate((element) => getComputedStyle(element).translate)
-    expect(lifts).toMatch(/px$/)
+    expect(lift).toMatch(/px$/)
     // The glass layer is behind everything and does not take the pointer.
-    const glass = await page
-      .locator(`${selector} > .depth-glass`)
-      .first()
-      .evaluate((element) => {
-        const style = getComputedStyle(element)
-        return { events: style.pointerEvents, blur: style.backdropFilter }
-      })
+    const glass = await card.locator('> .depth-glass').evaluate((element) => {
+      const style = getComputedStyle(element)
+      return { events: style.pointerEvents, blur: style.backdropFilter }
+    })
     expect(glass.events).toBe('none')
     expect(glass.blur).toMatch(/blur/)
     await page.mouse.move(2, 2)
-    await expect.poll(() => transformOf(page, selector), { timeout: 5_000 }).toBe('none')
+    await expect.poll(() => transformOf(card), { timeout: 5_000 }).toBe('none')
   })
 
-  test('FR-70 the why button inside a leaning card still opens its sheet', async ({
+  test('FR-70 a risk card with controls never leans; its glow follows and its why button works', async ({
     page,
   }, info) => {
     test.skip(info.project.name !== 'desktop-chromium', 'fine pointer only')
     await openResult(page, 'bn')
-    const selector = await hoverFirstRiskCard(page)
-    await expect.poll(() => transformOf(page, selector)).toMatch(/^matrix3d/)
-    const card = page.locator(selector).first()
+    const card = await hover(riskCard(page))
+    await expect(card).toHaveAttribute('data-glowing', 'true')
+    await expect(card).not.toHaveAttribute('data-tilt', 'on')
+    expect(await transformOf(card)).toBe('none')
     await openDetails(card, 'bn')
-    const why = card.getByRole('button', { name: text('bn', 'finding.why') })
-    await why.scrollIntoViewIfNeeded()
-    // A scroll sends the browser's own pointer move, which re-aims the lean for 120 ms; a person
-    // clicks once the card has come to rest, so the check waits for that too.
-    await settled(page, selector)
-    expect(await transformOf(page, selector)).toMatch(/^matrix3d/)
-    await why.click()
+    await card.getByRole('button', { name: text('bn', 'finding.why') }).click()
     await expect(page.getByRole('dialog')).toBeVisible()
   })
 
-  test("FR-71 a control left in a leaning card's own plane (a duty checkbox) takes its click", async ({
+  test('FR-71 a duty card with a checkbox never leans and its checkbox takes the click', async ({
     page,
   }, info) => {
     test.skip(info.project.name !== 'desktop-chromium', 'fine pointer only')
     await openResult(page, 'bn')
     await page.goto(`${new URL(page.url()).pathname}?tab=duties`)
-    const card = page.locator('[role="tabpanel"] .depth-card').first()
-    await card.scrollIntoViewIfNeeded()
-    const box = await card.boundingBox()
-    if (box === null) {
-      throw new Error('no duty card')
-    }
-    await page.mouse.move(box.x + box.width * 0.9, box.y + box.height * 0.5, { steps: 4 })
-    await expect
-      .poll(() => card.evaluate((el) => getComputedStyle(el).transform))
-      .toMatch(/^matrix3d/)
+    const card = await hover(page.locator('[role="tabpanel"] .depth-card'))
+    await expect(card).not.toHaveAttribute('data-tilt', 'on')
+    expect(await transformOf(card)).toBe('none')
     const checkbox = card.getByRole('checkbox')
-    await settled(page, '[role="tabpanel"] .depth-card')
     await checkbox.click()
     await expect(checkbox).toBeChecked()
   })
 
-  test('NFR-08 keyboard focus inside a leaning card holds it flat; a mouse click does not', async ({
-    page,
-  }, info) => {
+  test('NFR-08 a read-only stat tile on the result leans and settles', async ({ page }, info) => {
     test.skip(info.project.name !== 'desktop-chromium', 'fine pointer only')
     await openResult(page, 'bn')
-    const selector = await hoverFirstRiskCard(page)
-    const card = page.locator(selector).first()
-    await expect.poll(() => transformOf(page, selector)).toMatch(/^matrix3d/)
-    // A mouse click on বিস্তারিত keeps the card leaning, so nothing slides under the pointer.
-    await openDetails(card, 'bn')
-    await page.waitForTimeout(400)
-    expect(await transformOf(page, selector)).toMatch(/^matrix3d/)
-    // Keyboard focus inside the card holds it flat for reading.
-    const chip = card.getByRole('button', { name: /খুলুন/ }).first()
-    await chip.focus()
-    await page.keyboard.press('Shift+Tab')
-    await page.keyboard.press('Tab')
-    await expect.poll(() => transformOf(page, selector)).toBe('none')
+    const tile = await hover(statTile(page))
+    await expect.poll(() => transformOf(tile)).toMatch(/^matrix3d/)
+    await settled(tile)
   })
 
   test('NFR-08 cards stay flat when the visitor prefers reduced motion', async ({ page }, info) => {
     test.skip(info.project.name !== 'desktop-chromium', 'fine pointer only')
     await page.emulateMedia({ reducedMotion: 'reduce' })
     await openResult(page, 'bn')
-    const selector = await hoverFirstRiskCard(page)
+    const tile = await hover(statTile(page))
     await page.waitForTimeout(400)
-    expect(await transformOf(page, selector)).toBe('none')
-    await expect(page.locator(selector).first()).not.toHaveAttribute('data-tilt', 'on')
-    const lift = await page
-      .locator(`${selector} .lift-2`)
+    expect(await transformOf(tile)).toBe('none')
+    await expect(tile).not.toHaveAttribute('data-tilt', 'on')
+    const lift = await riskCard(page)
+      .locator('.lift-2')
       .first()
       .evaluate((element) => getComputedStyle(element).translate)
     expect(lift).toBe('none')
     // The glass is still there: the same look, flat.
-    await expect(page.locator(`${selector} > .depth-glass`).first()).toBeAttached()
+    await expect(tile.locator('> .depth-glass')).toBeAttached()
   })
 
   test('FR-76 cards stay flat in low-bandwidth mode', async ({ page }, info) => {
@@ -183,10 +171,10 @@ test.describe('depth system', () => {
       window.localStorage.setItem('shromikai.lowbw', 'true')
     })
     await openResult(page, 'bn')
-    const selector = await hoverFirstRiskCard(page)
+    const tile = await hover(statTile(page))
     await page.waitForTimeout(400)
-    expect(await transformOf(page, selector)).toBe('none')
-    await expect(page.locator(selector).first()).not.toHaveAttribute('data-tilt', 'on')
+    expect(await transformOf(tile)).toBe('none')
+    await expect(tile).not.toHaveAttribute('data-tilt', 'on')
   })
 
   test('FR-76 cards stay flat on a touch phone and nothing drifts on scroll', async ({
@@ -194,9 +182,9 @@ test.describe('depth system', () => {
   }, info) => {
     test.skip(info.project.name !== 'mobile-chromium', 'touch only')
     await openResult(page, 'bn')
-    const card = page.locator('article.depth-card').first()
-    await expect(card).not.toHaveAttribute('data-tilt', 'on')
-    expect(await transformOf(page, 'article.depth-card')).toBe('none')
+    const tile = statTile(page)
+    await expect(tile).not.toHaveAttribute('data-tilt', 'on')
+    expect(await transformOf(tile)).toBe('none')
     const drift = await page
       .locator('[data-parallax="1"]')
       .first()
@@ -253,7 +241,7 @@ test.describe('depth system', () => {
       test.skip(info.project.name !== 'desktop-chromium', 'fine pointer only')
       await inTheme(page, theme)
       await openResult(page, 'bn')
-      await hoverFirstRiskCard(page)
+      await hover(statTile(page))
       await page.waitForTimeout(400)
       const results = await new AxeBuilder({ page })
         .withTags(['wcag2a', 'wcag2aa', 'wcag21a', 'wcag21aa'])
@@ -279,7 +267,7 @@ test.describe('depth system', () => {
       await openResult(page, 'bn')
       await page.waitForTimeout(600)
       await shot(page, 'results-top', theme)
-      await hoverFirstRiskCard(page).catch(() => undefined)
+      await hover(riskCard(page)).catch(() => undefined)
       await page.waitForTimeout(500)
       await shot(page, 'results-card-hover', theme)
       await page.mouse.move(2, 2)
