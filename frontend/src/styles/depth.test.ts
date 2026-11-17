@@ -49,7 +49,7 @@ describe('depth system CSS', () => {
   })
 
   it('FR-68 the tilt uses transform and the reveal and hover lift use translate', () => {
-    expect(block(".depth-card[data-tilting='true']:not(:focus-within)")).toMatch(
+    expect(block(".depth-card[data-tilting='true']:not(:has(:focus-visible))")).toMatch(
       /transform:\s*perspective\(/,
     )
     const reveal = block('@keyframes reveal-rise')

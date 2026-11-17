@@ -376,7 +376,9 @@
     transition: transform var(--dur-base) var(--ease-out);
   }
 
-  .depth-card[data-tilting='true']:not(:focus-within) {
+  /* Keyboard focus inside a card holds it flat for reading; a mouse click (on বিস্তারিত, say)
+     does not, so nothing slides under the pointer. */
+  .depth-card[data-tilting='true']:not(:has(:focus-visible)) {
     transform: perspective(1000px) rotateX(var(--rx, 0deg)) rotateY(var(--ry, 0deg));
     transition-duration: 120ms;
     will-change: transform;

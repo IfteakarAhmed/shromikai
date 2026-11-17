@@ -2,7 +2,7 @@ import { mkdirSync } from 'node:fs'
 import { resolve } from 'node:path'
 import AxeBuilder from '@axe-core/playwright'
 import { expect, test, type Page } from '@playwright/test'
-import { inLocale, openResult, text } from './support'
+import { inLocale, openDetails, openResult, text } from './support'
 
 /**
  * The CSS 3D depth system (C2b): cards float, lean towards a fine pointer and lift their badges,
@@ -92,12 +92,30 @@ test.describe('depth system', () => {
     await openResult(page, 'bn')
     const selector = await hoverFirstRiskCard(page)
     await expect.poll(() => transformOf(page, selector)).toMatch(/^matrix3d/)
-    await page
-      .locator(selector)
-      .first()
-      .getByRole('button', { name: text('bn', 'finding.why') })
-      .click()
+    const card = page.locator(selector).first()
+    await openDetails(card, 'bn')
+    await card.getByRole('button', { name: text('bn', 'finding.why') }).click()
     await expect(page.getByRole('dialog')).toBeVisible()
+  })
+
+  test('NFR-08 keyboard focus inside a leaning card holds it flat; a mouse click does not', async ({
+    page,
+  }, info) => {
+    test.skip(info.project.name !== 'desktop-chromium', 'fine pointer only')
+    await openResult(page, 'bn')
+    const selector = await hoverFirstRiskCard(page)
+    const card = page.locator(selector).first()
+    await expect.poll(() => transformOf(page, selector)).toMatch(/^matrix3d/)
+    // A mouse click on বিস্তারিত keeps the card leaning, so nothing slides under the pointer.
+    await openDetails(card, 'bn')
+    await page.waitForTimeout(400)
+    expect(await transformOf(page, selector)).toMatch(/^matrix3d/)
+    // Keyboard focus inside the card holds it flat for reading.
+    const chip = card.getByRole('button', { name: /খুলুন/ }).first()
+    await chip.focus()
+    await page.keyboard.press('Shift+Tab')
+    await page.keyboard.press('Tab')
+    await expect.poll(() => transformOf(page, selector)).toBe('none')
   })
 
   test('NFR-08 cards stay flat when the visitor prefers reduced motion', async ({ page }, info) => {
