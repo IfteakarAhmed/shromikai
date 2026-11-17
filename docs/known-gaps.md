@@ -5,6 +5,16 @@ A running list of what is not done, not measured or not proven, so nothing is cl
 
 ## P9 (web experience, found while building and reviewing it)
 
+The transfer-risk card in the recorded demo shows `BLA-2006:3` as `VERIFIED`, and that citation does
+not clearly support the claim. This card is the documented example of the same-family verifier
+limitation: the verifier is a second Claude prompt (`SAME_FAMILY`), so it judges "does this section
+support this claim" with the same blind spots as the model that proposed the citation. Our own
+cross-check of 17 November found it. We have not changed the recordings, the verifier or the UI to
+hide it. Fix planned after 20 November: a cross-family verifier (a Gemini Flash run or another
+independent model, [ADR-0018](adr/0018-gemini-verifier-dropped-for-now.md)) plus a
+relevance check. Until then, do not call the verifier "independent", and when this card is shown,
+say so.
+
 | Gap | Where it matters | Detail |
 | --- | --- | --- |
 | The transfer finding ("any site, any time") cites `BLA-2006:3` and the quote does not clearly support the claim | FR-47, R-01 | In the recorded sample the transfer finding is `VERIFIED` against `BLA-2006:3` (f9 with the rules off, f11 with them on), but the quoted passage does not clearly support the claim. The support check judges the claim against the section, not whether the section bears on the clause, and every verification is `SAME_FAMILY`; a stricter cross-family judge is future work. (The probation finding now cites `BLA-2006:4`, whose recorded quote is about probation periods; no concern is recorded for it.) |
