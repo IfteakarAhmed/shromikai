@@ -159,7 +159,8 @@ public class AnalysisPipeline {
             job.placeholders(),
             properties.budget().perAnalysisUsdMicros(),
             properties.budget().perAnalysisTokens());
-    Deadline deadline = new Deadline(started + properties.analysis().hardTimeout().toMillis());
+    Deadline deadline =
+        new Deadline(clock, started + properties.analysis().hardTimeout().toMillis());
     try {
       dailyBudget.admit();
       JobData data = new JobData(job, request, session, deadline, release);
@@ -187,7 +188,6 @@ public class AnalysisPipeline {
     final ModelSession session;
     final Deadline deadline;
     final @Nullable String release;
-    final long started;
     final List<AnalysisJob.Warning> warnings = new ArrayList<>();
     final Map<String, Integer> promptVersions = new TreeMap<>();
     final Map<String, String> models = new TreeMap<>();
@@ -206,7 +206,6 @@ public class AnalysisPipeline {
       this.session = session;
       this.deadline = deadline;
       this.release = release;
-      this.started = System.currentTimeMillis();
     }
   }
 
@@ -818,14 +817,16 @@ public class AnalysisPipeline {
 
   /** The wall-time limit of one analysis. */
   private static final class Deadline {
+    final Clock clock;
     final long end;
 
-    Deadline(long end) {
+    Deadline(Clock clock, long end) {
+      this.clock = clock;
       this.end = end;
     }
 
     long remaining() {
-      return end - System.currentTimeMillis();
+      return end - clock.millis();
     }
   }
 }
