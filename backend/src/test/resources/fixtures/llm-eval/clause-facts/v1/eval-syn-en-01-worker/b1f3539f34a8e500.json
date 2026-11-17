@@ -1,0 +1,84 @@
+{
+  "fixtureVersion" : 1,
+  "promptId" : "clause-facts",
+  "promptVersion" : 1,
+  "caseId" : "eval-syn-en-01-worker",
+  "modelId" : "claude-haiku-5-5",
+  "requestSha256" : "b1f3539f34a8e500e037bcf06623272f4b293867977fea3eb61149c22e11bd9e",
+  "provenance" : "synthetic",
+  "source" : "recorded from a live call",
+  "recordedAt" : "2026-11-17T11:00:57.651912Z",
+  "stopReason" : "end_turn",
+  "usage" : {
+    "inputTokens" : 298,
+    "outputTokens" : 546,
+    "cacheReadTokens" : 0
+  },
+  "response" : {
+    "status" : "OK",
+    "reason" : "NONE",
+    "clauses" : [ {
+      "id" : "c5",
+      "facts" : [ {
+        "parameter" : "WAGE_PAYMENT_DEADLINE",
+        "value" : 25,
+        "unit" : "DAYS",
+        "confidence" : 0.8
+      }, {
+        "parameter" : "DEDUCTION_LIMIT",
+        "value" : 0,
+        "unit" : "PERCENT",
+        "confidence" : 0.2
+      } ]
+    }, {
+      "id" : "c6",
+      "facts" : [ {
+        "parameter" : "DAILY_WORKING_HOURS",
+        "value" : 11,
+        "unit" : "HOURS_PER_DAY",
+        "confidence" : 0.95
+      }, {
+        "parameter" : "WEEKLY_REST_DAYS",
+        "value" : 1,
+        "unit" : "COUNT",
+        "confidence" : 0.6
+      }, {
+        "parameter" : "OVERTIME_COMPULSORY",
+        "value" : 0,
+        "unit" : "BOOLEAN",
+        "confidence" : 0.3
+      } ]
+    }, {
+      "id" : "c7",
+      "facts" : [ {
+        "parameter" : "ANNUAL_LEAVE",
+        "value" : 6,
+        "unit" : "DAYS",
+        "confidence" : 0.9
+      }, {
+        "parameter" : "MATERNITY_LEAVE",
+        "value" : 0,
+        "unit" : "DAYS",
+        "confidence" : 0.85
+      } ]
+    }, {
+      "id" : "c8",
+      "facts" : [ {
+        "parameter" : "NOTICE_BY_EMPLOYER",
+        "value" : 24,
+        "unit" : "DAYS",
+        "confidence" : 0.4
+      }, {
+        "parameter" : "NOTICE_BY_WORKER",
+        "value" : 90,
+        "unit" : "DAYS",
+        "confidence" : 0.95
+      }, {
+        "parameter" : "TERMINATION_WITHOUT_NOTICE_ALLOWED",
+        "value" : 0,
+        "unit" : "BOOLEAN",
+        "confidence" : 0.2
+      } ]
+    } ]
+  }
+}

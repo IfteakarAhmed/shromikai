@@ -1,0 +1,22 @@
+{
+  "fixtureVersion" : 1,
+  "promptId" : "verify-support-claude",
+  "promptVersion" : 2,
+  "caseId" : "eval-citations",
+  "modelId" : "claude-haiku-5-5",
+  "requestSha256" : "995fb49ef1c3e186d5189d54e3f72f78881565dfbc2f0c34992487418364cd0a",
+  "provenance" : "synthetic",
+  "source" : "recorded from a live call",
+  "recordedAt" : "2026-11-17T10:48:38.882328Z",
+  "stopReason" : "end_turn",
+  "usage" : {
+    "inputTokens" : 851,
+    "outputTokens" : 74,
+    "cacheReadTokens" : 982
+  },
+  "response" : {
+    "label" : "SUPPORTS",
+    "confidence" : 0.95,
+    "reason" : "Section 28(1) states a worker in an establishment who completes 60 years of age shall retire from service in the normal course, matching the claim's elements."
+  }
+}

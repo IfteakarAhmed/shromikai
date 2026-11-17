@@ -1,0 +1,22 @@
+{
+  "fixtureVersion" : 1,
+  "promptId" : "query-rewrite",
+  "promptVersion" : 1,
+  "caseId" : "eval-syn-en-01-worker",
+  "modelId" : "claude-haiku-5-5",
+  "requestSha256" : "71eadf1c14e9c9305b1e32074815c5cc4f5143acd76cae02d00ce04e52d46a0d",
+  "provenance" : "synthetic",
+  "source" : "recorded from a live call",
+  "recordedAt" : "2026-11-17T11:01:03.696321Z",
+  "stopReason" : "end_turn",
+  "usage" : {
+    "inputTokens" : 75,
+    "outputTokens" : 116,
+    "cacheReadTokens" : 798
+  },
+  "response" : {
+    "status" : "OK",
+    "reason" : "NONE",
+    "queries" : [ "employer-chosen arbitrator waiver of labour court rights Bangladesh", "শ্রম আদালত ও শালিস বিরোধ নিষ্পত্তি শ্রমিকের অধিকার", "worker waiver of right to labour tribunal dispute resolution" ]
+  }
+}

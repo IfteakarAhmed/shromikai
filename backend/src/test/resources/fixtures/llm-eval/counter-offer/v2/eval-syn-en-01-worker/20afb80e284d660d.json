@@ -1,0 +1,24 @@
+{
+  "fixtureVersion" : 1,
+  "promptId" : "counter-offer",
+  "promptVersion" : 2,
+  "caseId" : "eval-syn-en-01-worker",
+  "modelId" : "claude-sonnet-5-5",
+  "requestSha256" : "20afb80e284d660d04c6396934036268c784c2dbfac2644f59826e5ac30fac48",
+  "provenance" : "synthetic",
+  "source" : "recorded from a live call",
+  "recordedAt" : "2026-11-17T11:01:44.197313Z",
+  "stopReason" : "end_turn",
+  "usage" : {
+    "inputTokens" : 612,
+    "outputTokens" : 368,
+    "cacheReadTokens" : 0
+  },
+  "response" : {
+    "status" : "OK",
+    "reason" : "NONE",
+    "action" : "REPLACE",
+    "proposed_text" : "4. মজুরী ও কর্তন: মজুরী পরবর্তী মাসের ২৫ তারিখের মধ্যে পরিশোধ করা হবে। শ্রমিকের অবহেলা বা গাফিলতিতে নিয়োগকর্তার ক্ষতি হলে, ন্যায় বিচারের নীতি অনুসরণ করে যথাযথ তদন্তে শ্রমিককে দোষী সাব্যস্ত করার পরেই এবং প্রকৃত ক্ষতির অধিক নয় এমন পরিমাণ মজুরী থেকে কর্তন করা যাবে।",
+    "rationale" : "ধারাটি এখন তদন্ত ও দোষী সাব্যস্তের শর্ত এবং ক্ষতির সীমা রাখে, তাই আইনসম্মত এবং নিয়োগকর্তার প্রকৃত ক্ষতিও রক্ষিত।"
+  }
+}

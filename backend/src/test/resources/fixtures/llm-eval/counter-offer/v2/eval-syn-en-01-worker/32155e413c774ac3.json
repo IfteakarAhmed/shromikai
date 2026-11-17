@@ -1,0 +1,24 @@
+{
+  "fixtureVersion" : 1,
+  "promptId" : "counter-offer",
+  "promptVersion" : 2,
+  "caseId" : "eval-syn-en-01-worker",
+  "modelId" : "claude-sonnet-5-5",
+  "requestSha256" : "32155e413c774ac3040bb15f91fd9812d469e99d6d8672bf2a5fcd4dd226e322",
+  "provenance" : "synthetic",
+  "source" : "recorded from a live call",
+  "recordedAt" : "2026-11-17T11:01:44.044171Z",
+  "stopReason" : "end_turn",
+  "usage" : {
+    "inputTokens" : 693,
+    "outputTokens" : 356,
+    "cacheReadTokens" : 0
+  },
+  "response" : {
+    "status" : "OK",
+    "reason" : "NONE",
+    "action" : "REPLACE",
+    "proposed_text" : "৫. কর্মঘণ্টা ও অধিকাল\n(ক) শ্রমিক দিনে ৮ ঘণ্টা এবং সপ্তাহে ৪৮ ঘণ্টার বেশি সাধারণ কর্মঘণ্টায় কাজ করবেন না।\n(খ) এর অতিরিক্ত কাজ কেবল শ্রমিকের সম্মতিতে ও অধিকাল কাজের নিয়ম মেনে করানো যাবে এবং আইনানুযায়ী অধিকাল মজুরি দিতে হবে। [EMPLOYEE_ID_1]",
+    "rationale" : "দৈনিক ৮ ও সাপ্তাহিক ৪৮ ঘণ্টার সীমা মেনে অতিরিক্ত কাজকে অধিকাল নিয়মে ও মজুরিসহ আনা হয়েছে।"
+  }
+}

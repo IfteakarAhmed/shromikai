@@ -1,0 +1,22 @@
+{
+  "fixtureVersion" : 1,
+  "promptId" : "query-rewrite",
+  "promptVersion" : 1,
+  "caseId" : "eval-syn-en-01-worker",
+  "modelId" : "claude-haiku-5-5",
+  "requestSha256" : "ede5b676eeb4fafe9f6af98c93dc96f664a5637d9b74eda25776eddd1310d09d",
+  "provenance" : "synthetic",
+  "source" : "recorded from a live call",
+  "recordedAt" : "2026-11-17T11:00:56.508428Z",
+  "stopReason" : "end_turn",
+  "usage" : {
+    "inputTokens" : 63,
+    "outputTokens" : 114,
+    "cacheReadTokens" : 0
+  },
+  "response" : {
+    "status" : "OK",
+    "reason" : "NONE",
+    "queries" : [ "মজুরি হ্রাস নিয়োগকর্তার একতরফা সিদ্ধান্ত শ্রম আইন", "employer unilateral reduction of wages Bangladesh labour law", "minimum wage protection and wage deduction rules Bangladesh" ]
+  }
+}

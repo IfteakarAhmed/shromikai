@@ -1,0 +1,22 @@
+{
+  "fixtureVersion" : 1,
+  "promptId" : "verify-support-claude",
+  "promptVersion" : 2,
+  "caseId" : "eval-citations",
+  "modelId" : "claude-haiku-5-5",
+  "requestSha256" : "bca22782a9eabe0d1ebbe0263369ce0259a4608298b3510dba224e920d925cc5",
+  "provenance" : "synthetic",
+  "source" : "recorded from a live call",
+  "recordedAt" : "2026-11-17T10:48:08.091231Z",
+  "stopReason" : "end_turn",
+  "usage" : {
+    "inputTokens" : 979,
+    "outputTokens" : 68,
+    "cacheReadTokens" : 982
+  },
+  "response" : {
+    "label" : "CONTRADICTS",
+    "confidence" : 0.95,
+    "reason" : "Section 126(2) says the deduction in no case may exceed the wages payable for the absence period, directly opposing the claim."
+  }
+}

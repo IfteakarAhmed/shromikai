@@ -1,0 +1,22 @@
+{
+  "fixtureVersion" : 1,
+  "promptId" : "verify-support-claude",
+  "promptVersion" : 2,
+  "caseId" : "eval-syn-en-01-worker",
+  "modelId" : "claude-haiku-5-5",
+  "requestSha256" : "531b22fc4c377a3f2ea0a22247cdeb21c45ac07c0fcfe7f9af30119d88511735",
+  "provenance" : "synthetic",
+  "source" : "recorded from a live call",
+  "recordedAt" : "2026-11-17T11:01:29.901703Z",
+  "stopReason" : "end_turn",
+  "usage" : {
+    "inputTokens" : 441,
+    "outputTokens" : 68,
+    "cacheReadTokens" : 982
+  },
+  "response" : {
+    "label" : "SUPPORTS",
+    "confidence" : 0.9,
+    "reason" : "Section 213 lets any worker apply to the labour court to enforce a right under the Act, award or agreement; the claim matches."
+  }
+}

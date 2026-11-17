@@ -1,0 +1,22 @@
+{
+  "fixtureVersion" : 1,
+  "promptId" : "verify-support-claude",
+  "promptVersion" : 2,
+  "caseId" : "eval-syn-en-01-worker",
+  "modelId" : "claude-haiku-5-5",
+  "requestSha256" : "ef04e3b0b98db45ca0325081c0ffbf0a0dcd43235685840a0f527e5c20fb29b1",
+  "provenance" : "synthetic",
+  "source" : "recorded from a live call",
+  "recordedAt" : "2026-11-17T11:01:28.264077Z",
+  "stopReason" : "end_turn",
+  "usage" : {
+    "inputTokens" : 1181,
+    "outputTokens" : 69,
+    "cacheReadTokens" : 0
+  },
+  "response" : {
+    "label" : "PARTIAL",
+    "confidence" : 0.6,
+    "reason" : "Section s.26(3) allows termination without notice by paying wages for the notice period, but it says 'may', not that it is mandatory."
+  }
+}

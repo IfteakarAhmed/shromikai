@@ -1,0 +1,22 @@
+{
+  "fixtureVersion" : 1,
+  "promptId" : "verify-support-claude",
+  "promptVersion" : 2,
+  "caseId" : "eval-citations",
+  "modelId" : "claude-haiku-5-5",
+  "requestSha256" : "34f2fc681e1eb970fe31a9cd78a67661bfb3a819ff368548d25ca8225120ecb1",
+  "provenance" : "synthetic",
+  "source" : "recorded from a live call",
+  "recordedAt" : "2026-11-17T10:47:44.400282Z",
+  "stopReason" : "end_turn",
+  "usage" : {
+    "inputTokens" : 501,
+    "outputTokens" : 71,
+    "cacheReadTokens" : 982
+  },
+  "response" : {
+    "label" : "CONTRADICTS",
+    "confidence" : 0.6,
+    "reason" : "Section grants weekly rest days (one day for factories, 1.5 for shops), not ten days of casual leave with full wages per year."
+  }
+}

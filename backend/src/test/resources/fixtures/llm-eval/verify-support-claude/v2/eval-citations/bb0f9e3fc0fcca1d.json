@@ -1,0 +1,22 @@
+{
+  "fixtureVersion" : 1,
+  "promptId" : "verify-support-claude",
+  "promptVersion" : 2,
+  "caseId" : "eval-citations",
+  "modelId" : "claude-haiku-5-5",
+  "requestSha256" : "bb0f9e3fc0fcca1dd7b34d45a9fae6ac4d89475de2786e81c978d9b2dadcde7c",
+  "provenance" : "synthetic",
+  "source" : "recorded from a live call",
+  "recordedAt" : "2026-11-17T10:47:40.600985Z",
+  "stopReason" : "end_turn",
+  "usage" : {
+    "inputTokens" : 817,
+    "outputTokens" : 71,
+    "cacheReadTokens" : 982
+  },
+  "response" : {
+    "label" : "UNRELATED",
+    "confidence" : 0.95,
+    "reason" : "Section 101 concerns daily working-hour limits and rest intervals; it says nothing about thirteen festival holidays with wages each year."
+  }
+}

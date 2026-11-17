@@ -1,0 +1,64 @@
+{
+  "fixtureVersion" : 1,
+  "promptId" : "risk-analysis",
+  "promptVersion" : 2,
+  "caseId" : "eval-syn-en-01-worker",
+  "modelId" : "claude-sonnet-5-5",
+  "requestSha256" : "e8a682b10b4710171d2b9def935ea488512e5f11ce82ce185c8bb01f988740e3",
+  "provenance" : "synthetic",
+  "source" : "recorded from a live call",
+  "recordedAt" : "2026-11-17T11:01:18.451494Z",
+  "stopReason" : "end_turn",
+  "usage" : {
+    "inputTokens" : 23943,
+    "outputTokens" : 1045,
+    "cacheReadTokens" : 0
+  },
+  "response" : {
+    "status" : "OK",
+    "reason" : "NONE",
+    "findings" : [ {
+      "title" : "১২ মাসের শিক্ষানবিশীকাল",
+      "kind" : "CONFLICT",
+      "severity" : "HIGH",
+      "non_obvious" : false,
+      "clause_type" : "PROBATION",
+      "clause_ids" : [ "c3" ],
+      "explanation" : "চুক্তিতে শিক্ষানবিশীকাল ১২ মাস। আইনে কেরানিসংক্রান্ত কাজে ছয় মাস, অন্যদের তিন মাস (দক্ষ শ্রমিকের আরও তিন মাস)।",
+      "citations" : [ {
+        "section_key" : "BLA-2006:4@amend-2026",
+        "quote" : "কেরানী-সংক্রান্ত কাজে নিযুক্ত কোন শ্রমিকের শিক্ষানবিশীকাল হইবে ছয় মাস",
+        "claim" : "আইনে শিক্ষানবিশীকালের সর্বোচ্চ মেয়াদ নির্ধারিত।"
+      } ],
+      "confidence" : 0.85
+    }, {
+      "title" : "শিক্ষানবিশীকালে বিনা নোটিশে ছাঁটাই",
+      "kind" : "CONFLICT",
+      "severity" : "CRITICAL",
+      "non_obvious" : false,
+      "clause_type" : "PROBATION",
+      "clause_ids" : [ "c3" ],
+      "explanation" : "মালিক শিক্ষানবিশীকালে যেকোনো সময় নোটিশ বা কারণ ছাড়া চাকরি শেষ করতে পারেন। বিনা নোটিশে অবসানে নোটিশকালের মজুরি দিতে হয়।",
+      "citations" : [ {
+        "section_key" : "BLA-2006:26@original",
+        "quote" : "নোটিশের পরিবর্তে নোটিশ মেয়াদের জন্য মজুরী প্রদান করিয়া ইহা করিতে পারিবেন",
+        "claim" : "বিনা নোটিশে অবসানে নোটিশ মেয়াদের মজুরি প্রদান আবশ্যক।"
+      } ],
+      "confidence" : 0.8
+    }, {
+      "title" : "যেকোনো কাজ ও স্থানে নিয়োগের ক্ষমতা",
+      "kind" : "AMBIGUITY",
+      "severity" : "MEDIUM",
+      "non_obvious" : true,
+      "clause_type" : "TRANSFER_AND_DEPLOYMENT",
+      "clause_ids" : [ "c2" ],
+      "explanation" : "মালিক যেকোনো কাজ ও স্থানে নির্দেশ দিতে পারেন, কোনো সীমা নেই। এতে শ্রমিকের পদ ও শর্ত অনিশ্চিত হয়।",
+      "citations" : [ {
+        "section_key" : "BLA-2006:3@amend-2026",
+        "quote" : "কোন শ্রমিকের জন্য এই অধ্যায়ের কোন বিধান হইতে কম অনুকূল হইতে পারিবে না",
+        "claim" : "চাকুরীর শর্ত আইনের চেয়ে কম অনুকূল হতে পারে না।"
+      } ],
+      "confidence" : 0.6
+    } ]
+  }
+}

@@ -1,0 +1,22 @@
+{
+  "fixtureVersion" : 1,
+  "promptId" : "verify-support-claude",
+  "promptVersion" : 2,
+  "caseId" : "eval-syn-en-01-worker",
+  "modelId" : "claude-haiku-5-5",
+  "requestSha256" : "becb135c7bb6eb54ac035dc63b4407826d2c8876a6a1a977379dc8c9da911bbf",
+  "provenance" : "synthetic",
+  "source" : "recorded from a live call",
+  "recordedAt" : "2026-11-17T11:01:28.254031Z",
+  "stopReason" : "end_turn",
+  "usage" : {
+    "inputTokens" : 420,
+    "outputTokens" : 72,
+    "cacheReadTokens" : 0
+  },
+  "response" : {
+    "label" : "PARTIAL",
+    "confidence" : 0.8,
+    "reason" : "Section gives workers a right to 10 days casual leave per year on full wages; it does not say mandatory, and excludes tea-garden workers."
+  }
+}

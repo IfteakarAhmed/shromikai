@@ -1,0 +1,22 @@
+{
+  "fixtureVersion" : 1,
+  "promptId" : "verify-support-claude",
+  "promptVersion" : 2,
+  "caseId" : "eval-citations",
+  "modelId" : "claude-haiku-5-5",
+  "requestSha256" : "af9aa9d4d2d1d80d0a73ccc585815ec96a8a8cefea678fe06cb88f01cf57669f",
+  "provenance" : "synthetic",
+  "source" : "recorded from a live call",
+  "recordedAt" : "2026-11-17T10:48:19.330748Z",
+  "stopReason" : "end_turn",
+  "usage" : {
+    "inputTokens" : 987,
+    "outputTokens" : 68,
+    "cacheReadTokens" : 982
+  },
+  "response" : {
+    "label" : "SUPPORTS",
+    "confidence" : 0.95,
+    "reason" : "Section 102(1) states an adult worker shall not ordinarily work over 48 hours per week, matching every element of the claim."
+  }
+}

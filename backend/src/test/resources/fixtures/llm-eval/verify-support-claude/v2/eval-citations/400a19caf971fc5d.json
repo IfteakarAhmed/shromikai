@@ -1,0 +1,22 @@
+{
+  "fixtureVersion" : 1,
+  "promptId" : "verify-support-claude",
+  "promptVersion" : 2,
+  "caseId" : "eval-citations",
+  "modelId" : "claude-haiku-5-5",
+  "requestSha256" : "400a19caf971fc5df9154013c841abe4b04ac974c83b78839019b2caac751657",
+  "provenance" : "synthetic",
+  "source" : "recorded from a live call",
+  "recordedAt" : "2026-11-17T10:48:13.582883Z",
+  "stopReason" : "end_turn",
+  "usage" : {
+    "inputTokens" : 253,
+    "outputTokens" : 62,
+    "cacheReadTokens" : 982
+  },
+  "response" : {
+    "label" : "CONTRADICTS",
+    "confidence" : 0.97,
+    "reason" : "Section bars any employer from hiring a worker without giving an appointment letter, directly opposing the claim."
+  }
+}

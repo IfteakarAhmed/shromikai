@@ -1,0 +1,22 @@
+{
+  "fixtureVersion" : 1,
+  "promptId" : "query-rewrite",
+  "promptVersion" : 1,
+  "caseId" : "eval-syn-en-01-worker",
+  "modelId" : "claude-haiku-5-5",
+  "requestSha256" : "2017601e7ecdf8b5909a3a9f07f05908e9fcfb5d678fbea9302ce6cbe8efe9cf",
+  "provenance" : "synthetic",
+  "source" : "recorded from a live call",
+  "recordedAt" : "2026-11-17T11:00:56.554966Z",
+  "stopReason" : "end_turn",
+  "usage" : {
+    "inputTokens" : 179,
+    "outputTokens" : 90,
+    "cacheReadTokens" : 0
+  },
+  "response" : {
+    "status" : "OK",
+    "reason" : "NONE",
+    "queries" : [ "employment agreement formation and parties' obligations under labour law", "কর্মসংস্থান চুক্তির পক্ষ ও শর্তাবলী", "written employment contract requirements for workers and employers" ]
+  }
+}

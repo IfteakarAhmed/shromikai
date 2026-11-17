@@ -1,0 +1,22 @@
+{
+  "fixtureVersion" : 1,
+  "promptId" : "verify-support-claude",
+  "promptVersion" : 2,
+  "caseId" : "eval-syn-en-01-worker",
+  "modelId" : "claude-haiku-5-5",
+  "requestSha256" : "4bdc08d364f0d81e9701cf9f9a1925b8e8dee9e5ece646e1fd514e68169d2d8a",
+  "provenance" : "synthetic",
+  "source" : "recorded from a live call",
+  "recordedAt" : "2026-11-17T11:01:29.981401Z",
+  "stopReason" : "end_turn",
+  "usage" : {
+    "inputTokens" : 3188,
+    "outputTokens" : 77,
+    "cacheReadTokens" : 982
+  },
+  "response" : {
+    "label" : "SUPPORTS",
+    "confidence" : 0.92,
+    "reason" : "Section 214(10) states a labour court has exclusive jurisdiction over industrial disputes and other listed matters arising under the Act, covering the claim."
+  }
+}

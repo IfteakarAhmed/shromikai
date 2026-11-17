@@ -1,0 +1,22 @@
+{
+  "fixtureVersion" : 1,
+  "promptId" : "verify-support-claude",
+  "promptVersion" : 2,
+  "caseId" : "eval-citations",
+  "modelId" : "claude-haiku-5-5",
+  "requestSha256" : "5639239cdd98e2d990fb323b1a475db6e4ff393f2b2a07a7636708b508c26d20",
+  "provenance" : "synthetic",
+  "source" : "recorded from a live call",
+  "recordedAt" : "2026-11-17T10:48:26.367386Z",
+  "stopReason" : "end_turn",
+  "usage" : {
+    "inputTokens" : 778,
+    "outputTokens" : 73,
+    "cacheReadTokens" : 982
+  },
+  "response" : {
+    "label" : "SUPPORTS",
+    "confidence" : 0.96,
+    "reason" : "Section 116(1) grants non-newspaper workers fourteen days sick leave per calendar year on full wages, matching every element of the claim."
+  }
+}

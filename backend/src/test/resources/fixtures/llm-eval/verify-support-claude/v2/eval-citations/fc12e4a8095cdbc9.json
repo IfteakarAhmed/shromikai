@@ -1,0 +1,22 @@
+{
+  "fixtureVersion" : 1,
+  "promptId" : "verify-support-claude",
+  "promptVersion" : 2,
+  "caseId" : "eval-citations",
+  "modelId" : "claude-haiku-5-5",
+  "requestSha256" : "fc12e4a8095cdbc9e67aff7a5941db94cbdfacff5091f108e66f757f053b5fa6",
+  "provenance" : "synthetic",
+  "source" : "recorded from a live call",
+  "recordedAt" : "2026-11-17T10:47:51.629221Z",
+  "stopReason" : "end_turn",
+  "usage" : {
+    "inputTokens" : 469,
+    "outputTokens" : 75,
+    "cacheReadTokens" : 982
+  },
+  "response" : {
+    "label" : "UNRELATED",
+    "confidence" : 0.95,
+    "reason" : "Section 118 concerns 13 paid festival holidays per year and holiday scheduling, not a 48-hour weekly working limit for adult workers."
+  }
+}

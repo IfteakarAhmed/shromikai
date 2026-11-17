@@ -1,0 +1,22 @@
+{
+  "fixtureVersion" : 1,
+  "promptId" : "verify-support-claude",
+  "promptVersion" : 2,
+  "caseId" : "eval-citations",
+  "modelId" : "claude-haiku-5-5",
+  "requestSha256" : "af265c83cc48fef97908ad8716f162224a5912a8f4c4cf96528df57c4d6b78a6",
+  "provenance" : "synthetic",
+  "source" : "recorded from a live call",
+  "recordedAt" : "2026-11-17T10:48:17.369039Z",
+  "stopReason" : "end_turn",
+  "usage" : {
+    "inputTokens" : 824,
+    "outputTokens" : 73,
+    "cacheReadTokens" : 982
+  },
+  "response" : {
+    "label" : "SUPPORTS",
+    "confidence" : 0.96,
+    "reason" : "Section 101(ka) states a worker cannot be compelled to work over six hours daily unless a one-hour rest or meal break is given that day."
+  }
+}

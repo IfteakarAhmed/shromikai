@@ -1,0 +1,47 @@
+{
+  "fixtureVersion" : 1,
+  "promptId" : "clause-classify",
+  "promptVersion" : 1,
+  "caseId" : "eval-syn-bn-01-worker",
+  "modelId" : "claude-haiku-5-5",
+  "requestSha256" : "2876de5c67ae66e004b2e4aa0e1b371aa474aff657202d6de39c9e35c0cfb820",
+  "provenance" : "synthetic",
+  "source" : "recorded from a live call",
+  "recordedAt" : "2026-11-17T10:51:46.993254Z",
+  "stopReason" : "end_turn",
+  "usage" : {
+    "inputTokens" : 1071,
+    "outputTokens" : 243,
+    "cacheReadTokens" : 1692
+  },
+  "response" : {
+    "status" : "OK",
+    "reason" : "NONE",
+    "document_type" : "EMPLOYMENT_CONTRACT",
+    "clauses" : [ {
+      "id" : "c1",
+      "type" : "APPOINTMENT_AND_ROLE",
+      "confidence" : 0.8
+    }, {
+      "id" : "c2",
+      "type" : "TRANSFER_AND_DEPLOYMENT",
+      "confidence" : 0.85
+    }, {
+      "id" : "c3",
+      "type" : "PROBATION",
+      "confidence" : 0.95
+    }, {
+      "id" : "c4",
+      "type" : "WAGES",
+      "confidence" : 0.95
+    }, {
+      "id" : "c5",
+      "type" : "WAGE_PAYMENT_AND_DEDUCTIONS",
+      "confidence" : 0.95
+    }, {
+      "id" : "c6",
+      "type" : "WORKING_HOURS",
+      "confidence" : 0.9
+    } ]
+  }
+}

@@ -1,0 +1,22 @@
+{
+  "fixtureVersion" : 1,
+  "promptId" : "query-rewrite",
+  "promptVersion" : 1,
+  "caseId" : "eval-syn-en-01-worker",
+  "modelId" : "claude-haiku-5-5",
+  "requestSha256" : "ec4567f58eaf6451978258462bd5594332a79f9c3fc35cfa0db461b4cb1dae7a",
+  "provenance" : "synthetic",
+  "source" : "recorded from a live call",
+  "recordedAt" : "2026-11-17T11:00:56.603354Z",
+  "stopReason" : "end_turn",
+  "usage" : {
+    "inputTokens" : 68,
+    "outputTokens" : 97,
+    "cacheReadTokens" : 0
+  },
+  "response" : {
+    "status" : "OK",
+    "reason" : "NONE",
+    "queries" : [ "annual paid leave entitlement for workers Bangladesh labour law", "মাতৃত্বকালীন ছুটি শ্রম আইন বাংলাদেশ", "worker maternity leave rights and employer obligations" ]
+  }
+}

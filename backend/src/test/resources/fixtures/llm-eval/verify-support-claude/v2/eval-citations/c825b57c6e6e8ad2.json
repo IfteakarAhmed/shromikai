@@ -1,0 +1,22 @@
+{
+  "fixtureVersion" : 1,
+  "promptId" : "verify-support-claude",
+  "promptVersion" : 2,
+  "caseId" : "eval-citations",
+  "modelId" : "claude-haiku-5-5",
+  "requestSha256" : "c825b57c6e6e8ad2236a84a8787b040887f75de84cf71311434f7dca13996dbe",
+  "provenance" : "synthetic",
+  "source" : "recorded from a live call",
+  "recordedAt" : "2026-11-17T10:48:24.655766Z",
+  "stopReason" : "end_turn",
+  "usage" : {
+    "inputTokens" : 446,
+    "outputTokens" : 71,
+    "cacheReadTokens" : 982
+  },
+  "response" : {
+    "label" : "PARTIAL",
+    "confidence" : 0.8,
+    "reason" : "Section grants ten days casual leave with full wages per calendar year to every worker, but excludes tea-garden workers, which the claim omits."
+  }
+}

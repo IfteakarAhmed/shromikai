@@ -1,0 +1,22 @@
+{
+  "fixtureVersion" : 1,
+  "promptId" : "verify-support-claude",
+  "promptVersion" : 2,
+  "caseId" : "eval-syn-en-01-worker",
+  "modelId" : "claude-haiku-5-5",
+  "requestSha256" : "fc20d11d32a01e5f61b6e965b20913fd4e9975a1bda79232af9257ef4b488f04",
+  "provenance" : "synthetic",
+  "source" : "recorded from a live call",
+  "recordedAt" : "2026-11-17T11:01:39.937545Z",
+  "stopReason" : "end_turn",
+  "usage" : {
+    "inputTokens" : 2375,
+    "outputTokens" : 62,
+    "cacheReadTokens" : 982
+  },
+  "response" : {
+    "label" : "SUPPORTS",
+    "confidence" : 0.95,
+    "reason" : "Section 4(8) states clerical workers' probation is six months and other workers' is three months, matching the claim."
+  }
+}

@@ -1,0 +1,24 @@
+{
+  "fixtureVersion" : 1,
+  "promptId" : "counter-offer",
+  "promptVersion" : 2,
+  "caseId" : "eval-syn-en-01-worker",
+  "modelId" : "claude-sonnet-5-5",
+  "requestSha256" : "c18bc6bf141b94147ddcf97b7a72838d6b69c8618d1b61dee66bdcfd6d203434",
+  "provenance" : "synthetic",
+  "source" : "recorded from a live call",
+  "recordedAt" : "2026-11-17T11:01:43.832490Z",
+  "stopReason" : "end_turn",
+  "usage" : {
+    "inputTokens" : 446,
+    "outputTokens" : 277,
+    "cacheReadTokens" : 0
+  },
+  "response" : {
+    "status" : "OK",
+    "reason" : "NONE",
+    "action" : "REPLACE",
+    "proposed_text" : "২. শিক্ষানবিশীকাল: শ্রমিকের শিক্ষানবিশীকাল হইবে ৩ মাস; কেরানি-সংক্রান্ত কাজে নিযুক্ত হইলে ৬ মাস। এই সময়সীমা আইনের অনুমোদিত মেয়াদের বেশি হইবে না। [EMPLOYEE_ID_1]",
+    "rationale" : "শিক্ষানবিশীকাল আইনসম্মত ৩ বা ৬ মাসে নামানো হয়েছে, ফলে ১২ মাসের সীমা আইনের সঙ্গে সঙ্গতিপূর্ণ হলো।"
+  }
+}

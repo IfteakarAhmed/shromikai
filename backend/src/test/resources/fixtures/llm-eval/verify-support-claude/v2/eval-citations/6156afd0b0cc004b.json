@@ -1,0 +1,22 @@
+{
+  "fixtureVersion" : 1,
+  "promptId" : "verify-support-claude",
+  "promptVersion" : 2,
+  "caseId" : "eval-citations",
+  "modelId" : "claude-haiku-5-5",
+  "requestSha256" : "6156afd0b0cc004be3945941c7d1b79ba54b5c190dba1db4b2190ba980a6209d",
+  "provenance" : "synthetic",
+  "source" : "recorded from a live call",
+  "recordedAt" : "2026-11-17T10:47:37.342606Z",
+  "stopReason" : "end_turn",
+  "usage" : {
+    "inputTokens" : 2358,
+    "outputTokens" : 77,
+    "cacheReadTokens" : 982
+  },
+  "response" : {
+    "label" : "UNRELATED",
+    "confidence" : 0.8,
+    "reason" : "Claim is vague and names no specific rule; the quoted text is a garbled passage about wage deduction complaints under s.132, not a clearly identified rule."
+  }
+}

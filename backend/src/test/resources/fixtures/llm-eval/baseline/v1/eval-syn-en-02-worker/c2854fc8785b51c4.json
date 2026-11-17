@@ -1,0 +1,70 @@
+{
+  "fixtureVersion" : 1,
+  "promptId" : "baseline",
+  "promptVersion" : 1,
+  "caseId" : "eval-syn-en-02-worker",
+  "modelId" : "claude-sonnet-5-5",
+  "requestSha256" : "c2854fc8785b51c458a0da1e98bb1c5a7228627de27b1aeb05837c0435ae332d",
+  "provenance" : "synthetic",
+  "source" : "recorded from a live call",
+  "recordedAt" : "2026-11-17T10:49:37.603963Z",
+  "stopReason" : "end_turn",
+  "usage" : {
+    "inputTokens" : 597,
+    "outputTokens" : 1271,
+    "cacheReadTokens" : 0
+  },
+  "response" : {
+    "status" : "OK",
+    "reason" : "NONE",
+    "findings" : [ {
+      "title" : "12 ঘণ্টা কাজ, ওভারটাইম নেই, সাপ্তাহিক ছুটি নেই",
+      "severity" : "CRITICAL",
+      "explanation" : "দিনে ১২ ঘণ্টা, মাসে ৩০ দিন, অতিরিক্ত মজুরি ও সাপ্তাহিক ছুটি ছাড়া; শ্রম আইন ২০০৬-এর কর্মঘণ্টা, ওভারটাইম ও ছুটির বিধানের পরিপন্থী।",
+      "citations" : [ {
+        "section_key" : "BLA:100-102,108,103@2006",
+        "quote" : "12 hours a day for 30 days a month. No extra payment is made",
+        "claim" : "আইনি সীমার অতিরিক্ত কর্মঘণ্টা ও ওভারটাইমহীন কাজ"
+      }, {
+        "section_key" : "CONTRACT:4",
+        "quote" : "The Guard has no weekly rest day and no public holidays",
+        "claim" : "সাপ্তাহিক ও উৎসব ছুটি অস্বীকার"
+      } ]
+    }, {
+      "title" : "নোটিশ ছাড়া ছাঁটাই, পদত্যাগে অনুমতি",
+      "severity" : "HIGH",
+      "explanation" : "নোটিশ ছাড়া বরখাস্ত এবং পদত্যাগে অনুমতির শর্ত আইনসম্মত নোটিশ ও পাওনা সুরক্ষার পরিপন্থী; বাতিলযোগ্য।",
+      "citations" : [ {
+        "section_key" : "BLA:26-27@2006",
+        "quote" : "may end this contract at any time without notice",
+        "claim" : "নোটিশ বা মজুরি ছাড়া চাকরির অবসান"
+      }, {
+        "section_key" : "CONTRACT:7",
+        "quote" : "needs the Company's written permission to resign",
+        "claim" : "পদত্যাগের অধিকারে অযৌক্তিক বাধা"
+      } ]
+    }, {
+      "title" : "আঘাত/অসুস্থতায় চিকিৎসা ও মজুরি নেই",
+      "severity" : "HIGH",
+      "explanation" : "কর্মকালীন আঘাতে ক্ষতিপূরণ ও অসুস্থতাজনিত ছুটিতে মজুরির আইনি অধিকার এই ধারায় অস্বীকার করা হয়েছে।",
+      "citations" : [ {
+        "section_key" : "BLA:98,150@2006",
+        "quote" : "the Company has no duty to pay medical costs or wages",
+        "claim" : "অসুস্থতা ছুটি ও দুর্ঘটনা ক্ষতিপূরণের অধিকার লঙ্ঘন"
+      } ]
+    }, {
+      "title" : "মজুরি কর্তন, দীর্ঘ শিক্ষানবিশি ও ৩ বছর নিষেধাজ্ঞা",
+      "severity" : "MEDIUM",
+      "explanation" : "৯ মাস ৭০% বেতন, প্রতি মাসে পোশাক-সরঞ্জামের কর্তন এবং ৩ বছর কাজ নিষেধ অযৌক্তিক ও অবৈধ কর্তনের ঝুঁকি।",
+      "citations" : [ {
+        "section_key" : "BLA:4,5,126@2006",
+        "quote" : "The first 9 months are probation, during which the salary is 70 percent",
+        "claim" : "শিক্ষানবিশকাল ও বেতন হ্রাস আইনি সীমা অতিক্রম করে"
+      }, {
+        "section_key" : "CONTRACT:8",
+        "quote" : "may not work for any security company",
+        "claim" : "অতি দীর্ঘ ও অযৌক্তিক প্রতিযোগিতা-নিষেধ"
+      } ]
+    } ]
+  }
+}

@@ -1,0 +1,22 @@
+{
+  "fixtureVersion" : 1,
+  "promptId" : "verify-support-claude",
+  "promptVersion" : 2,
+  "caseId" : "eval-citations",
+  "modelId" : "claude-haiku-5-5",
+  "requestSha256" : "d538f11f669e6a2ced4b7afa032b5e828de80a2e656a13b15fd2e6af3007525f",
+  "provenance" : "synthetic",
+  "source" : "recorded from a live call",
+  "recordedAt" : "2026-11-17T10:48:35.290152Z",
+  "stopReason" : "end_turn",
+  "usage" : {
+    "inputTokens" : 556,
+    "outputTokens" : 72,
+    "cacheReadTokens" : 982
+  },
+  "response" : {
+    "label" : "SUPPORTS",
+    "confidence" : 0.96,
+    "reason" : "Section 149(1) states an employer cannot pay a worker wages below the minimum rate declared or published under the chapter, matching the claim."
+  }
+}

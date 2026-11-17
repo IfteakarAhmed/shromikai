@@ -1,0 +1,106 @@
+{
+  "fixtureVersion" : 1,
+  "promptId" : "obligations",
+  "promptVersion" : 1,
+  "caseId" : "eval-syn-en-01-worker",
+  "modelId" : "claude-haiku-5-5",
+  "requestSha256" : "ff69402480715bae5fd2996ab9b364f8176dbd69c922abc8dee0bb9d95925724",
+  "provenance" : "synthetic",
+  "source" : "recorded from a live call",
+  "recordedAt" : "2026-11-17T11:01:18.449723Z",
+  "stopReason" : "end_turn",
+  "usage" : {
+    "inputTokens" : 22893,
+    "outputTokens" : 1837,
+    "cacheReadTokens" : 0
+  },
+  "response" : {
+    "status" : "OK",
+    "reason" : "NONE",
+    "items" : [ {
+      "party" : "EMPLOYER",
+      "obligation" : "কর্মীকে নিয়োগপত্র প্রদান করা ও ছবিসহ পরিচয়পত্র দেওয়া",
+      "trigger" : "নিয়োগের সময়",
+      "deadline" : null,
+      "source" : "STATUTE",
+      "status" : "CONFLICTS_WITH_CONTRACT",
+      "clause_ids" : [ "c1" ],
+      "citations" : [ {
+        "section_key" : "BLA-2006:5@original",
+        "quote" : "কোন মালিক নিয়োগপত্র প্রদান না করিয়া কোন শ্রমিককে নিয়োগ করিতে পারিবেন না, এবং নিয়োজিত প্রত্যেক শ্রমিককে ছবিসহ পরিচয়পত্র প্রদান করিতে হইবে।",
+        "claim" : "নিয়োগপত্র ও ছবিসহ পরিচয়পত্র বাধ্যতামূলক"
+      } ]
+    }, {
+      "party" : "EMPLOYER",
+      "obligation" : "মাসিক মজুরী ২৫ তারিখের মধ্যে পরিশোধ, কর্মদিবসে",
+      "trigger" : "মজুরীকাল শেষ হওয়ার পর",
+      "deadline" : {
+        "value" : 7,
+        "unit" : "DAYS"
+      },
+      "source" : "STATUTE",
+      "status" : "CONFLICTS_WITH_CONTRACT",
+      "clause_ids" : [ "c5" ],
+      "citations" : [ {
+        "section_key" : "BLA-2006:123@amend-2013",
+        "quote" : "কোন শ্রমিকের যে মজুরীকাল সমপর্কে তাহার মজুরী প্রদেয় হয় সেই কাল শেষ হওয়ার পরবর্তী সাত কর্মদিবসের মধ্যে তাহার মজুরী পরিশোধ করিতে হইবে।",
+        "claim" : "মজুরী সাত কর্মদিবসের মধ্যে পরিশোধ"
+      } ]
+    }, {
+      "party" : "EMPLOYER",
+      "obligation" : "ন্যূনতম মজুরী কম না দেওয়া; মজুরী যথেচ্ছ কমানো যাবে না",
+      "trigger" : "সর্বদা",
+      "deadline" : null,
+      "source" : "STATUTE",
+      "status" : "CONFLICTS_WITH_CONTRACT",
+      "clause_ids" : [ "c4" ],
+      "citations" : [ {
+        "section_key" : "BLA-2006:148@original",
+        "quote" : "প্রত্যেক শ্রমিক উক্তরূপ ঘোষিত বা প্রকাশিত মজুরীর অনূ্যন হারে মজুরী পাইতে অধিকারী হইবেন।",
+        "claim" : "ঘোষিত ন্যূনতম মজুরী দিতে হবে"
+      } ]
+    }, {
+      "party" : "EMPLOYER",
+      "obligation" : "বছরে ১০ দিনের নৈমিত্তিক ছুটি ও ১৪ দিনের পীড়া ছুটি দেওয়া",
+      "trigger" : "প্রতি পঞ্জিকা বছরে",
+      "deadline" : null,
+      "source" : "STATUTE",
+      "status" : "CONFLICTS_WITH_CONTRACT",
+      "clause_ids" : [ "c7" ],
+      "citations" : [ {
+        "section_key" : "BLA-2006:115@original",
+        "quote" : "প্রত্যেক শ্রমিক প্রতি পঞ্জিকা বৎসরে পূর্ণ মজুরীতে দশ দিনের নৈমিত্তিক ছুটি পাইবার অধিকারী হইবেন",
+        "claim" : "নৈমিত্তিক ছুটি বছরে ১০ দিন"
+      } ]
+    }, {
+      "party" : "EMPLOYER",
+      "obligation" : "বছরে ১৩ দিনের উৎসব ছুটি মজুরীসহ মঞ্জুর",
+      "trigger" : "প্রতি পঞ্জিকা বছরে",
+      "deadline" : null,
+      "source" : "STATUTE",
+      "status" : "CONFLICTS_WITH_CONTRACT",
+      "clause_ids" : [ "c7" ],
+      "citations" : [ {
+        "section_key" : "BLA-2006:118@amend-2026",
+        "quote" : "প্রত্যেক শ্রমিককে প্রতি পঞ্জিকা বৎসরে [১৩ (তের)] দিনের মজুরীসহ উৎসব ছুটি মঞ্জুর করিতে হইবে।",
+        "claim" : "উৎসব ছুটি বছরে ১৩ দিন"
+      } ]
+    }, {
+      "party" : "EMPLOYER",
+      "obligation" : "কর্মীর চাকরি অবসানে ছাঁটাই/ডিসচার্জ ক্ষতিপূরণ ও নোটিশ দেওয়া",
+      "trigger" : "চাকরি অবসানের সময়",
+      "deadline" : {
+        "value" : 30,
+        "unit" : "DAYS"
+      },
+      "source" : "STATUTE",
+      "status" : "CONFLICTS_WITH_CONTRACT",
+      "clause_ids" : [ "c8" ],
+      "citations" : [ {
+        "section_key" : "BLA-2006:26@original",
+        "quote" : "মালিক শ্রমিককে তাহার প্রত্যেক সম্পূর্ণ বত্সরের চাকুরীর জন্য ক্ষতিপূরণ হিসাবে ত্রিশ দিনের মজুরী",
+        "claim" : "অবসানে প্রতি বছরের জন্য ৩০ দিনের মজুরী"
+      } ]
+    } ]
+  }
+}

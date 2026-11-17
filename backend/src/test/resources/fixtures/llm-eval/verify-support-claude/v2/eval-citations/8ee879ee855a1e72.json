@@ -1,0 +1,22 @@
+{
+  "fixtureVersion" : 1,
+  "promptId" : "verify-support-claude",
+  "promptVersion" : 2,
+  "caseId" : "eval-citations",
+  "modelId" : "claude-haiku-5-5",
+  "requestSha256" : "8ee879ee855a1e72f831bfac2b45dd54239c0df0bbdf773492e3ad6e5ac71295",
+  "provenance" : "synthetic",
+  "source" : "recorded from a live call",
+  "recordedAt" : "2026-11-17T10:48:29.865033Z",
+  "stopReason" : "end_turn",
+  "usage" : {
+    "inputTokens" : 757,
+    "outputTokens" : 68,
+    "cacheReadTokens" : 982
+  },
+  "response" : {
+    "label" : "SUPPORTS",
+    "confidence" : 0.92,
+    "reason" : "Section 121 states each owner is liable for paying every worker they employ all wages payable under this Act, matching the claim's elements."
+  }
+}

@@ -1,0 +1,22 @@
+{
+  "fixtureVersion" : 1,
+  "promptId" : "verify-support-claude",
+  "promptVersion" : 2,
+  "caseId" : "eval-citations",
+  "modelId" : "claude-haiku-5-5",
+  "requestSha256" : "e4e54b67bb85fec8f716ce28f23997a1477cbb53e63833da3632e0a25c1faf69",
+  "provenance" : "synthetic",
+  "source" : "recorded from a live call",
+  "recordedAt" : "2026-11-17T10:48:21.105600Z",
+  "stopReason" : "end_turn",
+  "usage" : {
+    "inputTokens" : 509,
+    "outputTokens" : 71,
+    "cacheReadTokens" : 982
+  },
+  "response" : {
+    "label" : "SUPPORTS",
+    "confidence" : 0.95,
+    "reason" : "Section clause (ক) grants one weekly holiday in factories and industry and one and a half days in shops and establishments, matching the claim."
+  }
+}

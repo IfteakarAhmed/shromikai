@@ -1,0 +1,22 @@
+{
+  "fixtureVersion" : 1,
+  "promptId" : "verify-support-claude",
+  "promptVersion" : 2,
+  "caseId" : "eval-citations",
+  "modelId" : "claude-haiku-5-5",
+  "requestSha256" : "aed1763253ec1b116d0ed2f64b715e6192702027b86f110fc21b083c15a43c5a",
+  "provenance" : "synthetic",
+  "source" : "recorded from a live call",
+  "recordedAt" : "2026-11-17T10:48:02.709435Z",
+  "stopReason" : "end_turn",
+  "usage" : {
+    "inputTokens" : 631,
+    "outputTokens" : 73,
+    "cacheReadTokens" : 982
+  },
+  "response" : {
+    "label" : "CONTRADICTS",
+    "confidence" : 0.95,
+    "reason" : "Section 108(1) says overtime is paid at double the ordinary rate of basic wages, contradicting the claim of no extra allowance."
+  }
+}

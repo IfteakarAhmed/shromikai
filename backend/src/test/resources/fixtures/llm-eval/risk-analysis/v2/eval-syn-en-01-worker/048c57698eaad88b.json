@@ -1,0 +1,76 @@
+{
+  "fixtureVersion" : 1,
+  "promptId" : "risk-analysis",
+  "promptVersion" : 2,
+  "caseId" : "eval-syn-en-01-worker",
+  "modelId" : "claude-sonnet-5-5",
+  "requestSha256" : "048c57698eaad88b5305911dd433f30c665e44d1df7ee9cd2a41e5c621ae2ca4",
+  "provenance" : "synthetic",
+  "source" : "recorded from a live call",
+  "recordedAt" : "2026-11-17T11:01:20.958954Z",
+  "stopReason" : "end_turn",
+  "usage" : {
+    "inputTokens" : 18173,
+    "outputTokens" : 1523,
+    "cacheReadTokens" : 0
+  },
+  "response" : {
+    "status" : "OK",
+    "reason" : "NONE",
+    "findings" : [ {
+      "title" : "শ্রম আদালতে যাওয়ার অধিকার ত্যাগ",
+      "kind" : "CONFLICT",
+      "severity" : "HIGH",
+      "non_obvious" : false,
+      "clause_type" : "DISPUTE_RESOLUTION",
+      "clause_ids" : [ "c10" ],
+      "explanation" : "চুক্তিতে শ্রমিক আদালত/ট্রাইব্যুনালে যাওয়ার অধিকার ত্যাগ করেছেন। আইনে শ্রম আদালতের অনন্য এখতিয়ার রয়েছে, তাই শর্তটি ঝুঁকিপূর্ণ।",
+      "citations" : [ {
+        "section_key" : "BLA-2006:214@amend-2013",
+        "quote" : "কোন শ্রম আদালত নিম্নলিখিত বিষয়ে অনন্য এখতিয়ারের অধিকারী হইবে",
+        "claim" : "শ্রম বিরোধে শ্রম আদালতের অনন্য এখতিয়ার রয়েছে।"
+      }, {
+        "section_key" : "BLA-2006:213@amend-2026",
+        "quote" : "কোন শ্রমিক এই আইন বা কোন রোয়েদাদ বা কোন নিষ্পত্তি বা চুক্তির অধীন",
+        "claim" : "শ্রমিক অধিকার প্রয়োগে শ্রম আদালতে দরখাস্ত করতে পারেন।"
+      } ],
+      "confidence" : 0.85
+    }, {
+      "title" : "মালিক-মনোনীত একক সালিশকারক",
+      "kind" : "CONFLICT",
+      "severity" : "HIGH",
+      "non_obvious" : true,
+      "clause_type" : "DISPUTE_RESOLUTION",
+      "clause_ids" : [ "c10" ],
+      "explanation" : "সালিশকারক কেবল মালিক বাছাই করেন, ফলে নিরপেক্ষতা নেই। আইনে মধ্যস্থতাকারী উভয় পক্ষের স্বীকৃত হওয়া এবং কর্তৃপক্ষ নিরপেক্ষ হওয়া প্রয়োজন।",
+      "citations" : [ {
+        "section_key" : "BLA-2006:210@original",
+        "quote" : "তাহাদের সকলের স্বীকৃত কোন মধ্যস্থতাকারীর (Arbitrator) নিকট",
+        "claim" : "মধ্যস্থতাকারী উভয় পক্ষের স্বীকৃত হতে হয়।"
+      }, {
+        "section_key" : "BLA-2006:348C@amend-2026",
+        "quote" : "যাহা নিরপেক্ষ ও ন্যায্যতার ভিত্তিতে কার্যক্রম পরিচালনা করিবে",
+        "claim" : "শ্রম বিরোধ নিষ্পত্তি নিরপেক্ষ কর্তৃপক্ষের মাধ্যমে হবে।"
+      } ],
+      "confidence" : 0.8
+    }, {
+      "title" : "বকেয়া মজুরী ও অবসান-প্রতিকারের পথ বন্ধ",
+      "kind" : "INTERACTION",
+      "severity" : "MEDIUM",
+      "non_obvious" : true,
+      "clause_type" : "DISPUTE_RESOLUTION",
+      "clause_ids" : [ "c10", "c5" ],
+      "explanation" : "আদালত ত্যাগের ফলে বিলম্বিত মজুরী ও ক্ষতিপূরণ বা চাকুরীচ্যুতির প্রতিকার চাওয়ার আইনি পথ কার্যত বন্ধ হতে পারে।",
+      "citations" : [ {
+        "section_key" : "BLA-2006:132@amend-2026",
+        "quote" : "বকেয়া বা বিলম্বিত মজুরী ও অন্যান্য পাওনা আদায়ের জন্য শ্রম আদালতে দরখাসত্দ করিতে পারিবেন",
+        "claim" : "বকেয়া মজুরী আদায় শ্রম আদালতের মাধ্যমে হয়।"
+      }, {
+        "section_key" : "BLA-2006:33@amend-2013",
+        "quote" : "তিনি উপ-ধারা (২) এ উল্লিখিত সময় অতিক্রান্ত হওয়ার তারিখ হইতে ত্রিশ দিনের মধ্যে",
+        "claim" : "অভিযোগ নিষ্পত্তি না হলে শ্রমিক শ্রম আদালতে যেতে পারেন।"
+      } ],
+      "confidence" : 0.6
+    } ]
+  }
+}

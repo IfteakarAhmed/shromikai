@@ -1,0 +1,22 @@
+{
+  "fixtureVersion" : 1,
+  "promptId" : "query-rewrite",
+  "promptVersion" : 1,
+  "caseId" : "eval-syn-en-01-worker",
+  "modelId" : "claude-haiku-5-5",
+  "requestSha256" : "7fc57e7d692f82607cb2635981153b2af2f1c4fc81931374d90d2b602f0b8914",
+  "provenance" : "synthetic",
+  "source" : "recorded from a live call",
+  "recordedAt" : "2026-11-17T11:01:33.486228Z",
+  "stopReason" : "end_turn",
+  "usage" : {
+    "inputTokens" : 142,
+    "outputTokens" : 124,
+    "cacheReadTokens" : 798
+  },
+  "response" : {
+    "status" : "OK",
+    "reason" : "NONE",
+    "queries" : [ "শ্রমিকের শিক্ষানবিশীকাল ও স্থায়ীকরণের সময়সীমা", "probation period for employees and confirmation of employment", "কেরানি ও দক্ষ শ্রমিকের শিক্ষানবিশী মেয়াদ আইন" ]
+  }
+}

@@ -1,0 +1,22 @@
+{
+  "fixtureVersion" : 1,
+  "promptId" : "verify-support-claude",
+  "promptVersion" : 2,
+  "caseId" : "eval-citations",
+  "modelId" : "claude-haiku-5-5",
+  "requestSha256" : "289daf34f4b6dce9dfb19346035d4e7406c20bb42f0246f7748cb2008ebb7135",
+  "provenance" : "synthetic",
+  "source" : "recorded from a live call",
+  "recordedAt" : "2026-11-17T10:48:42.542056Z",
+  "stopReason" : "end_turn",
+  "usage" : {
+    "inputTokens" : 253,
+    "outputTokens" : 70,
+    "cacheReadTokens" : 982
+  },
+  "response" : {
+    "label" : "SUPPORTS",
+    "confidence" : 0.95,
+    "reason" : "Section 5 states no employer may employ a worker without providing an appointment letter (নিয়োগপত্র), matching the claim."
+  }
+}

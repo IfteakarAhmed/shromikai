@@ -1,0 +1,22 @@
+{
+  "fixtureVersion" : 1,
+  "promptId" : "verify-support-claude",
+  "promptVersion" : 2,
+  "caseId" : "eval-syn-en-01-worker",
+  "modelId" : "claude-haiku-5-5",
+  "requestSha256" : "59a5c85e330bb1ccb82d7ec7083e98ce2504657eb5ea4ddf303a3480edcc363a",
+  "provenance" : "synthetic",
+  "source" : "recorded from a live call",
+  "recordedAt" : "2026-11-17T11:01:27.969157Z",
+  "stopReason" : "end_turn",
+  "usage" : {
+    "inputTokens" : 361,
+    "outputTokens" : 72,
+    "cacheReadTokens" : 0
+  },
+  "response" : {
+    "label" : "SUPPORTS",
+    "confidence" : 0.92,
+    "reason" : "Section 148 says employers must follow declared minimum wage rates and every worker is entitled to wages not less than that rate, matching the claim."
+  }
+}

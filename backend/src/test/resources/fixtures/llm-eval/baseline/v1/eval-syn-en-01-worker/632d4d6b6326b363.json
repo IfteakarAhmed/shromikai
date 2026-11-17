@@ -1,0 +1,70 @@
+{
+  "fixtureVersion" : 1,
+  "promptId" : "baseline",
+  "promptVersion" : 1,
+  "caseId" : "eval-syn-en-01-worker",
+  "modelId" : "claude-sonnet-5-5",
+  "requestSha256" : "632d4d6b6326b36383fdf98aeba056078c6bb1dac873c3491b35a3a575460ef2",
+  "provenance" : "synthetic",
+  "source" : "recorded from a live call",
+  "recordedAt" : "2026-11-17T10:50:14.392511Z",
+  "stopReason" : "end_turn",
+  "usage" : {
+    "inputTokens" : 796,
+    "outputTokens" : 1176,
+    "cacheReadTokens" : 1106
+  },
+  "response" : {
+    "status" : "OK",
+    "reason" : "NONE",
+    "findings" : [ {
+      "title" : "আদালত/শ্রম ট্রাইব্যুনালের অধিকার ত্যাগ",
+      "severity" : "CRITICAL",
+      "explanation" : "নিয়োগকর্তার নির্বাচিত সালিশকারীই একমাত্র ফোরাম; শ্রম আদালতে যাওয়ার আইনি অধিকার ত্যাগ করানো বাংলাদেশ শ্রম আইনের পরিপন্থী ও অকার্যকর হতে পারে।",
+      "citations" : [ {
+        "section_key" : "CONTRACT:9@v1",
+        "quote" : "the Worker waives the right to go to any court or labour tribunal",
+        "claim" : "শ্রম আদালতে যাওয়ার অধিকার বাতিল"
+      } ]
+    }, {
+      "title" : "ওভারটাইম নেই, ১১ ঘণ্টা কাজ",
+      "severity" : "CRITICAL",
+      "explanation" : "দৈনিক ১১ ঘণ্টা ও সাপ্তাহিক ৬৬ ঘণ্টা সীমা ছাড়ায়; ওভারটাইমে দ্বিগুণ মজুরি প্রাপ্য, যা বাতিল করা যায় না।",
+      "citations" : [ {
+        "section_key" : "CONTRACT:5@v1",
+        "quote" : "Overtime is not paid separately; the wage already includes all extra hours.",
+        "claim" : "ওভারটাইম মজুরি অস্বীকার"
+      }, {
+        "section_key" : "CONTRACT:5@v1",
+        "quote" : "The Worker works 11 hours a day, six days a week.",
+        "claim" : "আইনসম্মত কর্মঘণ্টার বেশি"
+      } ]
+    }, {
+      "title" : "মাতৃত্বকালীন ছুটি ও অপর্যাপ্ত ছুটি",
+      "severity" : "HIGH",
+      "explanation" : "মাতৃত্বকালীন ছুটি (১৬ সপ্তাহ) আইনত বাধ্যতামূলক; বার্ষিক মাত্র ৬ দিন ছুটি আইনি ন্যূনতমের চেয়ে কম।",
+      "citations" : [ {
+        "section_key" : "CONTRACT:6@v1",
+        "quote" : "Maternity leave is not provided under this agreement.",
+        "claim" : "মাতৃত্বকালীন সুবিধা অস্বীকার"
+      }, {
+        "section_key" : "CONTRACT:6@v1",
+        "quote" : "The Worker gets 6 days of paid leave per year.",
+        "claim" : "ছুটি আইনি ন্যূনতমের কম"
+      } ]
+    }, {
+      "title" : "একতরফা বেতন কর্তন ও ছাঁটাই",
+      "severity" : "HIGH",
+      "explanation" : "যেকোনো পরিমাণ কর্তন, মজুরি হ্রাস, নোটিশ ছাড়া ছাঁটাই ও ১২ মাস শিক্ষানবিশকাল আইনবিরুদ্ধ; ৪ বছরের নন-কম্পিট অযৌক্তিক।",
+      "citations" : [ {
+        "section_key" : "CONTRACT:4@v1",
+        "quote" : "The Employer may deduct any amount from wages for any loss",
+        "claim" : "অনির্ধারিত বেতন কর্তন"
+      }, {
+        "section_key" : "CONTRACT:2@v1",
+        "quote" : "may end the employment at any moment without notice or reason",
+        "claim" : "নোটিশ ছাড়া ছাঁটাই"
+      } ]
+    } ]
+  }
+}

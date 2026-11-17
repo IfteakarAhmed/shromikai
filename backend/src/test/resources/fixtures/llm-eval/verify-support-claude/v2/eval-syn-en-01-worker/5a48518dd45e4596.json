@@ -1,0 +1,22 @@
+{
+  "fixtureVersion" : 1,
+  "promptId" : "verify-support-claude",
+  "promptVersion" : 2,
+  "caseId" : "eval-syn-en-01-worker",
+  "modelId" : "claude-haiku-5-5",
+  "requestSha256" : "5a48518dd45e45962cf348e558a71c7324eee66032c81e910832330c04db8f41",
+  "provenance" : "synthetic",
+  "source" : "recorded from a live call",
+  "recordedAt" : "2026-11-17T11:01:28.088587Z",
+  "stopReason" : "end_turn",
+  "usage" : {
+    "inputTokens" : 550,
+    "outputTokens" : 73,
+    "cacheReadTokens" : 0
+  },
+  "response" : {
+    "label" : "SUPPORTS",
+    "confidence" : 0.9,
+    "reason" : "Section s.127(1) bars wage deduction unless the worker is found guilty after proper inquiry following natural justice; the claim matches this."
+  }
+}

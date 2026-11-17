@@ -1,0 +1,22 @@
+{
+  "fixtureVersion" : 1,
+  "promptId" : "query-rewrite",
+  "promptVersion" : 1,
+  "caseId" : "eval-syn-en-01-worker",
+  "modelId" : "claude-haiku-5-5",
+  "requestSha256" : "7c12def942b5c4676861de98f25e39a747998448110b1ffc504c173991eecff9",
+  "provenance" : "synthetic",
+  "source" : "recorded from a live call",
+  "recordedAt" : "2026-11-17T11:00:56.513772Z",
+  "stopReason" : "end_turn",
+  "usage" : {
+    "inputTokens" : 81,
+    "outputTokens" : 99,
+    "cacheReadTokens" : 0
+  },
+  "response" : {
+    "status" : "OK",
+    "reason" : "NONE",
+    "queries" : [ "probation period termination without notice Bangladesh labour law", "প্রবেশন কাল চাকরি সমাপ্তি নোটিশ শ্রম আইন", "employer dismissal during probation worker rights Bangladesh" ]
+  }
+}

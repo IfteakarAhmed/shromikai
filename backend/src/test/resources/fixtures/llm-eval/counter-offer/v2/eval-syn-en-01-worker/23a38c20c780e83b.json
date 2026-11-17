@@ -1,0 +1,24 @@
+{
+  "fixtureVersion" : 1,
+  "promptId" : "counter-offer",
+  "promptVersion" : 2,
+  "caseId" : "eval-syn-en-01-worker",
+  "modelId" : "claude-sonnet-5-5",
+  "requestSha256" : "23a38c20c780e83b4984ab5fd38ee56fb191cb0b31ab8677abd969e06348728a",
+  "provenance" : "synthetic",
+  "source" : "recorded from a live call",
+  "recordedAt" : "2026-11-17T11:01:43.830135Z",
+  "stopReason" : "end_turn",
+  "usage" : {
+    "inputTokens" : 488,
+    "outputTokens" : 285,
+    "cacheReadTokens" : 0
+  },
+  "response" : {
+    "status" : "OK",
+    "reason" : "NONE",
+    "action" : "REPLACE",
+    "proposed_text" : "৩. মজুরী: মাসিক মোট মজুরী ১৬,০০০ টাকা। উভয় পক্ষের লিখিত সম্মতি ছাড়া মজুরী কমানো যাবে না এবং কোনো ক্ষেত্রেই মজুরী আইনের অধীন ঘোষিত বা প্রকাশিত নিম্নতম মজুরীর হারের নিচে নামানো যাবে না।",
+    "rationale" : "মজুরী হ্রাস পারস্পরিক সম্মতিনির্ভর ও ঘোষিত নিম্নতম হারের নিচে নামা নিষিদ্ধ হওয়ায় ঝুঁকি দূর হয়।"
+  }
+}

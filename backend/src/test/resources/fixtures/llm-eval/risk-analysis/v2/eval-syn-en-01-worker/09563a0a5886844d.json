@@ -1,0 +1,68 @@
+{
+  "fixtureVersion" : 1,
+  "promptId" : "risk-analysis",
+  "promptVersion" : 2,
+  "caseId" : "eval-syn-en-01-worker",
+  "modelId" : "claude-sonnet-5-5",
+  "requestSha256" : "09563a0a5886844d0d443dab746d4480d1136d5848f00055384fe71c3d3d9fa6",
+  "provenance" : "synthetic",
+  "source" : "recorded from a live call",
+  "recordedAt" : "2026-11-17T11:01:19.347457Z",
+  "stopReason" : "end_turn",
+  "usage" : {
+    "inputTokens" : 20453,
+    "outputTokens" : 1131,
+    "cacheReadTokens" : 0
+  },
+  "response" : {
+    "status" : "OK",
+    "reason" : "NONE",
+    "findings" : [ {
+      "title" : "মজুরী কর্তনে নিয়োগকর্তার একতরফা ক্ষমতা",
+      "kind" : "CONFLICT",
+      "severity" : "CRITICAL",
+      "non_obvious" : false,
+      "clause_type" : "WAGE_PAYMENT_AND_DEDUCTIONS",
+      "clause_ids" : [ "c5" ],
+      "explanation" : "নিয়োগকর্তা নিজের সিদ্ধান্তে যেকোনো ক্ষতির জন্য কর্তন করতে পারে। আইনে তদন্ত ও দোষী সাব্যস্ত ছাড়া কর্তন নিষিদ্ধ।",
+      "citations" : [ {
+        "section_key" : "BLA-2006:127@original",
+        "quote" : "যথাযথ তদনত্দের মাধ্যমে উক্ত শ্রমিককে দোষী সাব্যসত্দ করা হয়",
+        "claim" : "তদন্তে দোষী সাব্যস্ত না হলে মজুরী কর্তন করা যায় না।"
+      } ],
+      "confidence" : 0.9
+    }, {
+      "title" : "অধিকাল ভাতা মজুরীর অন্তর্ভুক্ত, দ্বিগুণ হার নেই",
+      "kind" : "CONFLICT",
+      "severity" : "CRITICAL",
+      "non_obvious" : false,
+      "clause_type" : "OVERTIME",
+      "clause_ids" : [ "c6" ],
+      "explanation" : "দৈনিক ১১ ঘণ্টা কাজ, অধিকালের আলাদা ভাতা নেই। আইনে অধিকাল কাজের জন্য সাধারণ হারের দ্বিগুণ ভাতা প্রাপ্য।",
+      "citations" : [ {
+        "section_key" : "BLA-2006:108@amend-2018",
+        "quote" : "সাধারণ হারের দ্বিগুণ হারে ভাতা পাইবেন",
+        "claim" : "অধিকাল কাজে শ্রমিক দ্বিগুণ হারে ভাতা পান।"
+      }, {
+        "section_key" : "BLA-2006:105@amend-2018",
+        "quote" : "ইহা দশ ঘণ্টার অধিক সমপ্রসাারিত না হয়",
+        "claim" : "কর্ম সময়ের বিস্তার দশ ঘণ্টার বেশি হতে পারে না।"
+      } ],
+      "confidence" : 0.9
+    }, {
+      "title" : "একতরফা মজুরী হ্রাসের ক্ষমতা",
+      "kind" : "AMBIGUITY",
+      "severity" : "HIGH",
+      "non_obvious" : true,
+      "clause_type" : "WAGES",
+      "clause_ids" : [ "c4" ],
+      "explanation" : "নিয়োগকর্তা ইচ্ছামতো মজুরী কমাতে পারে। এতে ঘোষিত নিম্নতম মজুরীর নিচে নামার ঝুঁকি আছে।",
+      "citations" : [ {
+        "section_key" : "BLA-2006:148@original",
+        "quote" : "প্রত্যেক শ্রমিক উক্তরূপ ঘোষিত বা প্রকাশিত মজুরীর অনূ্যন হারে মজুরী পাইতে অধিকারী",
+        "claim" : "ঘোষিত নিম্নতম মজুরীর কম মজুরী দেওয়া যায় না।"
+      } ],
+      "confidence" : 0.7
+    } ]
+  }
+}

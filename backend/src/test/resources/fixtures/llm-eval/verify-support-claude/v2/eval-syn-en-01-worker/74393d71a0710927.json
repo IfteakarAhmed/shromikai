@@ -1,0 +1,22 @@
+{
+  "fixtureVersion" : 1,
+  "promptId" : "verify-support-claude",
+  "promptVersion" : 2,
+  "caseId" : "eval-syn-en-01-worker",
+  "modelId" : "claude-haiku-5-5",
+  "requestSha256" : "74393d71a0710927554cfaf4caf971526d5e984257efe428ff1572d5f56d464e",
+  "provenance" : "synthetic",
+  "source" : "recorded from a live call",
+  "recordedAt" : "2026-11-17T11:01:28.266043Z",
+  "stopReason" : "end_turn",
+  "usage" : {
+    "inputTokens" : 1177,
+    "outputTokens" : 73,
+    "cacheReadTokens" : 0
+  },
+  "response" : {
+    "label" : "SUPPORTS",
+    "confidence" : 0.92,
+    "reason" : "Section 26(4) requires compensation for each full year of service of 30 days' wage or gratuity, whichever is greater, matching the claim."
+  }
+}

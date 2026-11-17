@@ -1,0 +1,22 @@
+{
+  "fixtureVersion" : 1,
+  "promptId" : "verify-support-claude",
+  "promptVersion" : 2,
+  "caseId" : "eval-citations",
+  "modelId" : "claude-haiku-5-5",
+  "requestSha256" : "8a0836ef5617376aaddd3f95bdd9f9abf0c66dc41bcc9baff031fd3fcc5f9376",
+  "provenance" : "synthetic",
+  "source" : "recorded from a live call",
+  "recordedAt" : "2026-11-17T10:47:48.139888Z",
+  "stopReason" : "end_turn",
+  "usage" : {
+    "inputTokens" : 455,
+    "outputTokens" : 73,
+    "cacheReadTokens" : 982
+  },
+  "response" : {
+    "label" : "UNRELATED",
+    "confidence" : 0.95,
+    "reason" : "Section 115 concerns ten days of casual leave per year with full wages; it says nothing about termination notice or paying wages in lieu of notice."
+  }
+}

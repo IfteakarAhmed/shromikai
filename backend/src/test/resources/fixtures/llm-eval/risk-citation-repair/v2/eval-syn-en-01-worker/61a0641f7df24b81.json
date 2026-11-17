@@ -1,0 +1,26 @@
+{
+  "fixtureVersion" : 1,
+  "promptId" : "risk-citation-repair",
+  "promptVersion" : 2,
+  "caseId" : "eval-syn-en-01-worker",
+  "modelId" : "claude-sonnet-5-5",
+  "requestSha256" : "61a0641f7df24b81f62483fa279dbe1ae41e4374c9580806308c0c16078b0503",
+  "provenance" : "synthetic",
+  "source" : "recorded from a live call",
+  "recordedAt" : "2026-11-17T11:01:38.084327Z",
+  "stopReason" : "end_turn",
+  "usage" : {
+    "inputTokens" : 13182,
+    "outputTokens" : 164,
+    "cacheReadTokens" : 0
+  },
+  "response" : {
+    "status" : "OK",
+    "reason" : "NONE",
+    "citations" : [ {
+      "section_key" : "BLA-2006:26@original",
+      "quote" : "নোটিশের পরিবর্তে নোটিশ মেয়াদের জন্য মজুরী প্রদান করিয়া ইহা করিতে পারিবেন",
+      "claim" : "বিনা নোটিশে চাকুরী অবসানে মালিককে নোটিশ মেয়াদের মজুরী দিতে হয়।"
+    } ]
+  }
+}

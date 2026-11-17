@@ -1,0 +1,22 @@
+{
+  "fixtureVersion" : 1,
+  "promptId" : "verify-support-claude",
+  "promptVersion" : 2,
+  "caseId" : "eval-citations",
+  "modelId" : "claude-haiku-5-5",
+  "requestSha256" : "7e1f6bc592817806a4778efe01e5d20ea6b34665263d6700cd0fb65c53267101",
+  "provenance" : "synthetic",
+  "source" : "recorded from a live call",
+  "recordedAt" : "2026-11-17T10:47:55.342761Z",
+  "stopReason" : "end_turn",
+  "usage" : {
+    "inputTokens" : 587,
+    "outputTokens" : 84,
+    "cacheReadTokens" : 982
+  },
+  "response" : {
+    "label" : "UNRELATED",
+    "confidence" : 0.95,
+    "reason" : "Section 123 covers wage payment timing (7 working days, final pay within 30 days, payment on working days); it says nothing about six-hour limits or one-hour rest breaks."
+  }
+}

@@ -1,0 +1,22 @@
+{
+  "fixtureVersion" : 1,
+  "promptId" : "verify-support-claude",
+  "promptVersion" : 2,
+  "caseId" : "eval-citations",
+  "modelId" : "claude-haiku-5-5",
+  "requestSha256" : "06027fc80ab5fb9adf4eb1361fd27bad288e0127f56d7fd4d77c74d2db8b2e8a",
+  "provenance" : "synthetic",
+  "source" : "recorded from a live call",
+  "recordedAt" : "2026-11-17T10:48:28.157388Z",
+  "stopReason" : "end_turn",
+  "usage" : {
+    "inputTokens" : 464,
+    "outputTokens" : 69,
+    "cacheReadTokens" : 982
+  },
+  "response" : {
+    "label" : "SUPPORTS",
+    "confidence" : 0.96,
+    "reason" : "Section 118(1) requires granting every worker 13 days of festival holiday with wages per calendar year, matching all claim elements."
+  }
+}

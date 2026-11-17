@@ -1,0 +1,22 @@
+{
+  "fixtureVersion" : 1,
+  "promptId" : "verify-support-claude",
+  "promptVersion" : 2,
+  "caseId" : "eval-citations",
+  "modelId" : "claude-haiku-5-5",
+  "requestSha256" : "89fedc191c18c69e3d03944a16692a5b3e8944e0a08427c7b6b254ec0a7e8bf7",
+  "provenance" : "synthetic",
+  "source" : "recorded from a live call",
+  "recordedAt" : "2026-11-17T10:47:53.473839Z",
+  "stopReason" : "end_turn",
+  "usage" : {
+    "inputTokens" : 764,
+    "outputTokens" : 76,
+    "cacheReadTokens" : 982
+  },
+  "response" : {
+    "label" : "UNRELATED",
+    "confidence" : 0.9,
+    "reason" : "Section 121 only makes employers liable for paying wages owed under the Act; it says nothing about termination, notice, or paying wages in lieu of notice."
+  }
+}

@@ -1,0 +1,76 @@
+{
+  "fixtureVersion" : 1,
+  "promptId" : "risk-analysis",
+  "promptVersion" : 2,
+  "caseId" : "eval-syn-en-01-worker",
+  "modelId" : "claude-sonnet-5-5",
+  "requestSha256" : "f963f37aefd09a91bede5fabb36966eeaa81d7b5067411409a5d4d40e5b724e0",
+  "provenance" : "synthetic",
+  "source" : "recorded from a live call",
+  "recordedAt" : "2026-11-17T11:01:20.490543Z",
+  "stopReason" : "end_turn",
+  "usage" : {
+    "inputTokens" : 17922,
+    "outputTokens" : 1353,
+    "cacheReadTokens" : 0
+  },
+  "response" : {
+    "status" : "OK",
+    "reason" : "NONE",
+    "findings" : [ {
+      "title" : "২৪ ঘণ্টার নোটিশে চাকুরির অবসান",
+      "kind" : "CONFLICT",
+      "severity" : "CRITICAL",
+      "non_obvious" : false,
+      "clause_type" : "TERMINATION",
+      "clause_ids" : [ "c8" ],
+      "explanation" : "মালিক ২৪ ঘণ্টার নোটিশে অবসান করতে পারেন। আইনে স্থায়ী শ্রমিকের জন্য ১২০ দিন এবং ক্ষতিপূরণ প্রযোজ্য।",
+      "citations" : [ {
+        "section_key" : "BLA-2006:26@original",
+        "quote" : "একশত বিশ দিনের,",
+        "claim" : "মাসিক মজুরীর স্থায়ী শ্রমিকের জন্য ১২০ দিনের লিখিত নোটিশ প্রয়োজন"
+      }, {
+        "section_key" : "BLA-2006:26@original",
+        "quote" : "ত্রিশ দিনের মজুরী, অথবা গ্রাচ্যুইটি, যদি প্রদেয় হয়, যাহা অধিক হইবে",
+        "claim" : "প্রতি পূর্ণ বৎসরের জন্য ক্ষতিপূরণ প্রদেয়"
+      } ],
+      "confidence" : 0.9
+    }, {
+      "title" : "মাতৃত্বকালীন ছুটি বাদ ও ছুটি কম",
+      "kind" : "CONFLICT",
+      "severity" : "HIGH",
+      "non_obvious" : false,
+      "clause_type" : "LEAVE",
+      "clause_ids" : [ "c7" ],
+      "explanation" : "চুক্তিতে বছরে ৬ দিন ছুটি, মাতৃত্বকালীন ছুটি নেই। আইনে নৈমিত্তিক ১০, পীড়া ১৪ ও উৎসব ছুটি ১৩ দিন প্রাপ্য।",
+      "citations" : [ {
+        "section_key" : "BLA-2006:115@original",
+        "quote" : "পূর্ণ মজুরীতে দশ দিনের নৈমিত্তিক ছুটি পাইবার অধিকারী",
+        "claim" : "প্রতি বছর ১০ দিনের নৈমিত্তিক ছুটি বাধ্যতামূলক"
+      }, {
+        "section_key" : "BLA-2006:118@amend-2026",
+        "quote" : "১৩ (তের)] দিনের মজুরীসহ উৎসব ছুটি মঞ্জুর করিতে হইবে",
+        "claim" : "বছরে ১৩ দিনের উৎসব ছুটি প্রাপ্য"
+      } ],
+      "confidence" : 0.85
+    }, {
+      "title" : "৪ বছরের নন-কম্পিট ও বেতন বাজেয়াপ্ত",
+      "kind" : "CONFLICT",
+      "severity" : "HIGH",
+      "non_obvious" : true,
+      "clause_type" : "NON_COMPETE",
+      "clause_ids" : [ "c9", "c8" ],
+      "explanation" : "৪ বছর গার্মেন্টস শিল্পে কাজ নিষিদ্ধ; ৯০ দিনের নোটিশ না দিলে সব মজুরি বাজেয়াপ্ত। এটি পেশা-নিষেধ ও আইনবিরুদ্ধ।",
+      "citations" : [ {
+        "section_key" : "CA-1872:27@original",
+        "quote" : "restrained from exercising a lawful profession, trade or business of any kind, is to that extent void",
+        "claim" : "পেশা বা ব্যবসায় বাধা দেওয়ার চুক্তি সেই পরিমাণে বাতিল"
+      }, {
+        "section_key" : "BLA-2006:27@amend-2026",
+        "quote" : "নোটিশ মেয়াদের জন্য মজুরীর সমপরিমাণ অর্থ মালিককে প্রদান করিয়া",
+        "claim" : "নোটিশ না দিলে শুধু নোটিশ মেয়াদের মজুরী সমপরিমাণ দায়"
+      } ],
+      "confidence" : 0.8
+    } ]
+  }
+}

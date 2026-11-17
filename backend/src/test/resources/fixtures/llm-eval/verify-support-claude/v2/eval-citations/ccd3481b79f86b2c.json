@@ -1,0 +1,22 @@
+{
+  "fixtureVersion" : 1,
+  "promptId" : "verify-support-claude",
+  "promptVersion" : 2,
+  "caseId" : "eval-citations",
+  "modelId" : "claude-haiku-5-5",
+  "requestSha256" : "ccd3481b79f86b2c65387fd55de7a0e11c3e264f36240a00524bdcf0be40474c",
+  "provenance" : "synthetic",
+  "source" : "recorded from a live call",
+  "recordedAt" : "2026-11-17T10:47:58.714039Z",
+  "stopReason" : "end_turn",
+  "usage" : {
+    "inputTokens" : 813,
+    "outputTokens" : 68,
+    "cacheReadTokens" : 982
+  },
+  "response" : {
+    "label" : "CONTRADICTS",
+    "confidence" : 0.95,
+    "reason" : "Section s.101(ka) bars requiring work over six hours daily unless a one-hour rest or meal break is given that day."
+  }
+}

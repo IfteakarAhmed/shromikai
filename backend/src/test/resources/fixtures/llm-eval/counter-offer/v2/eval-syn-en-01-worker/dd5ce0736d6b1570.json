@@ -1,0 +1,24 @@
+{
+  "fixtureVersion" : 1,
+  "promptId" : "counter-offer",
+  "promptVersion" : 2,
+  "caseId" : "eval-syn-en-01-worker",
+  "modelId" : "claude-sonnet-5-5",
+  "requestSha256" : "dd5ce0736d6b15702af523ae942e55ff8aba8748ea06f28ab56b3c4ac860090d",
+  "provenance" : "synthetic",
+  "source" : "recorded from a live call",
+  "recordedAt" : "2026-11-17T11:01:43.869346Z",
+  "stopReason" : "end_turn",
+  "usage" : {
+    "inputTokens" : 545,
+    "outputTokens" : 306,
+    "cacheReadTokens" : 0
+  },
+  "response" : {
+    "status" : "OK",
+    "reason" : "NONE",
+    "action" : "REPLACE",
+    "proposed_text" : "6. ছুটি\ni. শ্রমিক প্রতি পঞ্জিকা বৎসরে মজুরীসহ ১০ দিন নৈমিত্তিক ছুটি, ১৪ দিন পীড়া ছুটি এবং ১৩ দিন উৎসব ছুটি পাইবেন।\nii. প্রযোজ্য আইন অনুযায়ী যোগ্য নারী শ্রমিক মাতৃত্বকালীন ছুটি ও সুবিধা পাইবেন।",
+    "rationale" : "ছুটি আইনের ন্যূনতম মাত্রায় তোলা হয়েছে এবং মাতৃত্বকালীন ছুটি আইন অনুযায়ী যুক্ত হয়েছে।"
+  }
+}

@@ -1,0 +1,41 @@
+{
+  "fixtureVersion" : 1,
+  "promptId" : "clause-facts",
+  "promptVersion" : 1,
+  "caseId" : "eval-syn-en-01-worker",
+  "modelId" : "claude-haiku-5-5",
+  "requestSha256" : "a0f8be862dfc580293513153ecc627818e664f42dec8b1eaacbbaa89cf448e51",
+  "provenance" : "synthetic",
+  "source" : "recorded from a live call",
+  "recordedAt" : "2026-11-17T11:00:56.634221Z",
+  "stopReason" : "end_turn",
+  "usage" : {
+    "inputTokens" : 248,
+    "outputTokens" : 158,
+    "cacheReadTokens" : 0
+  },
+  "response" : {
+    "status" : "OK",
+    "reason" : "NONE",
+    "clauses" : [ {
+      "id" : "c9",
+      "facts" : [ {
+        "parameter" : "NON_COMPETE_DURATION",
+        "value" : 48,
+        "unit" : "MONTHS",
+        "confidence" : 0.95
+      } ]
+    }, {
+      "id" : "c10",
+      "facts" : [ {
+        "parameter" : "DISPUTE_FORUM_STATED",
+        "value" : 1,
+        "unit" : "BOOLEAN",
+        "confidence" : 0.9
+      } ]
+    }, {
+      "id" : "c11",
+      "facts" : [ ]
+    } ]
+  }
+}

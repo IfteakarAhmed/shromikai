@@ -1,0 +1,22 @@
+{
+  "fixtureVersion" : 1,
+  "promptId" : "verify-support-claude",
+  "promptVersion" : 2,
+  "caseId" : "eval-citations",
+  "modelId" : "claude-haiku-5-5",
+  "requestSha256" : "87c28ab75d7239b354ead414dedda699d5c14a6c0ab7743567da8c77e743cf28",
+  "provenance" : "synthetic",
+  "source" : "recorded from a live call",
+  "recordedAt" : "2026-11-17T10:48:04.450505Z",
+  "stopReason" : "end_turn",
+  "usage" : {
+    "inputTokens" : 441,
+    "outputTokens" : 60,
+    "cacheReadTokens" : 982
+  },
+  "response" : {
+    "label" : "CONTRADICTS",
+    "confidence" : 0.97,
+    "reason" : "Section grants ten days of casual leave per year on full wages, not five days without wages as the claim states."
+  }
+}

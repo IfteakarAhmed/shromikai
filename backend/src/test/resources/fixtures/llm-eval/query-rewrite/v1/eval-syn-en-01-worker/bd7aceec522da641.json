@@ -1,0 +1,22 @@
+{
+  "fixtureVersion" : 1,
+  "promptId" : "query-rewrite",
+  "promptVersion" : 1,
+  "caseId" : "eval-syn-en-01-worker",
+  "modelId" : "claude-haiku-5-5",
+  "requestSha256" : "bd7aceec522da6415737bd1f6367ebe9ee5fb2fa7c7bf72100ab1c34ea6c34a9",
+  "provenance" : "synthetic",
+  "source" : "recorded from a live call",
+  "recordedAt" : "2026-11-17T11:01:33.786782Z",
+  "stopReason" : "end_turn",
+  "usage" : {
+    "inputTokens" : 153,
+    "outputTokens" : 133,
+    "cacheReadTokens" : 798
+  },
+  "response" : {
+    "status" : "OK",
+    "reason" : "NONE",
+    "queries" : [ "শিক্ষানবিশ কর্মচারীর চাকরি অবসান ও নোটিশ মেয়াদ", "বিনা নোটিশে ছাঁটাইয়ের ক্ষতিপূরণ ও নোটিশকালের মজুরি", "probationary employee termination without notice and notice pay" ]
+  }
+}

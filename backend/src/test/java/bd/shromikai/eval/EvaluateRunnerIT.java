@@ -369,7 +369,9 @@ class EvaluateRunnerIT {
           "eval:" + contract,
           "eval-" + contract + "-worker",
           usd("shromikai.eval.stepCapUsd", 0.80),
-          60);
+          // A full run makes about 60 to 80 calls (12 rewrites, 20 support checks, counter-offers);
+          // 60 stopped the first syn-en-01 run at its last call. The spend caps are the real limit.
+          200);
       String text = demo ? sample.text() : SyntheticContracts.text(contract);
       documents.add(text);
       harness.piiMode(pii.contains(contract) ? "ground-truth-stand-in" : "local-model");

@@ -1,0 +1,22 @@
+{
+  "fixtureVersion" : 1,
+  "promptId" : "verify-support-claude",
+  "promptVersion" : 2,
+  "caseId" : "eval-citations",
+  "modelId" : "claude-haiku-5-5",
+  "requestSha256" : "f38ca3a0d8745a95f63527175fb10c074d83653f9afabf824f570dc3c9496dc1",
+  "provenance" : "synthetic",
+  "source" : "recorded from a live call",
+  "recordedAt" : "2026-11-17T10:48:15.559255Z",
+  "stopReason" : "end_turn",
+  "usage" : {
+    "inputTokens" : 438,
+    "outputTokens" : 77,
+    "cacheReadTokens" : 982
+  },
+  "response" : {
+    "label" : "PARTIAL",
+    "confidence" : 0.8,
+    "reason" : "Section bars adult workers from ordinarily working over 8 hours daily but allows up to 10 hours subject to s.108; the claim omits this proviso."
+  }
+}

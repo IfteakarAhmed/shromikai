@@ -353,6 +353,17 @@ public final class EvalResults {
     return new Bundle(analyses, citations, pii);
   }
 
+  /** The latest run of each contract, system and side (results are append-only). */
+  public static List<AnalysisCase> latest(List<AnalysisCase> analyses) {
+    Map<String, AnalysisCase> out = new LinkedHashMap<>();
+    for (AnalysisCase a : analyses) {
+      String key = a.contractId() + "|" + a.system() + "|" + a.side();
+      out.remove(key);
+      out.put(key, a);
+    }
+    return List.copyOf(out.values());
+  }
+
   /** For reports: a map in insertion order. */
   static Map<String, Object> map(Object... keyValues) {
     Map<String, Object> out = new LinkedHashMap<>();

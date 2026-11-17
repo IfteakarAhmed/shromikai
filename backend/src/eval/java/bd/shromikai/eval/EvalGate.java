@@ -21,7 +21,9 @@ public final class EvalGate {
   private EvalGate() {}
 
   /** Violations; empty when the gate holds. */
-  public static List<String> check(EvalResults.Bundle results) {
+  public static List<String> check(EvalResults.Bundle raw) {
+    EvalResults.Bundle results =
+        new EvalResults.Bundle(EvalResults.latest(raw.analyses()), raw.citations(), raw.pii());
     List<String> out = new ArrayList<>();
     if (results.analyses().isEmpty() && results.citations().isEmpty()) {
       out.add("there are no recorded results to check");
@@ -64,7 +66,9 @@ public final class EvalGate {
     if (!Files.isDirectory(dir)) {
       return List.of("the run folder " + dir + " is missing");
     }
-    EvalResults.Bundle results = EvalResults.read(dir);
+    EvalResults.Bundle raw = EvalResults.read(dir);
+    EvalResults.Bundle results =
+        new EvalResults.Bundle(EvalResults.latest(raw.analyses()), raw.citations(), raw.pii());
     List<String> out = new ArrayList<>(check(results));
     JsonNode stated = report.path("metrics").path("shromikai");
     compare(out, stated, Metrics.unverifiedExposure(results.analyses()));

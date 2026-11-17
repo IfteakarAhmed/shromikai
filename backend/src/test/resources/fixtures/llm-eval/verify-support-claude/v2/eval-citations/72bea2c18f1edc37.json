@@ -1,0 +1,22 @@
+{
+  "fixtureVersion" : 1,
+  "promptId" : "verify-support-claude",
+  "promptVersion" : 2,
+  "caseId" : "eval-citations",
+  "modelId" : "claude-haiku-5-5",
+  "requestSha256" : "72bea2c18f1edc37f7af9b385e2c21606272737d93f453b378ab72b4b3761334",
+  "provenance" : "synthetic",
+  "source" : "recorded from a live call",
+  "recordedAt" : "2026-11-17T10:48:48.109033Z",
+  "stopReason" : "end_turn",
+  "usage" : {
+    "inputTokens" : 339,
+    "outputTokens" : 72,
+    "cacheReadTokens" : 982
+  },
+  "response" : {
+    "label" : "SUPPORTS",
+    "confidence" : 0.97,
+    "reason" : "Section 27 states every agreement restraining anyone from a lawful profession, trade or business is void to that extent, matching the claim exactly."
+  }
+}

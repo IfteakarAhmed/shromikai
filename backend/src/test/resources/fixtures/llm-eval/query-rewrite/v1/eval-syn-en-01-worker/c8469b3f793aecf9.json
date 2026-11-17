@@ -1,0 +1,22 @@
+{
+  "fixtureVersion" : 1,
+  "promptId" : "query-rewrite",
+  "promptVersion" : 1,
+  "caseId" : "eval-syn-en-01-worker",
+  "modelId" : "claude-haiku-5-5",
+  "requestSha256" : "c8469b3f793aecf93f7e9d8514588abbd4fd64862d17fc860150acc8c4424248",
+  "provenance" : "synthetic",
+  "source" : "recorded from a live call",
+  "recordedAt" : "2026-11-17T11:00:56.506040Z",
+  "stopReason" : "end_turn",
+  "usage" : {
+    "inputTokens" : 74,
+    "outputTokens" : 123,
+    "cacheReadTokens" : 0
+  },
+  "response" : {
+    "status" : "OK",
+    "reason" : "NONE",
+    "queries" : [ "employment termination notice period employer worker Bangladesh labour law", "চাকরি সমাপ্তির নোটিশ মেয়াদ শ্রমিক নিয়োগকর্তা বাংলাদেশ", "unpaid wages forfeiture on resignation without notice Bangladesh" ]
+  }
+}

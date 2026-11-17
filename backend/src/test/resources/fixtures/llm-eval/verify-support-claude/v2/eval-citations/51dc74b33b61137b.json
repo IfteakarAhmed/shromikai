@@ -1,0 +1,22 @@
+{
+  "fixtureVersion" : 1,
+  "promptId" : "verify-support-claude",
+  "promptVersion" : 2,
+  "caseId" : "eval-citations",
+  "modelId" : "claude-haiku-5-5",
+  "requestSha256" : "51dc74b33b61137b9d334e61d33c5a5f2fa23b0aea8f193d949b751cd4a794e4",
+  "provenance" : "synthetic",
+  "source" : "recorded from a live call",
+  "recordedAt" : "2026-11-17T10:47:49.772247Z",
+  "stopReason" : "end_turn",
+  "usage" : {
+    "inputTokens" : 761,
+    "outputTokens" : 72,
+    "cacheReadTokens" : 982
+  },
+  "response" : {
+    "label" : "UNRELATED",
+    "confidence" : 0.95,
+    "reason" : "Section 116 concerns fourteen days of sick leave per calendar year on full wages, not payment of wages within seven working days after the wage period."
+  }
+}

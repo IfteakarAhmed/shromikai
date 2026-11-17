@@ -1,0 +1,22 @@
+{
+  "fixtureVersion" : 1,
+  "promptId" : "verify-support-claude",
+  "promptVersion" : 2,
+  "caseId" : "eval-citations",
+  "modelId" : "claude-haiku-5-5",
+  "requestSha256" : "ee5ba5381785dcaf105bb725fd2e1c583b6a4ba20aa823ece61f2bfeaf983d40",
+  "provenance" : "synthetic",
+  "source" : "recorded from a live call",
+  "recordedAt" : "2026-11-17T10:48:46.273962Z",
+  "stopReason" : "end_turn",
+  "usage" : {
+    "inputTokens" : 426,
+    "outputTokens" : 81,
+    "cacheReadTokens" : 982
+  },
+  "response" : {
+    "label" : "PARTIAL",
+    "confidence" : 0.8,
+    "reason" : "Section lets any union, employer or worker apply to Labour Court for any right, including under custom or notice; claim omits these and says only 'worker or employer' but core element matches."
+  }
+}

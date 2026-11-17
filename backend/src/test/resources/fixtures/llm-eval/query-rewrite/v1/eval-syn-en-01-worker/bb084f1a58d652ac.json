@@ -1,0 +1,22 @@
+{
+  "fixtureVersion" : 1,
+  "promptId" : "query-rewrite",
+  "promptVersion" : 1,
+  "caseId" : "eval-syn-en-01-worker",
+  "modelId" : "claude-haiku-5-5",
+  "requestSha256" : "bb084f1a58d652acc6eb07b4f0a6e53fd4de334c06b8cadbc066d9b2c250e9cf",
+  "provenance" : "synthetic",
+  "source" : "recorded from a live call",
+  "recordedAt" : "2026-11-17T11:01:03.595401Z",
+  "stopReason" : "end_turn",
+  "usage" : {
+    "inputTokens" : 85,
+    "outputTokens" : 125,
+    "cacheReadTokens" : 798
+  },
+  "response" : {
+    "status" : "OK",
+    "reason" : "NONE",
+    "queries" : [ "post-employment non-compete restriction on worker in Bangladesh", "বাংলাদেশে চাকরি ছাড়ার পর প্রতিযোগিতামূলক ব্যবসায় কাজের নিষেধাজ্ঞা", "employee confidentiality obligations after termination of employment" ]
+  }
+}

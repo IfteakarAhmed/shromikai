@@ -80,7 +80,24 @@ public final class ReportAssembler {
   }
 
   public static EvalReport assemble(Inputs in) {
-    List<AnalysisCase> all = in.results().analyses();
+    // Results are append-only: a case run again counts once, by its latest run.
+    Map<String, AnalysisCase> latest = new LinkedHashMap<>();
+    List<String> superseded = new ArrayList<>();
+    for (AnalysisCase a : in.results().analyses()) {
+      AnalysisCase earlier = latest.remove(a.contractId() + "|" + a.system() + "|" + a.side());
+      if (earlier != null) {
+        superseded.add(
+            "superseded by a later run of the same case (not counted): "
+                + earlier.contractId()
+                + " / "
+                + earlier.system()
+                + ": "
+                + earlier.outcome()
+                + (earlier.failureCode() == null ? "" : " (" + earlier.failureCode() + ")"));
+      }
+      latest.put(a.contractId() + "|" + a.system() + "|" + a.side(), a);
+    }
+    List<AnalysisCase> all = List.copyOf(latest.values());
     List<AnalysisCase> ours = of(all, "shromikai");
     List<AnalysisCase> baseline = of(all, "baseline");
     Map<String, List<GoldRisk>> gold = new LinkedHashMap<>();
@@ -211,10 +228,16 @@ public final class ReportAssembler {
         in.config(),
         bySystem,
         ablations(ours, all),
-        failures(all),
+        concat(superseded, failures(all)),
         limitations(in),
         knownFailures(in, m),
         in.errata());
+  }
+
+  private static List<String> concat(List<String> a, List<String> b) {
+    List<String> out = new ArrayList<>(a);
+    out.addAll(b);
+    return out;
   }
 
   private static List<AnalysisCase> of(List<AnalysisCase> all, String system) {

@@ -1,0 +1,22 @@
+{
+  "fixtureVersion" : 1,
+  "promptId" : "verify-support-claude",
+  "promptVersion" : 2,
+  "caseId" : "eval-citations",
+  "modelId" : "claude-haiku-5-5",
+  "requestSha256" : "3e80a0b8b53a550facadfdf0f159fa0af5c3ea5dcd2caf447cd37ebf919a8423",
+  "provenance" : "synthetic",
+  "source" : "recorded from a live call",
+  "recordedAt" : "2026-11-17T10:47:35.388303Z",
+  "stopReason" : "end_turn",
+  "usage" : {
+    "inputTokens" : 1933,
+    "outputTokens" : 66,
+    "cacheReadTokens" : 0
+  },
+  "response" : {
+    "label" : "UNRELATED",
+    "confidence" : 0.85,
+    "reason" : "Section 323 only provides for forming a national industrial health and safety council and its membership; it sets no rule a clause must follow."
+  }
+}

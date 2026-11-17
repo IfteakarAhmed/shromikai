@@ -1,0 +1,22 @@
+{
+  "fixtureVersion" : 1,
+  "promptId" : "verify-support-claude",
+  "promptVersion" : 2,
+  "caseId" : "eval-citations",
+  "modelId" : "claude-haiku-5-5",
+  "requestSha256" : "459a30e13e7a232257b55a22373504687081fddee85deeb13a67fa0acca813f4",
+  "provenance" : "synthetic",
+  "source" : "recorded from a live call",
+  "recordedAt" : "2026-11-17T10:47:46.162381Z",
+  "stopReason" : "end_turn",
+  "usage" : {
+    "inputTokens" : 636,
+    "outputTokens" : 81,
+    "cacheReadTokens" : 982
+  },
+  "response" : {
+    "label" : "PARTIAL",
+    "confidence" : 0.8,
+    "reason" : "Section 108 covers overtime pay at double the normal rate for hours beyond the Act's set limit, but never states a 48-hour weekly maximum for adult workers."
+  }
+}

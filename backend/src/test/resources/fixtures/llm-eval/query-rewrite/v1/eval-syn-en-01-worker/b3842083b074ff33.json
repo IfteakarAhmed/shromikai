@@ -1,0 +1,22 @@
+{
+  "fixtureVersion" : 1,
+  "promptId" : "query-rewrite",
+  "promptVersion" : 1,
+  "caseId" : "eval-syn-en-01-worker",
+  "modelId" : "claude-haiku-5-5",
+  "requestSha256" : "b3842083b074ff331339748184dde6f37f93d02a89ebe9337ba40b292ce8ec6e",
+  "provenance" : "synthetic",
+  "source" : "recorded from a live call",
+  "recordedAt" : "2026-11-17T11:00:56.511487Z",
+  "stopReason" : "end_turn",
+  "usage" : {
+    "inputTokens" : 98,
+    "outputTokens" : 87,
+    "cacheReadTokens" : 0
+  },
+  "response" : {
+    "status" : "OK",
+    "reason" : "NONE",
+    "queries" : [ "employee appointment and job duties in employment contract", "নিয়োগ ও কর্তব্য সংক্রান্ত শ্রম আইন", "transfer of worker to other work or location by employer" ]
+  }
+}

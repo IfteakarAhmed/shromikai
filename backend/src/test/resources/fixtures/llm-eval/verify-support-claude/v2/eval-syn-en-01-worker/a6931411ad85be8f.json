@@ -1,0 +1,22 @@
+{
+  "fixtureVersion" : 1,
+  "promptId" : "verify-support-claude",
+  "promptVersion" : 2,
+  "caseId" : "eval-syn-en-01-worker",
+  "modelId" : "claude-haiku-5-5",
+  "requestSha256" : "a6931411ad85be8f4cece16c0964df3ed0d02801c1218635e6b9f272ee71023a",
+  "provenance" : "synthetic",
+  "source" : "recorded from a live call",
+  "recordedAt" : "2026-11-17T11:01:30.124732Z",
+  "stopReason" : "end_turn",
+  "usage" : {
+    "inputTokens" : 4327,
+    "outputTokens" : 95,
+    "cacheReadTokens" : 982
+  },
+  "response" : {
+    "label" : "SUPPORTS",
+    "confidence" : 0.9,
+    "reason" : "Section 210(12): the arbitrator must be one acknowledged by all parties (তাহাদের সকলের স্বীকৃত), matching the claim that the arbitrator must be accepted by both sides."
+  }
+}

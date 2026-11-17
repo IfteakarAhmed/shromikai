@@ -1,0 +1,109 @@
+{
+  "fixtureVersion" : 1,
+  "promptId" : "obligations",
+  "promptVersion" : 1,
+  "caseId" : "eval-syn-en-01-worker",
+  "modelId" : "claude-haiku-5-5",
+  "requestSha256" : "1690d7d8ddc7479adc5913b45198047389df059cb00b3c9abafc3570b12f2c6d",
+  "provenance" : "synthetic",
+  "source" : "recorded from a live call",
+  "recordedAt" : "2026-11-17T11:01:26.261457Z",
+  "stopReason" : "end_turn",
+  "usage" : {
+    "inputTokens" : 22963,
+    "outputTokens" : 1932,
+    "cacheReadTokens" : 2212
+  },
+  "response" : {
+    "status" : "OK",
+    "reason" : "NONE",
+    "items" : [ {
+      "party" : "EMPLOYER",
+      "obligation" : "নিয়োগপত্র প্রদান করা এবং ছবিসহ পরিচয়পত্র দেওয়া",
+      "trigger" : "শ্রমিক নিয়োগের সময়",
+      "deadline" : null,
+      "source" : "STATUTE",
+      "status" : "STATUTORY_NOT_IN_CONTRACT",
+      "clause_ids" : [ "c1" ],
+      "citations" : [ {
+        "section_key" : "BLA-2006:5@original",
+        "quote" : "কোন মালিক নিয়োগপত্র প্রদান না করিয়া কোন শ্রমিককে নিয়োগ করিতে পারিবেন না, এবং নিয়োজিত প্রত্যেক শ্রমিককে ছবিসহ পরিচয়পত্র প্রদান করিতে হইবে।",
+        "claim" : "নিয়োগপত্র ও ছবিসহ পরিচয়পত্র বাধ্যতামূলক"
+      } ]
+    }, {
+      "party" : "EMPLOYER",
+      "obligation" : "ন্যূনতম মজুরী ও মজুরী সময়মতো পরিশোধ করা",
+      "trigger" : "প্রতি মজুরীকালের পর",
+      "deadline" : {
+        "value" : 7,
+        "unit" : "DAYS"
+      },
+      "source" : "STATUTE",
+      "status" : "CONFLICTS_WITH_CONTRACT",
+      "clause_ids" : [ "c4", "c5" ],
+      "citations" : [ {
+        "section_key" : "BLA-2006:123@amend-2013",
+        "quote" : "কোন শ্রমিকের যে মজুরীকাল সমপর্কে তাহার মজুরী প্রদেয় হয় সেই কাল শেষ হওয়ার পরবর্তী সাত কর্মদিবসের মধ্যে তাহার মজুরী পরিশোধ করিতে হইবে।",
+        "claim" : "মজুরী পরিশোধ ৭ কর্মদিবসের মধ্যে; চুক্তিতে ২৫ তারিখ"
+      } ]
+    }, {
+      "party" : "EMPLOYER",
+      "obligation" : "বছরে ১০ দিনের নৈমিত্তিক ছুটি দেওয়া",
+      "trigger" : "প্রতি পঞ্জিকা বছরে",
+      "deadline" : null,
+      "source" : "STATUTE",
+      "status" : "CONFLICTS_WITH_CONTRACT",
+      "clause_ids" : [ "c7" ],
+      "citations" : [ {
+        "section_key" : "BLA-2006:115@original",
+        "quote" : "প্রত্যেক শ্রমিক প্রতি পঞ্জিকা বৎসরে পূর্ণ মজুরীতে দশ দিনের নৈমিত্তিক ছুটি পাইবার অধিকারী হইবেন",
+        "claim" : "নৈমিত্তিক ছুটি ১০ দিন; চুক্তিতে মাত্র ৬ দিন"
+      } ]
+    }, {
+      "party" : "EMPLOYER",
+      "obligation" : "ছাঁটাইয়ে এক মাসের লিখিত নোটিশ ও ক্ষতিপূরণ দেওয়া",
+      "trigger" : "এক বছরের বেশি চাকুরীতে ছাঁটাইয়ের সময়",
+      "deadline" : {
+        "value" : 1,
+        "unit" : "MONTHS"
+      },
+      "source" : "STATUTE",
+      "status" : "CONFLICTS_WITH_CONTRACT",
+      "clause_ids" : [ "c8" ],
+      "citations" : [ {
+        "section_key" : "BLA-2006:20@original",
+        "quote" : "তাহার ছাঁটাইয়ের কারণ উল্লেখ করিয়া এক মাসের লিখিত নোটিশ দিতে হইবে",
+        "claim" : "ছাঁটাইয়ে এক মাসের নোটিশ; চুক্তিতে ২৪ ঘণ্টা"
+      } ]
+    }, {
+      "party" : "EMPLOYER",
+      "obligation" : "স্থায়ী শ্রমিককে অবসানে ৩০ দিনের নোটিশ বা ক্ষতিপূরণ দেওয়া",
+      "trigger" : "স্থায়ী শ্রমিকের চাকুরী অবসানের সময়",
+      "deadline" : {
+        "value" : 30,
+        "unit" : "DAYS"
+      },
+      "source" : "STATUTE",
+      "status" : "CONFLICTS_WITH_CONTRACT",
+      "clause_ids" : [ "c8" ],
+      "citations" : [ {
+        "section_key" : "BLA-2006:26@original",
+        "quote" : "ষাট দিনের লিখিত নোটিশ প্রদান করিয়া কোন স্থায়ী শ্রমিকের চাকুরীর অবসান করিতে পারিবেন",
+        "claim" : "স্থায়ী শ্রমিকে ৬০ দিনের নোটিশ; চুক্তিতে ২৪ ঘণ্টা"
+      } ]
+    }, {
+      "party" : "EMPLOYER",
+      "obligation" : "কোনো ব্যক্তিকে বাধ্যতামূলক বা অবৈধভাবে কাজে বাধ্য না করা; ৭ বছরের নির্দিষ্ট কাজের শর্ত অবৈধ",
+      "trigger" : "চাকুরী শেষ হওয়ার পর",
+      "deadline" : null,
+      "source" : "STATUTE",
+      "status" : "CONFLICTS_WITH_CONTRACT",
+      "clause_ids" : [ "c9" ],
+      "citations" : [ {
+        "section_key" : "CA-1872:27@original",
+        "quote" : "Every agreement by which any one is restrained from exercising a lawful profession, trade or business of any kind, is to that extent void.",
+        "claim" : "চাকুরী-পরবর্তী বাণিজ্য নিষেধ চুক্তি অবৈধ; চুক্তিতে ৪ বছর"
+      } ]
+    } ]
+  }
+}

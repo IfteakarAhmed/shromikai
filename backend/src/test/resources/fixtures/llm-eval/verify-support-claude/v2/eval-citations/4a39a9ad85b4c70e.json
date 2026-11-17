@@ -1,0 +1,22 @@
+{
+  "fixtureVersion" : 1,
+  "promptId" : "verify-support-claude",
+  "promptVersion" : 2,
+  "caseId" : "eval-citations",
+  "modelId" : "claude-haiku-5-5",
+  "requestSha256" : "4a39a9ad85b4c70e624133515eb9adf955d185debf026edc8340d0312aeabb45",
+  "provenance" : "synthetic",
+  "source" : "recorded from a live call",
+  "recordedAt" : "2026-11-17T10:47:42.590072Z",
+  "stopReason" : "end_turn",
+  "usage" : {
+    "inputTokens" : 990,
+    "outputTokens" : 65,
+    "cacheReadTokens" : 982
+  },
+  "response" : {
+    "label" : "UNRELATED",
+    "confidence" : 0.95,
+    "reason" : "Section 102 covers maximum weekly working hours for adult workers, not termination notice or payment in lieu of notice."
+  }
+}

@@ -1,0 +1,22 @@
+{
+  "fixtureVersion" : 1,
+  "promptId" : "verify-support-claude",
+  "promptVersion" : 2,
+  "caseId" : "eval-citations",
+  "modelId" : "claude-haiku-5-5",
+  "requestSha256" : "5794b1d6075966ac110b60683c53d411187855dea050368a6fe6b0271de526d7",
+  "provenance" : "synthetic",
+  "source" : "recorded from a live call",
+  "recordedAt" : "2026-11-17T10:47:38.952432Z",
+  "stopReason" : "end_turn",
+  "usage" : {
+    "inputTokens" : 453,
+    "outputTokens" : 88,
+    "cacheReadTokens" : 982
+  },
+  "response" : {
+    "label" : "UNRELATED",
+    "confidence" : 0.95,
+    "reason" : "Section 100 concerns maximum working hours for adult workers (8 hours, up to 10 under s.108); nothing about restricting enforcement of contract rights in ordinary tribunals."
+  }
+}

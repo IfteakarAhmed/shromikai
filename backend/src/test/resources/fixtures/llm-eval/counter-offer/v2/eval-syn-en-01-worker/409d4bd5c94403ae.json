@@ -1,0 +1,24 @@
+{
+  "fixtureVersion" : 1,
+  "promptId" : "counter-offer",
+  "promptVersion" : 2,
+  "caseId" : "eval-syn-en-01-worker",
+  "modelId" : "claude-sonnet-5-5",
+  "requestSha256" : "409d4bd5c94403aea84cf6882ac62fde25563093360367ed7927fafb15e754d8",
+  "provenance" : "synthetic",
+  "source" : "recorded from a live call",
+  "recordedAt" : "2026-11-17T11:01:44.373662Z",
+  "stopReason" : "end_turn",
+  "usage" : {
+    "inputTokens" : 610,
+    "outputTokens" : 366,
+    "cacheReadTokens" : 0
+  },
+  "response" : {
+    "status" : "OK",
+    "reason" : "NONE",
+    "action" : "REPLACE",
+    "proposed_text" : "৭. অবসান ও নোটিশ: মালিক স্থায়ী শ্রমিকের চাকুরী অবসান করতে চাইলে ১২০ দিনের লিখিত নোটিশ দেবেন এবং প্রত্যেক সম্পূর্ণ বছরের জন্য ৩০ দিনের মজুরী বা গ্র্যাচুইটি, যা অধিক হয়, ক্ষতিপূরণ দেবেন। শ্রমিক ৬০ দিনের নোটিশ দেবেন; অপ্রদত্ত মজুরী বাজেয়াপ্ত হবে না।",
+    "rationale" : "১২০ দিনের নোটিশ ও ক্ষতিপূরণ যুক্ত হওয়ায় ধারাটি আইনসম্মত হলো এবং শ্রমিকের মজুরী বাজেয়াপ্তির ঝুঁকি দূর হলো।"
+  }
+}

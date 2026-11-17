@@ -1,0 +1,22 @@
+{
+  "fixtureVersion" : 1,
+  "promptId" : "verify-support-claude",
+  "promptVersion" : 2,
+  "caseId" : "eval-syn-en-01-worker",
+  "modelId" : "claude-haiku-5-5",
+  "requestSha256" : "6687d8e4953325716ad7000fdddd63ccdf79e1348937108821351291929ca917",
+  "provenance" : "synthetic",
+  "source" : "recorded from a live call",
+  "recordedAt" : "2026-11-17T11:01:28.369194Z",
+  "stopReason" : "end_turn",
+  "usage" : {
+    "inputTokens" : 561,
+    "outputTokens" : 66,
+    "cacheReadTokens" : 0
+  },
+  "response" : {
+    "label" : "SUPPORTS",
+    "confidence" : 0.93,
+    "reason" : "Section s.108(1) states overtime workers receive allowance at double the ordinary rate, matching the claim and quote."
+  }
+}

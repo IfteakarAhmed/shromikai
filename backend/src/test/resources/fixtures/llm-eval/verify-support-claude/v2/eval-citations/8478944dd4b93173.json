@@ -1,0 +1,22 @@
+{
+  "fixtureVersion" : 1,
+  "promptId" : "verify-support-claude",
+  "promptVersion" : 2,
+  "caseId" : "eval-citations",
+  "modelId" : "claude-haiku-5-5",
+  "requestSha256" : "8478944dd4b9317345ea9267c5859ba233b09e3ff690bf4a8eb7cfad2db6b936",
+  "provenance" : "synthetic",
+  "source" : "recorded from a live call",
+  "recordedAt" : "2026-11-17T10:48:22.843156Z",
+  "stopReason" : "end_turn",
+  "usage" : {
+    "inputTokens" : 662,
+    "outputTokens" : 84,
+    "cacheReadTokens" : 982
+  },
+  "response" : {
+    "label" : "SUPPORTS",
+    "confidence" : 0.93,
+    "reason" : "Section 108(1) gives overtime allowance at twice the ordinary rate of basic wage, dearness allowance and any ad hoc or interim wage, matching the claim."
+  }
+}

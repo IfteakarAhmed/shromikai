@@ -1,0 +1,24 @@
+{
+  "fixtureVersion" : 1,
+  "promptId" : "counter-offer",
+  "promptVersion" : 2,
+  "caseId" : "eval-syn-en-01-worker",
+  "modelId" : "claude-sonnet-5-5",
+  "requestSha256" : "7e946f8524083ed0ce657b42a3a02023d582d8897e0aa47fd67e6c1d207fbad1",
+  "provenance" : "synthetic",
+  "source" : "recorded from a live call",
+  "recordedAt" : "2026-11-17T11:01:44.189315Z",
+  "stopReason" : "end_turn",
+  "usage" : {
+    "inputTokens" : 663,
+    "outputTokens" : 369,
+    "cacheReadTokens" : 0
+  },
+  "response" : {
+    "status" : "OK",
+    "reason" : "NONE",
+    "action" : "REPLACE",
+    "proposed_text" : "৫. কর্মঘণ্টা ও অধিকাল\n(ক) শ্রমিক দৈনিক ১১ ঘণ্টা, সপ্তাহে ছয় দিন কাজ করেন।\n(খ) আইনে নির্ধারিত সময়ের অতিরিক্ত কাজ অধিকাল গণ্য হবে এবং এর জন্য মূল মজুরী, মহার্ঘভাতা ও এডহক মজুরীর সাধারণ হারের ২ গুণ (দ্বিগুণ) হারে পৃথক ভাতা দেওয়া হবে। [EMPLOYEE_ID_1]",
+    "rationale" : "অধিকালের জন্য সাধারণ হারের দ্বিগুণ পৃথক ভাতা নিশ্চিত করায় ধারাটি আইনসম্মত হলো এবং কর্মঘণ্টা অপরিবর্তিত থাকল।"
+  }
+}

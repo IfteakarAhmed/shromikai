@@ -1,0 +1,22 @@
+{
+  "fixtureVersion" : 1,
+  "promptId" : "verify-support-claude",
+  "promptVersion" : 2,
+  "caseId" : "eval-citations",
+  "modelId" : "claude-haiku-5-5",
+  "requestSha256" : "ec2bd974e3e8af9e2099795ad27ef5eb841a2896eb10ca7c32a04efef67c3a57",
+  "provenance" : "synthetic",
+  "source" : "recorded from a live call",
+  "recordedAt" : "2026-11-17T10:48:44.406515Z",
+  "stopReason" : "end_turn",
+  "usage" : {
+    "inputTokens" : 321,
+    "outputTokens" : 67,
+    "cacheReadTokens" : 982
+  },
+  "response" : {
+    "label" : "SUPPORTS",
+    "confidence" : 0.93,
+    "reason" : "Section 187 bars transferring a trade union president, general secretary or other officer between districts without their consent, matching every claim element."
+  }
+}

@@ -1,0 +1,26 @@
+{
+  "fixtureVersion" : 1,
+  "promptId" : "risk-citation-repair",
+  "promptVersion" : 2,
+  "caseId" : "eval-syn-en-01-worker",
+  "modelId" : "claude-sonnet-5-5",
+  "requestSha256" : "ba9d5f78025987e7238e555564edcd3b84dc4be2e04052bf564f93fc333f0764",
+  "provenance" : "synthetic",
+  "source" : "recorded from a live call",
+  "recordedAt" : "2026-11-17T11:01:38.165484Z",
+  "stopReason" : "end_turn",
+  "usage" : {
+    "inputTokens" : 13167,
+    "outputTokens" : 177,
+    "cacheReadTokens" : 0
+  },
+  "response" : {
+    "status" : "OK",
+    "reason" : "NONE",
+    "citations" : [ {
+      "section_key" : "BLA-2006:4@amend-2026",
+      "quote" : "কেরানী-সংক্রান্ত কাজে নিযুক্ত কোন শ্রমিকের শিক্ষানবিশীকাল হইবে ছয় মাস এবং অন্যান্য শ্রমিকের জন্য এই সময় হইবে তিন মাস",
+      "claim" : "Statute fixes probation at six months for clerical work and three months for others."
+    } ]
+  }
+}

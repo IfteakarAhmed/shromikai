@@ -1,0 +1,22 @@
+{
+  "fixtureVersion" : 1,
+  "promptId" : "verify-support-claude",
+  "promptVersion" : 2,
+  "caseId" : "eval-citations",
+  "modelId" : "claude-haiku-5-5",
+  "requestSha256" : "f58c29a311a3b6b149ad3ea7150c13e66d038ea2bd4c88aa652f2d08ba26f7cf",
+  "provenance" : "synthetic",
+  "source" : "recorded from a live call",
+  "recordedAt" : "2026-11-17T10:48:11.708064Z",
+  "stopReason" : "end_turn",
+  "usage" : {
+    "inputTokens" : 770,
+    "outputTokens" : 81,
+    "cacheReadTokens" : 982
+  },
+  "response" : {
+    "label" : "CONTRADICTS",
+    "confidence" : 0.93,
+    "reason" : "Section 46(1) grants every woman worker maternity welfare benefit for 60 days before expected delivery, contrary to the claim of no pre-delivery right."
+  }
+}

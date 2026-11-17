@@ -1,0 +1,22 @@
+{
+  "fixtureVersion" : 1,
+  "promptId" : "query-rewrite",
+  "promptVersion" : 1,
+  "caseId" : "eval-syn-en-01-worker",
+  "modelId" : "claude-haiku-5-5",
+  "requestSha256" : "1d3f7dad208053d73cab083b431334339dd40aee9204c57aae1ed5546465b18b",
+  "provenance" : "synthetic",
+  "source" : "recorded from a live call",
+  "recordedAt" : "2026-11-17T11:00:56.697991Z",
+  "stopReason" : "end_turn",
+  "usage" : {
+    "inputTokens" : 72,
+    "outputTokens" : 146,
+    "cacheReadTokens" : 0
+  },
+  "response" : {
+    "status" : "OK",
+    "reason" : "NONE",
+    "queries" : [ "wage payment timing deadline employer obligation Bangladesh labour law", "employer deductions from wages unauthorised limits Bangladesh", "মজুরি পরিশোধের সময়সীমা ও বেতন কর্তনের বিধান", "মজুরি থেকে ক্ষতিপূরণ বাবদ কর্তনের আইনি সীমা" ]
+  }
+}

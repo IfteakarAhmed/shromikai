@@ -1,0 +1,22 @@
+{
+  "fixtureVersion" : 1,
+  "promptId" : "verify-support-claude",
+  "promptVersion" : 2,
+  "caseId" : "eval-syn-en-01-worker",
+  "modelId" : "claude-haiku-5-5",
+  "requestSha256" : "05531efb5de79b8254560f64b4444b70064689564a526ef30016775a7e6e150c",
+  "provenance" : "synthetic",
+  "source" : "recorded from a live call",
+  "recordedAt" : "2026-11-17T11:01:29.877711Z",
+  "stopReason" : "end_turn",
+  "usage" : {
+    "inputTokens" : 1781,
+    "outputTokens" : 65,
+    "cacheReadTokens" : 982
+  },
+  "response" : {
+    "label" : "PARTIAL",
+    "confidence" : 0.7,
+    "reason" : "Section 27(3) allows paying wages equal to the notice period instead of notice, but it does not say that is the only liability."
+  }
+}

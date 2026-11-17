@@ -1,0 +1,22 @@
+{
+  "fixtureVersion" : 1,
+  "promptId" : "query-rewrite",
+  "promptVersion" : 1,
+  "caseId" : "eval-syn-en-01-worker",
+  "modelId" : "claude-haiku-5-5",
+  "requestSha256" : "432fd3be211e55b116e98a495047f016c4f8c7302a18cf562dca7ad2ce8d396b",
+  "provenance" : "synthetic",
+  "source" : "recorded from a live call",
+  "recordedAt" : "2026-11-17T11:00:56.566720Z",
+  "stopReason" : "end_turn",
+  "usage" : {
+    "inputTokens" : 96,
+    "outputTokens" : 121,
+    "cacheReadTokens" : 0
+  },
+  "response" : {
+    "status" : "OK",
+    "reason" : "NONE",
+    "queries" : [ "overtime pay entitlement for extra working hours Bangladesh", "বাংলাদেশ শ্রম আইন অতিরিক্ত কাজের ঘণ্টা ও ওভারটাইম ভাতা", "maximum daily and weekly working hours for workers Bangladesh" ]
+  }
+}

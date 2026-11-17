@@ -1,0 +1,22 @@
+{
+  "fixtureVersion" : 1,
+  "promptId" : "verify-support-claude",
+  "promptVersion" : 2,
+  "caseId" : "eval-syn-en-01-worker",
+  "modelId" : "claude-haiku-5-5",
+  "requestSha256" : "0cf207cdeae350e62febe795304bed933e218189cdb85723ca594418f46f07c2",
+  "provenance" : "synthetic",
+  "source" : "recorded from a live call",
+  "recordedAt" : "2026-11-17T11:01:29.830052Z",
+  "stopReason" : "end_turn",
+  "usage" : {
+    "inputTokens" : 429,
+    "outputTokens" : 73,
+    "cacheReadTokens" : 982
+  },
+  "response" : {
+    "label" : "SUPPORTS",
+    "confidence" : 0.93,
+    "reason" : "Section s.118(1) grants every worker 13 days of paid festival leave per calendar year, matching the claim's 13-day entitlement."
+  }
+}
