@@ -96,3 +96,33 @@ Item numbers are those of the review report.
 | Per-user concurrency limit is a P7 choice | NFR-20 | Signed-in users without an organisation may run 2 analyses at once; the PRD names only guests and organisations. |
 | Compare baseline runs after the analysis | FR-59 | The baseline starts when the analysis has finished, so `GET /compare/{id}` stays `202` for one more model call. Compare events are the analysis events (no baseline stage); the compare ID is the analysis ID. `baseline` v1 has no dev-split report. |
 | Stored profile covers wording only and is read per request | FR-56 | `PATCH /auth/me` validates and stores the profile; an analysis uses it only when the request sends none. `side` of the profile is not applied to the analysis. |
+
+## Cross-check findings, 17 Nov 2026 (AI review, corpus-corroborated; lawyer review pending)
+
+An outside AI review of the redlines and risks was checked against the raw source text of the
+Bangladesh Labour Act 2006 (`data/raw/bdlaws.minlaw.gov.bd/act-print-952.html`, the consolidated
+text the corpus is built from), **not against the ingested database**. This is not a legal review;
+a lawyer's review is pending. All eight claims checked were corroborated by the source text.
+
+1. **Redline 6 understates festival-holiday work.** It says "compensatory leave or wages".
+   s.118(3) requires a substitute day **and** two days' compensatory wages when a worker is asked
+   to work on a festival holiday (sub-section substituted by Act 58 of 2018, s.17).
+2. **Redline 4 omits two compensation rules.** It does not mention the permanent-worker
+   compensation of s.26(4) (30 days' wages per full year of service, or gratuity if higher), nor
+   the resignation compensation of s.27(4), which the Labour (Amendment) Act 2026 (Act 43 of 2026,
+   s.13) substituted: 7 days' wages per full year up to 3 years, 15 days for over 3 and under 10
+   years, 30 days (or gratuity if higher) for 10 years or more.
+3. **Risk 11 cites a section that does not fit.** It cites s.3, which does not prohibit general
+   transfers. s.187 protects only trade-union officers (president, general secretary and other
+   officers) against transfer from one district to another without their consent. Already flagged
+   as the weakest citation (see "Weak citation relevance can pass the verifier").
+4. **Two rules are too coarse.** Rule 4 cannot express 1.5 days of weekly rest or the
+   distinction by establishment type (s.103(ka): one day for factories and industry, one and a half
+   days for shops and establishments). Rule 7 checks the count of festival holidays only, not work
+   on a festival holiday (s.118(3)).
+
+**Fix plan (after 20 Nov):** add a new counter-offer prompt version (`counter-offer` v{n+1}) that
+receives the relevant section text (s.118(3), s.26(4), s.27(4)); re-record the demo
+(record-missing only, see "Changing a rule file changes the recorded request hashes"); run the
+dev-split evaluation; then ask the lawyer to review the changes. Rules stay draft until a
+different reviewer signs them off.
