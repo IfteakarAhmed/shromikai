@@ -1,0 +1,24 @@
+{
+  "fixtureVersion" : 1,
+  "promptId" : "counter-offer",
+  "promptVersion" : 2,
+  "caseId" : "eval-syn-bn-01-worker",
+  "modelId" : "claude-sonnet-5-5",
+  "requestSha256" : "c82f779766a04593acc0ad71da54cf4823fc6c970b89353703b4be48258534dc",
+  "provenance" : "synthetic",
+  "source" : "recorded from a live call",
+  "recordedAt" : "2026-11-17T14:22:56.529959Z",
+  "stopReason" : "end_turn",
+  "usage" : {
+    "inputTokens" : 814,
+    "outputTokens" : 387,
+    "cacheReadTokens" : 0
+  },
+  "response" : {
+    "status" : "OK",
+    "reason" : "NONE",
+    "action" : "REPLACE",
+    "proposed_text" : "৪. মজুরি পরিশোধ ও কর্তন: মজুরি পরবর্তী মাসের ২০ তারিখের মধ্যে পরিশোধ করা হবে। আইনে অনুমোদিত ক্ষেত্র ছাড়া মজুরি থেকে কিছু কর্তন করা যাবে না। শ্রমিকের অবহেলার কারণে ক্ষতির কর্তন কেবল ন্যায় বিচারের নীতি মেনে যথাযথ তদন্তে দোষী সাব্যস্ত হলে এবং প্রকৃত ক্ষতির অধিক নয় এমন পরিমাণে করা যাবে।",
+    "rationale" : "ধারা ১২৫ ও ১২৭ অনুযায়ী কর্তন সীমিত ও তদন্তসাপেক্ষ হওয়ায় মালিকের ক্ষতিপূরণের অধিকার থাকে, শ্রমিকও সুরক্ষিত।"
+  }
+}

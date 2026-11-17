@@ -1,0 +1,40 @@
+{
+  "fixtureVersion" : 1,
+  "promptId" : "clause-facts",
+  "promptVersion" : 1,
+  "caseId" : "eval-syn-bn-01-worker",
+  "modelId" : "claude-haiku-5-5",
+  "requestSha256" : "28ee7cf6cf913056605f86523c53b86dc3f09573b650573578cf2cc37d69ce8a",
+  "provenance" : "synthetic",
+  "source" : "recorded from a live call",
+  "recordedAt" : "2026-11-17T14:22:54.680726Z",
+  "stopReason" : "end_turn",
+  "usage" : {
+    "inputTokens" : 269,
+    "outputTokens" : 165,
+    "cacheReadTokens" : 0
+  },
+  "response" : {
+    "status" : "OK",
+    "reason" : "NONE",
+    "clauses" : [ {
+      "id" : "proposal",
+      "facts" : [ {
+        "parameter" : "CASUAL_LEAVE",
+        "value" : 10,
+        "unit" : "DAYS",
+        "confidence" : 0.95
+      }, {
+        "parameter" : "SICK_LEAVE",
+        "value" : 14,
+        "unit" : "DAYS",
+        "confidence" : 0.95
+      }, {
+        "parameter" : "FESTIVAL_HOLIDAYS",
+        "value" : 13,
+        "unit" : "DAYS",
+        "confidence" : 0.95
+      } ]
+    } ]
+  }
+}

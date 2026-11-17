@@ -1,0 +1,24 @@
+{
+  "fixtureVersion" : 1,
+  "promptId" : "counter-offer",
+  "promptVersion" : 2,
+  "caseId" : "eval-syn-bn-01-worker",
+  "modelId" : "claude-sonnet-5-5",
+  "requestSha256" : "e47b262eb4ecc796c181237686708503ae416630c2320c0b6e4772e4ecfdc960",
+  "provenance" : "synthetic",
+  "source" : "recorded from a live call",
+  "recordedAt" : "2026-11-17T14:22:56.717987Z",
+  "stopReason" : "end_turn",
+  "usage" : {
+    "inputTokens" : 632,
+    "outputTokens" : 444,
+    "cacheReadTokens" : 0
+  },
+  "response" : {
+    "status" : "OK",
+    "reason" : "NONE",
+    "action" : "REPLACE",
+    "proposed_text" : "১. নিয়োগ ও পদ\n(ক) মালিক শ্রমিককে সেলাই অপারেটর পদে নিয়োগ দিলেন এবং শ্রমিক কর্মস্থল হিসেবে কাল্পনিকপুর কারখানা মেনে নিলেন।\n(খ) প্রয়োজনে মালিক শ্রমিকের পদমর্যাদা, মজুরি ও সুবিধা অক্ষুণ্ন রেখে, লিখিত নোটিশ দিয়ে, শ্রমিকের দক্ষতার সঙ্গে সামঞ্জস্যপূর্ণ কাজে বদলি করতে পারবেন; আইনের চেয়ে কম অনুকূল কোনো শর্ত প্রযোজ্য হবে না। [EMPLOYEE_ID_1]",
+    "rationale" : "বদলির ক্ষমতা বজায় থাকলেও মজুরি-পদমর্যাদা রক্ষা ও লিখিত নোটিশের সীমা যুক্ত হওয়ায় শ্রমিকের অধিকার সুরক্ষিত হয়।"
+  }
+}

@@ -1,0 +1,24 @@
+{
+  "fixtureVersion" : 1,
+  "promptId" : "counter-offer",
+  "promptVersion" : 2,
+  "caseId" : "eval-syn-bn-01-worker",
+  "modelId" : "claude-sonnet-5-5",
+  "requestSha256" : "6de699bd96ebe5f80165d124e5c54ebdbe418a0e756be8af47e4712b7aff3142",
+  "provenance" : "synthetic",
+  "source" : "recorded from a live call",
+  "recordedAt" : "2026-11-17T14:22:56.671755Z",
+  "stopReason" : "end_turn",
+  "usage" : {
+    "inputTokens" : 583,
+    "outputTokens" : 356,
+    "cacheReadTokens" : 0
+  },
+  "response" : {
+    "status" : "OK",
+    "reason" : "NONE",
+    "action" : "REPLACE",
+    "proposed_text" : "৯. বিরোধ নিষ্পত্তি: পক্ষগণ প্রথমে আলোচনা বা উভয়ের সম্মত নিরপেক্ষ মধ্যস্থতার মাধ্যমে বিরোধ নিষ্পত্তির চেষ্টা করবেন। তাতে নিষ্পত্তি না হলে যে কোনো পক্ষ আইন অনুযায়ী এখতিয়ারসম্পন্ন শ্রম আদালতে যেতে পারবেন; এই অধিকার ত্যাগ করা হয়নি।",
+    "rationale" : "মালিকের সালিশকারীর একচেটিয়া ক্ষমতা ও আদালতের অধিকার ত্যাগ বাদ দিয়ে নিরপেক্ষ মধ্যস্থতা এবং শ্রম আদালতের অধিকার রাখা হয়েছে।"
+  }
+}

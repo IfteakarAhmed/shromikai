@@ -1,0 +1,24 @@
+{
+  "fixtureVersion" : 1,
+  "promptId" : "counter-offer",
+  "promptVersion" : 2,
+  "caseId" : "eval-syn-bn-01-worker",
+  "modelId" : "claude-sonnet-5-5",
+  "requestSha256" : "f80e1090b3fd62b1bd875e9e10d2aba3dada9192d647c0ab2ea498a95214cb37",
+  "provenance" : "synthetic",
+  "source" : "recorded from a live call",
+  "recordedAt" : "2026-11-17T14:22:57.444352Z",
+  "stopReason" : "end_turn",
+  "usage" : {
+    "inputTokens" : 688,
+    "outputTokens" : 322,
+    "cacheReadTokens" : 1222
+  },
+  "response" : {
+    "status" : "OK",
+    "reason" : "NONE",
+    "action" : "REPLACE",
+    "proposed_text" : "৯. বিরোধ নিষ্পত্তি: বিরোধ প্রথমে উভয়পক্ষের সম্মত নিরপেক্ষ সালিশকারীর মাধ্যমে নিষ্পত্তির চেষ্টা করা হবে। সালিশকারীর সিদ্ধান্তে অসন্তুষ্ট হলে বা সিদ্ধান্ত না হলে শ্রমিক আইনানুযায়ী ৩০ দিনের মধ্যে শ্রম আদালতে লিখিত অভিযোগ করতে পারবেন।",
+    "rationale" : "সালিশকারী উভয়পক্ষের সম্মতিতে ঠিক হবে এবং শ্রম আদালতে যাওয়ার আইনি অধিকার বহাল থাকবে।"
+  }
+}

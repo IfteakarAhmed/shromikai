@@ -1,0 +1,40 @@
+{
+  "fixtureVersion" : 1,
+  "promptId" : "clause-facts",
+  "promptVersion" : 1,
+  "caseId" : "eval-syn-bn-01-worker",
+  "modelId" : "claude-haiku-5-5",
+  "requestSha256" : "cb144263077df982581745602f55804744ddd2bedb24321424420e6a9601d7ff",
+  "provenance" : "synthetic",
+  "source" : "recorded from a live call",
+  "recordedAt" : "2026-11-17T14:22:54.684404Z",
+  "stopReason" : "end_turn",
+  "usage" : {
+    "inputTokens" : 255,
+    "outputTokens" : 178,
+    "cacheReadTokens" : 0
+  },
+  "response" : {
+    "status" : "OK",
+    "reason" : "NONE",
+    "clauses" : [ {
+      "id" : "proposal",
+      "facts" : [ {
+        "parameter" : "NOTICE_BY_EMPLOYER",
+        "value" : 30,
+        "unit" : "DAYS",
+        "confidence" : 0.5
+      }, {
+        "parameter" : "TERMINATION_BENEFIT_STATED",
+        "value" : 1,
+        "unit" : "BOOLEAN",
+        "confidence" : 0.9
+      }, {
+        "parameter" : "NOTICE_BY_WORKER",
+        "value" : 30,
+        "unit" : "DAYS",
+        "confidence" : 0.95
+      } ]
+    } ]
+  }
+}
