@@ -60,6 +60,11 @@ whole name, which is not a role word.
   decision above. Consulting the list for name parts as well would fix it; it is not done, because
   it goes beyond "whole values only" and means a lone "মালিক" is no longer redacted when it is part
   of a real person's name. The owner decided on 17 Nov 2026 not to extend it (R-03 stays strict); the fix is planned after submission (prompt v2 or context-aware filtering, with its own ADR and eval).
+- **The list is loaded in production while it is still a draft** (`status: draft`, `reviewed_by:
+  null`). The loader does not require a reviewer, by design of this ADR (the loader was not
+  changed in the review fixes); until a Bangla-reading team member has read every entry, a
+  deployment that handles real contracts runs on an unreviewed privacy list. Recorded in
+  `docs/known-gaps.md`.
 - The list is Bangla-first and short. A role word it lacks still fails closed; the fix is to add the
   word after review, never to relax the guard.
 - The inflected forms are not listed: the guard works on protected values, and the model returns
@@ -81,7 +86,8 @@ whole name, which is not a role word.
 ## Verification
 
 `BanglaRoleWordsFailClosedTest` (role words kept, real names, NID, phone and e-mail redacted and
-blocked when leaked, no block on the redacted text), `RoleWordAllowlistTest` (whole-value matching,
+blocked when leaked, no block on the redacted text, and a longer person value that contains a role
+word still blocked: the `syn-bn-03` mechanism, pinned by a unit test and not confirmed by a live run), `RoleWordAllowlistTest` (whole-value matching,
 file validation, no invented identifier of the five synthetic contracts is on the list), the local
 evaluation step on all five contracts (`./gradlew evaluate -Pstep=local`: PII recall 36 of 36; role
 words kept in four of five contracts, not in `syn-bn-03`; no cloud call) and the live run of

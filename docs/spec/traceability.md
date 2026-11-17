@@ -17,6 +17,12 @@ status column at every phase exit; the P12 fact-check uses this file as its chec
 > `Verified` until the P9 acceptance check and Prompt R pass. Deferred: FR-73 user management and
 > FR-78 (P11); FR-74 pitch, team, Mermaid (P12) and contract numbers (P10).
 
+> **P10 status note (2026-11-17, review fixes).** FR-79 to FR-83, NFR-21 and the FR-74 contract numbers
+> were updated after the Prompt R review of P10. Statuses describe what exists; every number lives in
+> `eval/reports/report.md` and is not repeated here (R-07). The P10 run is 5 synthetic contracts,
+> worker side, one run, 0 reviewed labels (ADR-0024). Nothing is `Verified`: no phase tag, no human
+> acceptance check and no GitHub run of `eval-smoke` yet (nothing is pushed).
+
 ## 1. Judging criteria
 
 | Criterion (points) | What judges look for | Requirements | Proof artefact | Phase | Status |
@@ -208,16 +214,16 @@ status becomes `Verified` only when that proof exists and passes.
 | FR-71 | Redline view, print, share | Real-World Impact | P9 | Playwright memo print view; share-button test | Implemented (P9; e2e run locally, not in CI) |
 | FR-72 | Compare mode UI | Innovation | P9 | Playwright `j5-compare` | Implemented (P9; e2e run locally, not in CI) |
 | FR-73 | Admin console | Technical Execution | P9 | Playwright `j3-admin` equivalent (`e2e/admin.spec.ts`), `UsageKpiIT`; users part deferred | Implemented without user management (users deferred to P11) |
-| FR-74 | `/docs` hub | Presentation | P9 | MSW `/docs/audit` test; CI grep for hard-coded metrics; pitch, team and Mermaid in P12, contract numbers in P10 | Partial (P9 hub pages; rest deferred) |
+| FR-74 | `/docs` hub | Presentation | P9 | MSW `/docs/audit` test; CI grep for hard-coded metrics; pitch, team and Mermaid in P12, contract numbers in P10 | Partial (P9 hub pages; P10 added the contract numbers on `/docs/evaluation` from `report.json`; pitch, team, Mermaid deferred; `/api/v1/meta` `latestEval` still null) |
 | FR-75 | Bilingual UI | Global Readiness | P9 | i18n parity check; Playwright `locale` | Implemented (P9; e2e run locally, not in CI) |
 | FR-76 | Low-bandwidth mode and read-aloud | Real-World Impact | P9 | Vitest `LowBandwidth`, read-aloud visibility | Implemented (P9; e2e run locally, not in CI) |
 | FR-77 | Disclaimer and AI transparency | Ethical AI | P9 | UI snapshot tests; memo golden file; `McpServerIT` disclaimer assertion | Implemented (P9; e2e run locally, not in CI) |
 | FR-78 | Account deletion, AI-builder record | Ethical AI | P11 (deferred after preliminary submission) | `AccountDeletionIT` (not written); `docs/ai-tools.md` exists | Deferred; `docs/ai-tools.md` part done |
-| FR-79 | Eval dataset and labels | Technical Execution | P10 | `LabelSchemaTest` | Specified |
-| FR-80 | Evaluation runner and reports | Technical Execution | P10 | `MetricFormulaTest`, `EvalRunnerSmokeIT`, `ReportGeneratorTest` | Specified |
-| FR-81 | Calibrated LLM-as-judge | Technical Execution | P10 | `JudgeCalibrationTest` | Specified |
-| FR-82 | Observability | Technical Execution | P10 | `MetricsIT` | Specified |
-| FR-83 | CI eval-smoke | Technical Execution | P10 | CI `eval-smoke` job (seeded regression turns it red) | Specified |
+| FR-79 | Eval dataset and labels | Technical Execution | P10 | `LabelSchemaTest`; `eval/labels/*.yaml`, `eval/labels/export/labels.csv`, `eval/citations/` | Partial: 5 synthetic contracts (specified 12 to 15) and no Bangla–English pair; every label and adversarial claim is a Claude draft with `reviewed_by: null` (0 reviewed); no `eval/LABELLING.md` |
+| FR-80 | Evaluation runner and reports | Technical Execution | P10 | `MetricFormulaTest`, `EvalRunnerSmokeIT`, `ReportGeneratorTest`; `eval/reports/report.md`, `report.json` | Implemented; the run is partial: one run, worker side only, dev split, same-family verifier, no baseline fairness review; M-02, M-13, M-14, M-18, M-21, M-22, M-24, M-26 to M-28 not measured (reasons in the report); several targets missed and reported as missed |
+| FR-81 | Calibrated LLM-as-judge | Technical Execution | P10 | `JudgeCalibrationTest` | Partial: only the calibration gate logic exists and is tested; the judge itself was cut (ADR-0024), so M-21 and M-26 are "not done" in the report |
+| FR-82 | Observability | Technical Execution | P10 | `MetricsIT` | Implemented (Micrometer series with allowlisted labels; exercised in `MetricsIT`; not run against a deployed scraper) |
+| FR-83 | CI eval-smoke | Technical Execution | P10 | CI `eval-smoke` job (seeded regression turns it red) | Implemented; `evalSmoke` and `EvalRunnerSmokeIT` pass locally, not yet run on GitHub (unpushed); it recomputes the safety gate from committed results and cannot re-run the verifier on the law (no corpus in CI) |
 | FR-84 | n8n legislative watch | Scalability | P11 | `N8nWorkflowContractTest`, `ReingestOnChangeIT`, `RetrievalSmokeServiceIT` | Specified |
 | FR-85 | Production deployment with demo profile | Presentation | P11 | Manual: public HTTPS URL and one-click demo logins | Specified |
 | FR-86 | Hardening | Ethical AI (security) | P11 | CI Dependency-Check and secret scanning; restore drill in `docs/runbook.md` | Specified |
@@ -244,4 +250,4 @@ status becomes `Verified` only when that proof exists and passes.
 | NFR-18 | Observability | Technical Execution | P1, P10 | `LogAllowlistTest`, `MetricsIT` | Specified |
 | NFR-19 | Determinism | Technical Execution | P7 | `DeterminismIT` | Specified |
 | NFR-20 | Abuse resistance | Scalability | P7 | `AbuseLimitsIT` | Specified |
-| NFR-21 | Fairness (language and side) | Ethical AI | P10 | M-13, M-14 | Specified |
+| NFR-21 | Fairness (language and side) | Ethical AI | P10 | M-13, M-14 | Partial: M-13 not available (no Bangla–English pair of one contract) and M-14 not run (employer side), so nothing is measured |
