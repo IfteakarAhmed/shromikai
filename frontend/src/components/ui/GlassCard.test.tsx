@@ -160,4 +160,25 @@ describe('GlassCard depth', () => {
     })
     expect(element).not.toHaveAttribute('data-tilting')
   })
+
+  it('NFR-08 holds its lean still while the pointer is over a control, so nothing slides under it', () => {
+    media({})
+    render(
+      <PreferencesProvider>
+        <GlassCard data-testid="card">
+          <button type="button">act</button>
+        </GlassCard>
+      </PreferencesProvider>,
+    )
+    const element = screen.getByTestId('card')
+    fireEvent.pointerMove(element, { clientX: 300, clientY: 100, pointerType: 'mouse' })
+    expect(element.style.getPropertyValue('--ry')).toBe('6deg')
+    fireEvent.pointerMove(screen.getByRole('button', { name: 'act' }), {
+      clientX: 0,
+      clientY: 200,
+      pointerType: 'mouse',
+    })
+    expect(element.style.getPropertyValue('--ry')).toBe('6deg')
+    expect(element.style.getPropertyValue('--rx')).toBe('0deg')
+  })
 })

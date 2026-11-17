@@ -18,6 +18,8 @@ interface GlassCardProps extends HTMLAttributes<HTMLElement> {
 
 const round = (value: number, digits: number) => String(Number(value.toFixed(digits)))
 
+const CONTROLS = 'a, button, summary, input, select, textarea, label, [role="button"]'
+
 /**
  * A glass card with depth (C2b, CSS 3D only). The glass and the glow live on two hidden layers
  * behind the content, so the blur never sits on the element that tilts (a blur would flatten the
@@ -48,6 +50,11 @@ export function GlassCard({
     onPointerMove?.(event)
     const element = ref.current
     if (!capable || element === null || event.pointerType === 'touch') {
+      return
+    }
+    // Over a control the lean holds still, so the control never slides under the pointer
+    // between pressing and releasing.
+    if ((event.target as Element).closest(CONTROLS) !== null) {
       return
     }
     const rect = element.getBoundingClientRect()
