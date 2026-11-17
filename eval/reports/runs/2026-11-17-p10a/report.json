@@ -1,14 +1,14 @@
 {
   "provenance" : {
-    "gitSha" : "5832a27",
-    "generatedAt" : "2026-11-17T14:23:26.830984Z",
+    "gitSha" : "f0f22fa",
+    "generatedAt" : "2026-11-17T14:43:32.243248Z",
     "corpusRelease" : "2026.11.11-1",
     "generatedBy" : "./gradlew evaluate (bd.shromikai.eval); never edited by hand"
   },
   "config" : {
     "runId" : "p10a",
-    "generatedAt" : "2026-11-17T14:23:26.830984Z",
-    "gitSha" : "5832a27",
+    "generatedAt" : "2026-11-17T14:43:32.243248Z",
+    "gitSha" : "f0f22fa",
     "gitClean" : true,
     "corpusRelease" : "2026.11.11-1",
     "set" : "contracts, citations, pii",
@@ -54,8 +54,8 @@
     "met" : true
   }, {
     "id" : "M-03",
-    "metric" : "Fabricated-citation rate (objective checks)",
-    "baseline" : "1.000 (21 of 21)",
+    "metric" : "Citations not resolvable against the corpus (objective checks)",
+    "baseline" : "not resolvable against the corpus: 1.000 (21 of 21): 17 cite the contract's own clauses, 4 malformed keys",
     "shromikai" : "0.000 (0 of 65)",
     "target" : "reported; ShromikAI shown = 0",
     "met" : null
@@ -63,7 +63,7 @@
     "id" : "M-04",
     "metric" : "Fabricated-citation catch rate",
     "baseline" : "not applicable",
-    "shromikai" : "1.000 (73 of 73)",
+    "shromikai" : "1.000 (52 of 52) on the independent adversarial set; in addition 21 of 21 baseline and 0 of 0 raw-agent citations caught by the same check that defines them (a consistency check, not independent evidence)",
     "target" : "0 misses",
     "met" : true
   }, {
@@ -114,7 +114,7 @@
         "ci95" : [ 0.0, 0.055 ],
         "target" : "0",
         "met" : true,
-        "basis" : "5 analyses; every shown citation",
+        "basis" : "4 analysed, 1 failed closed; every shown citation",
         "note" : null,
         "extra" : { }
       },
@@ -145,11 +145,11 @@
         "basis" : "LLM claims; fabricated = section missing or quote not in it (no reviewer); see unresolvedByKeyShape for what a missing section pointed at",
         "note" : "raw risk-agent claims before verification; what is shown is in shownCitationsFabricated",
         "extra" : {
+          "unresolvedByKeyShape" : { },
           "reasonCodes" : {
             "QUOTE_TOO_SHORT" : 2,
             "SUPPORT_PARTIAL" : 13
           },
-          "unresolvedByKeyShape" : { },
           "shownCitationsFabricated" : "0.000 (0 of 66)"
         }
       },
@@ -288,7 +288,7 @@
         "ci95" : [ 0.0035, 0.105 ],
         "target" : "≤ 0.30",
         "met" : true,
-        "basis" : "5 analyses",
+        "basis" : "4 analysed, 1 failed closed",
         "note" : null,
         "extra" : { }
       },
@@ -333,10 +333,10 @@
         "basis" : "40 retrieval questions (0 checked by a person; the rest draft); method HYBRID_GRAPH",
         "note" : null,
         "extra" : {
-          "gitSha" : "aa1c970",
-          "recallAt8" : 1.0,
+          "corpusRelease" : "2026.11.11-1",
           "mrrAt10" : 0.8104166666666666,
-          "corpusRelease" : "2026.11.11-1"
+          "recallAt8" : 1.0,
+          "gitSha" : "aa1c970"
         }
       },
       "M-16" : {
@@ -393,13 +393,18 @@
         "ci95" : null,
         "target" : "p95 ≤ 85 s (reference)",
         "met" : false,
-        "basis" : "3 live analyses (replayed runs excluded); nearest rank",
+        "basis" : "3 analyses on mixed live and replayed calls (analyses replayed in full are excluded): syn-en-01: 12 live + 60 replayed calls, 60.5 s; syn-bn-02: 50 live + 2 replayed calls, 85.5 s; syn-bn-01: 14 live + 57 replayed calls, 98.4 s; nearest rank",
         "note" : null,
         "extra" : {
           "p50Seconds" : 85.527,
           "p95Seconds" : 98.448,
           "p50SecondsWithoutRedact" : 21.413,
-          "p95SecondsWithoutRedact" : 45.824
+          "p95SecondsWithoutRedact" : 45.824,
+          "perContract" : {
+            "syn-en-01" : "12 live + 60 replayed calls, 60.5 s",
+            "syn-bn-02" : "50 live + 2 replayed calls, 85.5 s",
+            "syn-bn-01" : "14 live + 57 replayed calls, 98.4 s"
+          }
         }
       },
       "M-20" : {
@@ -460,10 +465,10 @@
         "basis" : "4 contracts; clause boundaries compared by printed clause label; draft labels",
         "note" : null,
         "extra" : {
-          "fp" : 0,
-          "typeAccuracy" : "0.838 (31 of 37)",
+          "fn" : 0,
           "tp" : 37,
-          "fn" : 0
+          "typeAccuracy" : "0.838 (31 of 37)",
+          "fp" : 0
         }
       },
       "M-24" : {
@@ -562,12 +567,12 @@
         "basis" : "BASELINE claims; fabricated = section missing or quote not in it (no reviewer); see unresolvedByKeyShape for what a missing section pointed at",
         "note" : "every baseline citation counts as shown (evaluation.md M-03)",
         "extra" : {
-          "reasonCodes" : {
-            "SECTION_NOT_FOUND" : 21
-          },
           "unresolvedByKeyShape" : {
             "contract-clause-reference" : 17,
             "malformed-statute-reference" : 4
+          },
+          "reasonCodes" : {
+            "SECTION_NOT_FOUND" : 21
           }
         }
       },
@@ -665,7 +670,7 @@
     }
   },
   "failures" : [ "superseded by a later run of the same case (not counted): syn-en-01 / shromikai: FAILED (internal-error)", "superseded by a later run of the same case (not counted): syn-bn-01 / shromikai: FAILED (privacy-guard-blocked)", "superseded by a later run of the same case (not counted): syn-bn-01 / shromikai: FAILED (internal-error)", "superseded by a later run of the same case (not counted): syn-bn-01 / shromikai: FAILED (internal-error)", "syn-en-02 / baseline: 4 findings, 0 UNCERTAIN; reason codes of claims not verified: {SECTION_NOT_FOUND=7}", "syn-en-01 / baseline: 4 findings, 0 UNCERTAIN; reason codes of claims not verified: {SECTION_NOT_FOUND=7}", "syn-bn-01 / baseline: FAILED (privacy-guard-blocked)", "syn-bn-02 / baseline: 4 findings, 0 UNCERTAIN; reason codes of claims not verified: {SECTION_NOT_FOUND=7}", "syn-bn-03 / baseline: FAILED (privacy-guard-blocked)", "syn-en-02 / shromikai: 13 findings, 0 UNCERTAIN; reason codes of claims not verified: {SUPPORT_PARTIAL=2}; warnings: [verifier-same-family]", "syn-en-01 / shromikai: 13 findings, 0 UNCERTAIN; reason codes of claims not verified: {QUOTE_TOO_SHORT=1, SUPPORT_PARTIAL=5}; warnings: [obligations-unavailable, verifier-same-family]", "syn-bn-02 / shromikai: 11 findings, 1 UNCERTAIN; reason codes of claims not verified: {SUPPORT_PARTIAL=2}; warnings: [obligations-unavailable, counter-offer-dropped, verifier-same-family]", "syn-bn-03 / shromikai: FAILED (privacy-guard-blocked)", "syn-bn-01 / shromikai: 13 findings, 0 UNCERTAIN; reason codes of claims not verified: {QUOTE_TOO_SHORT=1, SUPPORT_PARTIAL=4}; warnings: [verifier-same-family]" ],
-  "limitations" : [ "Small sample: 5 synthetic contracts, one side (worker), one run per system. Every result on fewer than 10 cases is indicative; no significance claim is made and no difference interval is computed.", "Synthetic data only: contracts were written by the team with invented names and numbers; no real contract and no public template is in the set.", "Dev split only: all contracts are the P5 dev split and the prompts were developed against syn-en-02; there is no frozen test split yet.", "Same-family verifier: every support check is Claude Haiku judging Claude Sonnet's claims (SAME_FAMILY); no independent verifier was run (ADR-0018).", "Unreviewed, circular labels: the gold labels were drafted by Claude, the same model family as the system under test, and no person has reviewed them (0 reviewed labels). Risk recall, precision, severity agreement and abstention are measured against these drafts and may share the system's blind spots.", "The adversarial claims (valid, contradicted, unrelated) were drafted by Claude from the section text and are unreviewed; the nonexistent, non-current and misquote cases are generated mechanically from the corpus.", "M-04 mixes independent evidence (the adversarial set) with a consistency check (baseline and raw-agent citations that fail the same existence and quote checks that define them as fabricated); the breakdown is in the M-04 details.", "Retrieval (M-15) uses draft questions written from the statute text by the team; none is checked yet.", "Latency was measured on a development Mac with the local PII model in Docker without a GPU, which dominates the REDACT stage; the p95 is over very few live analyses.", "Read the baseline's M-03 with its breakdown: a citation counts as fabricated when its section is not in the corpus, and the baseline's unresolved citations point at {contract-clause-reference=17, malformed-statute-reference=4} (contract-clause-reference = it cited the contract's own clause, not a law; malformed-statute-reference = a statute named in a key the corpus cannot resolve, for example several sections in one key). This shows that the plain model's citations cannot be checked against the law, not that it invented that many sections.", "The baseline prompt was never reviewed by a team member who did not write the ShromikAI prompts (evaluation.md §8), and it does not give the model the corpus's act codes or key format; the comparison may be unfair to the baseline in that respect.", "syn-en-02 replays the demo recordings of 16 November, made from the canary-free sample text with the ground-truth entity list standing in for the local PII model; its M-16 scan covers its PII values, not the content marker." ],
-  "knownFailures" : [ "The transfer finding of the demo contract cites BLA-2006:3, which does not clearly support the claim; the same-family verifier passed it (docs/known-gaps.md, cross-check of 17 November).", "syn-bn-01 / baseline: FAILED (privacy-guard-blocked)", "syn-bn-03 / baseline: FAILED (privacy-guard-blocked)", "syn-bn-03 / shromikai: FAILED (privacy-guard-blocked)", "Valid control ac-053 ended UNCERTAIN [SUPPORT_PARTIAL] (the drafted claim is unreviewed: the verifier or the claim may be at fault)", "Valid control ac-058 ended UNCERTAIN [SUPPORT_PARTIAL] (the drafted claim is unreviewed: the verifier or the claim may be at fault)", "Valid control ac-067 ended UNCERTAIN [SUPPORT_PARTIAL] (the drafted claim is unreviewed: the verifier or the claim may be at fault)", "Valid control ac-070 ended UNCERTAIN [SUPPORT_PARTIAL] (the drafted claim is unreviewed: the verifier or the claim may be at fault)" ],
+  "limitations" : [ "Small sample: 5 synthetic contracts, one side (worker), one run per system. Every result on fewer than 10 cases is indicative; no significance claim is made and no difference interval is computed.", "Synthetic data only: contracts were written by the team with invented names and numbers; no real contract and no public template is in the set.", "Dev split only: all contracts are the P5 dev split and the prompts were developed against syn-en-02; there is no frozen test split yet.", "Same-family verifier: every support check is Claude Haiku judging Claude Sonnet's claims (SAME_FAMILY); no independent verifier was run (ADR-0018).", "Unreviewed, circular labels: the gold labels were drafted by Claude, the same model family as the system under test, and no person has reviewed them (0 reviewed labels). Risk recall, precision, severity agreement and abstention are measured against these drafts and may share the system's blind spots.", "The adversarial claims (valid, contradicted, unrelated) were drafted by Claude from the section text and are unreviewed; the nonexistent, non-current and misquote cases are generated mechanically from the corpus.", "M-04 mixes independent evidence (the adversarial set) with a consistency check (baseline and raw-agent citations that fail the same existence and quote checks that define them as fabricated); the breakdown is in the M-04 details.", "Retrieval (M-15) uses draft questions written from the statute text by the team; none is checked yet.", "Latency was measured on a development Mac with the local PII model in Docker without a GPU, which dominates the REDACT stage; the p95 is over very few analyses.", "Latency (M-19) rests on mixed live and replayed calls, not on clean live runs (syn-en-01: 12 live + 60 replayed calls, 60.5 s; syn-bn-02: 50 live + 2 replayed calls, 85.5 s; syn-bn-01: 14 live + 57 replayed calls, 98.4 s). A replayed call returns at once, so the wall time of an analysis that replayed calls understates a fully live run, while the local PII step ran for real; the p95 is a mixed figure and indicative only.", "Read the baseline's M-03 with its breakdown: a citation counts as fabricated when its section is not in the corpus, and the baseline's unresolved citations point at {contract-clause-reference=17, malformed-statute-reference=4} (contract-clause-reference = it cited the contract's own clause, not a law; malformed-statute-reference = a statute named in a key the corpus cannot resolve, for example several sections in one key). This shows that the plain model's citations cannot be checked against the law, not that it invented that many sections.", "The baseline prompt was never reviewed by a team member who did not write the ShromikAI prompts (evaluation.md §8), and it does not give the model the corpus's act codes or key format; the comparison may be unfair to the baseline in that respect.", "syn-en-02 replays the demo recordings of 16 November, made from the canary-free sample text with the ground-truth entity list standing in for the local PII model; its M-16 scan covers its PII values, not the content marker." ],
+  "knownFailures" : [ "The transfer finding of the demo contract cites BLA-2006:3, which does not clearly support the claim; the same-family verifier passed it (docs/known-gaps.md, cross-check of 17 November).", "The privacy-guard-blocked failures listed here (syn-bn-01 (baseline), syn-bn-03 (baseline), syn-bn-03 (shromikai)) predate the role-word allowlist of ADR-0025 and were not rerun; after it, syn-bn-01 (ShromikAI) passed the guard in a live rerun, the syn-bn-01 baseline was not rerun, and syn-bn-03 is expected to stay blocked on the name-part path (pinned by BanglaRoleWordsFailClosedTest and seen in local run p10c; not confirmed by a live rerun).", "syn-bn-01 / baseline: FAILED (privacy-guard-blocked)", "syn-bn-03 / baseline: FAILED (privacy-guard-blocked)", "syn-bn-03 / shromikai: FAILED (privacy-guard-blocked)", "Valid control ac-053 ended UNCERTAIN [SUPPORT_PARTIAL] (the drafted claim is unreviewed: the verifier or the claim may be at fault)", "Valid control ac-058 ended UNCERTAIN [SUPPORT_PARTIAL] (the drafted claim is unreviewed: the verifier or the claim may be at fault)", "Valid control ac-067 ended UNCERTAIN [SUPPORT_PARTIAL] (the drafted claim is unreviewed: the verifier or the claim may be at fault)", "Valid control ac-070 ended UNCERTAIN [SUPPORT_PARTIAL] (the drafted claim is unreviewed: the verifier or the claim may be at fault)" ],
   "errata" : [ ]
 }

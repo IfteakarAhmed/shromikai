@@ -37,3 +37,4 @@
 - 2026-11-17T14:23:03.976890Z contract syn-bn-01: live spend US$0.0450; eval total US$1.2291; ledger total US$3.0706; [shromikai ANALYSED: 13 findings, 18 shown, 14 live + 57 replayed calls, priced US$0.4199, 98448 ms]
 - 2026-11-17T14:23:14.450696Z at-rest scan after step contracts: 0 hit(s) []
 - 2026-11-17T14:23:27.014860Z report written: ../eval/reports/report.md
+- 2026-11-17T14:43:32.418021Z report written: ../eval/reports/report.md

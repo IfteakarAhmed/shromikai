@@ -1,7 +1,7 @@
 {
   "runId" : "p10a",
-  "generatedAt" : "2026-11-17T14:23:26.830984Z",
-  "gitSha" : "5832a27",
+  "generatedAt" : "2026-11-17T14:43:32.243248Z",
+  "gitSha" : "f0f22fa",
   "gitClean" : true,
   "corpusRelease" : "2026.11.11-1",
   "set" : "contracts, citations, pii",
