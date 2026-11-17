@@ -1,0 +1,24 @@
+{
+  "fixtureVersion" : 1,
+  "promptId" : "counter-offer",
+  "promptVersion" : 2,
+  "caseId" : "eval-syn-bn-01-worker",
+  "modelId" : "claude-sonnet-5-5",
+  "requestSha256" : "6ae309ff5cab3fe504d0d47d5ad744f6d318b7491b6bff08d25e5b3ad1fb798f",
+  "provenance" : "synthetic",
+  "source" : "recorded from a live call",
+  "recordedAt" : "2026-11-17T14:09:58.561398Z",
+  "stopReason" : "end_turn",
+  "usage" : {
+    "inputTokens" : 738,
+    "outputTokens" : 327,
+    "cacheReadTokens" : 0
+  },
+  "response" : {
+    "status" : "OK",
+    "reason" : "NONE",
+    "action" : "REPLACE",
+    "proposed_text" : "৫. কর্মঘণ্টা ও ছুটি: শ্রমিক প্রতি সপ্তাহে সর্বোচ্চ ৬ দিন কাজ করবেন এবং কমপক্ষে ১ দিন (দোকান ও প্রতিষ্ঠানে দেড় দিন) মজুরিসহ সাপ্তাহিক ছুটি পাবেন। বছরে কমপক্ষে ১৩ দিন উৎসব ছুটি মজুরিসহ প্রযোজ্য হবে। [EMPLOYEE_ID_1]",
+    "rationale" : "সাত দিন কাজের বাধ্যবাধকতা বাদ দিয়ে আইনসম্মত সাপ্তাহিক ও উৎসব ছুটি নিশ্চিত করা হয়েছে।"
+  }
+}

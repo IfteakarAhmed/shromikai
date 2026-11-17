@@ -31,3 +31,6 @@
 - 2026-11-17T13:29:45.472117Z contract syn-bn-01: live spend US$0.3890; eval total US$1.1297; ledger total US$2.9711; [shromikai FAILED(internal-error): 0 findings, 0 shown, 48 live + 0 replayed calls, priced US$0.0000, 0 ms]
 - 2026-11-17T13:29:56.103413Z at-rest scan after step contracts: 0 hit(s) []
 - 2026-11-17T13:30:29.550512Z report written: ../eval/reports/report.md
+- 2026-11-17T14:10:00.227643Z contract syn-bn-01: live spend US$0.0545; eval total US$1.1841; ledger total US$3.0256; [shromikai FAILED(internal-error): 0 findings, 0 shown, 9 live + 48 replayed calls, priced US$0.0000, 0 ms]
+- 2026-11-17T14:10:11.077061Z at-rest scan after step contracts: 0 hit(s) []
+- 2026-11-17T14:10:33.410309Z report written: ../eval/reports/report.md

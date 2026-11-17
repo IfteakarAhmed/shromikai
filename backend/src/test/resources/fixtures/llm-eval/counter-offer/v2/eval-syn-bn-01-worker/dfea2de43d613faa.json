@@ -1,0 +1,24 @@
+{
+  "fixtureVersion" : 1,
+  "promptId" : "counter-offer",
+  "promptVersion" : 2,
+  "caseId" : "eval-syn-bn-01-worker",
+  "modelId" : "claude-sonnet-5-5",
+  "requestSha256" : "dfea2de43d613faa3579d63fb9d8d415b888f82609640307ce683cf210fb2c6a",
+  "provenance" : "synthetic",
+  "source" : "recorded from a live call",
+  "recordedAt" : "2026-11-17T14:09:58.552166Z",
+  "stopReason" : "end_turn",
+  "usage" : {
+    "inputTokens" : 574,
+    "outputTokens" : 349,
+    "cacheReadTokens" : 0
+  },
+  "response" : {
+    "status" : "OK",
+    "reason" : "NONE",
+    "action" : "REPLACE",
+    "proposed_text" : "৭. নোটিশ ও চাকরি অবসান: ছাঁটাইয়ের ক্ষেত্রে মালিক আইনে নির্ধারিত লিখিত নোটিশ দেবেন এবং শ্রমিককে প্রত্যেক বছর চাকরির জন্য ৩০ দিনের মজুরি বা প্রদেয় গ্রাচুইটি, যেটি বেশি, ক্ষতিপূরণ দেবেন। শ্রমিক চাকরি ছাড়তে চাইলে ৩০ দিনের লিখিত নোটিশ দেবেন।",
+    "rationale" : "মালিকের ছাঁটাইয়ের অধিকার থাকলেও আইনসম্মত নোটিশ ও বছরপ্রতি ৩০ দিনের মজুরির ক্ষতিপূরণ নিশ্চিত হলো।"
+  }
+}

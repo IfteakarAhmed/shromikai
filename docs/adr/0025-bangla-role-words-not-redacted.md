@@ -59,7 +59,7 @@ whole name, which is not a role word.
   would still block that contract. Whole-value matching does not reach this path, by design of the
   decision above. Consulting the list for name parts as well would fix it; it is not done, because
   it goes beyond "whole values only" and means a lone "মালিক" is no longer redacted when it is part
-  of a real person's name. The owner decides (see the P10 follow-up report).
+  of a real person's name. The owner decided on 17 Nov 2026 not to extend it (R-03 stays strict); the fix is planned after submission (prompt v2 or context-aware filtering, with its own ADR and eval).
 - The list is Bangla-first and short. A role word it lacks still fails closed; the fix is to add the
   word after review, never to relax the guard.
 - The inflected forms are not listed: the guard works on protected values, and the model returns

@@ -1,0 +1,24 @@
+{
+  "fixtureVersion" : 1,
+  "promptId" : "counter-offer",
+  "promptVersion" : 2,
+  "caseId" : "eval-syn-bn-01-worker",
+  "modelId" : "claude-sonnet-5-5",
+  "requestSha256" : "33382db9ae2b975880c723ad3fdf245abd715d23e416afd064e8b9cb253b233f",
+  "provenance" : "synthetic",
+  "source" : "recorded from a live call",
+  "recordedAt" : "2026-11-17T14:09:59.098382Z",
+  "stopReason" : "end_turn",
+  "usage" : {
+    "inputTokens" : 543,
+    "outputTokens" : 376,
+    "cacheReadTokens" : 0
+  },
+  "response" : {
+    "status" : "OK",
+    "reason" : "NONE",
+    "action" : "REPLACE",
+    "proposed_text" : "৬. ছুটি: শ্রমিক প্রতি পঞ্জিকা বৎসরে মজুরীসহ ন্যূনতম ১০ দিন নৈমিত্তিক ছুটি, ১৪ দিন পীড়া ছুটি এবং ১৩ দিন উৎসব ছুটি পাবেন। অর্জিত ছুটি আইন অনুযায়ী প্রাপ্য হবে। ছুটি মঞ্জুরের সময় কাজের প্রয়োজন বিবেচনা করা যাবে, তবে আইনসিদ্ধ ছুটি অস্বীকার করা যাবে না।",
+    "rationale" : "ধারাটি এখন আইনের ন্যূনতম নৈমিত্তিক, পীড়া ও ১৩ দিন উৎসব ছুটি নিশ্চিত করে এবং মালিকের কাজের সময়সূচি বিবেচনার সুযোগ রাখে।"
+  }
+}

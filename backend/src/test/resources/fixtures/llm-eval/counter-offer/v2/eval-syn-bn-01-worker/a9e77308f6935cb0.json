@@ -1,0 +1,24 @@
+{
+  "fixtureVersion" : 1,
+  "promptId" : "counter-offer",
+  "promptVersion" : 2,
+  "caseId" : "eval-syn-bn-01-worker",
+  "modelId" : "claude-sonnet-5-5",
+  "requestSha256" : "a9e77308f6935cb041cd2a04fd2e9fa382fcc1ed785813836a0554bf58dbe0ec",
+  "provenance" : "synthetic",
+  "source" : "recorded from a live call",
+  "recordedAt" : "2026-11-17T14:09:59.247304Z",
+  "stopReason" : "end_turn",
+  "usage" : {
+    "inputTokens" : 437,
+    "outputTokens" : 357,
+    "cacheReadTokens" : 0
+  },
+  "response" : {
+    "status" : "OK",
+    "reason" : "NONE",
+    "action" : "REPLACE",
+    "proposed_text" : "৮. গোপনীয়তা: চাকরি চলাকালে ও শেষ হওয়ার পরে শ্রমিক নিয়োগকর্তার ব্যবসায়িক গোপন তথ্য প্রকাশ বা অপব্যবহার করবেন না। চাকরি শেষ হওয়ার পর শ্রমিকের অন্য কোনো গার্মেন্টস প্রতিষ্ঠানে বা বৈধ পেশায় কাজ করার ওপর কোনো নিষেধাজ্ঞা থাকবে না। [EMPLOYEE_ID_1]",
+    "rationale" : "৫ বছরের পেশা-নিষেধ বাদ দিয়ে শুধু গোপনীয়তা রাখায় ধারাটি আইনসম্মত থাকে এবং নিয়োগকর্তার বৈধ স্বার্থও রক্ষিত হয়।"
+  }
+}

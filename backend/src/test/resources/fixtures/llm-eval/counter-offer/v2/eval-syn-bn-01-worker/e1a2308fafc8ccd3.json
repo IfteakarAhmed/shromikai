@@ -1,0 +1,24 @@
+{
+  "fixtureVersion" : 1,
+  "promptId" : "counter-offer",
+  "promptVersion" : 2,
+  "caseId" : "eval-syn-bn-01-worker",
+  "modelId" : "claude-sonnet-5-5",
+  "requestSha256" : "e1a2308fafc8ccd351eea0784c103fcec89d8c3d61c2bc5baade4669eaf043d3",
+  "provenance" : "synthetic",
+  "source" : "recorded from a live call",
+  "recordedAt" : "2026-11-17T14:09:59.512974Z",
+  "stopReason" : "end_turn",
+  "usage" : {
+    "inputTokens" : 708,
+    "outputTokens" : 347,
+    "cacheReadTokens" : 0
+  },
+  "response" : {
+    "status" : "OK",
+    "reason" : "NONE",
+    "action" : "REPLACE",
+    "proposed_text" : "৫. কর্মঘণ্টা ও অতিরিক্ত সময় শ্রমিক সাধারণত সপ্তাহে ৪৮ ঘণ্টার অধিক কাজ করবেন না এবং সপ্তাহে একদিন ছুটি পাবেন। ৪৮ ঘণ্টার অতিরিক্ত কাজ শ্রমিকের সম্মতিতে করানো যাবে এবং তার জন্য মূল মজুরির ২ গুণ হারে অধিককাল ভাতা দেওয়া হবে। [EMPLOYEE_ID_1]",
+    "rationale" : "সাপ্তাহিক ৪৮ ঘণ্টার সীমা রেখে অতিরিক্ত কাজের জন্য ২ গুণ হারে মজুরি নিশ্চিত করায় লঙ্ঘন দূর হয়।"
+  }
+}

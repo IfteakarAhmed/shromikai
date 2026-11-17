@@ -1,0 +1,24 @@
+{
+  "fixtureVersion" : 1,
+  "promptId" : "counter-offer",
+  "promptVersion" : 2,
+  "caseId" : "eval-syn-bn-01-worker",
+  "modelId" : "claude-sonnet-5-5",
+  "requestSha256" : "bacf969984c555b4711a275a3d8eda90070d56556e002c8da6134b18c63776fa",
+  "provenance" : "synthetic",
+  "source" : "recorded from a live call",
+  "recordedAt" : "2026-11-17T14:09:58.554826Z",
+  "stopReason" : "end_turn",
+  "usage" : {
+    "inputTokens" : 548,
+    "outputTokens" : 282,
+    "cacheReadTokens" : 0
+  },
+  "response" : {
+    "status" : "OK",
+    "reason" : "NONE",
+    "action" : "REPLACE",
+    "proposed_text" : "২. শিক্ষানবিশকাল: শ্রমিকের শিক্ষানবিশকাল ১২ মাস হবে। এই সময়ে মালিক শ্রমিককে আইন অনুযায়ী লিখিত নোটিশ দিয়ে, অথবা নোটিশের পরিবর্তে নোটিশ মেয়াদের জন্য মজুরি প্রদান করে চাকরির অবসান করতে পারবেন।",
+    "rationale" : "নোটিশ বা নোটিশ-মজুরির শর্ত যোগ হওয়ায় ধারাটি আইনসম্মত হলো এবং মালিকের অবসানের অধিকার বজায় থাকল।"
+  }
+}
