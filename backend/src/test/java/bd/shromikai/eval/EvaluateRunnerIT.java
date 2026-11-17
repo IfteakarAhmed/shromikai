@@ -185,7 +185,11 @@ class EvaluateRunnerIT {
     EvalWrapping.Run.liveAllowed = false;
     Set<String> standIn = new LinkedHashSet<>();
     List<PiiCase> cases = new ArrayList<>();
+    List<String> only = list("shromikai.eval.contracts", "");
     for (String id : SyntheticContracts.IDS) {
+      if (!only.isEmpty() && !only.contains(id)) {
+        continue;
+      }
       String text = SyntheticContracts.text(id);
       documents.add(text);
       EvalWrapping.Run.currentContract = id;
@@ -259,12 +263,29 @@ class EvaluateRunnerIT {
         }
       }
     }
+    StringBuilder lost = new StringBuilder();
+    for (int i = 0; i < original.size() && i < redacted.size(); i++) {
+      if (roleTokens(original.get(i)) > roleTokens(redacted.get(i).text().reveal())) {
+        String shown = redacted.get(i).text().reveal();
+        lost.append(" | role word lost in redacted paragraph ")
+            .append(i)
+            .append(": ")
+            .append(shown.length() > 300 ? shown.substring(0, 300) : shown);
+      }
+    }
     long total = counts.values().stream().mapToLong(c -> c[0]).sum();
     long kept = counts.values().stream().mapToLong(c -> Math.min(c[0], c[1])).sum();
     StringBuilder words = new StringBuilder();
     counts.forEach(
         (w, c) -> words.append(w).append('=').append(c[1]).append('/').append(c[0]).append(' '));
-    return kept + " of " + total + " (" + words.toString().strip() + ")";
+    return kept + " of " + total + " (" + words.toString().strip() + ")" + lost;
+  }
+
+  private long roleTokens(String text) {
+    return java.util.Arrays.stream(text.split("\\s+"))
+        .map(t -> t.replaceAll("^[\\p{P}\\p{S}]+|[\\p{P}\\p{S}]+$", ""))
+        .filter(roleWords::isRoleWord)
+        .count();
   }
 
   private void writeAdversarialSet() throws IOException {

@@ -1,0 +1,7 @@
+- 2026-11-17T13:17:59.415220Z local PII syn-bn-01: local-model in 105.6 s, {ADDRESS=[1, 1], EMAIL=[1, 1], NID=[1, 1], ORG=[1, 1], PERSON=[3, 3], PHONE=[1, 1]}; role words kept in the text: 16 of 16 (কারখানা=1/1 মালিক=6/6 শ্রমিক=7/7 সাক্ষী=1/1 স্বাক্ষর=1/1)
+- 2026-11-17T13:19:45.979354Z local PII syn-bn-02: local-model in 106.6 s, {ADDRESS=[1, 1], NID=[1, 1], ORG=[1, 1], PERSON=[2, 2], PHONE=[1, 1]}; role words kept in the text: 8 of 8 (কর্মচারী=4/4 নিয়োগকর্তা=3/3 স্বাক্ষর=1/1)
+- 2026-11-17T13:22:13.275079Z local PII syn-bn-03: local-model in 147.3 s, {ADDRESS=[1, 1], DOB=[1, 1], EMAIL=[1, 1], ORG=[1, 1], PASSPORT=[1, 1], PERSON=[1, 1]}; role words kept in the text: 5 of 9 (কর্মকর্তা=2/2 কর্মচারী=0/3 কোম্পানি=2/2 পরিচালক=1/1 স্বাক্ষর=0/1)
+- 2026-11-17T13:23:16.878566Z local PII syn-en-01: local-model in 63.6 s, {ADDRESS=[1, 1], EMAIL=[1, 1], NID=[1, 1], ORG=[1, 1], PERSON=[3, 3], PHONE=[1, 1]}; role words kept in the text: 21 of 21 (Employer=9/9 Witness=1/1 Worker=10/10 factory=1/1)
+- 2026-11-17T13:24:05.156678Z local PII syn-en-02: local-model in 48.3 s, {ADDRESS=[1, 1], EMAIL=[1, 1], NID=[1, 1], ORG=[1, 1], PERSON=[3, 3], PHONE=[1, 1]}; role words kept in the text: 8 of 8 (Company=5/5 Witness=1/1 company=1/1 manager=1/1)
+- 2026-11-17T13:24:05.478374Z adversarial set: 72 cases {CONTRADICTED_CLAIM=10, MISQUOTE=15, NONEXISTENT_SECTION=14, NOT_CURRENT=3, UNRELATED_CLAIM=10, VALID_CONTROL=20}
+- 2026-11-17T13:24:18.133624Z at-rest scan after step local: 0 hit(s) []
