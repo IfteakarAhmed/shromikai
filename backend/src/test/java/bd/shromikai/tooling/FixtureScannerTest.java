@@ -102,6 +102,38 @@ class FixtureScannerTest {
   }
 
   @Test
+  void shouldCheckEvaluationRecordingsAsModelFixtures() throws IOException {
+    // P10 recordings live in llm-eval/, apart from the demo's llm/; same rules, and the request
+    // hash (hex digits that look like an ID number) is not PII.
+    Path dir = Files.createDirectories(fixtures.resolve("llm-eval/xx-echo/v1/eval-case"));
+    String sha = "3213688747a15fc1" + "b".repeat(48);
+    Files.writeString(
+        dir.resolve("3213688747a15fc1.json"),
+        """
+        {"fixtureVersion":1,"promptId":"xx-echo","promptVersion":1,"caseId":"eval-case",
+         "modelId":"m","requestSha256":"%s","provenance":"synthetic","recordedAt":"2026-11-17",
+         "response":{"echo":"x"}}
+        """
+            .formatted(sha));
+    Files.writeString(
+        dir.resolve("aaaaaaaaaaaaaaaa.json"),
+        """
+        {"fixtureVersion":1,"promptId":"xx-echo","promptVersion":1,"caseId":"eval-case",
+         "modelId":"m","requestSha256":"%s","provenance":"synthetic","recordedAt":"2026-11-17",
+         "response":{"echo":"canary@example.invalid"}}
+        """
+            .formatted("c".repeat(64)));
+
+    assertThat(scanner().scan())
+        .noneMatch(v -> v.contains("3213688747a15fc1.json"))
+        .contains(
+            "llm-eval/xx-echo/v1/eval-case/aaaaaaaaaaaaaaaa.json: file name is not the start of"
+                + " requestSha256",
+            "llm-eval/xx-echo/v1/eval-case/aaaaaaaaaaaaaaaa.json: response contains a canary"
+                + " value outside placeholder form");
+  }
+
+  @Test
   void shouldAcceptAnAnswerThatBrokeItsSchemaOnlyWhenItIsMarkedAsRecorded() throws IOException {
     Path dir = Files.createDirectories(fixtures.resolve("llm/xx-echo/v1"));
     String body =

@@ -43,7 +43,7 @@ public final class FixtureScanner {
       Set.of(".json", ".yml", ".yaml", ".txt", ".md", ".html", ".csv", ".jsonl", ".xml");
   private static final Pattern LLM_PATH =
       Pattern.compile(
-          "llm/([a-z0-9-]+)/v([1-9][0-9]*)/(?:([A-Za-z0-9._-]+)/([0-9a-f]{16})|([A-Za-z0-9._-]+))\\.json");
+          "llm(?:-eval)?/([a-z0-9-]+)/v([1-9][0-9]*)/(?:([A-Za-z0-9._-]+)/([0-9a-f]{16})|([A-Za-z0-9._-]+))\\.json");
 
   private final Path testResources;
   private final Path mainResources;
@@ -85,12 +85,13 @@ public final class FixtureScanner {
             || relative.endsWith("/.gitkeep")) {
           continue;
         }
-        if (relative.startsWith("llm/")) {
+        boolean model = relative.startsWith("llm/") || relative.startsWith("llm-eval/");
+        if (model) {
           checkLlmFixture(relative, file, schemas, canaries, violations);
         } else if (relative.startsWith("documents/") && !relative.endsWith(".meta.yml")) {
           checkDocument(relative, file, violations);
         }
-        if (isText(file) && !relative.startsWith("llm/")) {
+        if (isText(file) && !model) {
           checkPii(relative, Files.readString(file, StandardCharsets.UTF_8), canaries, violations);
         }
       }
