@@ -1,3 +1,8 @@
+/*
+ * NOT PRODUCT TEXT. Prototype placeholder content for the Lovable design reference only (R-10):
+ * the section numbers, titles and quotes below were not taken from the statute corpus and must
+ * never be copied into the product, the specification or a demo. See ../README.md.
+ */
 export const recordedLawSections = {
   section4: {
     section: "৪",

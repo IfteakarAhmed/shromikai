@@ -1,3 +1,11 @@
+> **NOT PRODUCT TEXT. DESIGN REFERENCE ONLY (R-10, R-07, R-12).**
+> This folder is a Lovable visual prototype. Its look (tokens in `src/styles.css`, component shapes,
+> screenshots) was the reference for the real frontend. Every legal sentence, section number,
+> quote, statute name, finding, sample contract and number in `src/mocks/`, `src/locales/` and the
+> components here was typed by a prototype generator, **not taken from the statute corpus**. None
+> of it is verified law, none of it is shown to users, and nothing in `frontend/` or `backend/`
+> imports from this folder. Real law text comes only from the ingested corpus with a source URL.
+
 # Shromik Law Lens
 
 Build the design foundation for ShromikAI (শ্রমিকAI), a Bangla-first legal-tech product that checks employment contracts in Bangladesh and shows only verified law citations. Stack: React + TypeScript (strict, no "any") + Vite + Tailwind. No backend, no Supabase, no auth: use static mock data in src/mocks/. Never store anything in localStorage.
