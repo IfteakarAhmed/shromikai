@@ -5,9 +5,12 @@ import static org.assertj.core.api.Assertions.assertThat;
 import bd.shromikai.shared.Hashing;
 import bd.shromikai.testsupport.Requirement;
 import java.time.Clock;
+import java.time.Duration;
 import java.time.Instant;
+import java.time.ZoneId;
 import java.time.ZoneOffset;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicInteger;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
@@ -43,8 +46,57 @@ class DeadlineClockTest {
   }
 
   @Test
-  void aClockFarInTheFutureDoesNotDisableTheDeadlineEither() {
+  void aClockFarInTheFutureAlsoLetsTheAnalysisFinish() {
     assertThat(runWith(Instant.parse("2040-01-01T00:00:00Z")))
         .isEqualTo(AnalysisJob.Status.ANALYSED);
+  }
+
+  /**
+   * Fixed until armed; then the first reading is the start time and every later one is an hour on.
+   */
+  private static final class JumpingClock extends Clock {
+    private final Instant start = Instant.parse("2026-01-01T00:00:00Z");
+    private final AtomicInteger readings = new AtomicInteger(-1);
+
+    void arm() {
+      readings.set(0);
+    }
+
+    @Override
+    public ZoneId getZone() {
+      return ZoneOffset.UTC;
+    }
+
+    @Override
+    public Clock withZone(ZoneId zone) {
+      return this;
+    }
+
+    @Override
+    public Instant instant() {
+      int n = readings.get();
+      if (n < 0) {
+        return start;
+      }
+      readings.incrementAndGet();
+      return n == 0 ? start : start.plus(Duration.ofHours(1));
+    }
+  }
+
+  @Test
+  void theDeadlineExpiresWhenTheInjectedClockPassesTheHardTimeout() {
+    JumpingClock clock = new JumpingClock();
+    PipelineHarness harness =
+        new PipelineHarness(
+            null,
+            new AnalysisFixtures.StubSource(q -> List.of(AnalysisFixtures.KEY_NOTICE)),
+            List.of(AnalysisFixtures.noticeMinRule()),
+            PipelineHarness.properties(),
+            clock);
+    AnalysisJob job = harness.classifiedJob();
+    clock.arm();
+    harness.pipeline.run(job, AnalysisRequest.of(Side.WORKER), OWNER);
+
+    assertThat(job.status()).isEqualTo(AnalysisJob.Status.FAILED);
   }
 }
