@@ -85,7 +85,9 @@ public record RiskMetrics(
     double kappa = Stats.quadraticKappa(a, b, SEVERITY.size());
     MetricResult nonObviousResult =
         nonObvious == 0
-            ? MetricResult.notAvailable("M-09", "no gold risk is marked non-obvious in the labels")
+            ? MetricResult.notAvailable(
+                "M-09",
+                "no gold risk marked non-obvious belongs to a contract that was analysed in this run")
             : MetricResult.proportion("M-09", nonObviousMatched, nonObvious, basis);
     return new RiskMetrics(
         MetricResult.proportion("M-06", matched, gold, basis),
