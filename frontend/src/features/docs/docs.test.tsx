@@ -73,7 +73,7 @@ describe('docs hub (FR-74)', () => {
     expect(screen.queryByText(/চুক্তির মূল্যায়ন এখনো চালানো হয়নি/)).not.toBeInTheDocument()
   })
 
-  it('FR-74 R-07 /docs/evaluation takes the retrieval numbers from the report file, with counts, and says the contract evaluation has not run', () => {
+  it('FR-74 R-07 /docs/evaluation takes the retrieval numbers from the report file, with counts', () => {
     const report = retrievalReport()
     expect(report).not.toBeNull()
     renderApp(<EvaluationPage />, '/docs/evaluation')
@@ -87,7 +87,7 @@ describe('docs hub (FR-74)', () => {
     expect(cells[0]).toHaveTextContent(
       `${formatNumber(row?.questions ?? 0, 'bn')}-এর মধ্যে ${formatNumber(row?.hitsAt5 ?? 0, 'bn')}`,
     )
-    expect(screen.getByTestId('contracts-not-run')).toHaveTextContent('এখনো চালানো হয়নি')
+    // the contract part (report present or not) is covered in evaluationContracts.test.tsx
     // a method that was not run is shown as not run, with the file's own reason, not as a number
     expect(screen.getAllByText('চালানো হয়নি').length).toBeGreaterThan(0)
   })

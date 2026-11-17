@@ -82,3 +82,24 @@ jobs:
       - run: ./scripts/check-fixtures
       - run: ./gradlew promptLint --no-daemon
         working-directory: backend
+
+  eval-smoke:
+    # FR-83, evaluation.md §13: the hard safety gate on recorded results only, no model call.
+    # evalSmoke recomputes M-01, M-04 (misses), M-16 and M-17 from the results of the last
+    # committed evaluation run and fails when a gate is broken or report.json states other numbers.
+    # EvalRunnerSmokeIT runs the runner end to end on scripted stand-ins (fictional act).
+    name: eval-smoke (hard safety gate on recorded results)
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    defaults:
+      run:
+        working-directory: backend
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-java@v5
+        with:
+          distribution: temurin
+          java-version: '21'
+      - uses: gradle/actions/setup-gradle@v5
+      - run: ./gradlew evalSmoke --no-daemon
+      - run: ./gradlew integrationTest --tests 'bd.shromikai.eval.EvalRunnerSmokeIT' --no-daemon

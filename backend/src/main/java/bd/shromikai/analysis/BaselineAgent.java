@@ -63,10 +63,17 @@ public final class BaselineAgent {
     this.clock = clock;
   }
 
-  /** Runs the baseline for a finished analysis and stores it on the job. */
+  /**
+   * Runs the baseline and stores it on the job: after a finished analysis (compare mode), or on a
+   * job that finished CLASSIFY, so the evaluation can run the baseline alone on the same redacted
+   * text (evaluation.md §8).
+   */
   public void run(AnalysisJob job) {
     AnalysisRequest request = job.request();
-    if (job.status() != AnalysisJob.Status.ANALYSED || request == null) {
+    boolean ready =
+        job.status() == AnalysisJob.Status.ANALYSED
+            || job.status() == AnalysisJob.Status.CLASSIFIED;
+    if (!ready || request == null) {
       job.baseline(Baseline.unavailable("analysis-failed"));
       return;
     }

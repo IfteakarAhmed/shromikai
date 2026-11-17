@@ -1,0 +1,117 @@
+# Drafted claims for the adversarial citation set (evaluation.md §4.4, M-04, M-05).
+#
+# status: draft. Drafted by Claude (AI) on 2026-11-17 from the section text stored in the corpus
+# (release 2026.11.11-1, read from the development database), not from memory (R-10). No person has
+# reviewed these claims yet: reviewedBy stays null in eval/citations/adversarial.jsonl until one does.
+# Claims are the drafter's English paraphrase of the quoted Bangla or English text; a reviewer should
+# check each "validClaim" is supported by its quote and each "contradictedClaim" contradicts it.
+#
+# How the set uses them (AdversarialGenerator, seed 42):
+#   VALID_CONTROL       quote + validClaim of the same section            -> expected VERIFIED
+#   CONTRADICTED_CLAIM  quote + contradictedClaim (first 10 that have one) -> expected not VERIFIED
+#   UNRELATED_CLAIM     quote + the validClaim of a section of another topic -> expected not VERIFIED
+# Quotes are copied character for character from the current section text (checked by the runner).
+status: draft
+drafted_by: Claude (AI draft), 2026-11-17
+reviewed_by: null
+drafts:
+  - sectionKey: "BLA-2006:100@original"
+    topic: hours
+    quote: "কোন প্রাপ্তবয়স্ক শ্রমিক কোন প্রতিষ্ঠানে সাধারণতঃ দৈনিক আট ঘণ্টার অধিক সময় কাজ করিবেন না বা তাহাকে দিয়ে কাজ করানো যাইবে না"
+    validClaim: "An adult worker shall not ordinarily work, or be made to work, more than eight hours a day in an establishment."
+    contradictedClaim: "An adult worker may ordinarily be made to work twelve hours every day."
+  - sectionKey: "BLA-2006:101@amend-2013"
+    topic: hours
+    quote: "দৈনিক ছয় ঘণ্টার অধিক কাজ করিতে বাধ্য থাকিবেন না, যদি না উক্ত দিনে তাহাকে বিশ্রাম বা আহারের জন্য এক ঘণ্টা বিরতি দেওয়া হয়"
+    validClaim: "A worker is not obliged to work more than six hours a day unless given a one-hour break for rest or meals on that day."
+    contradictedClaim: "A worker may be required to work more than six hours a day without any break for rest or meals."
+  - sectionKey: "BLA-2006:102@original"
+    topic: hours
+    quote: "কোন প্রাপ্তবয়স্ক শ্রমিক কোন প্রতিষ্ঠানে সাধারণতঃ সপ্তাহে আটচল্লিশ ঘণ্টার অধিক সময় কাজ করিবেন না বা তাহাকে দিয়ে কাজ করানো যাইবে না।"
+    validClaim: "An adult worker shall not ordinarily work, or be made to work, more than forty-eight hours in a week."
+    contradictedClaim: null
+  - sectionKey: "BLA-2006:103@amend-2018"
+    topic: rest
+    quote: "প্রতি সপ্তাহে কারখানা ও শিল্পের ক্ষেত্রে একদিন এবং দোকান ও প্রতিষ্ঠানের ক্ষেত্রে দেড় দিন ছুটি পাইবেন;"
+    validClaim: "A worker gets a weekly holiday of one day in factories and industry, and one and a half days in shops and establishments."
+    contradictedClaim: "A factory worker has no right to any weekly holiday."
+  - sectionKey: "BLA-2006:108@amend-2018"
+    topic: overtime
+    quote: "তিনি অধিকাল কাজের জন্য তাহার মূল মজুরী ও মহার্ঘভাতা এবং এডহক বা অন্তবর্তী মজুরী, যদি থাকে, এর সাধারণ হারের দ্বিগুণ হারে ভাতা পাইবেন।"
+    validClaim: "A worker who works beyond the fixed hours gets an overtime allowance at twice the ordinary rate of basic wage and dearness allowance, and ad hoc or interim wages if any."
+    contradictedClaim: "Overtime work may be paid at the ordinary rate of wages, with no extra allowance."
+  - sectionKey: "BLA-2006:115@original"
+    topic: leave
+    quote: "প্রত্যেক শ্রমিক প্রতি পঞ্জিকা বৎসরে পূর্ণ মজুরীতে দশ দিনের নৈমিত্তিক ছুটি পাইবার অধিকারী হইবেন"
+    validClaim: "Every worker is entitled to ten days of casual leave with full wages in each calendar year."
+    contradictedClaim: "A worker is entitled to only five days of casual leave a year, without wages."
+  - sectionKey: "BLA-2006:116@original"
+    topic: leave
+    quote: "প্রত্যেক শ্রমিক প্রত্যেক পঞ্জিকা বৎসরে পূর্ণ মজুরীতে চৌদ্দ দিনের পীড়া ছুটি পাইবার অধিকারী হইবেন।"
+    validClaim: "Every worker (other than a newspaper worker) is entitled to fourteen days of sick leave with full wages in each calendar year."
+    contradictedClaim: null
+  - sectionKey: "BLA-2006:118@amend-2026"
+    topic: leave
+    quote: "প্রত্যেক শ্রমিককে প্রতি পঞ্জিকা বৎসরে [১৩ (তের)] দিনের মজুরীসহ উৎসব ছুটি মঞ্জুর করিতে হইবে।"
+    validClaim: "Every worker must be granted thirteen days of festival holidays with wages in each calendar year."
+    contradictedClaim: null
+  - sectionKey: "BLA-2006:121@original"
+    topic: wages
+    quote: "প্রত্যেক মালিক তৎকর্তৃক নিযুক্ত প্রত্যেক শ্রমিককে, এই আইনের অধীন পরিশোধ করিতে হইবে এরূপ সকল মজুরী পরিশোধ করিবার জন্য দায়ী থাকিবেন"
+    validClaim: "Every employer is responsible for paying every worker it employs all wages that must be paid under the Act."
+    contradictedClaim: null
+  - sectionKey: "BLA-2006:123@amend-2013"
+    topic: wages
+    quote: "সেই কাল শেষ হওয়ার পরবর্তী সাত কর্মদিবসের মধ্যে তাহার মজুরী পরিশোধ করিতে হইবে।"
+    validClaim: "A worker's wages must be paid within seven working days after the end of the wage period."
+    contradictedClaim: "Wages may be paid at any time within two months after the wage period ends."
+  - sectionKey: "BLA-2006:126@original"
+    topic: wages
+    quote: "উক্তরূপ কর্তনের পরিমাণ কোন ৰেত্রেই অনুপস্থিতির সময়ের জন্য তাহাকে প্রদেয় মজুরীর পরিমাণ এর অধিক হইবে না"
+    validClaim: "A deduction from wages for absence from duty may never exceed the wages payable for the period of absence."
+    contradictedClaim: "An employer may deduct more than the wages for the period of absence as a penalty for being absent."
+  - sectionKey: "BLA-2006:149@original"
+    topic: wages
+    quote: "কোন মালিক কোন শ্রমিককে এই অধ্যায়ের অধীন ঘোষিত বা প্রকাশিত নিম্নতম হারের কম হারে কোন মজুরী প্রদান করিতে পারিবেন না।"
+    validClaim: "No employer may pay a worker wages below the minimum rate declared or published under the chapter."
+    contradictedClaim: null
+  - sectionKey: "BLA-2006:26@original"
+    topic: termination
+    quote: "যে ক্ষেত্রে মালিক বিনা নোটিশে কোন শ্রমিকের চাকুরীর অবসান করিতে চাহেন সে ক্ষেত্রে, তিনি উপ-ধারা (১) অথবা (২) এর অধীন, প্রদেয় নোটিশের পরিবর্তে নোটিশ মেয়াদের জন্য মজুরী প্রদান করিয়া ইহা করিতে পারিবেন"
+    validClaim: "An employer who wants to end a worker's employment without notice may do so by paying wages for the notice period instead of the notice."
+    contradictedClaim: "An employer may end a worker's employment without notice and without paying any wages for the notice period."
+  - sectionKey: "BLA-2006:28@amend-2018"
+    topic: termination
+    quote: "কোন প্রতিষ্ঠানে নিয়োজিত কোন শ্রমিকের বয়স [ ৬০ (ষাট) ] বত্সর পূর্ণ হইলে তিনি চাকুরী হইতে স্বাভাবিক অবসর গ্রহণ করিবেন"
+    validClaim: "A worker employed in an establishment retires in the normal course on completing sixty years of age."
+    contradictedClaim: null
+  - sectionKey: "BLA-2006:46@amend-2026"
+    topic: maternity
+    quote: "প্রত্যেক নারী শ্রমিক তাহার মালিকের নিকট হইতে তাহার সন্তান প্রসবের সম্ভাব্য তারিখের অব্যবহিত পূর্ববর্তী [৬০ (ষাট) দিন] এবং সন্তান প্রসবের অব্যবহিত পরবর্তী [৬০ (ষাট) দিনের] জন্য প্রসূতি কল্যাণ সুবিধা পাইবার অধিকারী হইবেন"
+    validClaim: "Every woman worker is entitled to maternity benefit from her employer for sixty days before and sixty days after the expected date of delivery."
+    contradictedClaim: "A woman worker has no right to any maternity benefit before her delivery."
+  - sectionKey: "BLA-2006:5@original"
+    topic: appointment
+    quote: "কোন মালিক নিয়োগপত্র প্রদান না করিয়া কোন শ্রমিককে নিয়োগ করিতে পারিবেন না"
+    validClaim: "No employer may employ a worker without giving an appointment letter."
+    contradictedClaim: "An employer may employ a worker without giving any appointment letter."
+  - sectionKey: "BLA-2006:187@amend-2013"
+    topic: unions
+    quote: "কোন ট্রেড ইউনিয়নের সভাপতি [ও সাধারণ সম্পাদকসহ কোন কর্মকর্তাকে তাহাদের] সম্মতি ব্যতিরেকে এক জেলা হইতে অন্য জেলায় বদলী করা যাইবে না।"
+    validClaim: "The president, the general secretary or another officer of a trade union may not be transferred from one district to another without their consent."
+    contradictedClaim: null
+  - sectionKey: "BLA-2006:213@amend-2026"
+    topic: courts
+    quote: "কোন অধিকার প্রয়োগের জন্য শ্রম আদালতে দরখাস্ত করিতে পারিবেন"
+    validClaim: "A worker or an employer may apply to the Labour Court to enforce a right secured or granted under the Act or under an agreement."
+    contradictedClaim: null
+  - sectionKey: "CA-1872:27@original"
+    topic: contract
+    quote: "Every agreement by which any one is restrained from exercising a lawful profession, trade or business of any kind, is to that extent void."
+    validClaim: "An agreement that restrains anyone from exercising a lawful profession, trade or business is void to that extent."
+    contradictedClaim: "An agreement that restrains a person from exercising a lawful profession is fully enforceable."
+  - sectionKey: "CA-1872:28@original"
+    topic: courts
+    quote: "Every agreement, by which any party thereto is restricted absolutely from enforcing his rights under or in respect of any contract, by the usual legal proceedings in the ordinary tribunals"
+    validClaim: "An agreement that absolutely restricts a party from enforcing contract rights by the usual legal proceedings in the ordinary tribunals is void to that extent."
+    contradictedClaim: null

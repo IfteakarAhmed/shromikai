@@ -8,14 +8,15 @@ import { formatDecimal, formatNumber } from '../../lib/format'
 import { useTitle } from '../../lib/useTitle'
 import { usePreferences } from '../../state/preferencesContext'
 import { ProvenanceNote } from './ProvenanceNote'
-import { contractEvaluationExists, retrievalReport } from './reports'
+import { contractReport, retrievalReport } from './reports'
 
 const EvalChart = lazy(() => import('./EvalChart'))
 
 /**
- * `/docs/evaluation` (FR-74, R-07): the retrieval numbers from the generated report, each with its
- * count, and an honest "not yet run" for the contract evaluation, which has no report file. No
- * number on this page is written by hand.
+ * `/docs/evaluation` (FR-74, R-07): the retrieval numbers and the contract evaluation from the
+ * generated report files, each with its count, the sample size, the number of reviewed labels,
+ * what was not measured and the limitations. Without a report file the page says "not yet run".
+ * No number on this page is written by hand; the report's own wording is shown in English.
  */
 export default function EvaluationPage() {
   const { t, i18n } = useTranslation()
@@ -24,7 +25,7 @@ export default function EvaluationPage() {
   const { lowBandwidth } = usePreferences()
   const retrieval = retrievalReport()
   const n = (value: number) => formatNumber(value, language)
-  const contractsRun = contractEvaluationExists()
+  const contracts = contractReport()
 
   return (
     <div>
@@ -124,15 +125,108 @@ export default function EvaluationPage() {
       )}
 
       <h2 className="mt-10 text-2xl font-bold">{t('docs.evaluation.contractsTitle')}</h2>
-      {contractsRun ? (
-        <p className="mt-3">{t('docs.evaluation.contractsFound')}</p>
-      ) : (
+      {contracts === null ? (
         <GlassCard className="mt-3 border-uncertain/50 p-5">
           <p className="font-semibold" data-testid="contracts-not-run">
             {t('docs.evaluation.contractsNotRun')}
           </p>
           <p className="mt-2 text-muted-foreground">{t('docs.evaluation.contractsHow')}</p>
         </GlassCard>
+      ) : (
+        <>
+          <p className="mt-2 text-muted-foreground" data-testid="contracts-sample">
+            {t('docs.evaluation.contractsSample', {
+              contracts: n(contracts.contracts),
+              reviewed: n(contracts.reviewedLabelFiles),
+              labels: n(contracts.labelFiles),
+              cases: n(contracts.adversarialCases),
+              spend: formatDecimal(contracts.liveSpendMicros / 1_000_000, language, 2),
+            })}
+          </p>
+          <ProvenanceNote
+            file="eval/reports/report.json"
+            provenance={contracts.provenance}
+            language={language}
+          />
+          <p className="mt-4 text-sm text-muted-foreground">
+            {t('docs.evaluation.contractsEnglish')}
+          </p>
+          <div data-testid="contracts-headline">
+            <TableShell
+              label={t('docs.evaluation.headlineCaption')}
+              minWidth="40rem"
+              className="mt-2"
+            >
+              <caption className="sr-only">{t('docs.evaluation.headlineCaption')}</caption>
+              <thead>
+                <tr className="border-b border-border">
+                  <th scope="col" className="px-3 py-2 text-start">
+                    {t('docs.evaluation.colMetric')}
+                  </th>
+                  <th scope="col" className="px-3 py-2 text-start">
+                    {t('docs.evaluation.colBaseline')}
+                  </th>
+                  <th scope="col" className="px-3 py-2 text-start">
+                    {t('docs.evaluation.colShromikai')}
+                  </th>
+                  <th scope="col" className="px-3 py-2 text-start">
+                    {t('docs.evaluation.colTarget')}
+                  </th>
+                  <th scope="col" className="px-3 py-2 text-start">
+                    {t('docs.evaluation.colMet')}
+                  </th>
+                </tr>
+              </thead>
+              <tbody lang="en">
+                {contracts.headline.map((row) => (
+                  <tr key={row.id} className="border-b border-border last:border-b-0">
+                    <th scope="row" className="px-3 py-2 text-start font-medium">
+                      {row.id} {row.metric}
+                    </th>
+                    <td className="px-3 py-2">{row.baseline}</td>
+                    <td className="px-3 py-2">{row.shromikai}</td>
+                    <td className="px-3 py-2">{row.target}</td>
+                    <td className="px-3 py-2" lang={language}>
+                      {row.met === null
+                        ? t('docs.evaluation.metNone')
+                        : row.met
+                          ? t('docs.evaluation.metYes')
+                          : t('docs.evaluation.metNo')}
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </TableShell>
+          </div>
+          <h3 className="mt-6 text-xl font-bold">{t('docs.evaluation.unmeasuredTitle')}</h3>
+          <ul className="mt-2 list-disc space-y-1 ps-6" data-testid="contracts-unmeasured">
+            {contracts.unmeasured.map((m) => (
+              <li key={m.id} lang="en">
+                <strong>
+                  {m.id} {m.name}
+                </strong>
+                {' · '}
+                {m.status.replace('_', ' ').toLowerCase()}: {m.note}
+              </li>
+            ))}
+          </ul>
+          <h3 className="mt-6 text-xl font-bold">{t('docs.evaluation.limitationsTitle')}</h3>
+          <ul className="mt-2 list-disc space-y-1 ps-6">
+            {contracts.limitations.map((l) => (
+              <li key={l} lang="en">
+                {l}
+              </li>
+            ))}
+          </ul>
+          <h3 className="mt-6 text-xl font-bold">{t('docs.evaluation.knownFailuresTitle')}</h3>
+          <ul className="mt-2 list-disc space-y-1 ps-6">
+            {contracts.knownFailures.map((l) => (
+              <li key={l} lang="en">
+                {l}
+              </li>
+            ))}
+          </ul>
+        </>
       )}
     </div>
   )

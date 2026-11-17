@@ -53,6 +53,11 @@ public final class SyntheticContracts {
   }
 
   /** Values of the given PII types (names, NIDs, phones, e-mail addresses). */
+  /** Every PII value of the contract, of any type. */
+  public static List<String> allValues(String id) {
+    return entities(id).stream().map(Entity::value).toList();
+  }
+
   public static List<String> values(String id, String... types) {
     List<String> wanted = List.of(types);
     return entities(id).stream().filter(e -> wanted.contains(e.type())).map(Entity::value).toList();

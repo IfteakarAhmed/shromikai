@@ -1125,7 +1125,20 @@
       "contractsTitle": "Contracts: risks and citations",
       "contractsNotRun": "Not yet run. The evaluation of risks found, correct citations and invented citations on the contract set has not been run, so no number is shown and none should be quoted.",
       "contractsHow": "The numbers will appear here when the evaluation has produced a report file.",
-      "contractsFound": "A report file exists, but this page does not show it yet."
+      "contractsSample": "{{contracts}} synthetic contracts, worker side, one run per system; {{reviewed}} of {{labels}} label files reviewed by a person; {{cases}} adversarial citations; live spend of this run US${{spend}}. Results on fewer than 10 cases are indicative only.",
+      "contractsEnglish": "Values and wording are shown exactly as the report file states them (in English).",
+      "headlineCaption": "Headline: plain AI baseline vs ShromikAI",
+      "colMetric": "Metric",
+      "colBaseline": "Plain AI",
+      "colShromikai": "ShromikAI",
+      "colTarget": "Target",
+      "colMet": "Target met",
+      "metYes": "yes",
+      "metNo": "no",
+      "metNone": "not applicable",
+      "unmeasuredTitle": "What was not measured, and why",
+      "limitationsTitle": "Limitations",
+      "knownFailuresTitle": "Known failures"
     }
   },
   "warningCodes": {

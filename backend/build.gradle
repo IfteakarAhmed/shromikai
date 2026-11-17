@@ -20,6 +20,25 @@ repositories {
     mavenCentral()
 }
 
+// The evaluation harness (P10, evaluation.md): metrics, labels, report generator. Its own source
+// set, not packaged into the boot jar; the unit tests and the Spring-based runner in src/test see
+// it. ArchitectureTest keeps everything else from depending on it.
+sourceSets {
+    eval {
+        compileClasspath += sourceSets.main.output
+        runtimeClasspath += sourceSets.main.output
+    }
+    test {
+        compileClasspath += sourceSets.eval.output
+        runtimeClasspath += sourceSets.eval.output
+    }
+}
+
+configurations {
+    evalImplementation.extendsFrom implementation
+    evalRuntimeOnly.extendsFrom runtimeOnly
+}
+
 ext {
     // Latest Spring AI 1.1.x GA patch for Spring Boot 3.5 (ADR-0001 version log, conflict C17).
     set('springAiVersion', '1.1.8')
@@ -95,6 +114,10 @@ dependencies {
     testImplementation 'org.wiremock:wiremock-standalone:3.13.2'
     testImplementation 'net.jqwik:jqwik:1.9.3'
     testImplementation 'org.junit.platform:junit-platform-launcher'
+
+    // Evaluation harness only (P10): label files are YAML. Already on the runtime classpath through
+    // Spring AI; declared here so the eval source set does not rely on a transitive dependency.
+    evalImplementation 'com.fasterxml.jackson.dataformat:jackson-dataformat-yaml'
 }
 
 // ---------------------------------------------------------------------------------------------
@@ -338,6 +361,49 @@ tasks.register('evalRetrieval', Test) { Test t ->
             }
         }
     }
+}
+
+// ---------------------------------------------------------------------------------------------
+// Contract evaluation (P10, FR-80, evaluation.md §5): ./gradlew evaluate -Pstep=... -PrunId=...
+// Steps: local (PII redaction with the local model, adversarial set; no cloud call), citations,
+// contracts (-Pcontracts=a,b -Psystems=shromikai,baseline), report. A step that may call a cloud
+// model needs -PliveOk=eval; LiveSpendLedger and the eval cap (US$1.45) hold on top. Writes only
+// under eval/reports/, eval/citations/adversarial.jsonl, eval/labels/export/ and the separate eval
+// recordings in src/test/resources/fixtures/llm-eval/ (record-missing only).
+// ---------------------------------------------------------------------------------------------
+tasks.register('evaluate', Test) { Test t ->
+    description = 'Runs one step of the contract evaluation against the development database.'
+    group = 'verification'
+    configureTestTask(t)
+    useJUnitPlatform { includeTags 'eval' }
+    filter { includeTestsMatching 'bd.shromikai.eval.EvaluateRunnerIT' }
+    systemProperty 'shromikai.test.blockExternalHosts', 'false'
+    systemProperty 'shromikai.live', project.findProperty('liveOk') ?: ''
+    ['step', 'runId', 'contracts', 'systems', 'stepCapUsd'].each { name ->
+        systemProperty "shromikai.eval.${name}", project.findProperty(name) ?: ''
+    }
+    outputs.upToDateWhen { false }
+    def envFile = new File(repoRoot, '.env')
+    if (envFile.exists()) {
+        envFile.eachLine { line ->
+            def m = line =~ /^\s*([A-Za-z_][A-Za-z0-9_]*)=(.*)$/
+            if (m && !line.trim().startsWith('#') && m[0][2]) {
+                t.environment m[0][1], m[0][2]
+            }
+        }
+    }
+}
+
+// CI eval-smoke (FR-83): the hard safety gate (M-01, M-04 misses, M-16, M-17) recomputed from the
+// recorded results of the last committed run, and checked against report.json. No model call.
+tasks.register('evalSmoke', JavaExec) {
+    description = 'Checks the hard safety gate on the recorded evaluation results (no model call).'
+    group = 'verification'
+    dependsOn tasks.named('evalClasses')
+    classpath = sourceSets.eval.runtimeClasspath
+    mainClass = 'bd.shromikai.eval.EvalGate'
+    args new File(repoRoot, 'eval/reports/report.json').absolutePath
+    javaLauncher = javaToolchains.launcherFor { languageVersion = JavaLanguageVersion.of(21) }
 }
 
 // ---------------------------------------------------------------------------------------------

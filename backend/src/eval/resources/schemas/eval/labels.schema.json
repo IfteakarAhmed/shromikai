@@ -1,0 +1,103 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://shromikai.bd/schemas/eval/labels.schema.json",
+  "title": "Evaluation labels of one contract (evaluation.md §4.2)",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["contractId", "schemaVersion", "status", "drafted_by", "reviewed_by", "corpusRelease", "clauses", "risks", "obligations"],
+  "properties": {
+    "contractId": { "type": "string", "pattern": "^(syn|tpl)-[a-z]{2}-[0-9]{2}$" },
+    "schemaVersion": { "const": 1 },
+    "status": { "enum": ["draft", "reviewed"] },
+    "drafted_by": { "type": "string", "minLength": 1 },
+    "reviewed_by": {
+      "oneOf": [
+        { "type": "null" },
+        {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["name", "role", "date"],
+            "properties": {
+              "name": { "type": "string", "minLength": 1 },
+              "role": { "type": "string", "minLength": 1 },
+              "date": { "type": "string", "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}$" }
+            }
+          }
+        }
+      ]
+    },
+    "corpusRelease": { "type": "string", "minLength": 1 },
+    "notes": { "type": "string" },
+    "clauses": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["label", "clauseType", "paragraphIds", "facts"],
+        "properties": {
+          "label": { "type": ["string", "null"] },
+          "clauseType": { "type": "string" },
+          "paragraphIds": { "type": "array", "items": { "type": "string" } },
+          "facts": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": ["parameter", "value", "unit"],
+              "properties": {
+                "parameter": { "type": "string" },
+                "value": { "type": ["number", "boolean"] },
+                "unit": { "type": ["string", "null"] }
+              }
+            }
+          }
+        }
+      }
+    },
+    "risks": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["id", "clauseLabels", "clauseType", "kind", "severity", "nonObvious", "side", "acceptableSectionKeys", "requiresCitation", "rationale"],
+        "properties": {
+          "id": { "type": "string", "pattern": "^G[0-9]+$" },
+          "clauseLabels": { "type": "array", "items": { "type": "string" } },
+          "clauseType": { "type": "string" },
+          "kind": { "enum": ["CONFLICT", "OMISSION", "AMBIGUITY", "INTERACTION"] },
+          "severity": { "enum": ["CRITICAL", "HIGH", "MEDIUM", "LOW"] },
+          "nonObvious": { "type": "boolean" },
+          "side": { "enum": ["WORKER", "EMPLOYER", "BOTH"] },
+          "acceptableSectionKeys": {
+            "type": "array",
+            "items": { "type": "string", "pattern": "^[A-Za-z][A-Za-z0-9-]{1,31}:[0-9A-Za-z().-]{1,32}@[a-z0-9-]{1,32}$" }
+          },
+          "requiresCitation": { "type": "boolean" },
+          "rationale": { "type": "string" }
+        }
+      }
+    },
+    "obligations": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["id", "party", "clauseLabels", "clauseType", "parameter", "source", "status", "acceptableSectionKeys", "summary"],
+        "properties": {
+          "id": { "type": "string", "pattern": "^GO[0-9]+$" },
+          "party": { "enum": ["EMPLOYER", "WORKER", "BOTH"] },
+          "clauseLabels": { "type": "array", "items": { "type": "string" } },
+          "clauseType": { "type": "string" },
+          "parameter": { "type": ["string", "null"] },
+          "source": { "enum": ["CONTRACT", "STATUTE", "BOTH"] },
+          "status": { "enum": ["STATED_IN_CONTRACT", "STATUTORY_NOT_IN_CONTRACT", "CONFLICTS_WITH_CONTRACT"] },
+          "acceptableSectionKeys": { "type": "array", "items": { "type": "string" } },
+          "summary": { "type": "string" }
+        }
+      }
+    }
+  }
+}

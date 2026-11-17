@@ -1,0 +1,145 @@
+# DRAFT gold labels (evaluation.md §4.2, §9). Written by Claude, the same model family as the
+# system under test: these labels are circular until people review them. Section keys were chosen
+# from the ingested corpus (release 2026.11.11-1, read from the development database), not from
+# memory (R-10). A team member and a lawyer or law student must review this file and add their
+# name, role and date to reviewed_by before status may become reviewed.
+contractId: syn-bn-01
+schemaVersion: 1
+status: draft
+drafted_by: Claude (AI draft, same model family as the system under test), 2026-11-17
+reviewed_by: null
+corpusRelease: 2026.11.11-1
+notes: Draft only. Clause labels are the printed top-level numbers; sub-items are not labelled.
+clauses:
+  - label: "১"
+    clauseType: APPOINTMENT_AND_ROLE
+    paragraphIds: []
+    facts: []
+  - label: "২"
+    clauseType: PROBATION
+    paragraphIds: []
+    facts: []
+  - label: "৩"
+    clauseType: WAGES
+    paragraphIds: []
+    facts: []
+  - label: "৪"
+    clauseType: WAGE_PAYMENT_AND_DEDUCTIONS
+    paragraphIds: []
+    facts: []
+  - label: "৫"
+    clauseType: WORKING_HOURS
+    paragraphIds: []
+    facts: []
+  - label: "৬"
+    clauseType: LEAVE
+    paragraphIds: []
+    facts: []
+  - label: "৭"
+    clauseType: NOTICE_AND_RESIGNATION
+    paragraphIds: []
+    facts: []
+  - label: "৮"
+    clauseType: NON_COMPETE
+    paragraphIds: []
+    facts: []
+  - label: "৯"
+    clauseType: DISPUTE_RESOLUTION
+    paragraphIds: []
+    facts: []
+  - label: "১০"
+    clauseType: GENERAL_PROVISIONS
+    paragraphIds: []
+    facts: []
+risks:
+  - id: G1
+    clauseLabels: ["২"]
+    clauseType: PROBATION
+    kind: CONFLICT
+    severity: HIGH
+    nonObvious: false
+    side: BOTH
+    acceptableSectionKeys: ["BLA-2006:4@amend-2026"]
+    requiresCitation: true
+    rationale: "12-month probation and dismissal without notice or reason during it."
+  - id: G2
+    clauseLabels: ["৪"]
+    clauseType: WAGE_PAYMENT_AND_DEDUCTIONS
+    kind: CONFLICT
+    severity: HIGH
+    nonObvious: false
+    side: BOTH
+    acceptableSectionKeys: ["BLA-2006:123@amend-2013", "BLA-2006:125@amend-2013"]
+    requiresCitation: true
+    rationale: "Wages paid by the 20th of the next month; unlimited deductions for any loss."
+  - id: G3
+    clauseLabels: ["৫"]
+    clauseType: WORKING_HOURS
+    kind: CONFLICT
+    severity: HIGH
+    nonObvious: false
+    side: BOTH
+    acceptableSectionKeys: ["BLA-2006:100@original", "BLA-2006:102@original", "BLA-2006:103@amend-2018", "BLA-2006:108@amend-2018"]
+    requiresCitation: true
+    rationale: "12 hours a day, seven days a week, no overtime pay."
+  - id: G4
+    clauseLabels: ["৬"]
+    clauseType: LEAVE
+    kind: CONFLICT
+    severity: HIGH
+    nonObvious: false
+    side: BOTH
+    acceptableSectionKeys: ["BLA-2006:115@original", "BLA-2006:116@original", "BLA-2006:117@amend-2026", "BLA-2006:118@amend-2026"]
+    requiresCitation: true
+    rationale: "Only 5 days of leave a year, at the employer discretion."
+  - id: G5
+    clauseLabels: ["৭"]
+    clauseType: NOTICE_AND_RESIGNATION
+    kind: CONFLICT
+    severity: HIGH
+    nonObvious: false
+    side: BOTH
+    acceptableSectionKeys: ["BLA-2006:26@original", "BLA-2006:27@amend-2026"]
+    requiresCitation: true
+    rationale: "One day or no notice for the employer; 90 days or three months wages for the worker."
+  - id: G6
+    clauseLabels: ["৮"]
+    clauseType: NON_COMPETE
+    kind: CONFLICT
+    severity: MEDIUM
+    nonObvious: false
+    side: BOTH
+    acceptableSectionKeys: ["CA-1872:27@original"]
+    requiresCitation: true
+    rationale: "Five-year ban on work in any garment business in Bangladesh."
+  - id: G7
+    clauseLabels: ["৯"]
+    clauseType: DISPUTE_RESOLUTION
+    kind: CONFLICT
+    severity: MEDIUM
+    nonObvious: false
+    side: BOTH
+    acceptableSectionKeys: ["CA-1872:28@original", "BLA-2006:213@amend-2026"]
+    requiresCitation: true
+    rationale: "Employer-chosen arbitrator only; worker waives the right to go to court."
+  - id: G8
+    clauseLabels: []
+    clauseType: MATERNITY_BENEFIT
+    kind: OMISSION
+    severity: HIGH
+    nonObvious: true
+    side: BOTH
+    acceptableSectionKeys: ["BLA-2006:46@amend-2026"]
+    requiresCitation: true
+    rationale: "No maternity benefit in a contract for a woman worker."
+  - id: G9
+    clauseLabels: ["১"]
+    clauseType: TRANSFER_AND_DEPLOYMENT
+    kind: AMBIGUITY
+    severity: MEDIUM
+    nonObvious: false
+    side: WORKER
+    acceptableSectionKeys: []
+    requiresCitation: false
+    rationale: "Transfer to any work or factory at any time; no corpus section found that clearly governs general transfers (abstention expected)."
+obligations: []

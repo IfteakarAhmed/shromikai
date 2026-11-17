@@ -1,0 +1,127 @@
+# DRAFT gold labels (evaluation.md §4.2, §9). Written by Claude, the same model family as the
+# system under test: these labels are circular until people review them. Section keys were chosen
+# from the ingested corpus (release 2026.11.11-1, read from the development database), not from
+# memory (R-10). A team member and a lawyer or law student must review this file and add their
+# name, role and date to reviewed_by before status may become reviewed.
+contractId: syn-bn-02
+schemaVersion: 1
+status: draft
+drafted_by: Claude (AI draft, same model family as the system under test), 2026-11-17
+reviewed_by: null
+corpusRelease: 2026.11.11-1
+notes: Draft only. Clause labels are the printed top-level numbers; sub-items are not labelled.
+clauses:
+  - label: "১"
+    clauseType: APPOINTMENT_AND_ROLE
+    paragraphIds: []
+    facts: []
+  - label: "২"
+    clauseType: WAGES
+    paragraphIds: []
+    facts: []
+  - label: "৩"
+    clauseType: WORKING_HOURS
+    paragraphIds: []
+    facts: []
+  - label: "৪"
+    clauseType: REST_AND_HOLIDAYS
+    paragraphIds: []
+    facts: []
+  - label: "৫"
+    clauseType: LEAVE
+    paragraphIds: []
+    facts: []
+  - label: "৬"
+    clauseType: WAGE_PAYMENT_AND_DEDUCTIONS
+    paragraphIds: []
+    facts: []
+  - label: "৭"
+    clauseType: TERMINATION
+    paragraphIds: []
+    facts: []
+  - label: "৮"
+    clauseType: DISPUTE_RESOLUTION
+    paragraphIds: []
+    facts: []
+risks:
+  - id: G1
+    clauseLabels: ["৩"]
+    clauseType: WORKING_HOURS
+    kind: CONFLICT
+    severity: HIGH
+    nonObvious: false
+    side: BOTH
+    acceptableSectionKeys: ["BLA-2006:100@original", "BLA-2006:101@amend-2013", "BLA-2006:102@original"]
+    requiresCitation: true
+    rationale: "From 8 am to 10 pm every day (14 hours)."
+  - id: G2
+    clauseLabels: ["৪"]
+    clauseType: REST_AND_HOLIDAYS
+    kind: CONFLICT
+    severity: HIGH
+    nonObvious: false
+    side: BOTH
+    acceptableSectionKeys: ["BLA-2006:103@amend-2018"]
+    requiresCitation: true
+    rationale: "No fixed weekly holiday for a shop worker."
+  - id: G3
+    clauseLabels: ["৫"]
+    clauseType: LEAVE
+    kind: CONFLICT
+    severity: HIGH
+    nonObvious: false
+    side: BOTH
+    acceptableSectionKeys: ["BLA-2006:116@original"]
+    requiresCitation: true
+    rationale: "Wages cut for sick days."
+  - id: G4
+    clauseLabels: ["৫"]
+    clauseType: MATERNITY_BENEFIT
+    kind: CONFLICT
+    severity: HIGH
+    nonObvious: false
+    side: BOTH
+    acceptableSectionKeys: ["BLA-2006:46@amend-2026"]
+    requiresCitation: true
+    rationale: "No maternity leave for women employees."
+  - id: G5
+    clauseLabels: ["৭"]
+    clauseType: TERMINATION
+    kind: CONFLICT
+    severity: HIGH
+    nonObvious: false
+    side: BOTH
+    acceptableSectionKeys: ["BLA-2006:26@original", "BLA-2006:123@amend-2013"]
+    requiresCitation: true
+    rationale: "Termination at any time without reason and no dues payable."
+  - id: G6
+    clauseLabels: ["৬"]
+    clauseType: WAGE_PAYMENT_AND_DEDUCTIONS
+    kind: AMBIGUITY
+    severity: MEDIUM
+    nonObvious: false
+    side: WORKER
+    acceptableSectionKeys: []
+    requiresCitation: false
+    rationale: "20,000 taka deposit forfeited on leaving; no corpus section found that clearly governs deposits (abstention expected)."
+  - id: G7
+    clauseLabels: ["৮"]
+    clauseType: DISPUTE_RESOLUTION
+    kind: CONFLICT
+    severity: MEDIUM
+    nonObvious: false
+    side: BOTH
+    acceptableSectionKeys: ["CA-1872:28@original", "BLA-2006:213@amend-2026"]
+    requiresCitation: true
+    rationale: "Disputes settled only where the employer chooses."
+  - id: G8
+    clauseLabels: ["১"]
+    clauseType: APPOINTMENT_AND_ROLE
+    kind: AMBIGUITY
+    severity: LOW
+    nonObvious: false
+    side: WORKER
+    acceptableSectionKeys: []
+    requiresCitation: false
+    rationale: "Obey every instruction without question."
+obligations: []

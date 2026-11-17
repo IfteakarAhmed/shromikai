@@ -1,0 +1,121 @@
+# DRAFT gold labels (evaluation.md §4.2, §9). Written by Claude, the same model family as the
+# system under test: these labels are circular until people review them. Section keys were chosen
+# from the ingested corpus (release 2026.11.11-1, read from the development database), not from
+# memory (R-10). A team member and a lawyer or law student must review this file and add their
+# name, role and date to reviewed_by before status may become reviewed.
+contractId: syn-bn-03
+schemaVersion: 1
+status: draft
+drafted_by: Claude (AI draft, same model family as the system under test), 2026-11-17
+reviewed_by: null
+corpusRelease: 2026.11.11-1
+notes: Draft only. Clause labels are the printed top-level numbers; sub-items are not labelled.
+clauses:
+  - label: "১"
+    clauseType: APPOINTMENT_AND_ROLE
+    paragraphIds: []
+    facts: []
+  - label: "২"
+    clauseType: WAGES
+    paragraphIds: []
+    facts: []
+  - label: "৩"
+    clauseType: WORKING_HOURS
+    paragraphIds: []
+    facts: []
+  - label: "৪"
+    clauseType: PROBATION
+    paragraphIds: []
+    facts: []
+  - label: "৫"
+    clauseType: NOTICE_AND_RESIGNATION
+    paragraphIds: []
+    facts: []
+  - label: "৬"
+    clauseType: INTELLECTUAL_PROPERTY
+    paragraphIds: []
+    facts: []
+  - label: "৭"
+    clauseType: CONFIDENTIALITY
+    paragraphIds: []
+    facts: []
+  - label: "৮"
+    clauseType: NON_COMPETE
+    paragraphIds: []
+    facts: []
+  - label: "৯"
+    clauseType: DISPUTE_RESOLUTION
+    paragraphIds: []
+    facts: []
+risks:
+  - id: G1
+    clauseLabels: ["৩"]
+    clauseType: WORKING_HOURS
+    kind: CONFLICT
+    severity: HIGH
+    nonObvious: false
+    side: BOTH
+    acceptableSectionKeys: ["BLA-2006:102@original", "BLA-2006:108@amend-2018"]
+    requiresCitation: true
+    rationale: "60 hours a week with no overtime pay. Whether the Labour Act covers this officer role needs review."
+  - id: G2
+    clauseLabels: ["৪"]
+    clauseType: PROBATION
+    kind: CONFLICT
+    severity: MEDIUM
+    nonObvious: false
+    side: BOTH
+    acceptableSectionKeys: ["BLA-2006:4@amend-2026", "BLA-2006:115@original", "BLA-2006:116@original"]
+    requiresCitation: true
+    rationale: "No leave at all during six months of probation."
+  - id: G3
+    clauseLabels: ["৫"]
+    clauseType: NOTICE_AND_RESIGNATION
+    kind: CONFLICT
+    severity: HIGH
+    nonObvious: false
+    side: BOTH
+    acceptableSectionKeys: ["BLA-2006:26@original", "BLA-2006:27@amend-2026"]
+    requiresCitation: true
+    rationale: "7 days notice for the company, 60 days for the employee."
+  - id: G4
+    clauseLabels: ["৬"]
+    clauseType: INTELLECTUAL_PROPERTY
+    kind: AMBIGUITY
+    severity: MEDIUM
+    nonObvious: false
+    side: WORKER
+    acceptableSectionKeys: []
+    requiresCitation: false
+    rationale: "All work, even outside office hours on personal devices, belongs to the company; no corpus section found (abstention expected)."
+  - id: G5
+    clauseLabels: ["৮"]
+    clauseType: NON_COMPETE
+    kind: CONFLICT
+    severity: MEDIUM
+    nonObvious: false
+    side: BOTH
+    acceptableSectionKeys: ["CA-1872:27@original"]
+    requiresCitation: true
+    rationale: "Three-year ban on work at any technology company."
+  - id: G6
+    clauseLabels: ["৯"]
+    clauseType: DISPUTE_RESOLUTION
+    kind: CONFLICT
+    severity: MEDIUM
+    nonObvious: false
+    side: BOTH
+    acceptableSectionKeys: ["CA-1872:28@original", "BLA-2006:213@amend-2026"]
+    requiresCitation: true
+    rationale: "Private arbitration with all costs on the employee."
+  - id: G7
+    clauseLabels: ["৭"]
+    clauseType: CONFIDENTIALITY
+    kind: AMBIGUITY
+    severity: LOW
+    nonObvious: false
+    side: WORKER
+    acceptableSectionKeys: []
+    requiresCitation: false
+    rationale: "Confidentiality of all information forever."
+obligations: []
