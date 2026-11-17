@@ -106,7 +106,7 @@ function Duty({
           {item.obligation}
         </span>
       </label>
-      <div className="mt-2 flex flex-wrap items-center gap-2">
+      <div className="lift-2 mt-2 flex flex-wrap items-center gap-2">
         <Badge tone={item.status === 'CONFLICTS_WITH_CONTRACT' ? 'rejected' : 'neutral'}>
           {t(`duties.status.${item.status}`)}
         </Badge>

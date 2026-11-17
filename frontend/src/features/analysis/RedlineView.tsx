@@ -73,13 +73,13 @@ function RedlineCard({
 
   return (
     <GlassCard as="article" className="p-5" aria-labelledby={`redline-${redline.id}`}>
-      <div className="flex flex-wrap items-center gap-2">
+      <div className="lift-2 flex flex-wrap items-center gap-2">
         <Badge tone="neutral">{t(`redline.action.${redline.action}`)}</Badge>
         {redline.ruleCheck.ruleIds.length > 0 && (
           <Badge tone="verified">{t('redline.ruleChecked')}</Badge>
         )}
       </div>
-      <h3 id={`redline-${redline.id}`} className="mt-2 text-lg font-bold">
+      <h3 id={`redline-${redline.id}`} className="lift-1 mt-2 text-lg font-bold">
         {t('redline.forFinding', { title })}
       </h3>
 

@@ -145,7 +145,7 @@ function TicketBody({
         {items.map((item, index) => (
           <li key={item.findingId ?? index}>
             <GlassCard as="article" className="p-4">
-              <div className="flex flex-wrap items-center gap-2">
+              <div className="lift-2 flex flex-wrap items-center gap-2">
                 <Badge
                   tone={
                     item.status === 'APPROVED'

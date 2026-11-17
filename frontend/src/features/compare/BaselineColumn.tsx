@@ -46,14 +46,14 @@ export function BaselineColumn({ baseline, language }: { baseline: Baseline; lan
         {baseline.findings.map((finding, index) => (
           <li key={`${finding.title}-${index}`}>
             <GlassCard as="article" className="p-4">
-              <div className="flex flex-wrap items-center gap-2">
+              <div className="lift-2 flex flex-wrap items-center gap-2">
                 <Badge tone="neutral">
                   {t(`severity.${finding.severity.toLowerCase()}`, {
                     defaultValue: finding.severity,
                   })}
                 </Badge>
               </div>
-              <div lang={language}>
+              <div lang={language} className="lift-1">
                 <h3 className="mt-2 text-lg font-bold">{finding.title}</h3>
                 <p className="mt-1">{finding.explanation}</p>
               </div>
