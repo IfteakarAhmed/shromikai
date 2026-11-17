@@ -1050,3 +1050,10 @@ in "Honest limits" below and in [`docs/known-gaps.md`](known-gaps.md).
 - **Known gaps:** NFR-10 not demonstrated as interactive; BLA-2006:3 card documented as the same-family limitation (fix after 20 Nov); e2e and axe run locally only; `mobile-webkit`, `mobile-narrow`, `desktop-firefox` do not exist; the PRD note lists a "CI run" for `check:lite` that has not run on GitHub yet.
 - **Open questions:** the report you pasted was cut off at finding 2; please paste the rest if it lists more fixes. Do you want `design/lovable/` deleted after all?
 - **Next:** push on your word, then re-run Prompt R; no `phase-9` tag until the acceptance check and Prompt R PASS.
+
+## Phase report - P9 re-review fixes (2026-11-17)
+- **Summary:** four small fixes from the Prompt R re-review; docs and tests only. Nothing pushed, no tag, no live calls, rules, prompts and fixtures untouched.
+- **Tests:** `DeadlineClockTest` now has `theDeadlineExpiresWhenTheInjectedClockPassesTheHardTimeout` (a clock that jumps an hour after the run starts ends the job `FAILED`; it fails on the old wall-clock code and passed 6 reruns in a row), and the future-clock test is renamed `aClockFarInTheFutureAlsoLetsTheAnalysisFinish`.
+- **Docs:** `docs/known-gaps.md` gains the line that no CI step compares rule quotes with the corpus (`checkRules` is opt-in); the PRD NFR-10 note says `check:lite` runs in CI (run #35 for `779a251`, green).
+- **Screenshots:** removed `C2b-compare-dark-390` (same as `C3-compare-dark-390`), `C1-landing-hero-type-1280` (same as `C1-landing-lite-1280`) and three `C4-admin-*-light-390` images that were copies of the 403 page (the shot ran as a worker). The last is a gap: those three admin pages have no light 390 px picture until the screenshot run is repeated.
+- **Gates:** `./gradlew check` green; frontend lint, typecheck, `npm test` (474), build, `check:bundle`, `check:lite` (510 KB, load 4.7 s) pass.
