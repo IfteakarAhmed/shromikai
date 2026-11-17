@@ -73,6 +73,13 @@ public class EvalWrapping implements BeanPostProcessor, EnvironmentAware {
     public static volatile int maxLiveCalls = 0;
     public static volatile boolean liveAllowed = false;
 
+    /**
+     * Messages of the calls this wrapper refused (prompt ID and amounts only, never contract text),
+     * so the runner can write them to the run notes.
+     */
+    public static final java.util.List<String> refusals =
+        new java.util.concurrent.CopyOnWriteArrayList<>();
+
     private Run() {}
   }
 
@@ -259,6 +266,11 @@ public class EvalWrapping implements BeanPostProcessor, EnvironmentAware {
       return delegate.provider();
     }
 
+    private static LiveSpendLedger.SpendCapException refused(String message) {
+      Run.refusals.add(message);
+      return new LiveSpendLedger.SpendCapException(message);
+    }
+
     @Override
     public ChatResponse call(ChatRequest request) {
       long worst =
@@ -268,14 +280,13 @@ public class EvalWrapping implements BeanPostProcessor, EnvironmentAware {
               request.maxOutputTokens());
       synchronized (this) {
         if (!Run.liveAllowed) {
-          throw new LiveSpendLedger.SpendCapException(
+          throw refused(
               "A live call of "
                   + request.promptId()
                   + " was needed but live calls are off for this step (-PliveOk=eval)");
         }
         if (++calls > Run.maxLiveCalls) {
-          throw new LiveSpendLedger.SpendCapException(
-              "More than " + Run.maxLiveCalls + " live calls in this step; stopping");
+          throw refused("More than " + Run.maxLiveCalls + " live calls in this step; stopping");
         }
         long spent = ledger.spentMicros();
         long evalSpent = ledger.spentOn(LiveSpendLedger.EVAL_PREFIX);
@@ -283,12 +294,20 @@ public class EvalWrapping implements BeanPostProcessor, EnvironmentAware {
         if (spent + inFlight + worst > ledger.capMicros()
             || evalSpent + inFlight + worst > LiveSpendLedger.EVAL_CAP_MICROS
             || stepSpent + inFlight + worst > Run.stepCapMicros) {
-          throw new LiveSpendLedger.SpendCapException(
+          throw refused(
               String.format(
                   java.util.Locale.ROOT,
-                  "Refused %s: worst case US$%.4f; ledger US$%.4f of %.2f, eval US$%.4f of %.2f,"
+                  "Refused %s (model %s, max output %d tokens; over: %s): worst case US$%.4f;"
+                      + " ledger US$%.4f of %.2f, eval US$%.4f of %.2f,"
                       + " this step US$%.4f of %.4f, in flight US$%.4f",
                   request.promptId(),
+                  request.modelId(),
+                  request.maxOutputTokens(),
+                  (spent + inFlight + worst > ledger.capMicros() ? "ledger " : "")
+                      + (evalSpent + inFlight + worst > LiveSpendLedger.EVAL_CAP_MICROS
+                          ? "eval "
+                          : "")
+                      + (stepSpent + inFlight + worst > Run.stepCapMicros ? "step" : ""),
                   worst / 1e6,
                   spent / 1e6,
                   ledger.capMicros() / 1e6,

@@ -423,6 +423,7 @@ class EvaluateRunnerIT {
       if (demo) {
         pii.add(contract);
       }
+      EvalWrapping.Run.refusals.clear();
       EvalWrapping.Run.piiStandIn = pii;
       EvalWrapping.Run.currentContract = contract;
       EvalWrapping.Run.demoCase = demo ? SampleContract.ID + "-worker" : null;
@@ -439,6 +440,9 @@ class EvaluateRunnerIT {
       List<AnalysisCase> cases =
           harness.run(contract, text, Side.WORKER, systems, SyntheticContracts.allValues(contract));
       EvalResults.append(runDir(), cases, List.of(), List.of());
+      for (String refusal : EvalWrapping.Run.refusals) {
+        note("spend guard, " + contract + ": " + refusal);
+      }
       long spent = new LiveSpendLedger().spentOn("eval:" + contract) - before;
       StringBuilder summary = new StringBuilder();
       for (AnalysisCase c : cases) {
