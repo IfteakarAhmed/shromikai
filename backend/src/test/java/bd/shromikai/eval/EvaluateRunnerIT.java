@@ -558,8 +558,9 @@ class EvaluateRunnerIT {
               + String.join(", ", blocked)
               + ") predate the role-word allowlist of ADR-0025 and were not rerun; after it,"
               + " syn-bn-01 (ShromikAI) passed the guard in a live rerun, the syn-bn-01 baseline"
-              + " was not rerun, and syn-bn-03 stays blocked on the name-part path"
-              + " (BanglaRoleWordsFailClosedTest; local run p10c; no live rerun).");
+              + " was not rerun, and syn-bn-03 is expected to stay"
+              + " blocked on the name-part path (pinned by BanglaRoleWordsFailClosedTest and seen in"
+              + " local run p10c; not confirmed by a live rerun).");
     }
     if (results.pii().stream().anyMatch(p -> "local-model-failed".equals(p.mode()))) {
       limitations.add(
