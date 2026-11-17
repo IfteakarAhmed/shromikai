@@ -209,248 +209,304 @@ export function UploadPage() {
         </p>
       )}
 
-      <GlassCard depth="still" className="mt-6 p-5">
-        <fieldset disabled={recorded !== null || busy} className="min-w-0 border-0 p-0">
-          <legend className="sr-only">{t('upload.method')}</legend>
-          <Tabs
-            idPrefix="upload"
-            label={t('upload.method')}
-            value={method}
-            onChange={(id) => {
-              setMethod(id as Method)
-              setInvalid(null)
-            }}
-            items={[
-              {
-                id: 'file',
-                label: t('upload.methodFile'),
-                panel: (
-                  <div className="rounded-xl border-2 border-dashed border-border p-6 text-center">
-                    <Icon name="file" size={32} className="mx-auto text-muted-foreground" />
-                    <p className="mt-2 font-semibold">{pdf?.name ?? t('upload.dropTitle')}</p>
-                    <p className="text-muted-foreground">
-                      {t('upload.dropHint', {
-                        mb: formatNumber(MAX_BYTES / (1024 * 1024), language),
-                      })}
-                    </p>
-                    <input
-                      ref={fileInput}
-                      type="file"
-                      accept="application/pdf,.pdf,image/jpeg,image/png,text/plain,.txt"
-                      className="sr-only"
-                      tabIndex={-1}
-                      aria-hidden="true"
-                      onChange={(event) => void takeFiles(event)}
-                    />
-                    <Button
-                      variant="secondary"
-                      className="mt-4"
-                      onClick={() => fileInput.current?.click()}
-                    >
-                      <Icon name="upload" />
-                      {t('upload.chooseFile')}
-                    </Button>
-                  </div>
-                ),
-              },
-              {
-                id: 'photos',
-                label: t('upload.methodPhotos'),
-                panel: (
-                  <div>
-                    <p className="text-muted-foreground">
-                      {t('upload.photosHint', { max: formatNumber(MAX_IMAGES, language) })}
-                    </p>
-                    <input
-                      ref={cameraInput}
-                      type="file"
-                      accept="image/*"
-                      capture="environment"
-                      className="sr-only"
-                      tabIndex={-1}
-                      aria-hidden="true"
-                      onChange={takePhotos}
-                    />
-                    <input
-                      ref={photoInput}
-                      type="file"
-                      accept="image/jpeg,image/png"
-                      multiple
-                      className="sr-only"
-                      tabIndex={-1}
-                      aria-hidden="true"
-                      onChange={takePhotos}
-                    />
-                    <div className="mt-3 flex flex-wrap gap-2">
-                      <Button variant="secondary" onClick={() => cameraInput.current?.click()}>
-                        <Icon name="camera" />
-                        {t('upload.takePhoto')}
-                      </Button>
-                      <Button variant="outline" onClick={() => photoInput.current?.click()}>
-                        <Icon name="upload" />
-                        {t('upload.choosePhotos')}
-                      </Button>
-                    </div>
-                    {thumbnails.length > 0 && (
-                      <ol className="mt-4 space-y-2">
-                        {thumbnails.map(({ file, url }, index) => {
-                          const n = formatNumber(index + 1, language)
-                          return (
-                            <li
-                              key={`${file.name}-${url}`}
-                              className="flex items-center gap-3 rounded-lg border border-border p-2"
-                            >
-                              <img
-                                src={url}
-                                alt=""
-                                className="decor size-12 shrink-0 rounded object-cover"
-                              />
-                              <span className="min-w-0 flex-1 truncate">
-                                <strong>{t('upload.pageN', { n })}</strong> · {file.name}
-                              </span>
-                              <Button
-                                variant="ghost"
-                                size="icon"
-                                disabled={index === 0}
-                                aria-label={t('upload.moveUp', { n })}
-                                onClick={() => {
-                                  move(index, -1)
-                                }}
-                              >
-                                <Icon name="chevronDown" className="rotate-180" />
-                              </Button>
-                              <Button
-                                variant="ghost"
-                                size="icon"
-                                disabled={index === thumbnails.length - 1}
-                                aria-label={t('upload.moveDown', { n })}
-                                onClick={() => {
-                                  move(index, 1)
-                                }}
-                              >
-                                <Icon name="chevronDown" />
-                              </Button>
-                              <Button
-                                variant="ghost"
-                                size="icon"
-                                aria-label={t('upload.remove', { n })}
-                                onClick={() => {
-                                  setImages((current) => current.filter((_, i) => i !== index))
-                                }}
-                              >
-                                <Icon name="trash" />
-                              </Button>
-                            </li>
-                          )
-                        })}
-                      </ol>
-                    )}
-                  </div>
-                ),
-              },
-              {
-                id: 'text',
-                label: t('upload.methodText'),
-                panel: (
-                  <div>
-                    <label htmlFor="contract-text" className="font-semibold">
-                      {t('upload.textLabel')}
-                    </label>
-                    <textarea
-                      id="contract-text"
-                      value={text}
-                      onChange={(event) => {
-                        setText(event.target.value)
-                      }}
-                      rows={10}
-                      placeholder={t('upload.textPlaceholder')}
-                      className="mt-2 block w-full rounded-lg border border-input bg-background/60 p-3"
-                    />
-                    <p className="mt-1 text-sm text-muted-foreground">
-                      {t('upload.textHint', {
-                        min: formatNumber(MIN_TEXT, language),
-                        count: formatNumber(textLength, language),
-                      })}
-                    </p>
-                  </div>
-                ),
-              },
-            ]}
+      <div role="group" aria-label={t('upload.steps.label')} className="upload-steps mt-8">
+        <section aria-labelledby="step-contract" className="upload-step">
+          <StepHeading
+            id="step-contract"
+            n={1}
+            title={t('upload.steps.contract')}
+            hint={t('upload.steps.contractHint')}
           />
-        </fieldset>
-      </GlassCard>
-
-      <fieldset className="mt-6 min-w-0 border-0 p-0" disabled={recorded !== null || busy}>
-        <legend className="mb-2 font-semibold">{t('upload.sideLabel')}</legend>
-        <div className="grid gap-3 sm:grid-cols-2">
-          {(['WORKER', 'EMPLOYER'] as const).map((value) => (
-            <label
-              key={value}
-              className={cx(
-                'flex min-h-11 cursor-pointer items-start gap-3 rounded-xl border p-4',
-                effectiveSide === value ? 'border-primary bg-primary/10' : 'border-border',
-              )}
-            >
-              <input
-                type="radio"
-                name="side"
-                value={value}
-                checked={effectiveSide === value}
-                onChange={() => {
-                  setSide(value)
+          <GlassCard depth="still" className="p-5">
+            <fieldset disabled={recorded !== null || busy} className="min-w-0 border-0 p-0">
+              <legend className="sr-only">{t('upload.method')}</legend>
+              <Tabs
+                idPrefix="upload"
+                label={t('upload.method')}
+                value={method}
+                onChange={(id) => {
+                  setMethod(id as Method)
+                  setInvalid(null)
                 }}
-                className="mt-1.5 size-5 accent-[var(--primary)]"
+                items={[
+                  {
+                    id: 'file',
+                    label: t('upload.methodFile'),
+                    panel: (
+                      <div className="rounded-xl border-2 border-dashed border-border p-6 text-center">
+                        <Icon name="file" size={32} className="mx-auto text-muted-foreground" />
+                        <p className="mt-2 font-semibold">{pdf?.name ?? t('upload.dropTitle')}</p>
+                        <p className="text-muted-foreground">
+                          {t('upload.dropHint', {
+                            mb: formatNumber(MAX_BYTES / (1024 * 1024), language),
+                          })}
+                        </p>
+                        <input
+                          ref={fileInput}
+                          type="file"
+                          accept="application/pdf,.pdf,image/jpeg,image/png,text/plain,.txt"
+                          className="sr-only"
+                          tabIndex={-1}
+                          aria-hidden="true"
+                          onChange={(event) => void takeFiles(event)}
+                        />
+                        <Button
+                          variant="secondary"
+                          className="mt-4"
+                          onClick={() => fileInput.current?.click()}
+                        >
+                          <Icon name="upload" />
+                          {t('upload.chooseFile')}
+                        </Button>
+                      </div>
+                    ),
+                  },
+                  {
+                    id: 'photos',
+                    label: t('upload.methodPhotos'),
+                    panel: (
+                      <div>
+                        <p className="text-muted-foreground">
+                          {t('upload.photosHint', { max: formatNumber(MAX_IMAGES, language) })}
+                        </p>
+                        <input
+                          ref={cameraInput}
+                          type="file"
+                          accept="image/*"
+                          capture="environment"
+                          className="sr-only"
+                          tabIndex={-1}
+                          aria-hidden="true"
+                          onChange={takePhotos}
+                        />
+                        <input
+                          ref={photoInput}
+                          type="file"
+                          accept="image/jpeg,image/png"
+                          multiple
+                          className="sr-only"
+                          tabIndex={-1}
+                          aria-hidden="true"
+                          onChange={takePhotos}
+                        />
+                        <div className="mt-3 flex flex-wrap gap-2">
+                          <Button variant="secondary" onClick={() => cameraInput.current?.click()}>
+                            <Icon name="camera" />
+                            {t('upload.takePhoto')}
+                          </Button>
+                          <Button variant="outline" onClick={() => photoInput.current?.click()}>
+                            <Icon name="upload" />
+                            {t('upload.choosePhotos')}
+                          </Button>
+                        </div>
+                        {thumbnails.length > 0 && (
+                          <ol className="mt-4 space-y-2">
+                            {thumbnails.map(({ file, url }, index) => {
+                              const n = formatNumber(index + 1, language)
+                              return (
+                                <li
+                                  key={`${file.name}-${url}`}
+                                  className="flex items-center gap-3 rounded-lg border border-border p-2"
+                                >
+                                  <img
+                                    src={url}
+                                    alt=""
+                                    className="decor size-12 shrink-0 rounded object-cover"
+                                  />
+                                  <span className="min-w-0 flex-1 truncate">
+                                    <strong>{t('upload.pageN', { n })}</strong> · {file.name}
+                                  </span>
+                                  <Button
+                                    variant="ghost"
+                                    size="icon"
+                                    disabled={index === 0}
+                                    aria-label={t('upload.moveUp', { n })}
+                                    onClick={() => {
+                                      move(index, -1)
+                                    }}
+                                  >
+                                    <Icon name="chevronDown" className="rotate-180" />
+                                  </Button>
+                                  <Button
+                                    variant="ghost"
+                                    size="icon"
+                                    disabled={index === thumbnails.length - 1}
+                                    aria-label={t('upload.moveDown', { n })}
+                                    onClick={() => {
+                                      move(index, 1)
+                                    }}
+                                  >
+                                    <Icon name="chevronDown" />
+                                  </Button>
+                                  <Button
+                                    variant="ghost"
+                                    size="icon"
+                                    aria-label={t('upload.remove', { n })}
+                                    onClick={() => {
+                                      setImages((current) => current.filter((_, i) => i !== index))
+                                    }}
+                                  >
+                                    <Icon name="trash" />
+                                  </Button>
+                                </li>
+                              )
+                            })}
+                          </ol>
+                        )}
+                      </div>
+                    ),
+                  },
+                  {
+                    id: 'text',
+                    label: t('upload.methodText'),
+                    panel: (
+                      <div>
+                        <label htmlFor="contract-text" className="font-semibold">
+                          {t('upload.textLabel')}
+                        </label>
+                        <textarea
+                          id="contract-text"
+                          value={text}
+                          onChange={(event) => {
+                            setText(event.target.value)
+                          }}
+                          rows={10}
+                          placeholder={t('upload.textPlaceholder')}
+                          className="mt-2 block w-full rounded-lg border border-input bg-background/60 p-3"
+                        />
+                        <p className="mt-1 text-sm text-muted-foreground">
+                          {t('upload.textHint', {
+                            min: formatNumber(MIN_TEXT, language),
+                            count: formatNumber(textLength, language),
+                          })}
+                        </p>
+                      </div>
+                    ),
+                  },
+                ]}
               />
-              <span>
-                <span className="block font-semibold">
-                  {t(value === 'WORKER' ? 'upload.sideWorker' : 'upload.sideEmployer')}
-                </span>
-                <span className="text-sm text-muted-foreground">
-                  {t(value === 'WORKER' ? 'upload.sideWorkerHint' : 'upload.sideEmployerHint')}
-                </span>
-              </span>
-            </label>
-          ))}
-        </div>
-      </fieldset>
+            </fieldset>
+          </GlassCard>
+        </section>
 
-      {invalid !== null && (
-        <p
-          role="alert"
-          className="mt-4 rounded-lg border border-rejected/40 bg-rejected/10 px-4 py-3 font-medium text-rejected"
-        >
-          {errorText(invalid)}
-        </p>
-      )}
-      {start.isError && (
-        <div className="mt-4">
-          <ErrorState error={start.error} />
-        </div>
-      )}
+        <section aria-labelledby="step-side" className="upload-step">
+          <StepHeading id="step-side" n={2} title={t('upload.steps.side')} />
+          <fieldset className="min-w-0 border-0 p-0" disabled={recorded !== null || busy}>
+            <legend className="sr-only">{t('upload.sideLabel')}</legend>
+            <div className="grid gap-3 sm:grid-cols-2">
+              {(['WORKER', 'EMPLOYER'] as const).map((value) => (
+                <label
+                  key={value}
+                  className={cx(
+                    'flex min-h-11 cursor-pointer items-start gap-3 rounded-xl border p-4',
+                    effectiveSide === value ? 'border-primary bg-primary/10' : 'border-border',
+                  )}
+                >
+                  <input
+                    type="radio"
+                    name="side"
+                    value={value}
+                    checked={effectiveSide === value}
+                    onChange={() => {
+                      setSide(value)
+                    }}
+                    className="mt-1.5 size-5 accent-[var(--primary)]"
+                  />
+                  <span>
+                    <span className="block font-semibold">
+                      {t(value === 'WORKER' ? 'upload.sideWorker' : 'upload.sideEmployer')}
+                    </span>
+                    <span className="text-sm text-muted-foreground">
+                      {t(value === 'WORKER' ? 'upload.sideWorkerHint' : 'upload.sideEmployerHint')}
+                    </span>
+                  </span>
+                </label>
+              ))}
+            </div>
+          </fieldset>
+        </section>
 
-      <div className="mt-6 flex flex-col gap-3 sm:flex-row">
-        <Button
-          size="lg"
-          busy={busy && start.variables.kind !== 'sample'}
-          disabled={recorded !== null || busy}
-          onClick={submit}
-        >
-          {busy && start.variables.kind !== 'sample' ? t('upload.submitting') : t('upload.submit')}
-        </Button>
-        <Button
-          size="lg"
-          variant="secondary"
-          busy={busy && start.variables.kind === 'sample'}
-          disabled={busy}
-          onClick={() => {
-            setInvalid(null)
-            start.mutate({ kind: 'sample' })
-          }}
-        >
-          {t('upload.sample')}
-        </Button>
+        <section aria-labelledby="step-start" className="upload-step">
+          <StepHeading
+            id="step-start"
+            n={3}
+            title={t('upload.steps.start')}
+            hint={t('upload.steps.startHint')}
+          />
+          {invalid !== null && (
+            <p
+              role="alert"
+              className="mt-4 rounded-lg border border-rejected/40 bg-rejected/10 px-4 py-3 font-medium text-rejected"
+            >
+              {errorText(invalid)}
+            </p>
+          )}
+          {start.isError && (
+            <div className="mt-4">
+              <ErrorState error={start.error} />
+            </div>
+          )}
+
+          <div className="flex flex-col gap-3 sm:flex-row">
+            <Button
+              size="lg"
+              busy={busy && start.variables.kind !== 'sample'}
+              disabled={recorded !== null || busy}
+              onClick={submit}
+            >
+              {busy && start.variables.kind !== 'sample'
+                ? t('upload.submitting')
+                : t('upload.submit')}
+            </Button>
+            <Button
+              size="lg"
+              variant="secondary"
+              busy={busy && start.variables.kind === 'sample'}
+              disabled={busy}
+              onClick={() => {
+                setInvalid(null)
+                start.mutate({ kind: 'sample' })
+              }}
+            >
+              {t('upload.sample')}
+            </Button>
+          </div>
+          <p className="mt-2 text-sm text-muted-foreground">{t('upload.sampleHint')}</p>
+        </section>
       </div>
-      <p className="mt-2 text-sm text-muted-foreground">{t('upload.sampleHint')}</p>
+    </div>
+  )
+}
+
+/** The number, title and hint of one upload step; the number is a lit node on the rail. */
+function StepHeading({
+  id,
+  n,
+  title,
+  hint,
+}: {
+  id: string
+  n: number
+  title: string
+  hint?: string
+}) {
+  const { t, i18n } = useTranslation()
+  const language: Language = i18n.language === 'en' ? 'en' : 'bn'
+  return (
+    <div className="mb-4 flex items-start gap-3">
+      <span
+        aria-hidden="true"
+        className="step-node font-ui flex size-10 shrink-0 items-center justify-center rounded-full border-2 border-primary bg-background font-bold text-primary"
+      >
+        {formatNumber(n, language)}
+      </span>
+      <div>
+        <p className="sr-only">{t('upload.steps.number', { n: formatNumber(n, language) })}</p>
+        <h2 id={id} className="text-2xl leading-tight">
+          {title}
+        </h2>
+        {hint !== undefined && <p className="mt-1 text-muted-foreground">{hint}</p>}
+      </div>
     </div>
   )
 }

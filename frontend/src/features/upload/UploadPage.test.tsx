@@ -242,4 +242,21 @@ describe('UploadPage', () => {
       within(await screen.findByRole('alert')).getByText(/রেকর্ড করা উত্তর নেই/),
     ).toBeInTheDocument()
   })
+
+  it('FR-69 is three numbered steps in order: the contract, the side, start', async () => {
+    page()
+    const steps = await screen.findByRole('group', { name: 'তিন ধাপে চুক্তি দিন' })
+    const items = within(steps).getAllByRole('region')
+    expect(
+      within(steps)
+        .getAllByRole('heading', { level: 2 })
+        .map((h) => h.textContent),
+    ).toEqual(['চুক্তি দিন', 'কার পক্ষ থেকে দেখবেন', 'শুরু করুন'])
+    const [first, second, third] = items
+    expect(within(first as HTMLElement).getByRole('tablist')).toBeInTheDocument()
+    expect(within(second as HTMLElement).getAllByRole('radio')).toHaveLength(2)
+    expect(
+      within(third as HTMLElement).getByRole('button', { name: 'বিশ্লেষণ করুন' }),
+    ).toBeInTheDocument()
+  })
 })

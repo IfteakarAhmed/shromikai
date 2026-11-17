@@ -14,7 +14,11 @@ interface ProgressViewProps {
   polling: boolean
 }
 
-/** The six steps of the analysis, driven by the real stages the API reports (FR-58, FR-69). */
+/**
+ * The six steps of the analysis as a lit timeline, driven by the real stages the API reports
+ * (FR-58, FR-69): done steps glow, the running one pulses and says in a plain sentence what is
+ * happening; the only number besides the step numbers is the API's own percentage.
+ */
 export function ProgressView({ states, progress, warnings, polling }: ProgressViewProps) {
   const { t, i18n } = useTranslation()
   const language: Language = i18n.language === 'en' ? 'en' : 'bn'
@@ -46,52 +50,66 @@ export function ProgressView({ states, progress, warnings, polling }: ProgressVi
           {t('progress.percent', { percent: formatNumber(percent, language) })}
         </p>
 
-        <ol className="mt-5 space-y-3">
+        <ol className="progress-rail mt-6">
           {UI_STAGES.map((step, index) => {
             const state = states[index] ?? 'waiting'
             return (
               <li
                 key={step}
+                data-stage={step}
+                data-state={state}
                 aria-current={state === 'active' ? 'step' : undefined}
-                className={cx(
-                  'flex items-center gap-3 rounded-lg border px-4 py-3 transition-colors',
-                  state === 'active' && 'border-primary/60 bg-primary/10',
-                  state === 'done' && 'border-verified/30 bg-verified/5',
-                  state === 'waiting' && 'border-border opacity-70',
-                )}
+                className="relative flex gap-4 pb-6 last:pb-0"
               >
                 <span
                   className={cx(
-                    'flex size-8 shrink-0 items-center justify-center rounded-full border',
+                    'stage-node relative z-10 flex size-10 shrink-0 items-center justify-center rounded-full border-2',
                     state === 'done' && 'border-verified bg-verified text-background',
-                    state === 'active' && 'border-primary text-primary',
-                    state === 'waiting' && 'border-border text-muted-foreground',
+                    state === 'active' && 'border-primary bg-background text-primary',
+                    state === 'waiting' && 'border-border bg-background text-muted-foreground',
                   )}
                 >
                   {state === 'done' ? (
-                    <Icon name="check" size={16} />
+                    <Icon name="check" size={18} />
                   ) : state === 'active' ? (
-                    <Icon name="loader" size={16} className="animate-spin" />
+                    <Icon name="loader" size={18} className="animate-spin" />
                   ) : (
-                    <span aria-hidden="true">{formatNumber(index + 1, language)}</span>
+                    <span aria-hidden="true" className="font-ui">
+                      {formatNumber(index + 1, language)}
+                    </span>
                   )}
                 </span>
-                <span className="flex-1 font-medium">{t(`progress.steps.${step}`)}</span>
-                <span className="text-sm text-muted-foreground">
-                  {t(
-                    state === 'done'
-                      ? 'progress.stateDone'
-                      : state === 'active'
-                        ? 'progress.stateActive'
-                        : 'progress.stateWaiting',
+                <div className="min-w-0 flex-1 pt-1.5">
+                  <p
+                    className={cx(
+                      'flex flex-wrap items-baseline justify-between gap-x-3 font-semibold',
+                      state === 'waiting' && 'text-muted-foreground',
+                    )}
+                  >
+                    <span>{t(`progress.steps.${step}`)}</span>
+                    <span className="text-sm font-normal text-muted-foreground">
+                      {t(
+                        state === 'done'
+                          ? 'progress.stateDone'
+                          : state === 'active'
+                            ? 'progress.stateActive'
+                            : 'progress.stateWaiting',
+                      )}
+                    </span>
+                  </p>
+                  {state === 'active' && (
+                    // The live region below announces it; this copy is for the eye.
+                    <p aria-hidden="true" className="stage-sentence mt-1 text-primary">
+                      {t(`progress.sentences.${step}`)}
+                    </p>
                   )}
-                </span>
+                </div>
               </li>
             )
           })}
         </ol>
         <p role="status" className="sr-only">
-          {active === undefined ? '' : t(`progress.steps.${active}`)}
+          {active === undefined ? '' : t(`progress.sentences.${active}`)}
         </p>
       </GlassCard>
 
