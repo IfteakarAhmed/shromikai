@@ -421,11 +421,11 @@
 
 মূল ধারা (কাল্পনিক চুক্তি থেকে):
 
-> 3. Hours of work The Guard works 12 hours a day for 30 days a month. No extra payment is made for night shifts or extra hours.
+> 3\. Hours of work The Guard works 12 hours a day for 30 days a month. No extra payment is made for night shifts or extra hours.
 
 প্রস্তাবিত ধারা:
 
-> ৩. কাজের সময়: গার্ড আইনে নির্ধারিত সময়ের মধ্যে কাজ করবেন। নির্ধারিত সময়ের অতিরিক্ত কাজ অধিকাল কাজ গণ্য হবে এবং এর জন্য মূল মজুরী, মহার্ঘভাতা ও এডহক বা অন্তবর্তী মজুরী (যদি থাকে) এর সাধারণ হারের দ্বিগুণ হারে ভাতা দেওয়া হবে।
+> ৩\. কাজের সময়: গার্ড আইনে নির্ধারিত সময়ের মধ্যে কাজ করবেন। নির্ধারিত সময়ের অতিরিক্ত কাজ অধিকাল কাজ গণ্য হবে এবং এর জন্য মূল মজুরী, মহার্ঘভাতা ও এডহক বা অন্তবর্তী মজুরী (যদি থাকে) এর সাধারণ হারের দ্বিগুণ হারে ভাতা দেওয়া হবে।
 
 কেন এটি ঠিক (টুলের কারণ): ১২ ঘণ্টার বিনা-ভাতার শর্ত বাদ দিয়ে অধিকাল কাজে সাধারণ হারের দ্বিগুণ ভাতা নিশ্চিত করা হয়েছে।
 
@@ -435,11 +435,11 @@
 
 মূল ধারা (কাল্পনিক চুক্তি থেকে):
 
-> 2. Salary The monthly salary is BDT 11,000, from which uniform and equipment costs are deducted every month.
+> 2\. Salary The monthly salary is BDT 11,000, from which uniform and equipment costs are deducted every month.
 
 প্রস্তাবিত ধারা:
 
-> 2. Salary: The monthly salary is BDT 11,000, paid in full. The employer shall provide uniforms and equipment at its own cost, and no deduction for them shall be made from wages, except deductions that the law expressly permits.
+> 2\. Salary: The monthly salary is BDT 11,000, paid in full. The employer shall provide uniforms and equipment at its own cost, and no deduction for them shall be made from wages, except deductions that the law expressly permits.
 
 কেন এটি ঠিক (টুলের কারণ): ইউনিফর্ম ও সরঞ্জামের খরচ নিয়োগকর্তা বহন করবে, ফলে আইনবহির্ভূত মজুরী কর্তন বাদ যায় ও পূর্ণ মজুরী নিশ্চিত হয়।
 
@@ -449,11 +449,11 @@
 
 মূল ধারা (কাল্পনিক চুক্তি থেকে):
 
-> 6. Injury and sickness If the Guard is injured or ill, the Company has no duty to pay medical costs or wages for absent days.
+> 6\. Injury and sickness If the Guard is injured or ill, the Company has no duty to pay medical costs or wages for absent days.
 
 প্রস্তাবিত ধারা:
 
-> ৬. আঘাত ও অসুস্থতা: কর্মকালীন দুর্ঘটনা বা পেশাগত রোগে আক্রান্ত হলে কোম্পানি নিজ খরচে ও দায়িত্বে গার্ডের সম্পূর্ণ সুস্থ হওয়া পর্যন্ত চিকিৎসা করাবে এবং আইন অনুযায়ী ক্ষতিপূরণ দেবে। কর্মসংশ্লিষ্ট নয় এমন অসুস্থতায় ছুটি ও মজুরি আইন ও কোম্পানির নীতি অনুযায়ী হবে।
+> ৬\. আঘাত ও অসুস্থতা: কর্মকালীন দুর্ঘটনা বা পেশাগত রোগে আক্রান্ত হলে কোম্পানি নিজ খরচে ও দায়িত্বে গার্ডের সম্পূর্ণ সুস্থ হওয়া পর্যন্ত চিকিৎসা করাবে এবং আইন অনুযায়ী ক্ষতিপূরণ দেবে। কর্মসংশ্লিষ্ট নয় এমন অসুস্থতায় ছুটি ও মজুরি আইন ও কোম্পানির নীতি অনুযায়ী হবে।
 
 কেন এটি ঠিক (টুলের কারণ): ধারাটি এখন কর্মকালীন আঘাতে মালিকের খরচে চিকিৎসা ও ক্ষতিপূরণ নিশ্চিত করে এবং অন্য অসুস্থতায় আইনানুগ ছুটি রাখে।
 
@@ -463,11 +463,11 @@
 
 মূল ধারা (কাল্পনিক চুক্তি থেকে):
 
-> 7. Notice and termination The Company may end this contract at any time without notice. The Guard needs the Company's written permission to resign.
+> 7\. Notice and termination The Company may end this contract at any time without notice. The Guard needs the Company's written permission to resign.
 
 প্রস্তাবিত ধারা:
 
-> ৭. নোটিশ ও অবসান: কোম্পানি আইন অনুযায়ী লিখিত নোটিশ দিয়ে, অথবা আইনে অনুমোদিত ক্ষেত্রে নোটিশের পরিবর্তে নোটিশ মেয়াদের মজুরি প্রদান করে, চুক্তি অবসান করতে পারিবে। গার্ড কোম্পানির অনুমতি ছাড়াই লিখিত নোটিশ দিয়ে, অথবা নোটিশ মেয়াদের মজুরির সমপরিমাণ অর্থ প্রদান করিয়া, ইস্তফা দিতে পারিবেন।
+> ৭\. নোটিশ ও অবসান: কোম্পানি আইন অনুযায়ী লিখিত নোটিশ দিয়ে, অথবা আইনে অনুমোদিত ক্ষেত্রে নোটিশের পরিবর্তে নোটিশ মেয়াদের মজুরি প্রদান করে, চুক্তি অবসান করতে পারিবে। গার্ড কোম্পানির অনুমতি ছাড়াই লিখিত নোটিশ দিয়ে, অথবা নোটিশ মেয়াদের মজুরির সমপরিমাণ অর্থ প্রদান করিয়া, ইস্তফা দিতে পারিবেন।
 
 কেন এটি ঠিক (টুলের কারণ): বিনা নোটিশে অবসান ও ইস্তফায় অনুমতির শর্ত বাদ দিয়ে ধারা ২৭ অনুযায়ী নোটিশ বা মজুরির বিকল্প রাখা হয়েছে।
 
@@ -479,11 +479,11 @@
 
 মূল ধারা (কাল্পনিক চুক্তি থেকে):
 
-> 3. Hours of work The Guard works 12 hours a day for 30 days a month. No extra payment is made for night shifts or extra hours.
+> 3\. Hours of work The Guard works 12 hours a day for 30 days a month. No extra payment is made for night shifts or extra hours.
 
 প্রস্তাবিত ধারা:
 
-> 3. Hours of work: The Guard works 8 hours a day and no more than 48 hours a week, with weekly rest as the law requires. Any work beyond these hours is overtime and is paid at double the ordinary rate. Night shifts are allotted fairly.
+> 3\. Hours of work: The Guard works 8 hours a day and no more than 48 hours a week, with weekly rest as the law requires. Any work beyond these hours is overtime and is paid at double the ordinary rate. Night shifts are allotted fairly.
 
 কেন এটি ঠিক (টুলের কারণ): দৈনিক ৮ ঘণ্টা ও সাপ্তাহিক ৪৮ ঘণ্টার সীমা এবং অধিকালের দ্বিগুণ ভাতা যুক্ত হওয়ায় ধারাটি আইনসম্মত হয়েছে।
 
@@ -493,11 +493,11 @@
 
 মূল ধারা (কাল্পনিক চুক্তি থেকে):
 
-> 4. Weekly rest and holidays The Guard has no weekly rest day and no public holidays unless the client site is closed.
+> 4\. Weekly rest and holidays The Guard has no weekly rest day and no public holidays unless the client site is closed.
 
 প্রস্তাবিত ধারা:
 
-> ৪. সাপ্তাহিক ছুটি ও উৎসব ছুটি: গার্ড প্রতি সপ্তাহে অন্তত ১ দিন সাপ্তাহিক ছুটি এবং বছরে ১৩ দিন মজুরীসহ উৎসব ছুটি পাবেন। ছুটির দিনে কাজ করতে হলে আইন অনুযায়ী ক্ষতিপূরক ছুটি বা প্রাপ্য মজুরী দেওয়া হবে।
+> ৪\. সাপ্তাহিক ছুটি ও উৎসব ছুটি: গার্ড প্রতি সপ্তাহে অন্তত ১ দিন সাপ্তাহিক ছুটি এবং বছরে ১৩ দিন মজুরীসহ উৎসব ছুটি পাবেন। ছুটির দিনে কাজ করতে হলে আইন অনুযায়ী ক্ষতিপূরক ছুটি বা প্রাপ্য মজুরী দেওয়া হবে।
 
 কেন এটি ঠিক (টুলের কারণ): ধারাটি এখন ন্যূনতম ১ দিন সাপ্তাহিক ছুটি ও ১৩ দিন উৎসব ছুটি নিশ্চিত করে এবং প্রয়োজনে ছুটির দিনে কাজের সুযোগ রাখে।
 
@@ -509,11 +509,11 @@
 
 মূল ধারা (কাল্পনিক চুক্তি থেকে):
 
-> 4. Weekly rest and holidays The Guard has no weekly rest day and no public holidays unless the client site is closed.
+> 4\. Weekly rest and holidays The Guard has no weekly rest day and no public holidays unless the client site is closed.
 
 প্রস্তাবিত ধারা:
 
-> ৪. সাপ্তাহিক বিশ্রাম ও ছুটি: নিরাপত্তারক্ষী প্রতি সপ্তাহে কমপক্ষে ১ দিন মজুরিসহ সাপ্তাহিক বিশ্রাম পাবেন এবং প্রতি পঞ্জিকা বছরে মজুরিসহ ১৩ দিন উৎসব ছুটি পাবেন। ক্লায়েন্ট সাইট বন্ধ থাকলে সেই দিন এই ছুটির অংশ হিসেবে গণ্য হতে পারে।
+> ৪\. সাপ্তাহিক বিশ্রাম ও ছুটি: নিরাপত্তারক্ষী প্রতি সপ্তাহে কমপক্ষে ১ দিন মজুরিসহ সাপ্তাহিক বিশ্রাম পাবেন এবং প্রতি পঞ্জিকা বছরে মজুরিসহ ১৩ দিন উৎসব ছুটি পাবেন। ক্লায়েন্ট সাইট বন্ধ থাকলে সেই দিন এই ছুটির অংশ হিসেবে গণ্য হতে পারে।
 
 কেন এটি ঠিক (টুলের কারণ): ধারাটিতে এখন আইনসম্মত ১ দিন সাপ্তাহিক বিশ্রাম ও ১৩ দিন মজুরিসহ উৎসব ছুটি নিশ্চিত করা হয়েছে।
 
@@ -525,11 +525,11 @@
 
 মূল ধারা (কাল্পনিক চুক্তি থেকে):
 
-> 5. Probation The first 9 months are probation, during which the salary is 70 percent of the stated salary.
+> 5\. Probation The first 9 months are probation, during which the salary is 70 percent of the stated salary.
 
 প্রস্তাবিত ধারা:
 
-> ৫. শিক্ষানবিশকাল: নিয়োগের প্রথম ৩ মাস (কেরানী-সংক্রান্ত কাজে ৬ মাস) শিক্ষানবিশকাল হইবে। এই সময়ে শ্রমিক চুক্তিতে উল্লিখিত পূর্ণ বেতন পাইবেন।
+> ৫\. শিক্ষানবিশকাল: নিয়োগের প্রথম ৩ মাস (কেরানী-সংক্রান্ত কাজে ৬ মাস) শিক্ষানবিশকাল হইবে। এই সময়ে শ্রমিক চুক্তিতে উল্লিখিত পূর্ণ বেতন পাইবেন।
 
 কেন এটি ঠিক (টুলের কারণ): শিক্ষানবিশকাল আইনসম্মত ৩ বা ৬ মাসে সীমিত করা হয়েছে এবং কম বেতনের শর্ত বাদ দিয়ে পূর্ণ বেতন রাখা হয়েছে।
 
@@ -539,11 +539,11 @@
 
 মূল ধারা (কাল্পনিক চুক্তি থেকে):
 
-> 8. Non-competition For 3 years after leaving, the Guard may not work for any security company.
+> 8\. Non-competition For 3 years after leaving, the Guard may not work for any security company.
 
 প্রস্তাবিত ধারা:
 
-> ৮. গোপনীয়তা: চাকরি ছাড়ার পর গার্ড নিয়োগকর্তার গোপনীয় তথ্য, ক্লায়েন্টের তালিকা ও নিরাপত্তা-ব্যবস্থার বিবরণ প্রকাশ বা অপব্যবহার করবেন না। এই ধারা গার্ডকে কোনো বৈধ পেশা বা কোনো নিরাপত্তা কোম্পানিতে কাজ করা থেকে বিরত রাখে না।
+> ৮\. গোপনীয়তা: চাকরি ছাড়ার পর গার্ড নিয়োগকর্তার গোপনীয় তথ্য, ক্লায়েন্টের তালিকা ও নিরাপত্তা-ব্যবস্থার বিবরণ প্রকাশ বা অপব্যবহার করবেন না। এই ধারা গার্ডকে কোনো বৈধ পেশা বা কোনো নিরাপত্তা কোম্পানিতে কাজ করা থেকে বিরত রাখে না।
 
 কেন এটি ঠিক (টুলের কারণ): পেশা-নিষেধ বাদ দিয়ে শুধু গোপনীয়তা রাখায় ধারাটি বৈধ থাকে এবং নিয়োগকর্তার স্বার্থও সুরক্ষিত হয়।
 
@@ -553,12 +553,12 @@
 
 মূল ধারা (কাল্পনিক চুক্তি থেকে):
 
-> 9. Governing law and disputes Any dispute is decided by the Company's manager, and that decision is final.
+> 9\. Governing law and disputes Any dispute is decided by the Company's manager, and that decision is final.
 Signed for the Company by Nasrin Demo Akter; the Guard: Karim Demo Hossain. Witness: Faruk Demo Mia.
 
 প্রস্তাবিত ধারা:
 
-> ৯. প্রযোজ্য আইন ও বিরোধ: কোনো বিরোধ দেখা দিলে পক্ষগণ প্রথমে কোম্পানির ম্যানেজারের সঙ্গে আলোচনার মাধ্যমে তা নিষ্পত্তির চেষ্টা করবেন। এতে নিষ্পত্তি না হলে যেকোনো পক্ষ বাংলাদেশের প্রচলিত আইন অনুযায়ী উপযুক্ত শ্রম আদালতে প্রতিকার চাইতে পারবেন।
+> ৯\. প্রযোজ্য আইন ও বিরোধ: কোনো বিরোধ দেখা দিলে পক্ষগণ প্রথমে কোম্পানির ম্যানেজারের সঙ্গে আলোচনার মাধ্যমে তা নিষ্পত্তির চেষ্টা করবেন। এতে নিষ্পত্তি না হলে যেকোনো পক্ষ বাংলাদেশের প্রচলিত আইন অনুযায়ী উপযুক্ত শ্রম আদালতে প্রতিকার চাইতে পারবেন।
 
 কেন এটি ঠিক (টুলের কারণ): ম্যানেজারের সিদ্ধান্ত আর চূড়ান্ত নয়; প্রাথমিক আলোচনা থাকলেও শ্রম আদালতে যাওয়ার অধিকার অক্ষুণ্ণ থাকে।
 
@@ -568,11 +568,11 @@ Signed for the Company by Nasrin Demo Akter; the Guard: Karim Demo Hossain. Witn
 
 মূল ধারা (কাল্পনিক চুক্তি থেকে):
 
-> 1. Engagement The Company engages the Guard as a security guard and may post the Guard at any client site in the country at any time.
+> 1\. Engagement The Company engages the Guard as a security guard and may post the Guard at any client site in the country at any time.
 
 প্রস্তাবিত ধারা:
 
-> ১. নিয়োগ: কোম্পানি গার্ডকে নিরাপত্তা প্রহরী হিসেবে নিয়োগ দেয় এবং ন্যায্য প্রয়োজনে দেশের যেকোনো ক্লায়েন্ট সাইটে পোস্টিং দিতে পারে। বদলির অন্তত ৭ দিন আগে লিখিত নোটিশ দিতে হবে এবং বদলির কারণে বাড়তি খরচের জন্য যুক্তিসংগত ভাতা দিতে হবে। বদলিতে বেতন ও সুবিধা কমানো যাবে না।
+> ১\. নিয়োগ: কোম্পানি গার্ডকে নিরাপত্তা প্রহরী হিসেবে নিয়োগ দেয় এবং ন্যায্য প্রয়োজনে দেশের যেকোনো ক্লায়েন্ট সাইটে পোস্টিং দিতে পারে। বদলির অন্তত ৭ দিন আগে লিখিত নোটিশ দিতে হবে এবং বদলির কারণে বাড়তি খরচের জন্য যুক্তিসংগত ভাতা দিতে হবে। বদলিতে বেতন ও সুবিধা কমানো যাবে না।
 
 কেন এটি ঠিক (টুলের কারণ): বদলিতে নোটিশ, ভাতা ও বেতন-সুবিধার সুরক্ষা যোগ হওয়ায় শ্রমিকের অধিকার ক্ষুণ্ন হয় না, কোম্পানির পোস্টিংয়ের ক্ষমতাও থাকে।
 
@@ -584,11 +584,11 @@ Signed for the Company by Nasrin Demo Akter; the Guard: Karim Demo Hossain. Witn
 
 মূল ধারা (কাল্পনিক চুক্তি থেকে):
 
-> 2. Salary The monthly salary is BDT 11,000, from which uniform and equipment costs are deducted every month.
+> 2\. Salary The monthly salary is BDT 11,000, from which uniform and equipment costs are deducted every month.
 
 প্রস্তাবিত ধারা:
 
-> ২. মজুরী: মাসিক মজুরী ১১,০০০ টাকা। প্রতিটি মজুরীকাল শেষ হওয়ার পরবর্তী ৭ কর্মদিবসের মধ্যে সম্পূর্ণ মজুরী পরিশোধ করা হবে। ইউনিফর্ম ও সরঞ্জামের খরচ কেবল আইনে অনুমোদিত হলে এবং লিখিতভাবে জানিয়ে কর্তন করা যাবে।
+> ২\. মজুরী: মাসিক মজুরী ১১,০০০ টাকা। প্রতিটি মজুরীকাল শেষ হওয়ার পরবর্তী ৭ কর্মদিবসের মধ্যে সম্পূর্ণ মজুরী পরিশোধ করা হবে। ইউনিফর্ম ও সরঞ্জামের খরচ কেবল আইনে অনুমোদিত হলে এবং লিখিতভাবে জানিয়ে কর্তন করা যাবে।
 
 কেন এটি ঠিক (টুলের কারণ): মজুরী পরিশোধের সময়সীমা ৭ কর্মদিবস স্পষ্ট করা হয়েছে এবং কর্তন আইনসম্মত শর্তে সীমিত রাখা হয়েছে।
 
