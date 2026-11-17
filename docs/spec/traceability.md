@@ -10,6 +10,13 @@ IDs refer to [`PRD.md`](PRD.md) (FR, NFR, KPI), [`evaluation.md`](evaluation.md)
 [`architecture.md`](architecture.md) §13 (T) and [`AGENTS.md`](../../AGENTS.md) (R). Update the
 status column at every phase exit; the P12 fact-check uses this file as its checklist.
 
+> **P9 status note (2026-11-17, review fixes).** Statuses for FR-68 to FR-78 and NFR-08 to NFR-11 were
+> updated after the Prompt R review of P9. The names in the "Proof" column are the planned names from
+> the specification; the real tests are the Vitest files under `frontend/src/` and the Playwright
+> specs under `frontend/e2e/`, which run locally only (test strategy §12). Nothing here is marked
+> `Verified` until the P9 acceptance check and Prompt R pass. Deferred: FR-73 user management and
+> FR-78 (P11); FR-74 pitch, team, Mermaid (P12) and contract numbers (P10).
+
 ## 1. Judging criteria
 
 | Criterion (points) | What judges look for | Requirements | Proof artefact | Phase | Status |
@@ -34,7 +41,7 @@ status column at every phase exit; the P12 fact-check uses this file as its chec
 | | API and MCP channel for law firms, NGOs, job portals | FR-58, FR-63 to FR-66 | `/swagger-ui`; `docs/mcp.md` | P7, P8 | Specified |
 | | Expansion through jurisdiction packs | NFR-17; architecture §11.4 | `JurisdictionPackIT`; `list_jurisdiction_packs` | P8, P11 | Specified |
 | | Localisation | R-11, FR-75, NFR-09 | i18n parity; Playwright `locale` | P9 | Specified |
-| **Real-World Impact + Ethical AI (20)** | Workers on phones, low bandwidth, no account | J1; FR-09, FR-69, FR-76, NFR-10, NFR-11 | Playwright `j1-worker`, `perf-landing`; screenshots in `docs/img/` | P2, P9 | Specified |
+| **Real-World Impact + Ethical AI (20)** | Workers on phones, low bandwidth, no account | J1; FR-09, FR-69, FR-76, NFR-10, NFR-11 | Playwright `j1-worker` (local); `check:lite` in CI (Slow 3G is a proxy measurement, see PRD NFR-10 note); screenshots in `docs/img/` | P2, P9 | Specified |
 | | Plain-Bangla explanations | FR-51, FR-56 | M-21; `PlainLanguageLintTest` | P7, P10 | Specified |
 | | Actionable outputs: redlines and obligations checklist | FR-41, FR-52, FR-53 | M-27, M-28 in `report.md`; `CounterOfferRuleCheckIT`, `ObligationsExportIT` | P6, P7, P10 | Specified |
 | | Bias testing by language and side | FR-40; NFR-21 | M-13, M-14 in `report.md` | P6, P10 | Specified |
@@ -195,17 +202,17 @@ status becomes `Verified` only when that proof exists and passes.
 | FR-65 | API keys and metering | Business Model | P8 | `McpAuthIT`, `McpRateLimitIT`, `CrossOrganisationIsolationIT` | Specified |
 | FR-66 | MCP analysis privacy | Ethical AI | P8 | `McpPrivacyIT` | Specified |
 | FR-67 | MCP documentation and demo tunnel | Presentation | P8 | Manual: MCP Inspector and Claude Desktop; `docs/img/mcp-*.png` | Specified |
-| FR-68 | Routes and navigation | Real-World Impact | P9 | Playwright `j1-worker`, protected-route test | Specified |
-| FR-69 | Upload flow and compression | Real-World Impact | P9 | Vitest `UploadForm`, image compression, MSW SSE order | Specified |
-| FR-70 | Risk cards, badges, citation chips, why drawer | Ethical AI | P9 | Vitest `VerificationBadge`, `RiskCard`, `CitationChip` | Specified |
-| FR-71 | Redline view, print, share | Real-World Impact | P9 | Playwright memo print view; share-button test | Specified |
-| FR-72 | Compare mode UI | Innovation | P9 | Playwright `j5-compare` | Specified |
-| FR-73 | Admin console | Technical Execution | P9 | Playwright `j3-admin`, `AdminUsersIT`, `UsageKpiIT` | Specified |
-| FR-74 | `/docs` hub | Presentation | P9 | MSW `/docs/audit` test; CI grep for hard-coded metrics | Specified |
-| FR-75 | Bilingual UI | Global Readiness | P9 | i18n parity check; Playwright `locale` | Specified |
-| FR-76 | Low-bandwidth mode and read-aloud | Real-World Impact | P9 | Vitest `LowBandwidth`, read-aloud visibility | Specified |
-| FR-77 | Disclaimer and AI transparency | Ethical AI | P9 | UI snapshot tests; memo golden file; `McpServerIT` disclaimer assertion | Specified |
-| FR-78 | Account deletion, AI-builder record | Ethical AI | P9 | `AccountDeletionIT` | Specified |
+| FR-68 | Routes and navigation | Real-World Impact | P9 | Playwright `j1-worker`, protected-route test | Implemented (P9; e2e run locally, not in CI) |
+| FR-69 | Upload flow and compression | Real-World Impact | P9 | Vitest `UploadForm`, image compression, MSW SSE order | Implemented (P9; e2e run locally, not in CI) |
+| FR-70 | Risk cards, badges, citation chips, why drawer | Ethical AI | P9 | Vitest `VerificationBadge`, `RiskCard`, `CitationChip` | Implemented (P9; e2e run locally, not in CI) |
+| FR-71 | Redline view, print, share | Real-World Impact | P9 | Playwright memo print view; share-button test | Implemented (P9; e2e run locally, not in CI) |
+| FR-72 | Compare mode UI | Innovation | P9 | Playwright `j5-compare` | Implemented (P9; e2e run locally, not in CI) |
+| FR-73 | Admin console | Technical Execution | P9 | Playwright `j3-admin` equivalent (`e2e/admin.spec.ts`), `UsageKpiIT`; users part deferred | Implemented without user management (users deferred to P11) |
+| FR-74 | `/docs` hub | Presentation | P9 | MSW `/docs/audit` test; CI grep for hard-coded metrics; pitch, team and Mermaid in P12, contract numbers in P10 | Partial (P9 hub pages; rest deferred) |
+| FR-75 | Bilingual UI | Global Readiness | P9 | i18n parity check; Playwright `locale` | Implemented (P9; e2e run locally, not in CI) |
+| FR-76 | Low-bandwidth mode and read-aloud | Real-World Impact | P9 | Vitest `LowBandwidth`, read-aloud visibility | Implemented (P9; e2e run locally, not in CI) |
+| FR-77 | Disclaimer and AI transparency | Ethical AI | P9 | UI snapshot tests; memo golden file; `McpServerIT` disclaimer assertion | Implemented (P9; e2e run locally, not in CI) |
+| FR-78 | Account deletion, AI-builder record | Ethical AI | P11 (deferred after preliminary submission) | `AccountDeletionIT` (not written); `docs/ai-tools.md` exists | Deferred; `docs/ai-tools.md` part done |
 | FR-79 | Eval dataset and labels | Technical Execution | P10 | `LabelSchemaTest` | Specified |
 | FR-80 | Evaluation runner and reports | Technical Execution | P10 | `MetricFormulaTest`, `EvalRunnerSmokeIT`, `ReportGeneratorTest` | Specified |
 | FR-81 | Calibrated LLM-as-judge | Technical Execution | P10 | `JudgeCalibrationTest` | Specified |
@@ -224,10 +231,10 @@ status becomes `Verified` only when that proof exists and passes.
 | NFR-05 | No content at rest | Ethical AI | P5 | `NoContractPersistenceIT`; M-17 | Specified |
 | NFR-06 | No PII egress | Ethical AI | P5 | `EgressPlumbingIT`; M-16 | Specified |
 | NFR-07 | Security | Technical Execution | P11 | Dependency-Check, `npm audit`; `docs/security/asvs-l1.md` | Specified |
-| NFR-08 | Accessibility | Real-World Impact | P9 | Playwright `a11y`, `keyboard-j1` | Specified |
-| NFR-09 | Bangla first | Global Readiness | P9 | i18n parity check; snapshot tests | Specified |
-| NFR-10 | Low bandwidth | Real-World Impact | P9 | CI bundle report; Playwright `perf-landing` | Specified |
-| NFR-11 | Device support | Real-World Impact | P9 | Playwright browser projects | Specified |
+| NFR-08 | Accessibility | Real-World Impact | P9 | Playwright `a11y`, `keyboard-j1` | Implemented (axe in local Playwright runs; not in CI) |
+| NFR-09 | Bangla first | Global Readiness | P9 | i18n parity check; snapshot tests | Implemented |
+| NFR-10 | Low bandwidth | Real-World Impact | P9 | CI `check:bundle` and `check:lite`; throttled load measured as a proxy (PRD NFR-10 note); no Playwright `perf-landing` | Partial (target not demonstrated) |
+| NFR-11 | Device support | Real-World Impact | P9 | Playwright projects `mobile-chromium` and `desktop-chromium` only | Partial |
 | NFR-12 | Scalability | Scalability | P11 | k6 (FR-87); `CrossOrganisationIsolationIT` | Specified |
 | NFR-13 | Reproducibility | Technical Execution | P7 | `ProvenanceIT` | Specified |
 | NFR-14 | Explainability | Ethical AI | P9 | `TraceCoverageIT` | Specified |

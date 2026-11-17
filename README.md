@@ -14,7 +14,7 @@ Built by team **Cosmic Duo** for the International AI Builders Congress 2026 —
 
 - **[AGENTS.md](AGENTS.md)**: engineering constitution for people and AI coding agents. Read it first.
 - **[Specification](docs/spec/)**: [PRD](docs/spec/PRD.md), [architecture](docs/spec/architecture.md), [API](docs/spec/api.md), [test strategy](docs/spec/test-strategy.md), [evaluation](docs/spec/evaluation.md), [traceability](docs/spec/traceability.md).
-- **[Architecture decisions](docs/adr/)**: ADR-0001 to ADR-0008.
+- **[Architecture decisions](docs/adr/)**: ADR-0001 to ADR-0023.
 - **[Master prompt playbook](docs/playbook/master-prompt-playbook.md)**: phase prompts P1 to P12, reviewer prompt R and fix prompt F.
 
 ## Stack
@@ -93,9 +93,14 @@ npm install
 npm run dev
 ```
 
-3. Open <http://localhost:5173>. Vite forwards `/api` to the backend. The page shows
-   **চালু (সংস্করণ 0.1.0)** when the backend is running, and a Bangla error message with a retry
-   button when it is not.
+3. Open <http://localhost:5173>. Vite forwards `/api` and `/actuator` to the backend on port
+   8080. This is the web app of P9: a Bangla-first landing page, sign-in, upload, results with
+   verified and uncertain findings, redlines, memo, compare mode, the admin console and the
+   `/docs` hub (English and Bangla, dark and light themes, a low-bandwidth mode). To see it
+   without live model calls, run the backend with `SPRING_PROFILES_ACTIVE=demo,dev,fake-models`
+   and use the one-click demo accounts on the sign-in page. Answers in that profile are
+   **recorded** replays on a synthetic sample contract, and every page says so. The `prod`
+   profile refuses to start together with `fake-models`, `demo` or `dev`.
 
 ### Quality gates (what CI runs)
 
@@ -104,8 +109,14 @@ cd backend && ./gradlew check
 ```
 
 ```bash
-cd frontend && npm run lint && npm run typecheck && npm test && npm run build
+cd frontend && npm run lint && npm run typecheck && npm test && npm run build && npm run check:bundle && npm run check:lite
 ```
+
+`check:bundle` keeps the initial JavaScript within 200 KB gzip; `check:lite` keeps the lite
+landing within 1.5 MB, free of 3D scene code, and prints one load time under Slow 3G throttling
+(a proxy, see the NFR-10 note in the PRD). The Playwright end-to-end suite (`npm run e2e`) needs
+the backend running with `demo` and `fake-models` and is run locally, not in CI yet
+([test strategy §12](docs/spec/test-strategy.md)).
 
 `./gradlew check` runs unit and integration tests (Testcontainers, so Docker must be running),
 ArchUnit module rules, the JUnit tag rules, the log-key allowlist, `promptLint`, the fixture
