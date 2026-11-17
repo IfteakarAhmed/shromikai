@@ -1057,3 +1057,28 @@ in "Honest limits" below and in [`docs/known-gaps.md`](known-gaps.md).
 - **Docs:** `docs/known-gaps.md` gains the line that no CI step compares rule quotes with the corpus (`checkRules` is opt-in); the PRD NFR-10 note says `check:lite` runs in CI (run #35 for `779a251`, green).
 - **Screenshots:** removed `C2b-compare-dark-390` (same as `C3-compare-dark-390`), `C1-landing-hero-type-1280` (same as `C1-landing-lite-1280`) and three `C4-admin-*-light-390` images that were copies of the 403 page (the shot ran as a worker). The last is a gap: those three admin pages have no light 390 px picture until the screenshot run is repeated.
 - **Gates:** `./gradlew check` green; frontend lint, typecheck, `npm test` (474), build, `check:bundle`, `check:lite` (510 KB, load 4.7 s) pass.
+
+## Phase report - P10 (evaluation, observability)
+- Summary: evaluation harness (`./gradlew evaluate`), Micrometer metrics, `eval-smoke` CI gate and `/docs/evaluation` from `report.json`. Run `p10a` on 5 synthetic contracts (worker side, one run), live spend US$0.7407 of the US$1.45 eval cap (ledger total US$2.5821 of US$3.30). 0 reviewed labels.
+- Headline (from `eval/reports/report.md`, generated at 8afa315; indicative, fewer than 10 contracts):
+
+| Metric | Baseline | ShromikAI | Target |
+| --- | --- | --- | --- |
+| M-01 unverified citations shown | 1.000 (21 of 21) | 0.000 (0 of 48) | 0 |
+| M-03 objectively fabricated | 1.000 (21 of 21): 17 cite the contract's own clauses, 4 malformed statute keys | raw claims 0.000 (0 of 46) | reported |
+| M-04 fabricated caught | n/a | 1.000 (73 of 73), 0 misses; independent part 52 of 52 adversarial | 0 misses |
+| M-05 valid citations accepted | n/a | 0.800 (16 of 20), missed | ≥ 0.90 |
+| M-11 correct abstention | n/a | 0.200 (1 of 5), missed | ≥ 0.90 |
+| M-16 PII in cloud requests | 0 (of 11) | 0 (of 207) | 0 |
+| M-19 latency p95 | n/a | 85.5 s (n = 2; 45.8 s without the local PII step), missed | ≤ 85 s |
+| M-20 cost per contract median | US$0.016 (n = 3) | US$0.348 (n = 3) | ≤ US$0.40 |
+| M-25 PII recall (local model) | n/a | 1.000 (36 of 36) | |
+| M-06 / M-07 / M-10 vs draft labels | n/a | 23 of 27 / ≥ 23 of 37 / 11 of 23 | |
+
+- Not available / not done: M-02, M-27, M-28 (no reviewer), M-21, M-26 (judge cut), M-13 (no pairs), M-14 (employer side not run), M-18 (no injection set), M-22 (facts not kept), M-24 (no OCR set), no-rules ablation, variance repeat.
+- Failures: `syn-bn-01` and `syn-bn-03` fail closed with `privacy-guard-blocked` (both systems): the local PII model labels role words (মালিক, কর্মচারী, স্বাক্ষর) as names, inflected forms survive redaction, and the egress guard blocks. No PII left; Bangla availability is the problem. `syn-en-01`'s first run hit the harness's 60-call limit (fixed, rerun replayed; US$0.38 + US$0.04).
+- Tests added: MetricFormulaTest, LabelSchemaTest, ReportGeneratorTest, ReportAssemblerTest, JudgeCalibrationTest, EvalGateTest, AdversarialGeneratorTest, EvalRunnerSmokeIT, MetricsIT, FixtureScannerTest (llm-eval); frontend evaluationContracts.test.tsx. `./gradlew check` green before the live runs; frontend 477 unit tests, 152 e2e (docs, a11y) green after.
+- Decisions: ADR-0024; ADR-0015 cap amendment. Two privacy tests now assert a zero counter instead of an absent one (counter registered up front).
+- Notes: 171 eval recordings landed partly in two `fix(eval)` commits (54c516f, 8620409); five are marked `schemaInvalidAsRecorded`.
+- Known gaps: see `docs/known-gaps.md` (P10). Open for the team: law student review of `eval/labels/export/labels.csv` and `eval/citations/claims-draft.yaml`; fix the local PII over-extraction; baseline prompt fairness review.
+- Not done yet: Prompt R review, human acceptance check, `/api/v1/meta` latestEval still null. No push, no tag.

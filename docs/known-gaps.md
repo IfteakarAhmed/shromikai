@@ -3,6 +3,18 @@
 A running list of what is not done, not measured or not proven, so nothing is claimed by accident
 (R-07, R-12). Each phase report in `docs/dev-log.md` links here. Newest first.
 
+## P10 (evaluation run p10a, 17 Nov 2026)
+
+| Gap | Where it matters | Detail |
+| --- | --- | --- |
+| Bangla contracts blocked by the egress guard | R-03, FR-28, availability | The local PII model labels role words (মালিক, কর্মচারী, স্বাক্ষর) as entities; inflected forms stay in the redacted text and the guard's known-value check blocks the request. `syn-bn-01` and `syn-bn-03` fail closed for both systems. No leak; fix needed in extraction or redaction. |
+| Labels and adversarial claims are unreviewed AI drafts | M-06 to M-11, M-04, M-05 | Written by Claude, same family as the system: circular. 0 reviewed labels. |
+| Valid citations accepted 16 of 20 | M-05, FR-44 | Four valid controls ended `SUPPORT_PARTIAL`; the verifier or the drafted claims may be at fault. |
+| Correct abstention 1 of 5 | M-11, FR-47 | Risks with no supporting section (transfer, deposit, IP) are mostly shown VERIFIED with a weak citation (see BLA-2006:3). |
+| Baseline comparison is mostly key-format failures | M-03, ADR-0024 | 17 of 21 baseline citations point at contract clauses, 4 use malformed keys; baseline prompt fairness never reviewed. |
+| `/api/v1/meta` latestEval still null | FR-74 | `/docs/audit` does not show the P10 numbers; `/docs/evaluation` does. |
+| CI cannot re-run the verifier on the real law | FR-83 | `eval-smoke` recomputes the gate from committed results; no corpus in CI. |
+
 ## P9 (web experience, found while building and reviewing it)
 
 The transfer-risk card in the recorded demo shows `BLA-2006:3` as `VERIFIED`, and that citation does
@@ -28,7 +40,7 @@ say so.
 | The demo database holds about a hundred API keys of earlier test runs | FR-65 | `/admin/api-keys` is very long in the demo (every e2e run creates a key and revokes only one). The page is correct; the data is test residue. |
 | Admin users and account deletion, `/docs/pitch`, `/docs/team`, Mermaid diagrams | FR-73, FR-74, FR-78 | Agreed to defer for P9: no admin user CRUD, no `DELETE /auth/me`, no pitch or team pages; the architecture page is a hand-drawn SVG |
 | The docs pages show English documents in the Bangla interface | R-11, FR-74, FR-75 | `/docs/mcp`, `/docs/known-gaps`, the prompt pages and the specification sections on `/docs/security` and `/docs/architecture` are the project's own English files, rendered as they are and marked `lang="en"`; only the page frames and the live and report-based pages (`/docs/audit`, `/docs/data`, `/docs/evaluation`) are translated. Diagram sources (`mermaid` fences) inside those sections are replaced by a note. |
-| `/docs/evaluation` has no contract numbers | R-07, FR-79, FR-74 | Only the retrieval report exists. The contract evaluation (risks found, correct and invented citations) has no `eval/reports/report.json`, so the page says "not yet run" and `/docs/audit` shows no latest evaluation until P10 writes one. |
+| `/docs/evaluation` had no contract numbers (fixed in P10: it reads `eval/reports/report.json`) | R-07, FR-79, FR-74 | Only the retrieval report exists. The contract evaluation (risks found, correct and invented citations) has no `eval/reports/report.json`, so the page says "not yet run" and `/docs/audit` shows no latest evaluation until P10 writes one. |
 | Usage report: model cost covers 30 days, KPIs cover 7 days | FR-73, KPI-12 to KPI-14 | The cost per model comes from `analysis_trace`, which is kept for 30 days, so a longer window shows model cost only for its last 30 days; the day totals come from `usage_event` (13 months). The three KPIs always cover the 7 days ending at `to`. `memoDownloadRate` can be above 1 when a memo is rendered more than once. |
 | No CI step compares the rule quotes with the corpus | FR-36, R-10 | `checkRules` is opt-in (`-PcorpusCheck`) and CI has no corpus database. The app does check the quotes at startup against its own database; team review and local runs cover the rest for now. |
 | Three light-theme 390 px admin screenshots showed the 403 page, and were removed | FR-73, R-12 | `C4-admin-{playbooks,review,trace}-light-390.png` were byte-identical copies of the 403 page (the shot ran as a worker). They are gone from `docs/img/p9/`; the dark 390 and light 1280 admin pictures are unaffected, and the light 390 admin pages have no picture until the screenshot run is repeated. |
