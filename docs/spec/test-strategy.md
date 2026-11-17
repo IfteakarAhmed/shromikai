@@ -202,6 +202,14 @@ invented NIDs, phone numbers in unallocated ranges).
 
 ## 12. End-to-end and accessibility
 
+> **Status (2026-11-17, P9 review fixes).** The Playwright suite in `frontend/e2e/` runs **locally
+> only** for now (against the `demo` + `fake-models` backend); there is **no CI e2e job yet**. Of the
+> projects below only `mobile-chromium` and `desktop-chromium` exist; `mobile-narrow`,
+> `mobile-webkit` and `desktop-firefox` are planned, not built. There is no `perf-landing` Playwright
+> spec: the CI job `frontend` runs `npm run check:lite` instead (transfer size under 1.5 MB, no scene
+> code on the lite landing, and one load under 400 kbps / 400 ms RTT throttling whose time is
+> printed and guarded at 30 s; see the NFR-10 note in the PRD). A CI e2e job is a P11 item.
+
 | Playwright project | Viewport | Browser |
 | --- | --- | --- |
 | `mobile-chromium` | 390 × 844, touch; Slow 3G for `perf-landing` | Chromium |
@@ -218,7 +226,7 @@ Specs (backend in `demo` + `fake-models`):
 - `j5-compare`: `/app/compare` highlights the fake baseline citation.
 - `locale`: every route in `bn` and `en`.
 - `a11y`: axe-core on `/`, `/app`, `/app/compare`, `/admin`, `/docs`, zero serious or critical violations.
-- `perf-landing`: interactive within 5 s on Slow 3G.
+- `perf-landing`: interactive within 5 s on Slow 3G (target; not built as a Playwright spec, see the status note above).
 - `keyboard-j1`: J1 without a pointer.
 
 ## 13. Test data rules
