@@ -14,80 +14,107 @@
     "outputTokens" : 1465,
     "cacheReadTokens" : 2232
   },
+  "schemaInvalidAsRecorded" : true,
   "response" : {
     "status" : "OK",
     "reason" : "NONE",
-    "items" : [ {
-      "party" : "EMPLOYER",
-      "obligation" : "কর্মচারীকে নিয়োগপত্র দিতে হবে এবং ছবিসহ পরিচয়পত্র প্রদান করতে হবে।",
-      "trigger" : "কর্মচারী নিয়োগের সময়",
-      "deadline" : null,
-      "source" : "STATUTE",
-      "status" : "STATUTORY_NOT_IN_CONTRACT",
-      "clause_ids" : [ "c1" ],
-      "citations" : [ {
-        "section_key" : "BLA-2006:5@original",
-        "quote" : "কোন মালিক নিয়োগপত্র প্রদান না করিয়া কোন শ্রমিককে নিয়োগ করিতে পারিবেন না",
-        "claim" : "নিয়োগপত্র ও ছবিসহ পরিচয়পত্র বাধ্যতামূলক"
-      } ]
-    }, {
-      "party" : "EMPLOYER",
-      "obligation" : "নির্ধারিত মজুরির কম নয় এমন বেতন পরিশোধ করতে হবে।",
-      "trigger" : "মজুরি প্রদানের সময়",
-      "deadline" : null,
-      "source" : "STATUTE",
-      "status" : "CONFLICTS_WITH_CONTRACT",
-      "clause_ids" : [ "c3" ],
-      "citations" : [ {
-        "section_key" : "BLA-2006:149@original",
-        "quote" : "কোন মালিক কোন শ্রমিককে এই অধ্যায়ের অধীন ঘোষিত বা প্রকাশিত নিম্নতম হারের কম হারে কোন মজুরী প্রদান করিতে পারিবেন না",
-        "claim" : "নিম্নতম মজুরির কম বেতন নিষিদ্ধ"
-      } ]
-    }, {
-      "party" : "EMPLOYER",
-      "obligation" : "দৈনিক কাজের সময় সীমা ও বিশ্রামের বিরতি দিতে হবে।",
-      "trigger" : "প্রতিদিনের কর্মঘণ্টায়",
-      "deadline" : null,
-      "source" : "STATUTE",
-      "status" : "CONFLICTS_WITH_CONTRACT",
-      "clause_ids" : [ "c4" ],
-      "citations" : [ {
-        "section_key" : "BLA-2006:101@amend-2013",
-        "quote" : "দৈনিক আট ঘন্টার অধিক কাজ করিতে বাধ্য থাকিবেন না, যদি না উক্ত দিনে",
-        "claim" : "দৈনিক ৮ ঘণ্টার বেশি কাজ ও বিরতির শর্ত"
-      } ]
-    }, {
-      "party" : "EMPLOYER",
-      "obligation" : "প্রতি বছর ধারাবাহিক চাকরির জন্য সবৈতনিক বার্ষিক ছুটি দিতে হবে।",
-      "trigger" : "এক বছর অবিচ্ছিন্ন চাকরির পর",
-      "deadline" : {
-        "value" : 12,
-        "unit" : "MONTHS"
+    "items" : [
+      {
+        "party" : "EMPLOYER",
+        "obligation" : "কর্মচারীকে নিয়োগপত্র দিতে হবে এবং ছবিসহ পরিচয়পত্র প্রদান করতে হবে।",
+        "trigger" : "কর্মচারী নিয়োগের সময়",
+        "deadline" : null,
+        "source" : "STATUTE",
+        "status" : "STATUTORY_NOT_IN_CONTRACT",
+        "clause_ids" : [
+          "c1"
+        ],
+        "citations" : [
+          {
+            "section_key" : "BLA-2006:5@original",
+            "quote" : "কোন মালিক নিয়োগপত্র প্রদান না করিয়া কোন শ্রমিককে নিয়োগ করিতে পারিবেন না",
+            "claim" : "নিয়োগপত্র ও ছবিসহ পরিচয়পত্র বাধ্যতামূলক"
+          }
+        ]
       },
-      "source" : "STATUTE",
-      "status" : "CONFLICTS_WITH_CONTRACT",
-      "clause_ids" : [ "c5" ],
-      "citations" : [ {
-        "section_key" : "BLA-2006:117@amend-2026",
-        "quote" : "কোন প্রতিষ্ঠানে অবিচ্ছিন্নভাবে এক বৎসর চাকুরী পূর্ণ করিয়াছেন এমন প্রত্যেক প্রাপ্ত বয়স্ক শ্রমিককে",
-        "claim" : "বার্ষিক মজুরিসহ ছুটি বাধ্যতামূলক"
-      } ]
-    }, {
-      "party" : "EMPLOYER",
-      "obligation" : "চাকরি অবসানে নোটিশ দিতে হবে বা নোটিশের মজুরি দিতে হবে।",
-      "trigger" : "চাকরি শেষ করার সময়",
-      "deadline" : {
-        "value" : 30,
-        "unit" : "DAYS"
+      {
+        "party" : "EMPLOYER",
+        "obligation" : "নির্ধারিত মজুরির কম নয় এমন বেতন পরিশোধ করতে হবে।",
+        "trigger" : "মজুরি প্রদানের সময়",
+        "deadline" : null,
+        "source" : "STATUTE",
+        "status" : "CONFLICTS_WITH_CONTRACT",
+        "clause_ids" : [
+          "c3"
+        ],
+        "citations" : [
+          {
+            "section_key" : "BLA-2006:149@original",
+            "quote" : "কোন মালিক কোন শ্রমিককে এই অধ্যায়ের অধীন ঘোষিত বা প্রকাশিত নিম্নতম হারের কম হারে কোন মজুরী প্রদান করিতে পারিবেন না",
+            "claim" : "নিম্নতম মজুরির কম বেতন নিষিদ্ধ"
+          }
+        ]
       },
-      "source" : "STATUTE",
-      "status" : "CONFLICTS_WITH_CONTRACT",
-      "clause_ids" : [ "c8" ],
-      "citations" : [ {
-        "section_key" : "BLA-2006:26@original",
-        "quote" : "লিখিত নোটিশ প্রদান করিয়া কোন অস্থায়ী শ্রমিকের চাকুরীর অবসান করিতে পারিবেন",
-        "claim" : "চাকরি অবসানে লিখিত নোটিশ বাধ্যতামূলক"
-      } ]
-    } ]
+      {
+        "party" : "EMPLOYER",
+        "obligation" : "দৈনিক কাজের সময় সীমা ও বিশ্রামের বিরতি দিতে হবে।",
+        "trigger" : "প্রতিদিনের কর্মঘণ্টায়",
+        "deadline" : null,
+        "source" : "STATUTE",
+        "status" : "CONFLICTS_WITH_CONTRACT",
+        "clause_ids" : [
+          "c4"
+        ],
+        "citations" : [
+          {
+            "section_key" : "BLA-2006:101@amend-2013",
+            "quote" : "দৈনিক আট ঘন্টার অধিক কাজ করিতে বাধ্য থাকিবেন না, যদি না উক্ত দিনে",
+            "claim" : "দৈনিক ৮ ঘণ্টার বেশি কাজ ও বিরতির শর্ত"
+          }
+        ]
+      },
+      {
+        "party" : "EMPLOYER",
+        "obligation" : "প্রতি বছর ধারাবাহিক চাকরির জন্য সবৈতনিক বার্ষিক ছুটি দিতে হবে।",
+        "trigger" : "এক বছর অবিচ্ছিন্ন চাকরির পর",
+        "deadline" : {
+          "value" : 12,
+          "unit" : "MONTHS"
+        },
+        "source" : "STATUTE",
+        "status" : "CONFLICTS_WITH_CONTRACT",
+        "clause_ids" : [
+          "c5"
+        ],
+        "citations" : [
+          {
+            "section_key" : "BLA-2006:117@amend-2026",
+            "quote" : "কোন প্রতিষ্ঠানে অবিচ্ছিন্নভাবে এক বৎসর চাকুরী পূর্ণ করিয়াছেন এমন প্রত্যেক প্রাপ্ত বয়স্ক শ্রমিককে",
+            "claim" : "বার্ষিক মজুরিসহ ছুটি বাধ্যতামূলক"
+          }
+        ]
+      },
+      {
+        "party" : "EMPLOYER",
+        "obligation" : "চাকরি অবসানে নোটিশ দিতে হবে বা নোটিশের মজুরি দিতে হবে।",
+        "trigger" : "চাকরি শেষ করার সময়",
+        "deadline" : {
+          "value" : 30,
+          "unit" : "DAYS"
+        },
+        "source" : "STATUTE",
+        "status" : "CONFLICTS_WITH_CONTRACT",
+        "clause_ids" : [
+          "c8"
+        ],
+        "citations" : [
+          {
+            "section_key" : "BLA-2006:26@original",
+            "quote" : "লিখিত নোটিশ প্রদান করিয়া কোন অস্থায়ী শ্রমিকের চাকুরীর অবসান করিতে পারিবেন",
+            "claim" : "চাকরি অবসানে লিখিত নোটিশ বাধ্যতামূলক"
+          }
+        ]
+      }
+    ]
   }
 }

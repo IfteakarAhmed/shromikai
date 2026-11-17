@@ -1,0 +1,30 @@
+- 2026-11-17T10:39:45.368865Z local PII syn-bn-01: local-model in 152.2 s, {ADDRESS=[1, 1], EMAIL=[1, 1], NID=[1, 1], ORG=[1, 1], PERSON=[3, 3], PHONE=[1, 1]}
+- 2026-11-17T10:42:56.622657Z local PII syn-bn-02: local-model in 191.2 s, {ADDRESS=[1, 1], NID=[1, 1], ORG=[1, 1], PERSON=[2, 2], PHONE=[1, 1]}
+- 2026-11-17T10:44:51.527329Z local PII syn-bn-03: local-model in 114.9 s, {ADDRESS=[1, 1], DOB=[1, 1], EMAIL=[1, 1], ORG=[1, 1], PASSPORT=[1, 1], PERSON=[1, 1]}
+- 2026-11-17T10:45:50.219872Z local PII syn-en-01: local-model in 58.7 s, {ADDRESS=[1, 1], EMAIL=[1, 1], NID=[1, 1], ORG=[1, 1], PERSON=[3, 3], PHONE=[1, 1]}
+- 2026-11-17T10:46:47.108282Z local PII syn-en-02: local-model in 56.9 s, {ADDRESS=[1, 1], EMAIL=[1, 1], NID=[1, 1], ORG=[1, 1], PERSON=[3, 3], PHONE=[1, 1]}
+- 2026-11-17T10:46:47.901048Z adversarial set: 72 cases {CONTRADICTED_CLAIM=10, MISQUOTE=15, NONEXISTENT_SECTION=14, NOT_CURRENT=3, UNRELATED_CLAIM=10, VALID_CONTROL=20}
+- 2026-11-17T10:46:59.631170Z at-rest scan after step local: 0 hit(s) []
+- 2026-11-17T10:48:49.977772Z citations: 72 cases {CONTRADICTED_CLAIM->REJECTED=10, MISQUOTE->REJECTED=15, NONEXISTENT_SECTION->REJECTED=14, NOT_CURRENT->REJECTED=3, UNRELATED_CLAIM->REJECTED=9, UNRELATED_CLAIM->UNCERTAIN=1, VALID_CONTROL->UNCERTAIN=4, VALID_CONTROL->VERIFIED=16}; live spend US$0.0050; eval total US$0.0050
+- 2026-11-17T10:48:59.494950Z at-rest scan after step citations: 0 hit(s) []
+- 2026-11-17T10:49:37.708978Z contract syn-en-02: live spend US$0.0167; eval total US$0.0217; ledger total US$1.8632; [baseline ANALYSED: 4 findings, 0 shown, 1 live + 2 replayed calls, priced US$0.0170, 11288 ms]
+- 2026-11-17T10:50:14.438850Z contract syn-en-01: live spend US$0.0142; eval total US$0.0359; ledger total US$1.8774; [baseline ANALYSED: 4 findings, 0 shown, 3 live + 0 replayed calls, priced US$0.0142, 36723 ms]
+- 2026-11-17T10:51:47.012519Z contract syn-bn-01: live spend US$0.0002; eval total US$0.0362; ledger total US$1.8776; [baseline FAILED(privacy-guard-blocked): 0 findings, 0 shown, 1 live + 0 replayed calls, priced US$0.0000, 0 ms]
+- 2026-11-17T10:53:10.355683Z contract syn-bn-02: live spend US$0.0159; eval total US$0.0520; ledger total US$1.8935; [baseline ANALYSED: 4 findings, 0 shown, 3 live + 0 replayed calls, priced US$0.0159, 83334 ms]
+- 2026-11-17T10:54:11.027749Z contract syn-bn-03: live spend US$0.0002; eval total US$0.0522; ledger total US$1.8937; [baseline FAILED(privacy-guard-blocked): 0 findings, 0 shown, 1 live + 0 replayed calls, priced US$0.0000, 0 ms]
+- 2026-11-17T10:54:20.881185Z at-rest scan after step contracts: 0 hit(s) []
+- 2026-11-17T10:58:16.598114Z contract syn-en-02: live spend US$0.0000; eval total US$0.0522; ledger total US$1.8937; [shromikai ANALYSED: 13 findings, 20 shown, 0 live + 70 replayed calls, priced US$0.3722, 12184 ms]
+- 2026-11-17T10:58:26.645048Z at-rest scan after step contracts: 0 hit(s) []
+- 2026-11-17T10:59:50.958054Z contract syn-bn-01: live spend US$0.0000; eval total US$0.0522; ledger total US$1.8937; [shromikai FAILED(privacy-guard-blocked): 0 findings, 0 shown, 0 live + 1 replayed calls, priced US$0.0000, 0 ms]
+- 2026-11-17T11:00:01.297278Z at-rest scan after step contracts: 0 hit(s) []
+- 2026-11-17T11:01:45.876117Z contract syn-en-01: live spend US$0.3808; eval total US$0.4330; ledger total US$2.2745; [shromikai FAILED(internal-error): 0 findings, 0 shown, 58 live + 2 replayed calls, priced US$0.0000, 0 ms]
+- 2026-11-17T11:01:56.706541Z at-rest scan after step contracts: 0 hit(s) []
+- 2026-11-17T11:04:37.358464Z contract syn-en-01: live spend US$0.0374; eval total US$0.4704; ledger total US$2.3119; [shromikai ANALYSED: 13 findings, 16 shown, 12 live + 60 replayed calls, priced US$0.3483, 60508 ms]
+- 2026-11-17T11:04:47.846507Z at-rest scan after step contracts: 0 hit(s) []
+- 2026-11-17T11:06:39.725354Z contract syn-bn-02: live spend US$0.2703; eval total US$0.7407; ledger total US$2.5821; [shromikai ANALYSED: 11 findings, 12 shown, 50 live + 2 replayed calls, priced US$0.2676, 85527 ms]
+- 2026-11-17T11:06:50.424691Z at-rest scan after step contracts: 0 hit(s) []
+- 2026-11-17T11:08:00.809118Z contract syn-bn-03: live spend US$0.0000; eval total US$0.7407; ledger total US$2.5821; [shromikai FAILED(privacy-guard-blocked): 0 findings, 0 shown, 0 live + 1 replayed calls, priced US$0.0000, 0 ms]
+- 2026-11-17T11:08:10.374678Z at-rest scan after step contracts: 0 hit(s) []
+- 2026-11-17T11:08:35.432796Z report written: ../eval/reports/report.md
+- 2026-11-17T11:10:21.967594Z report written: ../eval/reports/report.md
+- 2026-11-17T11:10:57.274950Z report written: ../eval/reports/report.md
