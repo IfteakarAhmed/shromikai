@@ -1,6 +1,6 @@
 import AxeBuilder from '@axe-core/playwright'
 import { expect, test, type Page } from '@playwright/test'
-import { analyseSample, inLocale, LOCALES, text } from './support'
+import { analyseSample, inLocale, LOCALES, openDetails, text } from './support'
 
 async function expectNoSeriousViolations(page: Page, where: string) {
   const results = await new AxeBuilder({ page })
@@ -86,10 +86,9 @@ for (const locale of LOCALES) {
         await expectNoSeriousViolations(page, 'citation sheet')
         await page.keyboard.press('Escape')
 
-        await page
-          .getByRole('button', { name: text(locale, 'finding.why') })
-          .first()
-          .click()
+        const firstCard = page.locator('article').first()
+        await openDetails(firstCard, locale)
+        await firstCard.getByRole('button', { name: text(locale, 'finding.why') }).click()
         await expect(page.getByRole('dialog')).toBeVisible()
         await expectNoSeriousViolations(page, 'why drawer')
         await page.keyboard.press('Escape')

@@ -1,4 +1,4 @@
-import { expect, type Page } from '@playwright/test'
+import { expect, type Locator, type Page } from '@playwright/test'
 import bn from '../src/i18n/bn.json' with { type: 'json' }
 import en from '../src/i18n/en.json' with { type: 'json' }
 
@@ -62,4 +62,9 @@ export async function openResult(page: Page, locale: Locale): Promise<void> {
   await page.goto('/demo-user')
   await expect(page.getByRole('heading', { name: text(locale, 'upload.title') })).toBeVisible()
   await analyseSample(page, locale)
+}
+
+/** Opens the বিস্তারিত fold of a compact risk card (clause numbers, the rest, the why button). */
+export async function openDetails(card: Locator, locale: Locale): Promise<void> {
+  await card.locator('summary', { hasText: text(locale, 'finding.details') }).click()
 }

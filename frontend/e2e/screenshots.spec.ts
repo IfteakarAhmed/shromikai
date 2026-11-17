@@ -1,7 +1,7 @@
 import { mkdirSync } from 'node:fs'
 import { resolve } from 'node:path'
 import { expect, test, type Page } from '@playwright/test'
-import { inLocale, text } from './support'
+import { inLocale, openDetails, text } from './support'
 
 /**
  * Screenshots for the phase report (docs/img/p9/). Run only on request:
@@ -113,21 +113,20 @@ test.describe('screenshots', () => {
       timeout: 60_000,
     })
 
-    await page
-      .getByRole('button', { name: text('bn', 'finding.why') })
-      .first()
-      .click()
+    const firstCard = page.locator('article').first()
+    await openDetails(firstCard, 'bn')
+    await firstCard.getByRole('button', { name: text('bn', 'finding.why') }).click()
     await expect(page.getByRole('dialog').getByText(text('bn', 'why.checksTitle'))).toBeVisible()
     await page.waitForTimeout(400)
     await shot(page, 'why-verified')
     await page.keyboard.press('Escape')
 
-    await page
+    const uncertainCard = page
       .locator('article')
       .filter({ hasText: text('bn', 'verification.sentForReview') })
       .first()
-      .getByRole('button', { name: text('bn', 'finding.why') })
-      .click()
+    await openDetails(uncertainCard, 'bn')
+    await uncertainCard.getByRole('button', { name: text('bn', 'finding.why') }).click()
     await expect(page.getByRole('dialog').getByText(text('bn', 'why.uncertainTitle'))).toBeVisible()
     await page.waitForTimeout(400)
     await shot(page, 'why-uncertain')

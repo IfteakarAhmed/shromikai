@@ -1,5 +1,5 @@
 import { expect, test } from '@playwright/test'
-import { inLocale, LOCALES, openResult, text } from './support'
+import { inLocale, LOCALES, openDetails, openResult, text } from './support'
 
 for (const locale of LOCALES) {
   test.describe(`result tabs (${locale})`, () => {
@@ -15,6 +15,7 @@ for (const locale of LOCALES) {
         .locator('article')
         .filter({ hasText: text(locale, 'verification.verified') })
         .first()
+      await openDetails(verified, locale)
       await verified.getByRole('button', { name: text(locale, 'finding.why') }).click()
       let dialog = page.getByRole('dialog')
       await expect(dialog.getByText(text(locale, 'why.checksTitle'))).toBeVisible()
@@ -29,6 +30,7 @@ for (const locale of LOCALES) {
         .locator('article')
         .filter({ hasText: text(locale, 'verification.sentForReview') })
         .first()
+      await openDetails(uncertain, locale)
       await uncertain.getByRole('button', { name: text(locale, 'finding.why') }).click()
       dialog = page.getByRole('dialog')
       await expect(dialog.getByText(text(locale, 'why.uncertainTitle'))).toBeVisible()
