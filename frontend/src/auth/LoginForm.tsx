@@ -1,3 +1,5 @@
+import { cx } from '../lib/cx'
+import { fieldClass } from '../components/ui/field'
 import { useState, type SyntheticEvent } from 'react'
 import { useTranslation } from 'react-i18next'
 import { ApiError, NetworkError } from '../api/client'
@@ -13,8 +15,7 @@ interface Props {
   onSubmit: (email: string, password: string) => Promise<unknown>
 }
 
-const inputClass =
-  'mt-1 block min-h-11 w-full rounded-lg border border-input bg-background/60 px-3 py-2 text-base'
+const inputClass = cx(fieldClass, 'mt-1 text-base')
 
 export function LoginForm({ onSubmit }: Props) {
   const { t, i18n } = useTranslation()

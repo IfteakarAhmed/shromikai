@@ -1,3 +1,4 @@
+import { textareaClass } from '../../components/ui/field'
 import { useMutation } from '@tanstack/react-query'
 import { useEffect, useMemo, useRef, useState, type ChangeEvent } from 'react'
 import { useTranslation } from 'react-i18next'
@@ -372,7 +373,7 @@ export function UploadPage() {
                           }}
                           rows={10}
                           placeholder={t('upload.textPlaceholder')}
-                          className="mt-2 block w-full rounded-lg border border-input bg-background/60 p-3"
+                          className={cx(textareaClass, 'mt-2')}
                         />
                         <p className="mt-1 text-sm text-muted-foreground">
                           {t('upload.textHint', {

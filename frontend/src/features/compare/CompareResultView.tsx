@@ -1,9 +1,11 @@
-import { useState } from 'react'
+import { useState, type ReactNode } from 'react'
 import { useTranslation } from 'react-i18next'
 import { Link } from 'react-router-dom'
 import type { CompareResult, RiskFinding } from '../../api/analyses'
 import { RiskCard } from '../../components/result/RiskCard'
+import { Badge } from '../../components/ui/Badge'
 import { Disclaimer } from '../../components/ui/Disclaimer'
+import { GlassCard } from '../../components/ui/GlassCard'
 import { Tabs } from '../../components/ui/Tabs'
 import { sortFindings } from '../../lib/findings'
 import { formatNumber } from '../../lib/format'
@@ -60,6 +62,12 @@ export function CompareResultView({ compare }: { compare: CompareResult }) {
   const baseline = (
     <BaselineColumn baseline={compare.baseline} language={shromikai.outputLanguage} />
   )
+  const column = (name: 'baseline' | 'ours', tone: string, body: ReactNode) => (
+    <div data-column={name}>
+      <div aria-hidden="true" className={`mb-4 h-1.5 rounded-full bg-gradient-to-r ${tone}`} />
+      {body}
+    </div>
+  )
 
   return (
     <div className="mx-auto max-w-6xl px-(--gutter) py-8">
@@ -72,8 +80,12 @@ export function CompareResultView({ compare }: { compare: CompareResult }) {
           {t('compare.scriptedNotice')}
         </p>
       )}
-      <div className="mt-4 rounded-xl border border-rejected/40 bg-rejected/5 p-4" role="status">
-        <p className="text-xl font-bold" data-testid="compare-summary">
+      <GlassCard
+        data-testid="compare-summary-card"
+        className="mt-4 border-rejected/30 p-5 sm:p-6"
+        role="status"
+      >
+        <p className="text-xl font-bold sm:text-2xl" data-testid="compare-summary">
           {t(scripted ? 'compare.summaryScripted' : 'compare.summary', {
             total: n(summary.baselineCitations),
             rejected: n(summary.baselineRejected),
@@ -86,13 +98,36 @@ export function CompareResultView({ compare }: { compare: CompareResult }) {
             shown: n(summary.shromikaiShownCitations),
           })}
         </p>
-      </div>
+        <ul className="mt-4 grid grid-cols-3 gap-3">
+          {(
+            [
+              ['total', summary.baselineCitations, 'statTotal', 'text-foreground'],
+              ['rejected', summary.baselineRejected, 'statRejected', 'text-rejected'],
+              ['shown', summary.shromikaiShownCitations, 'statShown', 'text-verified'],
+            ] as const
+          ).map(([key, value, label, tone]) => (
+            <li
+              key={key}
+              data-testid={`compare-stat-${key}`}
+              className="rounded-xl border border-border bg-surface-2/60 px-3 py-3"
+            >
+              <p className={`font-ui text-3xl font-bold ${tone}`}>{n(value)}</p>
+              <p className="mt-1 text-sm text-muted-foreground">{t(`compare.${label}`)}</p>
+              {scripted && (
+                <Badge tone="uncertain" className="mt-2">
+                  {t('compare.illustration')}
+                </Badge>
+              )}
+            </li>
+          ))}
+        </ul>
+      </GlassCard>
 
       <div className="mt-6">
         {wide ? (
           <div className="grid grid-cols-2 items-start gap-8">
-            {baseline}
-            {ours}
+            {column('baseline', 'from-rejected to-transparent', baseline)}
+            {column('ours', 'from-verified to-transparent', ours)}
           </div>
         ) : (
           <Tabs

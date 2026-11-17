@@ -137,4 +137,67 @@ describe('TicketPage', () => {
 
     expect(await screen.findByRole('alert')).toHaveTextContent('পর্যালোচনা টিকিটের মেয়াদ শেষ')
   })
+
+  it('FR-68 the code form is one still glass card with a shared field and an icon, not a bare form', () => {
+    // A ticket this page load has never seen, so no code is remembered.
+    const { container } = renderApp(
+      <Routes>
+        <Route path="/app/tickets/:ticketId" element={<TicketPage />} />
+      </Routes>,
+      '/app/tickets/77777777-7777-4777-8777-777777777777',
+    )
+    const field = screen.getByLabelText('টিকিটের গোপন কোড')
+    expect(field).toHaveClass('field')
+    const card = field.closest('.depth-card')
+    expect(card).not.toBeNull()
+    expect(card).not.toHaveAttribute('data-tilt')
+    expect(container.querySelector('svg[data-icon="lock"], svg[aria-hidden="true"]')).not.toBeNull()
+  })
+
+  it('FR-61 FR-68 the ticket opens with a summary computed from the answer and a timeline of items', async () => {
+    rememberTicketCode(ID, 'c')
+    server.use(
+      http.get(`/api/v1/review-tickets/${ID}`, () =>
+        HttpResponse.json(
+          status([
+            {
+              findingId: 'a',
+              title: 'First',
+              status: 'APPROVED',
+              decision: 'APPROVED_WITHOUT_CITATION',
+              citation: null,
+              note: null,
+              decidedAt: '2026-11-16T12:00:00Z',
+            },
+            {
+              findingId: 'b',
+              title: 'Second',
+              status: 'OPEN',
+              decision: null,
+              citation: null,
+              note: null,
+              decidedAt: null,
+            },
+            {
+              findingId: 'c',
+              title: 'Third',
+              status: 'IN_REVIEW',
+              decision: null,
+              citation: null,
+              note: null,
+              decidedAt: null,
+            },
+          ]),
+        ),
+      ),
+    )
+    page()
+
+    const summary = await screen.findByTestId('ticket-summary')
+    expect(summary).toHaveTextContent('৩টি বিষয়')
+    expect(summary).toHaveTextContent('১টির সিদ্ধান্ত হয়েছে')
+    const timeline = screen.getByTestId('ticket-timeline')
+    expect(timeline.tagName).toBe('OL')
+    expect(within(timeline).getAllByRole('article')).toHaveLength(3)
+  })
 })

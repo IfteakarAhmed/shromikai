@@ -221,4 +221,65 @@ describe('compare pages', () => {
     expect(screen.getByLabelText('নিজের লেখায় তুলনা করুন')).toBeDisabled()
     expect(screen.getByRole('button', { name: 'নমুনা চুক্তিতে তুলনা করুন' })).toBeEnabled()
   })
+
+  it('FR-72 FR-68 opens with a summary card: the sentence and three numbers from the response', () => {
+    wide(true)
+    renderApp(<CompareResultView compare={makeCompare()} />)
+    const card = screen.getByTestId('compare-summary-card')
+    expect(card.closest('.depth-card')).not.toBeNull()
+    expect(within(card).getByTestId('compare-summary')).toBeInTheDocument()
+    expect(within(card).getByTestId('compare-stat-total')).toHaveTextContent('৫')
+    expect(within(card).getByTestId('compare-stat-rejected')).toHaveTextContent('৩')
+    expect(within(card).getByTestId('compare-stat-shown')).toHaveTextContent(
+      String(makeCompare().summary.shromikaiShownCitations).replace(
+        /\d/g,
+        (d) => '০১২৩৪৫৬৭৮৯'[Number(d)] ?? d,
+      ),
+    )
+  })
+
+  it('NFR-08 the three numbers are a list, not a definition list (axe: a dl holds only dt and dd)', () => {
+    wide(true)
+    renderApp(<CompareResultView compare={makeCompare()} />)
+    const card = screen.getByTestId('compare-summary-card')
+    expect(card.querySelector('dl')).toBeNull()
+    expect(within(card).getAllByRole('listitem')).toHaveLength(3)
+  })
+
+  it('FR-72 R-12 the numbers of a scripted example carry the label উদাহরণ', () => {
+    wide(true)
+    const compare = makeCompare()
+    renderApp(
+      <CompareResultView
+        compare={{
+          ...compare,
+          baseline: { ...compare.baseline, modelId: 'scripted-demo-standin' },
+        }}
+      />,
+    )
+    const card = screen.getByTestId('compare-summary-card')
+    expect(within(card).getAllByText('উদাহরণ').length).toBeGreaterThanOrEqual(1)
+  })
+
+  it('FR-72 FR-68 the two columns are marked, so the plain AI and ShromikAI look different', () => {
+    wide(true)
+    const { container } = renderApp(<CompareResultView compare={makeCompare()} />)
+    expect(container.querySelector('[data-column="baseline"]')).not.toBeNull()
+    expect(container.querySelector('[data-column="ours"]')).not.toBeNull()
+  })
+})
+
+describe('CompareStartPage layout', () => {
+  it('FR-72 FR-68 the two ways to start are two cards side by side, with the shared field class', () => {
+    server.use(http.get('/api/v1/meta', () => HttpResponse.json(sampleMeta)))
+    renderApp(
+      <Routes>
+        <Route path="*" element={<CompareStartPage />} />
+      </Routes>,
+      '/app/compare',
+    )
+    const grid = screen.getByTestId('compare-start-grid')
+    expect(grid.className).toMatch(/\blg:grid-cols-2\b/)
+    expect(screen.getByLabelText('নিজের লেখায় তুলনা করুন')).toHaveClass('field')
+  })
 })

@@ -1,3 +1,5 @@
+import { cx } from '../../lib/cx'
+import { textareaClass } from '../../components/ui/field'
 import { useMutation, useQuery } from '@tanstack/react-query'
 import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
@@ -51,7 +53,7 @@ export function CompareStartPage() {
   })
 
   return (
-    <div className="mx-auto max-w-3xl px-(--gutter) py-10">
+    <div className="mx-auto max-w-5xl px-(--gutter) py-10">
       <h1 className="parallax text-3xl font-bold">{t('compare.title')}</h1>
       <p className="mt-2 text-lg text-muted-foreground">{t('compare.intro')}</p>
       {recorded !== null && (
@@ -62,57 +64,67 @@ export function CompareStartPage() {
           {t('upload.recordedOnly')}
         </p>
       )}
-      <GlassCard depth="still" className="mt-6 p-5">
-        <Button
-          size="lg"
-          busy={start.isPending && start.variables.kind === 'sample'}
-          disabled={start.isPending}
-          onClick={() => {
-            setInvalid(false)
-            start.mutate({ kind: 'sample' })
-          }}
-        >
-          {t('compare.start')}
-        </Button>
-      </GlassCard>
-      <GlassCard depth="still" className="mt-4 p-5">
-        <label htmlFor="compare-text" className="font-semibold">
-          {t('compare.startText')}
-        </label>
-        <textarea
-          id="compare-text"
-          rows={8}
-          disabled={recorded !== null}
-          value={text}
-          onChange={(event) => {
-            setText(event.target.value)
-          }}
-          className="mt-2 block w-full rounded-lg border border-input bg-background/60 p-3"
-        />
-        <p className="mt-1 text-sm text-muted-foreground">
-          {t('compare.textHint', { min: formatNumber(MIN_TEXT, language) })}
-        </p>
-        {invalid && (
-          <p role="alert" className="mt-2 text-rejected">
-            {t('upload.errors.textTooShort', { min: formatNumber(MIN_TEXT, language) })}
+      <div
+        data-testid="compare-start-grid"
+        className="mt-6 grid gap-4 lg:grid-cols-2 lg:items-stretch"
+      >
+        <GlassCard depth="still" className="flex flex-col p-5 sm:p-6">
+          <h2 className="text-xl font-bold">{t('compare.sampleTitle')}</h2>
+          <p className="mt-1 flex-1 text-muted-foreground">{t('compare.sampleBody')}</p>
+          <div className="mt-4">
+            <Button
+              size="lg"
+              busy={start.isPending && start.variables.kind === 'sample'}
+              disabled={start.isPending}
+              onClick={() => {
+                setInvalid(false)
+                start.mutate({ kind: 'sample' })
+              }}
+            >
+              {t('compare.start')}
+            </Button>
+          </div>
+        </GlassCard>
+        <GlassCard depth="still" className="p-5 sm:p-6">
+          <h2 className="text-xl font-bold">{t('compare.textTitle')}</h2>
+          <label htmlFor="compare-text" className="sr-only">
+            {t('compare.startText')}
+          </label>
+          <textarea
+            id="compare-text"
+            rows={8}
+            disabled={recorded !== null}
+            value={text}
+            onChange={(event) => {
+              setText(event.target.value)
+            }}
+            className={cx(textareaClass, 'mt-2')}
+          />
+          <p className="mt-1 text-sm text-muted-foreground">
+            {t('compare.textHint', { min: formatNumber(MIN_TEXT, language) })}
           </p>
-        )}
-        <Button
-          className="mt-3"
-          variant="secondary"
-          disabled={recorded !== null || start.isPending}
-          onClick={() => {
-            if (validateText(text) !== null) {
-              setInvalid(true)
-              return
-            }
-            setInvalid(false)
-            start.mutate({ kind: 'text', text: text.trim() })
-          }}
-        >
-          {t('compare.startText')}
-        </Button>
-      </GlassCard>
+          {invalid && (
+            <p role="alert" className="mt-2 text-rejected">
+              {t('upload.errors.textTooShort', { min: formatNumber(MIN_TEXT, language) })}
+            </p>
+          )}
+          <Button
+            className="mt-3"
+            variant="secondary"
+            disabled={recorded !== null || start.isPending}
+            onClick={() => {
+              if (validateText(text) !== null) {
+                setInvalid(true)
+                return
+              }
+              setInvalid(false)
+              start.mutate({ kind: 'text', text: text.trim() })
+            }}
+          >
+            {t('compare.startText')}
+          </Button>
+        </GlassCard>
+      </div>
       {start.isError && (
         <div className="mt-4">
           <ErrorState error={start.error} />

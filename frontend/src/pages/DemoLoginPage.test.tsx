@@ -56,4 +56,22 @@ describe('demo login', () => {
       '/login',
     )
   })
+
+  it('FR-68 the waiting and the failed state are each a glass card, not bare text', async () => {
+    server.use(
+      http.post('/api/v1/auth/demo/worker', async () => {
+        await new Promise((done) => setTimeout(done, 150))
+        return problem(404, 'not-found', 'x')
+      }),
+    )
+    const { container } = renderApp(<App />, '/demo-user')
+
+    const waiting = screen.getByRole('status')
+    expect(waiting).toHaveTextContent('ডেমো অ্যাকাউন্টে ঢোকানো হচ্ছে')
+    expect(waiting.closest('.depth-card')).not.toBeNull()
+
+    const alert = await screen.findByRole('alert')
+    expect(alert.closest('.depth-card')).not.toBeNull()
+    expect(container.querySelector('h1')).toHaveTextContent('ডেমো')
+  })
 })

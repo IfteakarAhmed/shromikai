@@ -74,4 +74,26 @@ describe('ProfilePage', () => {
 
     expect(await screen.findByRole('link', { name: 'প্রোফাইল' })).toBeInTheDocument()
   })
+
+  it('FR-68 the fields sit in a two-column grid and use the shared field class', async () => {
+    signedIn()
+    renderApp(<App />, '/app/profile')
+
+    const grid = await screen.findByTestId('profile-grid')
+    expect(grid.className).toMatch(/\bmd:grid-cols-2\b/)
+    for (const label of ['কাজের খাত', 'পদ বা কাজ', 'ব্যাখ্যার ভাষা', 'ব্যাখ্যার ধরন']) {
+      expect(screen.getByLabelText(label)).toHaveClass('field')
+    }
+  })
+
+  it('FR-56 FR-68 a side card says what the profile changes and what it never changes', async () => {
+    signedIn()
+    renderApp(<App />, '/app/profile')
+
+    const note = await screen.findByTestId('profile-effect')
+    expect(note).toHaveTextContent('যা বদলায়')
+    expect(note).toHaveTextContent('যা কখনো বদলায় না')
+    expect(note).toHaveTextContent('কোন ঝুঁকি পাওয়া যাবে')
+    expect(note.closest('.depth-card')).not.toBeNull()
+  })
 })

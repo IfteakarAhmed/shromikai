@@ -1,3 +1,5 @@
+import { cx } from '../../lib/cx'
+import { fieldClass } from '../../components/ui/field'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { useState, type SyntheticEvent } from 'react'
 import { useTranslation } from 'react-i18next'
@@ -7,6 +9,7 @@ import { useAuth } from '../../auth/authContext'
 import { Button, LinkButton } from '../../components/ui/Button'
 import { ErrorState } from '../../components/ui/ErrorState'
 import { GlassCard } from '../../components/ui/GlassCard'
+import { Icon } from '../../components/ui/Icon'
 import { Skeleton } from '../../components/ui/Skeleton'
 import { formatNumber } from '../../lib/format'
 import { useTitle } from '../../lib/useTitle'
@@ -27,8 +30,7 @@ const SECTORS = [
 
 const MAX_ROLE = 60
 
-const selectClass =
-  'mt-1 block min-h-11 w-full rounded-lg border border-input bg-background/60 px-3 py-2'
+const selectClass = cx(fieldClass, 'mt-1')
 
 /** `/app/profile` (E-09): sector, job role, language and reading level. They change wording only. */
 export function ProfilePage() {
@@ -55,9 +57,9 @@ export function ProfilePage() {
     )
   }
   return (
-    <div className="mx-auto max-w-2xl px-(--gutter) py-10">
-      <h1 className="text-3xl font-bold">{t('profile.title')}</h1>
-      <p className="mt-2 text-muted-foreground">{t('profile.intro')}</p>
+    <div className="mx-auto max-w-4xl px-(--gutter) py-10">
+      <h1 className="parallax text-3xl font-bold">{t('profile.title')}</h1>
+      <p className="mt-2 max-w-2xl text-lg text-muted-foreground">{t('profile.intro')}</p>
       {me.isPending && (
         <div role="status" aria-label={t('common.loading')} className="mt-6 space-y-3">
           <Skeleton className="h-11 w-full" />
@@ -74,7 +76,12 @@ export function ProfilePage() {
           />
         </div>
       )}
-      {me.isSuccess && <ProfileForm me={me.data} />}
+      {me.isSuccess && (
+        <div className="mt-6 grid gap-6 lg:grid-cols-[minmax(0,1fr)_20rem] lg:items-start">
+          <ProfileForm me={me.data} />
+          <ProfileEffect />
+        </div>
+      )}
     </div>
   )
 }
@@ -113,7 +120,7 @@ function ProfileForm({ me }: { me: Me }) {
   })
 
   return (
-    <GlassCard depth="still" className="mt-6 p-5">
+    <GlassCard depth="still" className="p-5 sm:p-6">
       <form
         onSubmit={(event: SyntheticEvent) => {
           event.preventDefault()
@@ -121,76 +128,78 @@ function ProfileForm({ me }: { me: Me }) {
         }}
         className="space-y-5"
       >
-        <div>
-          <label htmlFor="profile-sector" className="font-semibold">
-            {t('profile.sector')}
-          </label>
-          <select
-            id="profile-sector"
-            value={sector}
-            onChange={(event) => {
-              setSector(event.target.value)
-            }}
-            className={selectClass}
-          >
-            <option value="">{t('profile.none')}</option>
-            {SECTORS.map((value) => (
-              <option key={value} value={value}>
-                {t(`profile.sectors.${value}`)}
-              </option>
-            ))}
-          </select>
-        </div>
-        <div>
-          <label htmlFor="profile-role" className="font-semibold">
-            {t('profile.jobRole')}
-          </label>
-          <input
-            id="profile-role"
-            value={jobRole}
-            maxLength={MAX_ROLE}
-            onChange={(event) => {
-              setJobRole(event.target.value)
-            }}
-            className={selectClass}
-          />
-          <p className="mt-1 text-sm text-muted-foreground">
-            {t('profile.jobRoleHint', { max: formatNumber(MAX_ROLE, language) })}
-          </p>
-        </div>
-        <div>
-          <label htmlFor="profile-language" className="font-semibold">
-            {t('profile.preferredLanguage')}
-          </label>
-          <select
-            id="profile-language"
-            value={preferred}
-            onChange={(event) => {
-              setPreferred(event.target.value)
-            }}
-            className={selectClass}
-          >
-            <option value="">{t('profile.none')}</option>
-            <option value="bn">{t('language.bangla')}</option>
-            <option value="en">{t('language.english')}</option>
-          </select>
-        </div>
-        <div>
-          <label htmlFor="profile-level" className="font-semibold">
-            {t('profile.readingLevel')}
-          </label>
-          <select
-            id="profile-level"
-            value={level}
-            onChange={(event) => {
-              setLevel(event.target.value)
-            }}
-            className={selectClass}
-          >
-            <option value="">{t('profile.none')}</option>
-            <option value="BASIC">{t('profile.level.BASIC')}</option>
-            <option value="STANDARD">{t('profile.level.STANDARD')}</option>
-          </select>
+        <div data-testid="profile-grid" className="grid gap-5 md:grid-cols-2">
+          <div>
+            <label htmlFor="profile-sector" className="font-semibold">
+              {t('profile.sector')}
+            </label>
+            <select
+              id="profile-sector"
+              value={sector}
+              onChange={(event) => {
+                setSector(event.target.value)
+              }}
+              className={selectClass}
+            >
+              <option value="">{t('profile.none')}</option>
+              {SECTORS.map((value) => (
+                <option key={value} value={value}>
+                  {t(`profile.sectors.${value}`)}
+                </option>
+              ))}
+            </select>
+          </div>
+          <div>
+            <label htmlFor="profile-role" className="font-semibold">
+              {t('profile.jobRole')}
+            </label>
+            <input
+              id="profile-role"
+              value={jobRole}
+              maxLength={MAX_ROLE}
+              onChange={(event) => {
+                setJobRole(event.target.value)
+              }}
+              className={selectClass}
+            />
+            <p className="mt-1 text-sm text-muted-foreground">
+              {t('profile.jobRoleHint', { max: formatNumber(MAX_ROLE, language) })}
+            </p>
+          </div>
+          <div>
+            <label htmlFor="profile-language" className="font-semibold">
+              {t('profile.preferredLanguage')}
+            </label>
+            <select
+              id="profile-language"
+              value={preferred}
+              onChange={(event) => {
+                setPreferred(event.target.value)
+              }}
+              className={selectClass}
+            >
+              <option value="">{t('profile.none')}</option>
+              <option value="bn">{t('language.bangla')}</option>
+              <option value="en">{t('language.english')}</option>
+            </select>
+          </div>
+          <div>
+            <label htmlFor="profile-level" className="font-semibold">
+              {t('profile.readingLevel')}
+            </label>
+            <select
+              id="profile-level"
+              value={level}
+              onChange={(event) => {
+                setLevel(event.target.value)
+              }}
+              className={selectClass}
+            >
+              <option value="">{t('profile.none')}</option>
+              <option value="BASIC">{t('profile.level.BASIC')}</option>
+              <option value="STANDARD">{t('profile.level.STANDARD')}</option>
+            </select>
+          </div>
         </div>
         {save.isError && <ErrorState error={save.error} />}
         {save.isSuccess && (
@@ -202,6 +211,33 @@ function ProfileForm({ me }: { me: Me }) {
           {save.isPending ? t('profile.saving') : t('profile.save')}
         </Button>
       </form>
+    </GlassCard>
+  )
+}
+
+/** What a profile changes and what it never changes: wording only, never the findings (R-12). */
+function ProfileEffect() {
+  const { t } = useTranslation()
+  return (
+    <GlassCard data-testid="profile-effect" className="p-5">
+      <h2 className="text-lg font-bold">{t('profile.changesTitle')}</h2>
+      <ul className="mt-2 space-y-2">
+        {(['changesLanguage', 'changesStyle', 'changesWords'] as const).map((key) => (
+          <li key={key} className="flex items-start gap-2">
+            <Icon name="check" size={18} className="mt-1.5 shrink-0 text-verified" />
+            {t(`profile.${key}`)}
+          </li>
+        ))}
+      </ul>
+      <h2 className="mt-5 text-lg font-bold">{t('profile.keepsTitle')}</h2>
+      <ul className="mt-2 space-y-2">
+        {(['keepsRisks', 'keepsCitations', 'keepsVerification'] as const).map((key) => (
+          <li key={key} className="flex items-start gap-2">
+            <Icon name="lock" size={18} className="mt-1.5 shrink-0 text-muted-foreground" />
+            {t(`profile.${key}`)}
+          </li>
+        ))}
+      </ul>
     </GlassCard>
   )
 }
