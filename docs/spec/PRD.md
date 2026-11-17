@@ -128,7 +128,7 @@ Out-of-scope items are listed in §12.
 
 | Step | User action | System behaviour | Requirements |
 | --- | --- | --- | --- |
-| 1 | Opens `/admin` (judges use `/demo-admin`) | Dashboard: open review items, privacy blocks, usage and cost per analysis (Recharts) | FR-73 |
+| 1 | Opens `/admin` (judges use `/demo-admin`) | Dashboard: open review items, privacy blocks, usage and cost per analysis (Recharts) | FR-73 **Deferred after preliminary submission (moved to P11):** the users part of the console (create, disable, delete, assign organisation), `/api/v1/admin/users` and `AdminUsersIT`. |
 | 2 | Opens the review queue and claims an item | Clause type, finding kind, severity, redacted paraphrase (≤ 400 characters), typed facts, claimed citation, reason codes, candidate sections; never contract text | FR-50, FR-60 |
 | 3 | Searches the corpus for the right section | Law search and section view with authoritative text and source URL | FR-22 |
 | 4 | Approves with a section key and the supporting quote | Existence and quote checks run on the reviewer's citation; it cannot be saved unless both pass; the reviewer counts as the support check | FR-60 |
@@ -151,7 +151,7 @@ Out-of-scope items are listed in §12.
 | 1 | Opens `/demo-user` from the submission form | One-click login as the demo worker | FR-08 |
 | 2 | Taps "নমুনা চুক্তি দিয়ে দেখুন" (try a sample contract) | A bundled synthetic contract runs through the real pipeline | FR-69 |
 | 3 | Opens `/app/compare` | Plain LLM and ShromikAI side by side; the baseline's invented citations are marked ✗ বাতিল (rejected) with the verifier's reason | FR-59, FR-72 |
-| 4 | Opens `/docs/audit` and `/docs/evaluation` | Live audit report and charts generated from eval output files | FR-74 |
+| 4 | Opens `/docs/audit` and `/docs/evaluation` | Live audit report and charts generated from eval output files | FR-74 **Phasing (P9 review fixes, 2026-11-17):** P9 delivers `/docs/data`, `/docs/security`, `/docs/audit`, `/docs/prompts` and a `/docs/architecture` page with hand-drawn SVG pictures. `/docs/pitch` and `/docs/team` stay for P12. Mermaid diagrams move to P12. Contract numbers on `/docs/evaluation` move to P10, because they come only from `eval/reports/` (R-07). |
 
 ## 8. Functional requirements
 
@@ -276,12 +276,12 @@ public template without personal data under `backend/src/test/resources/fixtures
 | FR-70 | Results: risk cards with severity, non-obvious tag and plain-Bangla reason; verification badges with a legend: ✓ যাচাইকৃত (verified) and ? অনিশ্চিত (uncertain, sent for review); a citation chip opens the exact section text with the quoted span highlighted and a link to the official source; a "কেন?" drawer shows the trace. | Vitest: `VerificationBadge` (both states and legend; no third state), `RiskCard` (uncertain cards never render a citation), `CitationChip` highlighting. |
 | FR-71 | Redline view, obligations checklist, print stylesheet for a clean Bangla PDF fallback, copy and share (Web Share API when available). | Playwright: memo print view renders; share button hidden when the API is absent. |
 | FR-72 | `/app/compare`: plain LLM and ShromikAI side by side; rejected baseline citations highlighted in red as ✗ বাতিল (rejected) with the verifier's reason. | Playwright: `/app/compare` highlights the fake baseline citation. |
-| FR-73 | `/admin`: review queue (approve or reject, audited), playbooks, users (create, disable, delete, assign organisation), API keys, usage and cost dashboard (Recharts), trace viewer for one analysis end to end. Backed by `/api/v1/admin/users`, `/api/v1/admin/api-keys`, `/api/v1/admin/usage` and `/api/v1/admin/traces/{analysisId}`. | Playwright: `/demo-admin` approves a review item; `AdminUsersIT`: create, disable and delete a user; non-admin `403`. `UsageKpiIT`: the usage report's `kpis` block (KPI-12 to KPI-14) equals hand-computed values on seeded rows and is `null` when there is no data. |
+| FR-73 | `/admin`: review queue (approve or reject, audited), playbooks, API keys, usage and cost dashboard (Recharts), trace viewer for one analysis end to end. Backed by `/api/v1/admin/api-keys`, `/api/v1/admin/usage` and `/api/v1/admin/traces/{analysisId}`. | Playwright: `/demo-admin` approves a review item; non-admin `403`. `UsageKpiIT`: the usage report's `kpis` block (KPI-12 to KPI-14) equals hand-computed values on seeded rows and is `null` when there is no data. |
 | FR-74 | `/docs` hub: `/docs/architecture` (Mermaid diagrams), `/docs/data` (sources, lineage, corpus quality), `/docs/security` (privacy shield, auth, threat model), `/docs/audit` (one-click report from the live system through `/api/v1/meta`: last corpus refresh, model IDs, privacy checks, latest eval numbers, open review items), `/docs/evaluation` (charts from `eval/reports/report.json`), `/docs/prompts` (prompt library), `/docs/pitch`, `/docs/team`. | MSW test: `/docs/audit` renders values from the meta response; a grep check in CI finds no hard-coded metric values in `frontend/src/`. |
 | FR-75 | Bangla default with an English toggle on every page; Bangla numerals in the `bn` UI; the choice is remembered. | i18n key-parity check passes; Vitest language toggle; Playwright runs J1 and J5 in both languages. |
 | FR-76 | Low-bandwidth mode: text-only results, no heavy assets, remembered per device. Read-aloud with the Web Speech API when a Bangla voice is available, hidden otherwise. Helpful empty, loading and error states; first-visit tooltips. | Vitest: `LowBandwidth` toggle removes images and charts; read-aloud button hidden when `speechSynthesis.getVoices()` has no `bn` voice. |
 | FR-77 | Every result screen, memo and MCP response includes the disclaimer "এটা আইনি পরামর্শ নয়। গুরুত্বপূর্ণ সিদ্ধান্তের আগে একজন আইনজীবীর সাথে কথা বলুন।" (and its English equivalent); every result shows the models and prompt versions used. | UI snapshot tests; memo golden file; `McpServerIT` asserts the `disclaimer` field. |
-| FR-78 | A signed-in non-demo user deletes their own account (`DELETE /api/v1/auth/me`); ADMIN deletes users. Personal rows are hard-deleted within 24 hours; usage events are kept without user ID. `docs/ai-tools.md` records which frontend AI builder produced which screen. | `AccountDeletionIT`: after deletion and the retention job, no row references the user ID except anonymised usage events. |
+| FR-78 | A signed-in non-demo user deletes their own account (`DELETE /api/v1/auth/me`); ADMIN deletes users. Personal rows are hard-deleted within 24 hours; usage events are kept without user ID. `docs/ai-tools.md` records which frontend AI builder produced which screen. | `AccountDeletionIT`: after deletion and the retention job, no row references the user ID except anonymised usage events. **Deferred after preliminary submission (moved to P11):** `DELETE /api/v1/auth/me`, ADMIN deletion of users and `AccountDeletionIT`. The `docs/ai-tools.md` record of AI builders stays in P9. |
 
 ### 8.10 Evaluation and observability (P10)
 
@@ -478,7 +478,7 @@ Expansion order (packs), each with the same verification guarantees:
 | P6 | FR-35 to FR-50; NFR-01 first measured (dev split) |
 | P7 | FR-51 to FR-63; NFR-03, NFR-13, NFR-16, NFR-19, NFR-20; NFR-12 isolation (`CrossOrganisationIsolationIT`) |
 | P8 | FR-64 to FR-67 |
-| P9 | FR-68 to FR-78; NFR-08 to NFR-11, NFR-14; KPI-12 to KPI-14 computed (admin usage report) |
-| P10 | FR-79 to FR-83; NFR-01 (test split), NFR-21; KPI-01 to KPI-11 measured |
-| P11 | FR-84 to FR-88; NFR-02, NFR-04, NFR-07, NFR-12, NFR-17 |
-| P12 | FR-89 |
+| P9 | FR-68 to FR-72, FR-75 to FR-77; FR-73 without user management; FR-74 without `/docs/pitch`, `/docs/team`, Mermaid diagrams and contract numbers; `docs/ai-tools.md` (FR-78 part); NFR-08 to NFR-11, NFR-14; KPI-12 to KPI-14 computed (admin usage report) |
+| P10 | FR-79 to FR-83; contract numbers on `/docs/evaluation` (FR-74 part); NFR-01 (test split), NFR-21; KPI-01 to KPI-11 measured |
+| P11 | FR-84 to FR-88; FR-73 user management and FR-78 account deletion (deferred after preliminary submission); NFR-02, NFR-04, NFR-07, NFR-12, NFR-17 |
+| P12 | FR-89; `/docs/pitch`, `/docs/team` and Mermaid diagrams (FR-74 part) |
