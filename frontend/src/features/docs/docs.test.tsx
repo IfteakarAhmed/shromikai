@@ -93,7 +93,7 @@ describe('docs hub (FR-74)', () => {
     expect(screen.getAllByText('চালানো হয়নি').length).toBeGreaterThan(0)
   })
 
-  it('FR-74 R-07 reads the committed contract evaluation report: headline with counts, limitations, 0 reviewed labels stated', () => {
+  it('FR-74 R-07 reads the committed contract evaluation report: headline with counts, limitations, label review counts', () => {
     const report = contractReport()
     expect(report).not.toBeNull()
     expect(report?.headline.map((row) => row.id)).toContain('M-01')
@@ -103,11 +103,32 @@ describe('docs hub (FR-74)', () => {
       expect(row.shromikai).not.toMatch(/%/)
     }
     expect(report?.limitations.length).toBeGreaterThan(0)
+    // the review state comes from the file; it is not pinned here, so a reviewed label set later
+    // does not break this test
     expect(report?.labelFiles).toBeGreaterThan(0)
-    expect(report?.reviewedLabelFiles).toBe(0)
+    expect(report?.reviewedLabelFiles).toBeGreaterThanOrEqual(0)
+    expect(report?.reviewedLabelFiles).toBeLessThanOrEqual(report?.labelFiles ?? 0)
     expect(report?.unmeasured.map((m) => m.id)).toEqual(
       expect.arrayContaining(['M-21', 'M-27', 'M-28']),
     )
+  })
+
+  it('FR-74 R-07 takes the number of reviewed label files from the report it is given (toy report)', () => {
+    const toy = {
+      provenance: { gitSha: 'abc1234', generatedAt: '2099-01-02T03:04:05Z', corpusRelease: 'x' },
+      config: { contracts: ['syn-xx-01'], labelFiles: 5, reviewedLabelFiles: 2 },
+      headline: [],
+      metrics: { shromikai: {} },
+      limitations: ['toy'],
+      knownFailures: [],
+    }
+    const report = contractReport(toy)
+    expect(report?.labelFiles).toBe(5)
+    expect(report?.reviewedLabelFiles).toBe(2)
+    expect(
+      contractReport({ ...toy, config: { ...toy.config, reviewedLabelFiles: 0 } })
+        ?.reviewedLabelFiles,
+    ).toBe(0)
   })
 
   it('FR-74 /docs/data lists the acts of the corpus quality report and its provenance', () => {

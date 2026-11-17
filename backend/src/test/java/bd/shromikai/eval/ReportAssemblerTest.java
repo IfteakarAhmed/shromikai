@@ -45,4 +45,25 @@ class ReportAssemblerTest {
                     && f.contains("internal-error"));
     assertThat(report.failures()).noneMatch(f -> f.startsWith("syn-xx-01 / shromikai: FAILED"));
   }
+
+  @Test
+  void shouldSayInTheLimitationsWhenLatencyRestsOnMixedLiveAndReplayedCalls() {
+    AnalysisCase mixed =
+        AnalysisCase.builder("syn-xx-01", "shromikai", "WORKER")
+            .latencyMs(60_000)
+            .liveCalls(12)
+            .replayedCalls(60)
+            .build();
+    EvalResults.Bundle results = new EvalResults.Bundle(List.of(mixed), List.of(), List.of());
+
+    EvalReport report =
+        ReportAssembler.assemble(ReportAssembler.Inputs.forSmoke(results, "r", "toy"));
+
+    assertThat(report.limitations())
+        .anyMatch(
+            l ->
+                l.contains("Latency (M-19)")
+                    && l.contains("mixed live and replayed")
+                    && l.contains("syn-xx-01: 12 live + 60 replayed calls"));
+  }
 }

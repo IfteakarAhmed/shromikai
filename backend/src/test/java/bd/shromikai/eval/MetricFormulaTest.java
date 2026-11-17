@@ -400,4 +400,53 @@ class MetricFormulaTest {
     assertThat(m16.n()).isEqualTo(13);
     assertThat(m16.met()).isFalse();
   }
+
+  @Test
+  void shouldSayHowManyAnalysesRanAndHowManyFailedClosed_M01_M12() {
+    var ok1 = AnalysisCase.builder("c1", "shromikai", "WORKER").build();
+    var ok2 = AnalysisCase.builder("c2", "shromikai", "WORKER").build();
+    var blocked =
+        AnalysisCase.builder("c3", "shromikai", "WORKER")
+            .outcome("FAILED")
+            .failureCode("privacy-guard-blocked")
+            .build();
+    var crashed =
+        AnalysisCase.builder("c4", "shromikai", "WORKER")
+            .outcome("FAILED")
+            .failureCode("internal-error")
+            .build();
+
+    assertThat(Metrics.unverifiedExposure(List.of(ok1, ok2, blocked)).basis())
+        .contains("2 analysed, 1 failed closed")
+        .doesNotContain("3 analyses");
+    assertThat(Metrics.abstentionRate(List.of(ok1, ok2, blocked, crashed)).basis())
+        .contains("2 analysed, 1 failed closed, 1 failed");
+    assertThat(Metrics.abstentionRate(List.of(ok1, ok2)).basis()).isEqualTo("2 analysed");
+  }
+
+  @Test
+  void shouldListLiveAndReplayedCallsPerContractAndNeverCallMixedRunsLive_M19() {
+    var full =
+        AnalysisCase.builder("c1", "shromikai", "WORKER")
+            .latencyMs(85_000)
+            .liveCalls(50)
+            .replayedCalls(2)
+            .build();
+    var mixed =
+        AnalysisCase.builder("c2", "shromikai", "WORKER")
+            .latencyMs(60_000)
+            .liveCalls(12)
+            .replayedCalls(60)
+            .build();
+
+    MetricResult m19 = Metrics.latency(List.of(full, mixed));
+
+    assertThat(m19.basis())
+        .contains("mixed live and replayed")
+        .contains("c1: 50 live + 2 replayed calls, 85.0 s")
+        .contains("c2: 12 live + 60 replayed calls, 60.0 s")
+        .doesNotContain("3 live analyses")
+        .doesNotContain("replayed runs excluded");
+    assertThat(m19.extra()).containsKey("perContract");
+  }
 }

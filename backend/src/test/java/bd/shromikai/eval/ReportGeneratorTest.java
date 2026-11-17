@@ -171,4 +171,82 @@ class ReportGeneratorTest {
       assertThat(Files.isRegularFile(run.resolve("config.json"))).isTrue();
     }
   }
+
+  @Test
+  void shouldNotCallUnresolvableBaselineCitationsFabricatedAndShowTheIndependentCatchRateApart()
+      throws IOException {
+    Map<String, MetricResult> metrics = allNotRun();
+    metrics.put(
+        "M-04",
+        MetricResult.proportion(
+            "M-04",
+            73,
+            73,
+            "adversarial set plus baseline",
+            Map.of(
+                "misses", 0L,
+                "adversarialCaught", 52L,
+                "adversarialFabricated", 52L,
+                "baselineCaught", 21L,
+                "baselineFabricated", 21L,
+                "rawAgentCaught", 0L,
+                "rawAgentFabricated", 0L)));
+    Map<String, MetricResult> baseline = new LinkedHashMap<>();
+    baseline.put(
+        "M-03",
+        MetricResult.proportion(
+            "M-03",
+            21,
+            21,
+            "BASELINE claims",
+            Map.of(
+                "unresolvedByKeyShape",
+                new java.util.TreeMap<>(
+                    Map.of("contract-clause-reference", 17L, "malformed-statute-reference", 4L)))));
+    EvalReport report =
+        new EvalReport(
+            config(0),
+            Map.of("shromikai", metrics, "baseline", baseline),
+            List.of(),
+            List.of(),
+            List.of("Small sample."),
+            List.of(),
+            List.of());
+
+    ReportGenerator.write(report, dir);
+
+    JsonNode json = new ObjectMapper().readTree(dir.resolve("report.json").toFile());
+    JsonNode m03 = headlineRow(json, "M-03");
+    assertThat(m03.get("metric").asText()).doesNotContainIgnoringCase("fabricated");
+    assertThat(m03.get("baseline").asText())
+        .contains("not resolvable against the corpus")
+        .contains("1.000 (21 of 21)")
+        .contains("17 cite the contract's own clauses")
+        .contains("4 malformed keys");
+    JsonNode m04 = headlineRow(json, "M-04");
+    assertThat(m04.get("shromikai").asText())
+        .contains("1.000 (52 of 52)")
+        .contains("independent")
+        .contains("21 of 21 baseline")
+        .contains("same check");
+    assertThat(m04.get("shromikai").asText()).doesNotContain("73 of 73");
+    // The per-metric entry keeps the full figures; only the headline cell is qualified.
+    assertThat(json.get("metrics").get("shromikai").get("M-04").get("count").asLong())
+        .isEqualTo(73);
+
+    String md = Files.readString(dir.resolve("report.md"));
+    String headline = md.substring(md.indexOf("## Headline"), md.indexOf("## All metrics"));
+    assertThat(headline).contains("not resolvable against the corpus").contains("1.000 (52 of 52)");
+    assertThat(headline.lines().filter(l -> l.startsWith("| M-03")).findFirst().orElseThrow())
+        .doesNotContainIgnoringCase("fabricated");
+  }
+
+  private static JsonNode headlineRow(JsonNode json, String id) {
+    for (JsonNode row : json.get("headline")) {
+      if (id.equals(row.get("id").asText())) {
+        return row;
+      }
+    }
+    throw new AssertionError("no headline row " + id);
+  }
 }

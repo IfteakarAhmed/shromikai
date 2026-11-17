@@ -10,6 +10,7 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
@@ -26,6 +27,32 @@ public final class Metrics {
 
   private Metrics() {}
 
+  /** Failure codes of a run that stopped before any cloud call or at the egress guard. */
+  private static final Set<String> FAILED_CLOSED =
+      Set.of("privacy-guard-blocked", "local-model-unavailable");
+
+  /**
+   * How many analyses a metric rests on: "4 analysed, 1 failed closed". A run that failed closed
+   * (the egress guard blocked it, or the local model was unavailable) has no findings and adds
+   * nothing to the counts, so it is named instead of being counted as an analysis.
+   */
+  static String analysisBasis(List<AnalysisCase> cases) {
+    long analysed = cases.stream().filter(c -> "ANALYSED".equals(c.outcome())).count();
+    long closed =
+        cases.stream()
+            .filter(c -> !"ANALYSED".equals(c.outcome()) && FAILED_CLOSED.contains(c.failureCode()))
+            .count();
+    long other = cases.size() - analysed - closed;
+    StringBuilder out = new StringBuilder(analysed + " analysed");
+    if (closed > 0) {
+      out.append(", ").append(closed).append(" failed closed");
+    }
+    if (other > 0) {
+      out.append(", ").append(other).append(" failed");
+    }
+    return out.toString();
+  }
+
   /** M-01: shown citations whose status is not VERIFIED, deduplicated by citation ID. */
   public static MetricResult unverifiedExposure(List<AnalysisCase> cases) {
     Map<String, ShownCitation> unique = new LinkedHashMap<>();
@@ -34,7 +61,7 @@ public final class Metrics {
     }
     long bad = unique.values().stream().filter(s -> !"VERIFIED".equals(s.status())).count();
     return MetricResult.proportion(
-        "M-01", bad, unique.size(), cases.size() + " analyses; every shown citation");
+        "M-01", bad, unique.size(), analysisBasis(cases) + "; every shown citation");
   }
 
   private static final java.util.regex.Pattern STATUTE_KEY =
@@ -191,30 +218,69 @@ public final class Metrics {
         }
       }
     }
-    return MetricResult.proportion("M-12", uncertain, n, cases.size() + " analyses");
+    return MetricResult.proportion("M-12", uncertain, n, analysisBasis(cases));
   }
 
-  /** M-19: p50 and p95 of job latency over live (not replayed) finished analyses. */
+  /**
+   * Per analysis, "contract: 14 live + 57 replayed calls, 98.4 s": what a latency figure rests on.
+   */
+  static Map<String, String> latencyRows(List<AnalysisCase> cases) {
+    Map<String, String> rows = new LinkedHashMap<>();
+    for (AnalysisCase c : cases) {
+      if (c.recorded() || !"ANALYSED".equals(c.outcome())) {
+        continue;
+      }
+      rows.put(
+          c.contractId(),
+          String.format(
+              Locale.ROOT,
+              "%d live + %d replayed calls, %.1f s",
+              c.liveCalls(),
+              c.replayedCalls(),
+              c.latencyMs() / 1000.0));
+    }
+    return rows;
+  }
+
+  /**
+   * M-19: p50 and p95 of job latency over finished analyses that were not replayed in full. A run
+   * can replay part of its calls from recordings, so the basis lists the live and replayed calls of
+   * every analysis instead of calling them live runs.
+   */
   public static MetricResult latency(List<AnalysisCase> cases) {
     List<Double> seconds = new ArrayList<>();
     List<Double> withoutRedact = new ArrayList<>();
+    boolean anyReplayed = false;
     for (AnalysisCase c : cases) {
       if (c.recorded() || !"ANALYSED".equals(c.outcome())) {
         continue;
       }
       seconds.add(c.latencyMs() / 1000.0);
       withoutRedact.add((c.latencyMs() - c.stageMs().getOrDefault("REDACT", 0L)) / 1000.0);
+      anyReplayed |= c.replayedCalls() > 0;
     }
+    Map<String, String> rows = latencyRows(cases);
     Map<String, Object> extra = new LinkedHashMap<>();
     extra.put("p50Seconds", Stats.nearestRank(seconds, 0.5));
     extra.put("p95Seconds", Stats.nearestRank(seconds, 0.95));
     extra.put("p50SecondsWithoutRedact", Stats.nearestRank(withoutRedact, 0.5));
     extra.put("p95SecondsWithoutRedact", Stats.nearestRank(withoutRedact, 0.95));
+    extra.put("perContract", rows);
+    String per =
+        rows.entrySet().stream()
+            .map(e -> e.getKey() + ": " + e.getValue())
+            .collect(java.util.stream.Collectors.joining("; "));
     return MetricResult.number(
         "M-19",
         Stats.nearestRank(seconds, 0.95),
         seconds.size(),
-        seconds.size() + " live analyses (replayed runs excluded); nearest rank",
+        seconds.size()
+            + (anyReplayed
+                ? " analyses on mixed live and replayed calls (analyses replayed in full are"
+                    + " excluded): "
+                : " analyses on live calls: ")
+            + per
+            + "; nearest rank",
         extra);
   }
 

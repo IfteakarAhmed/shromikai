@@ -221,7 +221,7 @@ class EvaluateRunnerIT {
           }
         }
       }
-      String roleNote = redacted == null ? "n/a" : roleWordsKept(paragraphs, redacted);
+      String roleNote = redacted == null ? "n/a" : roleWordsKept(id, paragraphs, redacted);
       map.clear();
       cases.add(new PiiCase(id, mode, ms, byType, 0, List.of()));
       note(
@@ -242,10 +242,18 @@ class EvaluateRunnerIT {
 
   /**
    * Generic role words (ADR-0025) that occur as whole tokens of the original and how many of those
-   * occurrences are still in the redacted text. The words come from the allowlist, never from a
-   * personal value, so the line is content-free.
+   * occurrences are still in the redacted text. The counts and words come from the allowlist, never
+   * from a personal value. For a paragraph that lost a role word the line also quotes the redacted
+   * paragraph (at most 300 characters): that is contract text, so this writer is for the team's
+   * synthetic contracts only and refuses any other contract ID (R-02).
    */
-  private String roleWordsKept(List<String> original, List<RedactedParagraph> redacted) {
+  private String roleWordsKept(
+      String contractId, List<String> original, List<RedactedParagraph> redacted) {
+    if (!SyntheticContracts.IDS.contains(contractId)) {
+      throw new IllegalStateException(
+          "The role-word check writes redacted paragraphs to notes.md; it is for synthetic contract"
+              + " IDs only");
+    }
     java.util.Map<String, long[]> counts = new TreeMap<>();
     for (String paragraph : original) {
       for (String token : paragraph.split("\\s+")) {
@@ -537,6 +545,22 @@ class EvaluateRunnerIT {
                 "The transfer finding of the demo contract cites BLA-2006:3, which does not clearly"
                     + " support the claim; the same-family verifier passed it (docs/known-gaps.md,"
                     + " cross-check of 17 November)."));
+    List<String> blocked =
+        EvalResults.latest(results.analyses()).stream()
+            .filter(a -> "privacy-guard-blocked".equals(a.failureCode()))
+            .map(a -> a.contractId() + " (" + a.system() + ")")
+            .toList();
+    if (!blocked.isEmpty()) {
+      // These runs happened before the role-word allowlist of ADR-0025 and were not repeated: the
+      // report's failures are the pre-fix outcome, not what the guard does after it.
+      knownFailures.add(
+          "The privacy-guard-blocked failures listed here ("
+              + String.join(", ", blocked)
+              + ") predate the role-word allowlist of ADR-0025 and were not rerun; after it,"
+              + " syn-bn-01 (ShromikAI) passed the guard in a live rerun, the syn-bn-01 baseline"
+              + " was not rerun, and syn-bn-03 stays blocked on the name-part path"
+              + " (BanglaRoleWordsFailClosedTest; local run p10c; no live rerun).");
+    }
     if (results.pii().stream().anyMatch(p -> "local-model-failed".equals(p.mode()))) {
       limitations.add(
           "The local PII model failed or took over 15 minutes on at least one contract; that contract's cloud runs used the ground-truth entity list (see M-25 details).");

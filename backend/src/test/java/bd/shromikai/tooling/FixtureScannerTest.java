@@ -154,6 +154,26 @@ class FixtureScannerTest {
   }
 
   @Test
+  void shouldRejectAFixtureMarkedAsSchemaInvalidWhoseAnswerIsValid() throws IOException {
+    // The mark lets an answer that broke its schema be replayed so the gateway repairs it. A mark
+    // on an answer that is valid would hide a fixture from the schema check for no reason.
+    Path dir = Files.createDirectories(fixtures.resolve("llm/xx-echo/v1"));
+    Files.writeString(
+        dir.resolve("case-1.json"),
+        """
+        {"fixtureVersion":1,"promptId":"xx-echo","promptVersion":1,"caseId":"case-1",
+         "modelId":"m","requestSha256":"%s","provenance":"synthetic","recordedAt":"2026-11-10",
+         "schemaInvalidAsRecorded":true,"response":{"echo":"x"}}
+        """
+            .formatted("a".repeat(64)));
+
+    assertThat(scanner().scan())
+        .contains(
+            "llm/xx-echo/v1/case-1.json: marked schemaInvalidAsRecorded but the response is valid"
+                + " for its schema");
+  }
+
+  @Test
   void shouldReportMissingCanaryFile() throws IOException {
     Files.delete(fixtures.resolve("canaries.yml"));
 

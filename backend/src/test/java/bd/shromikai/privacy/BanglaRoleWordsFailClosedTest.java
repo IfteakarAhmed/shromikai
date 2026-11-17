@@ -154,4 +154,33 @@ class BanglaRoleWordsFailClosedTest {
     assertThat(redacted).doesNotContain("রহিম", "নমুনা").contains("স্বাক্ষর");
     assertThat(map.protectedValues()).contains("মালিক রহিম নমুনা সরকার");
   }
+
+  @Test
+  void shouldStillBlockWhenALongerPersonValueContainsARoleWordAndAnInflectedFormSurvives() {
+    // The syn-bn-03 path (ADR-0025, known gap): the model returns one longer person value that
+    // contains a role word. The allowlist matches whole values only, so the value is kept and the
+    // redactor redacts every name part, the role word included. Its inflected form is not replaced,
+    // still contains a protected value, and the guard must keep blocking (fail closed, no leak).
+    String model =
+        "{\"status\":\"OK\",\"reason\":\"NONE\",\"persons\":[\"কর্মচারী রহিম নমুনা সরকার\"],"
+            + "\"organisations\":[],\"addresses\":[],\"employee_ids\":[]}";
+    PlaceholderMap map = new PlaceholderMap("job-6");
+
+    String redacted =
+        text(
+            shield(model)
+                .redact(
+                    List.of(
+                        "কর্মচারী রহিম নমুনা সরকার চুক্তিতে স্বাক্ষর করবেন।",
+                        "এখানে কর্মচারী নোটিশ দেবেন।",
+                        "কর্মচারীর ছুটি মালিকের অনুমতি নিয়ে হবে।"),
+                    map));
+
+    // The lone word was redacted as a name part, so it is a protected value of the job; the
+    // inflected form is not replaced and still contains it.
+    assertThat(redacted).doesNotContain("রহিম", "নমুনা").contains("কর্মচারীর");
+    assertThat(map.protectedValues()).contains("কর্মচারী");
+    assertThatThrownBy(() -> guard.check(cloudRequest(redacted, map)))
+        .isInstanceOf(EgressBlockedException.class);
+  }
 }

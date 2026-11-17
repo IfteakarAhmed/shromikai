@@ -88,6 +88,77 @@ public final class ReportGenerator {
     }
   }
 
+  // ------------------------------------------------------------------ headline wording
+
+  /**
+   * The headline's name for a metric. M-03 is "fabricated" for ShromikAI's own claims, but for the
+   * plain baseline most unresolved citations point at the contract's own clauses or use a key the
+   * corpus cannot resolve; the headline therefore says "not resolvable", never "fabricated" (R-07).
+   */
+  static String headlineName(String id) {
+    return "M-03".equals(id)
+        ? "Citations not resolvable against the corpus (objective checks)"
+        : MetricCatalog.get(id).name();
+  }
+
+  /**
+   * One headline cell. The full figures stay in the per-metric tables; the headline adds what a
+   * reader needs not to misread a number: what an unresolvable baseline citation pointed at (M-03)
+   * and which part of the M-04 catch rate is independent evidence.
+   */
+  static String headlineCell(String id, String system, MetricResult m) {
+    if (m.status() != MetricResult.Status.MEASURED) {
+      return m.display();
+    }
+    if ("M-03".equals(id) && "baseline".equals(system)) {
+      return "not resolvable against the corpus: " + m.display() + shapes(m.extra());
+    }
+    if ("M-04".equals(id) && "shromikai".equals(system)) {
+      Object advCaught = m.extra().get("adversarialCaught");
+      Object advTotal = m.extra().get("adversarialFabricated");
+      if (advCaught instanceof Number c && advTotal instanceof Number t) {
+        long k = c.longValue();
+        long n = t.longValue();
+        double rate = n == 0 ? 0 : (double) k / n;
+        return String.format(
+            Locale.ROOT,
+            "%.3f (%d of %d) on the independent adversarial set; in addition %d of %d baseline"
+                + " and %d of %d raw-agent citations caught by the same check that defines"
+                + " them (a consistency check, not independent evidence)",
+            rate,
+            k,
+            n,
+            num(m.extra().get("baselineCaught")),
+            num(m.extra().get("baselineFabricated")),
+            num(m.extra().get("rawAgentCaught")),
+            num(m.extra().get("rawAgentFabricated")));
+      }
+    }
+    return m.display();
+  }
+
+  private static long num(Object value) {
+    return value instanceof Number n ? n.longValue() : 0;
+  }
+
+  private static String shapes(Map<String, Object> extra) {
+    if (!(extra.get("unresolvedByKeyShape") instanceof Map<?, ?> byShape) || byShape.isEmpty()) {
+      return "";
+    }
+    List<String> parts = new java.util.ArrayList<>();
+    byShape.forEach(
+        (shape, count) ->
+            parts.add(
+                count
+                    + " "
+                    + switch (String.valueOf(shape)) {
+                      case "contract-clause-reference" -> "cite the contract's own clauses";
+                      case "malformed-statute-reference" -> "malformed keys";
+                      default -> "use a key of shape " + shape;
+                    }));
+    return ": " + String.join(", ", parts);
+  }
+
   // ------------------------------------------------------------------ JSON
 
   static ObjectNode json(EvalReport report) {
@@ -105,11 +176,11 @@ public final class ReportGenerator {
     for (String id : HEADLINE) {
       ObjectNode row = headline.addObject();
       row.put("id", id);
-      row.put("metric", MetricCatalog.get(id).name());
+      row.put("metric", headlineName(id));
       MetricResult base = report.metricsBySystem().getOrDefault("baseline", Map.of()).get(id);
       MetricResult ours = report.metricsBySystem().get("shromikai").get(id);
-      row.put("baseline", base == null ? "not applicable" : base.display());
-      row.put("shromikai", ours.display());
+      row.put("baseline", base == null ? "not applicable" : headlineCell(id, "baseline", base));
+      row.put("shromikai", headlineCell(id, "shromikai", ours));
       row.put("target", MetricCatalog.get(id).target());
       if (ours.met() == null) {
         row.putNull("met");
@@ -211,11 +282,11 @@ public final class ReportGenerator {
       md.append("| ")
           .append(id)
           .append(' ')
-          .append(esc(MetricCatalog.get(id).name()))
+          .append(esc(headlineName(id)))
           .append(" | ")
-          .append(base == null ? "not applicable" : esc(base.display()))
+          .append(base == null ? "not applicable" : esc(headlineCell(id, "baseline", base)))
           .append(" | ")
-          .append(esc(ours.display()))
+          .append(esc(headlineCell(id, "shromikai", ours)))
           .append(" | ")
           .append("no interval: fewer than 10 contracts (indicative)")
           .append(" | ")

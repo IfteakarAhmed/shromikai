@@ -438,7 +438,26 @@ public final class ReportAssembler {
     out.add(
         "Retrieval (M-15) uses draft questions written from the statute text by the team; none is checked yet.");
     out.add(
-        "Latency was measured on a development Mac with the local PII model in Docker without a GPU, which dominates the REDACT stage; the p95 is over very few live analyses.");
+        "Latency was measured on a development Mac with the local PII model in Docker without a GPU, which dominates the REDACT stage; the p95 is over very few analyses.");
+    List<AnalysisCase> shromikai =
+        EvalResults.latest(in.results().analyses()).stream()
+            .filter(a -> a.system().equals("shromikai"))
+            .toList();
+    Map<String, String> latencyRows = Metrics.latencyRows(shromikai);
+    boolean mixed =
+        shromikai.stream()
+            .anyMatch(
+                a -> !a.recorded() && "ANALYSED".equals(a.outcome()) && a.replayedCalls() > 0);
+    if (mixed) {
+      out.add(
+          "Latency (M-19) rests on mixed live and replayed calls, not on clean live runs ("
+              + latencyRows.entrySet().stream()
+                  .map(e -> e.getKey() + ": " + e.getValue())
+                  .collect(java.util.stream.Collectors.joining("; "))
+              + "). A replayed call returns at once, so the wall time of an analysis that replayed"
+              + " calls understates a fully live run, while the local PII step ran for real; the"
+              + " p95 is a mixed figure and indicative only.");
+    }
     List<AnalysisCase> baseline =
         EvalResults.latest(in.results().analyses()).stream()
             .filter(a -> a.system().equals("baseline"))

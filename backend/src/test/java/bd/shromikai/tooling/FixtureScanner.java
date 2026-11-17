@@ -123,6 +123,17 @@ public final class FixtureScanner {
     }
     FakeChatPort.checkFixture(fixture, path.group(1), Integer.parseInt(path.group(2)), schemas)
         .forEach(problem -> violations.add(relative + ": " + problem));
+    if (fixture.path("schemaInvalidAsRecorded").asBoolean(false)) {
+      // FakeChatPort skips the schema check for a marked fixture, so the scanner makes sure the
+      // mark is earned: the answer must really fail its schema, or the mark hides a valid fixture.
+      String schema = FakeChatPort.schemaLocation(path.group(1), Integer.parseInt(path.group(2)));
+      if (schemas.exists(schema)
+          && fixture.hasNonNull("response")
+          && schemas.validate(schema, fixture.get("response")).isEmpty()) {
+        violations.add(
+            relative + ": marked schemaInvalidAsRecorded but the response is valid for its schema");
+      }
+    }
     String caseId = path.group(3) != null ? path.group(3) : path.group(5);
     if (!caseId.equals(fixture.path("caseId").asText())) {
       violations.add(relative + ": caseId does not match the file name");
