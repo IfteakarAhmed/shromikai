@@ -39,6 +39,20 @@ async function transformOf(page: Page, selector: string): Promise<string> {
     .evaluate((element) => getComputedStyle(element).transform)
 }
 
+/** Waits until the card's transform is the same in two reads 200 ms apart. */
+async function settled(page: Page, selector: string) {
+  await expect
+    .poll(
+      async () => {
+        const before = await transformOf(page, selector)
+        await page.waitForTimeout(200)
+        return before === (await transformOf(page, selector))
+      },
+      { timeout: 5_000 },
+    )
+    .toBe(true)
+}
+
 /** The centre of the first risk card, nudged towards its right edge. */
 async function hoverFirstRiskCard(page: Page): Promise<string> {
   const card = page.locator('article.depth-card').first()
@@ -94,8 +108,36 @@ test.describe('depth system', () => {
     await expect.poll(() => transformOf(page, selector)).toMatch(/^matrix3d/)
     const card = page.locator(selector).first()
     await openDetails(card, 'bn')
-    await card.getByRole('button', { name: text('bn', 'finding.why') }).click()
+    const why = card.getByRole('button', { name: text('bn', 'finding.why') })
+    await why.scrollIntoViewIfNeeded()
+    // A scroll sends the browser's own pointer move, which re-aims the lean for 120 ms; a person
+    // clicks once the card has come to rest, so the check waits for that too.
+    await settled(page, selector)
+    expect(await transformOf(page, selector)).toMatch(/^matrix3d/)
+    await why.click()
     await expect(page.getByRole('dialog')).toBeVisible()
+  })
+
+  test("FR-71 a control left in a leaning card's own plane (a duty checkbox) takes its click", async ({
+    page,
+  }, info) => {
+    test.skip(info.project.name !== 'desktop-chromium', 'fine pointer only')
+    await openResult(page, 'bn')
+    await page.goto(`${new URL(page.url()).pathname}?tab=duties`)
+    const card = page.locator('[role="tabpanel"] .depth-card').first()
+    await card.scrollIntoViewIfNeeded()
+    const box = await card.boundingBox()
+    if (box === null) {
+      throw new Error('no duty card')
+    }
+    await page.mouse.move(box.x + box.width * 0.9, box.y + box.height * 0.5, { steps: 4 })
+    await expect
+      .poll(() => card.evaluate((el) => getComputedStyle(el).transform))
+      .toMatch(/^matrix3d/)
+    const checkbox = card.getByRole('checkbox')
+    await settled(page, '[role="tabpanel"] .depth-card')
+    await checkbox.click()
+    await expect(checkbox).toBeChecked()
   })
 
   test('NFR-08 keyboard focus inside a leaning card holds it flat; a mouse click does not', async ({

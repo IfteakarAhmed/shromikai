@@ -445,6 +445,12 @@
     opacity: 0.6;
   }
 
+  /* In a leaning card every direct child is its own 3D plane: Chrome hit-tests content left in
+     the card's own plane against the wrong box, so a button drawn there could miss its click. */
+  .depth-card[data-tilt='on'] > :not(.depth-glass, .depth-glow, .lift-1, .lift-2) {
+    translate: 0 0 0.5px;
+  }
+
   /* Children that stand out in front of the glass while the card leans (translate takes a z). */
   .lift-1 {
     translate: 0 0 12px;

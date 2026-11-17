@@ -107,4 +107,11 @@ describe('depth system CSS', () => {
     expect(block('@keyframes seal-drop')).toMatch(/translate|transform/)
     expect(block('@media (prefers-reduced-motion: reduce)')).toMatch(/\.seal-moment/)
   })
+
+  it('FR-70 every direct child of a leaning card is its own plane, so clicks hit what is drawn', () => {
+    const rule = block(
+      ".depth-card[data-tilt='on'] > :not(.depth-glass, .depth-glow, .lift-1, .lift-2)",
+    )
+    expect(rule).toMatch(/translate:\s*0 0 /)
+  })
 })
