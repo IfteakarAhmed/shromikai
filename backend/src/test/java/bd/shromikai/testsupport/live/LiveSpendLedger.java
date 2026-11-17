@@ -16,13 +16,23 @@ import java.time.Instant;
  * The cumulative cap on live API spend (ADR-0015 decision 4): a development-time guard, not product
  * behaviour. The state lives in the git-ignored {@code .live-spend/ledger.json}, so it survives
  * test runs. A call is refused before it is made when its worst-case cost would pass the cap, and
- * every finished call is added at its reported usage. The cap is US$3.00: the team's API balance is
- * small and a live call cannot be undone.
+ * every finished call is added at its reported usage. The cap is US$3.30 (US$3.00 until the owner
+ * raised it on 2026-11-17 for the P10 evaluation): the team's API balance is small and a live call
+ * cannot be undone. Evaluation calls (purpose prefix {@code eval:}) have their own cap of US$1.45.
  */
 public final class LiveSpendLedger {
 
-  /** US$3.00 in micro-dollars. */
-  public static final long CAP_MICROS = 3_000_000;
+  /** US$3.30 in micro-dollars. */
+  public static final long CAP_MICROS = 3_300_000;
+
+  /** Ledger purpose prefix of every evaluation call (P10). */
+  public static final String EVAL_PREFIX = "eval:";
+
+  /**
+   * US$1.45: everything the P10 evaluation may spend in total, so the owner's API balance keeps a
+   * US$1.60 reserve for the demo (ledger prices under-count the Console by about US$0.04).
+   */
+  public static final long EVAL_CAP_MICROS = 1_450_000;
 
   private static final ObjectMapper MAPPER =
       new ObjectMapper().enable(SerializationFeature.INDENT_OUTPUT);

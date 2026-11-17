@@ -73,8 +73,15 @@ class LiveSpendLedgerTest {
   }
 
   @Test
-  void shouldCapSpendAtThreeDollars() {
-    assertThat(LiveSpendLedger.CAP_MICROS).isEqualTo(3_000_000);
+  void shouldCapSpendAtThreeDollarsThirty() {
+    // Raised from US$3.00 by the owner on 2026-11-17 for the P10 evaluation (ADR-0015 amendment).
+    assertThat(LiveSpendLedger.CAP_MICROS).isEqualTo(3_300_000);
+  }
+
+  @Test
+  void shouldCapEvaluationSpendAtOneDollarFortyFive() {
+    assertThat(LiveSpendLedger.EVAL_PREFIX).isEqualTo("eval:");
+    assertThat(LiveSpendLedger.EVAL_CAP_MICROS).isEqualTo(1_450_000);
   }
 
   @Test

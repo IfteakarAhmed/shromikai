@@ -35,6 +35,9 @@ phase order, and the team has only a small API balance, so live spend needs its 
    each call from reported usage, refuses a call whose worst-case cost (input estimate plus
    `max_output_tokens`) would pass **US$3.00** in total, and never retries beyond the adapters' two
    retries. This is a development-time guard, not product behaviour.
+   *Amended 2026-11-17 (owner's decision for P10):* the cap is **US$3.30**, and evaluation calls
+   (ledger purpose prefix `eval:`) have their own cumulative cap of **US$1.45**, so the API balance
+   keeps a US$1.60 reserve for the demo.
 5. **Cheapest suitable model per role.** `query-rewrite`, `clause-segment`, `clause-classify`,
    `clause-facts` and the verifier fallback use Haiku 5.5 (`FAST`, `VERIFIER_FALLBACK`); Sonnet 5.5
    is used only by `risk-analysis`, `risk-citation-repair` and `counter-offer`; `verify-support` uses
