@@ -1,0 +1,22 @@
+{
+  "fixtureVersion" : 1,
+  "promptId" : "query-rewrite",
+  "promptVersion" : 1,
+  "caseId" : "eval-syn-bn-01-worker",
+  "modelId" : "claude-haiku-5-5",
+  "requestSha256" : "7411263ee8d30df778889c67c198f8d968d5321d08001f468ec7f6a3e3594717",
+  "provenance" : "synthetic",
+  "source" : "recorded from a live call",
+  "recordedAt" : "2026-11-17T13:29:01.071997Z",
+  "stopReason" : "end_turn",
+  "usage" : {
+    "inputTokens" : 305,
+    "outputTokens" : 124,
+    "cacheReadTokens" : 0
+  },
+  "response" : {
+    "status" : "OK",
+    "reason" : "NONE",
+    "queries" : [ "নিয়োগপত্র ও চাকরির চুক্তির শর্ত, নিয়োগকর্তা ও শ্রমিকের দায়িত্ব", "employment contract formation between employer and worker in Bangladesh", "appointment letter requirements for workers under Bangladesh labour law" ]
+  }
+}

@@ -1,0 +1,22 @@
+{
+  "fixtureVersion" : 1,
+  "promptId" : "verify-support-claude",
+  "promptVersion" : 2,
+  "caseId" : "eval-syn-bn-01-worker",
+  "modelId" : "claude-haiku-5-5",
+  "requestSha256" : "1bf13d3efc16516936bd243b1913920c070d404d3cf8a1f7e2f9de740f46524d",
+  "provenance" : "synthetic",
+  "source" : "recorded from a live call",
+  "recordedAt" : "2026-11-17T13:29:32.209834Z",
+  "stopReason" : "end_turn",
+  "usage" : {
+    "inputTokens" : 1022,
+    "outputTokens" : 61,
+    "cacheReadTokens" : 982
+  },
+  "response" : {
+    "label" : "SUPPORTS",
+    "confidence" : 0.96,
+    "reason" : "Section 6(7) states the employer shall return the worker's service book at the end of employment, matching the claim."
+  }
+}

@@ -1,0 +1,22 @@
+{
+  "fixtureVersion" : 1,
+  "promptId" : "query-rewrite",
+  "promptVersion" : 1,
+  "caseId" : "eval-syn-bn-01-worker",
+  "modelId" : "claude-haiku-5-5",
+  "requestSha256" : "76426f68d58c4721cc619a18d43f26133b44defd673168636acbd5641b422b15",
+  "provenance" : "synthetic",
+  "source" : "recorded from a live call",
+  "recordedAt" : "2026-11-17T13:29:00.978400Z",
+  "stopReason" : "end_turn",
+  "usage" : {
+    "inputTokens" : 149,
+    "outputTokens" : 115,
+    "cacheReadTokens" : 0
+  },
+  "response" : {
+    "status" : "OK",
+    "reason" : "NONE",
+    "queries" : [ "বাংলাদেশ শ্রম আইন মজুরি পরিশোধের সময়সীমা", "মজুরি থেকে কর্তন ও জরিমানার আইনি সীমা", "wage payment deadline and deductions from wages Bangladesh labour law" ]
+  }
+}

@@ -1,0 +1,86 @@
+{
+  "fixtureVersion" : 1,
+  "promptId" : "obligations",
+  "promptVersion" : 1,
+  "caseId" : "eval-syn-bn-01-worker",
+  "modelId" : "claude-haiku-5-5",
+  "requestSha256" : "63aee04754c18cfa01876c39445232b10a4eeba84d2fc17c457c7ff732f26f8b",
+  "provenance" : "synthetic",
+  "source" : "recorded from a live call",
+  "recordedAt" : "2026-11-17T13:29:21.978285Z",
+  "stopReason" : "end_turn",
+  "usage" : {
+    "inputTokens" : 24265,
+    "outputTokens" : 1290,
+    "cacheReadTokens" : 0
+  },
+  "response" : {
+    "status" : "OK",
+    "reason" : "NONE",
+    "items" : [ {
+      "party" : "EMPLOYER",
+      "obligation" : "শ্রমিককে নিয়োগপত্র প্রদান করতে হবে",
+      "trigger" : "নিয়োগের সময়",
+      "deadline" : null,
+      "source" : "BOTH",
+      "status" : "CONFLICTS_WITH_CONTRACT",
+      "clause_ids" : [ "c1" ],
+      "citations" : [ {
+        "section_key" : "BLA-2006:5@original",
+        "quote" : "কোন মালিক নিয়োগপত্র প্রদান না করিয়া কোন শ্রমিককে নিয়োগ করিতে পারিবেন না",
+        "claim" : "নিয়োগপত্র ছাড়া নিয়োগ নিষিদ্ধ; চুক্তিটি নিয়োগপত্র হিসেবে আছে"
+      } ]
+    }, {
+      "party" : "EMPLOYER",
+      "obligation" : "মজুরি পরবর্তী মাসের ২০ তারিখের মধ্যে পরিশোধ",
+      "trigger" : "মজুরি প্রদেয় হলে",
+      "deadline" : {
+        "value" : 20,
+        "unit" : "DAYS"
+      },
+      "source" : "CONTRACT",
+      "status" : "STATED_IN_CONTRACT",
+      "clause_ids" : [ "c5" ],
+      "citations" : [ ]
+    }, {
+      "party" : "EMPLOYER",
+      "obligation" : "মাসিক মজুরি ১৫,০০০ টাকা প্রদান; নিম্নতম মজুরি মেনে চলতে হবে",
+      "trigger" : "প্রতি মাসে",
+      "deadline" : null,
+      "source" : "BOTH",
+      "status" : "STATED_IN_CONTRACT",
+      "clause_ids" : [ "c4" ],
+      "citations" : [ {
+        "section_key" : "BLA-2006:148@original",
+        "quote" : "প্রত্যেক শ্রমিক উক্তরূপ ঘোষিত বা প্রকাশিত মজুরীর অনূ্যন হারে মজুরী পাইতে অধিকারী হইবেন",
+        "claim" : "ঘোষিত নিম্নতম মজুরীর কম দেওয়া যাবে না"
+      } ]
+    }, {
+      "party" : "EMPLOYER",
+      "obligation" : "শ্রমিককে সার্ভিস বই সরবরাহ ও চাকরি শেষে ফেরত দিতে হবে",
+      "trigger" : "নিয়োগ ও চাকরির অবসানের সময়",
+      "deadline" : null,
+      "source" : "STATUTE",
+      "status" : "STATUTORY_NOT_IN_CONTRACT",
+      "clause_ids" : [ ],
+      "citations" : [ {
+        "section_key" : "BLA-2006:6@original",
+        "quote" : "কোন শ্রমিকের চাকুরীর অবসানকালে মালিক তাহার সার্ভিস বই ফেরত দিবেন",
+        "claim" : "চাকরি শেষে সার্ভিস বই ফেরত দিতে হবে"
+      } ]
+    }, {
+      "party" : "EMPLOYER",
+      "obligation" : "বাৎসরিক ছুটি মঞ্জুর করতে হবে; চুক্তির ৫ দিন আইনের চেয়ে কম",
+      "trigger" : "এক বছর অবিচ্ছিন্ন চাকরির পর",
+      "deadline" : null,
+      "source" : "BOTH",
+      "status" : "CONFLICTS_WITH_CONTRACT",
+      "clause_ids" : [ "c7" ],
+      "citations" : [ {
+        "section_key" : "BLA-2006:117@amend-2026",
+        "quote" : "কোন প্রতিষ্ঠানে অবিচ্ছিন্নভাবে এক বৎসর চাকুরী পূর্ণ করিয়াছেন এমন প্রত্যেক প্রাপ্ত বয়স্ক শ্রমিককে",
+        "claim" : "আইনের চেয়ে কম বাৎসরিক ছুটি চুক্তিতে আছে"
+      } ]
+    } ]
+  }
+}

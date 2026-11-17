@@ -1,0 +1,22 @@
+{
+  "fixtureVersion" : 1,
+  "promptId" : "query-rewrite",
+  "promptVersion" : 1,
+  "caseId" : "eval-syn-bn-01-worker",
+  "modelId" : "claude-haiku-5-5",
+  "requestSha256" : "8e0c391b7df275e23a012c48d2b645e0245f9a893678c253f98fffc7650e901e",
+  "provenance" : "synthetic",
+  "source" : "recorded from a live call",
+  "recordedAt" : "2026-11-17T13:29:00.900384Z",
+  "stopReason" : "end_turn",
+  "usage" : {
+    "inputTokens" : 179,
+    "outputTokens" : 144,
+    "cacheReadTokens" : 0
+  },
+  "response" : {
+    "status" : "OK",
+    "reason" : "NONE",
+    "queries" : [ "বাংলাদেশ শ্রম আইন চাকরি থেকে ছাঁটাই নোটিশ ছাড়া বরখাস্ত", "শ্রমিকের চাকরি ছাড়ার নোটিশ ও ক্ষতিপূরণ বিধান", "termination of employment notice period compensation Bangladesh labour law" ]
+  }
+}

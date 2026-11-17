@@ -1,0 +1,22 @@
+{
+  "fixtureVersion" : 1,
+  "promptId" : "verify-support-claude",
+  "promptVersion" : 2,
+  "caseId" : "eval-syn-bn-01-worker",
+  "modelId" : "claude-haiku-5-5",
+  "requestSha256" : "12c41a9d0a2f46ce01b57f6a86f452838b24b61e98e04078637ed9def9b7178e",
+  "provenance" : "synthetic",
+  "source" : "recorded from a live call",
+  "recordedAt" : "2026-11-17T13:29:34.246320Z",
+  "stopReason" : "end_turn",
+  "usage" : {
+    "inputTokens" : 2486,
+    "outputTokens" : 86,
+    "cacheReadTokens" : 982
+  },
+  "response" : {
+    "label" : "CONTRADICTS",
+    "confidence" : 0.8,
+    "reason" : "Section s.117 grants annual leave with pay (1 day per 18 or 14 days worked) to workers; claim of less statutory leave is contradicted by the quoted clause."
+  }
+}

@@ -1,0 +1,22 @@
+{
+  "fixtureVersion" : 1,
+  "promptId" : "query-rewrite",
+  "promptVersion" : 1,
+  "caseId" : "eval-syn-bn-01-worker",
+  "modelId" : "claude-haiku-5-5",
+  "requestSha256" : "de099ecfbc461c78526eddc1554019dd36c6452bb54103efd6a4af9bfe7fc491",
+  "provenance" : "synthetic",
+  "source" : "recorded from a live call",
+  "recordedAt" : "2026-11-17T13:29:36.174046Z",
+  "stopReason" : "end_turn",
+  "usage" : {
+    "inputTokens" : 144,
+    "outputTokens" : 136,
+    "cacheReadTokens" : 798
+  },
+  "response" : {
+    "status" : "OK",
+    "reason" : "NONE",
+    "queries" : [ "শিক্ষানবিশকালে নোটিশ ছাড়া চাকরি অবসান বাংলাদেশ শ্রম আইন", "probation period termination without notice Bangladesh labour law", "নোটিশ-মজুরি ও লিখিত নোটিশ ছাড়া ছাঁটাই আইন" ]
+  }
+}

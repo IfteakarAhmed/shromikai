@@ -1,0 +1,22 @@
+{
+  "fixtureVersion" : 1,
+  "promptId" : "verify-support-claude",
+  "promptVersion" : 2,
+  "caseId" : "eval-syn-bn-01-worker",
+  "modelId" : "claude-haiku-5-5",
+  "requestSha256" : "35f31337c54f3ab1340e5f5aa77fe75337cdc40d78348797414115de77c666ab",
+  "provenance" : "synthetic",
+  "source" : "recorded from a live call",
+  "recordedAt" : "2026-11-17T13:29:30.588417Z",
+  "stopReason" : "end_turn",
+  "usage" : {
+    "inputTokens" : 400,
+    "outputTokens" : 71,
+    "cacheReadTokens" : 982
+  },
+  "response" : {
+    "label" : "PARTIAL",
+    "confidence" : 0.6,
+    "reason" : "Section voids clauses restricting court access or limiting time to sue, but says nothing about the clause remaining in the contract; claim is broader."
+  }
+}

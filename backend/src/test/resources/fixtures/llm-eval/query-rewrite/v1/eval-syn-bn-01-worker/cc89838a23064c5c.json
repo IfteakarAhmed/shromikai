@@ -1,0 +1,22 @@
+{
+  "fixtureVersion" : 1,
+  "promptId" : "query-rewrite",
+  "promptVersion" : 1,
+  "caseId" : "eval-syn-bn-01-worker",
+  "modelId" : "claude-haiku-5-5",
+  "requestSha256" : "cc89838a23064c5cb000a35cc3f9ff6a75fc5636ef241c16ddf4b9ceecd48a6a",
+  "provenance" : "synthetic",
+  "source" : "recorded from a live call",
+  "recordedAt" : "2026-11-17T13:29:00.857242Z",
+  "stopReason" : "end_turn",
+  "usage" : {
+    "inputTokens" : 121,
+    "outputTokens" : 114,
+    "cacheReadTokens" : 0
+  },
+  "response" : {
+    "status" : "OK",
+    "reason" : "NONE",
+    "queries" : [ "শ্রমিকের শিক্ষানবিশকাল ও চাকরি সমাপ্তি", "probation period termination without notice Bangladesh labour law", "শিক্ষানবিশ শ্রমিকের চাকরি অবসানের নোটিশ" ]
+  }
+}

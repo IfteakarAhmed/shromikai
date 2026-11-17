@@ -1,0 +1,22 @@
+{
+  "fixtureVersion" : 1,
+  "promptId" : "verify-support-claude",
+  "promptVersion" : 2,
+  "caseId" : "eval-syn-bn-01-worker",
+  "modelId" : "claude-haiku-5-5",
+  "requestSha256" : "b464742d29731280b2712f4dbbd37ce2413e28bae7725efbbe015e6b3f99739b",
+  "provenance" : "synthetic",
+  "source" : "recorded from a live call",
+  "recordedAt" : "2026-11-17T13:29:30.600595Z",
+  "stopReason" : "end_turn",
+  "usage" : {
+    "inputTokens" : 743,
+    "outputTokens" : 74,
+    "cacheReadTokens" : 982
+  },
+  "response" : {
+    "label" : "PARTIAL",
+    "confidence" : 0.8,
+    "reason" : "Section s.116(1) gives 14 days sick leave on full wages per year, but excludes newspaper workers, so the claim is broader than the section."
+  }
+}

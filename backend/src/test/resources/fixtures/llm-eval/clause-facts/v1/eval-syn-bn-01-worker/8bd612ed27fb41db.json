@@ -1,0 +1,84 @@
+{
+  "fixtureVersion" : 1,
+  "promptId" : "clause-facts",
+  "promptVersion" : 1,
+  "caseId" : "eval-syn-bn-01-worker",
+  "modelId" : "claude-haiku-5-5",
+  "requestSha256" : "8bd612ed27fb41db62d3bd6abe5dc621fd23786efc67fa22a61c8f70a0b00466",
+  "provenance" : "synthetic",
+  "source" : "recorded from a live call",
+  "recordedAt" : "2026-11-17T13:29:01.922288Z",
+  "stopReason" : "end_turn",
+  "usage" : {
+    "inputTokens" : 584,
+    "outputTokens" : 554,
+    "cacheReadTokens" : 0
+  },
+  "response" : {
+    "status" : "OK",
+    "reason" : "NONE",
+    "clauses" : [ {
+      "id" : "c5",
+      "facts" : [ {
+        "parameter" : "WAGE_PAYMENT_DEADLINE",
+        "value" : 20,
+        "unit" : "DAYS",
+        "confidence" : 0.6
+      }, {
+        "parameter" : "DEDUCTION_LIMIT",
+        "value" : 0,
+        "unit" : "PERCENT",
+        "confidence" : 0.1
+      } ]
+    }, {
+      "id" : "c6",
+      "facts" : [ {
+        "parameter" : "DAILY_WORKING_HOURS",
+        "value" : 12,
+        "unit" : "HOURS_PER_DAY",
+        "confidence" : 0.95
+      }, {
+        "parameter" : "WEEKLY_REST_DAYS",
+        "value" : 0,
+        "unit" : "COUNT",
+        "confidence" : 0.6
+      }, {
+        "parameter" : "OVERTIME_COMPULSORY",
+        "value" : 1,
+        "unit" : "BOOLEAN",
+        "confidence" : 0.7
+      } ]
+    }, {
+      "id" : "c7",
+      "facts" : [ {
+        "parameter" : "ANNUAL_LEAVE",
+        "value" : 5,
+        "unit" : "DAYS",
+        "confidence" : 0.95
+      } ]
+    }, {
+      "id" : "c8",
+      "facts" : [ {
+        "parameter" : "NOTICE_BY_EMPLOYER",
+        "value" : 1,
+        "unit" : "DAYS",
+        "confidence" : 0.9
+      }, {
+        "parameter" : "TERMINATION_WITHOUT_NOTICE_ALLOWED",
+        "value" : 1,
+        "unit" : "BOOLEAN",
+        "confidence" : 0.9
+      }, {
+        "parameter" : "NOTICE_BY_WORKER",
+        "value" : 90,
+        "unit" : "DAYS",
+        "confidence" : 0.95
+      }, {
+        "parameter" : "TERMINATION_BENEFIT_STATED",
+        "value" : 1,
+        "unit" : "BOOLEAN",
+        "confidence" : 0.8
+      } ]
+    } ]
+  }
+}

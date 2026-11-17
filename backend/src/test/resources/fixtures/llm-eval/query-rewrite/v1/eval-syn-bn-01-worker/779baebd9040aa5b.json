@@ -1,0 +1,22 @@
+{
+  "fixtureVersion" : 1,
+  "promptId" : "query-rewrite",
+  "promptVersion" : 1,
+  "caseId" : "eval-syn-bn-01-worker",
+  "modelId" : "claude-haiku-5-5",
+  "requestSha256" : "779baebd9040aa5b1109d675f4452b203dbeedeffd844f889a8e273c514ad754",
+  "provenance" : "synthetic",
+  "source" : "recorded from a live call",
+  "recordedAt" : "2026-11-17T13:29:14.682963Z",
+  "stopReason" : "end_turn",
+  "usage" : {
+    "inputTokens" : 148,
+    "outputTokens" : 134,
+    "cacheReadTokens" : 798
+  },
+  "response" : {
+    "status" : "OK",
+    "reason" : "NONE",
+    "queries" : [ "চাকরি শেষে প্রতিযোগিতা নিষেধাজ্ঞা শ্রমিক চুক্তি", "গোপনীয়তা ও চাকরির পর অন্যত্র কাজের সীমাবদ্ধতা", "post-employment non-compete restriction for workers in Bangladesh" ]
+  }
+}

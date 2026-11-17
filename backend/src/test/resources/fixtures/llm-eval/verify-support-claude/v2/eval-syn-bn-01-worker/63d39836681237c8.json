@@ -1,0 +1,22 @@
+{
+  "fixtureVersion" : 1,
+  "promptId" : "verify-support-claude",
+  "promptVersion" : 2,
+  "caseId" : "eval-syn-bn-01-worker",
+  "modelId" : "claude-haiku-5-5",
+  "requestSha256" : "63d39836681237c86e784dd3e9c04c681b21d2ddfb8ec5c4a381b37f9323b961",
+  "provenance" : "synthetic",
+  "source" : "recorded from a live call",
+  "recordedAt" : "2026-11-17T13:29:28.701504Z",
+  "stopReason" : "end_turn",
+  "usage" : {
+    "inputTokens" : 1725,
+    "outputTokens" : 67,
+    "cacheReadTokens" : 0
+  },
+  "response" : {
+    "label" : "SUPPORTS",
+    "confidence" : 0.95,
+    "reason" : "Section 125(1) states no wage may be deducted from a worker's wages except in cases the Act permits, matching the claim."
+  }
+}

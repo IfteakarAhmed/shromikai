@@ -1,0 +1,22 @@
+{
+  "fixtureVersion" : 1,
+  "promptId" : "verify-support-claude",
+  "promptVersion" : 2,
+  "caseId" : "eval-syn-bn-01-worker",
+  "modelId" : "claude-haiku-5-5",
+  "requestSha256" : "3cab3d16665d04f8fa7892eb696d469c3c8d030e5a72a08054f14682bc22d64f",
+  "provenance" : "synthetic",
+  "source" : "recorded from a live call",
+  "recordedAt" : "2026-11-17T13:29:30.547236Z",
+  "stopReason" : "end_turn",
+  "usage" : {
+    "inputTokens" : 2096,
+    "outputTokens" : 81,
+    "cacheReadTokens" : 982
+  },
+  "response" : {
+    "label" : "SUPPORTS",
+    "confidence" : 0.9,
+    "reason" : "Section 33(1) lets a worker whose employment ended (dismissal, discharge, etc.) file a written complaint within 30 days, matching the claim and quote."
+  }
+}

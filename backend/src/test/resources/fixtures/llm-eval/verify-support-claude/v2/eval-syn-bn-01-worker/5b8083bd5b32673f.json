@@ -1,0 +1,22 @@
+{
+  "fixtureVersion" : 1,
+  "promptId" : "verify-support-claude",
+  "promptVersion" : 2,
+  "caseId" : "eval-syn-bn-01-worker",
+  "modelId" : "claude-haiku-5-5",
+  "requestSha256" : "5b8083bd5b32673f5b74f0941914baa2866e722620b8d8ff82a7e7b45382451f",
+  "provenance" : "synthetic",
+  "source" : "recorded from a live call",
+  "recordedAt" : "2026-11-17T13:29:42.739045Z",
+  "stopReason" : "end_turn",
+  "usage" : {
+    "inputTokens" : 1171,
+    "outputTokens" : 67,
+    "cacheReadTokens" : 982
+  },
+  "response" : {
+    "label" : "SUPPORTS",
+    "confidence" : 0.9,
+    "reason" : "Sub-section 3 allows termination without notice by paying wages for the notice period in place of the required notice, matching the claim."
+  }
+}

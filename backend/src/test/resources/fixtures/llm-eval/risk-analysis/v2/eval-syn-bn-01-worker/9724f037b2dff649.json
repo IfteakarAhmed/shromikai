@@ -1,0 +1,76 @@
+{
+  "fixtureVersion" : 1,
+  "promptId" : "risk-analysis",
+  "promptVersion" : 2,
+  "caseId" : "eval-syn-bn-01-worker",
+  "modelId" : "claude-sonnet-5-5",
+  "requestSha256" : "9724f037b2dff649065b58306d4bfb1aa2098a3e0186b37693f7a0e5a930d41b",
+  "provenance" : "synthetic",
+  "source" : "recorded from a live call",
+  "recordedAt" : "2026-11-17T13:29:26.842333Z",
+  "stopReason" : "end_turn",
+  "usage" : {
+    "inputTokens" : 22019,
+    "outputTokens" : 1569,
+    "cacheReadTokens" : 0
+  },
+  "response" : {
+    "status" : "OK",
+    "reason" : "NONE",
+    "findings" : [ {
+      "title" : "যেকোনো পরিমাণ মজুরি কর্তনের শর্ত",
+      "kind" : "CONFLICT",
+      "severity" : "CRITICAL",
+      "non_obvious" : false,
+      "clause_type" : "WAGE_PAYMENT_AND_DEDUCTIONS",
+      "clause_ids" : [ "c5" ],
+      "explanation" : "মালিক যেকোনো ক্ষতিতে যেকোনো পরিমাণ কাটতে পারেন। আইনে শুধু নির্দিষ্ট কর্তন বৈধ এবং ক্ষতির কর্তনে তদন্ত ও সীমা আছে।",
+      "citations" : [ {
+        "section_key" : "BLA-2006:125@amend-2013",
+        "quote" : "এই আইন দ্বারা অনুমোদিত কর্তনের ক্ষেত্র ব্যতীত অন্য কোন ৰেত্রে কোন শ্রমিকের মজুরী হইতে কিছুই কর্তন করা যাইবে না",
+        "claim" : "অনুমোদিত ক্ষেত্র ছাড়া মজুরি কর্তন নিষিদ্ধ।"
+      }, {
+        "section_key" : "BLA-2006:127@original",
+        "quote" : "যতৰণ পর্যনত্দ না উক্ত কর্তনের বিরম্নদ্ধে ন্যায় বিচারের নীতি অনুসরণ করিয়া যথাযথ তদনত্দের মাধ্যমে",
+        "claim" : "ক্ষতির কর্তনের আগে যথাযথ তদন্তে দোষী প্রমাণ আবশ্যক।"
+      } ],
+      "confidence" : 0.9
+    }, {
+      "title" : "অতিরিক্ত সময়ের জন্য কোনো মজুরি নেই",
+      "kind" : "CONFLICT",
+      "severity" : "CRITICAL",
+      "non_obvious" : true,
+      "clause_type" : "OVERTIME",
+      "clause_ids" : [ "c6", "c4" ],
+      "explanation" : "১২ ঘণ্টা ও সপ্তাহে সাত দিন কাজ, অতিরিক্ত মজুরি নেই। এতে অধিককাল ভাতা ও সাপ্তাহিক সীমা লঙ্ঘিত হয়।",
+      "citations" : [ {
+        "section_key" : "BLA-2006:102@original",
+        "quote" : "সপ্তাহে আটচল্লিশ ঘণ্টার অধিক সময় কাজ করিবেন না বা তাহাকে দিয়ে কাজ করানো যাইবে না",
+        "claim" : "সাপ্তাহিক কর্মঘণ্টার সাধারণ সীমা ৪৮ ঘণ্টা।"
+      }, {
+        "section_key" : "BLA-2006:120@original",
+        "quote" : "ছুটি, বন্ধ অথবা অধিকাল কর্মের জন্য প্রদেয় কোন পারিশ্রমিক",
+        "claim" : "অধিকাল কর্মের পারিশ্রমিক মজুরির অংশ, তা প্রাপ্য।"
+      } ],
+      "confidence" : 0.85
+    }, {
+      "title" : "বার্ষিক ছুটি ও পদত্যাগের নোটিশে অসমতা",
+      "kind" : "CONFLICT",
+      "severity" : "HIGH",
+      "non_obvious" : true,
+      "clause_type" : "NOTICE_AND_RESIGNATION",
+      "clause_ids" : [ "c8", "c7" ],
+      "explanation" : "শ্রমিকের জন্য ৯০ দিনের নোটিশ, আইনে ৬০ দিন। মালিকের জন্য ১ দিন বা বিনা নোটিশ, বার্ষিক ছুটি মাত্র ৫ দিন।",
+      "citations" : [ {
+        "section_key" : "BLA-2006:27@amend-2026",
+        "quote" : "কোন স্থায়ী শ্রমিক মালিককে ষাট দিনের লিখিত নোটিশ প্রদান করিয়া তাহার চাকুরী হইতে ইস্তফা দিতে পারিবেন",
+        "claim" : "শ্রমিকের পদত্যাগের নোটিশ ৬০ দিনের বেশি হতে পারে না।"
+      }, {
+        "section_key" : "BLA-2006:20@original",
+        "quote" : "তাহার ছাঁটাইয়ের কারণ উল্লেখ করিয়া এক মাসের লিখিত নোটিশ দিতে হইবে",
+        "claim" : "ছাঁটাইয়ে মালিককে এক মাসের লিখিত নোটিশ দিতে হয়।"
+      } ],
+      "confidence" : 0.8
+    } ]
+  }
+}

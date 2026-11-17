@@ -1,0 +1,22 @@
+{
+  "fixtureVersion" : 1,
+  "promptId" : "verify-support-claude",
+  "promptVersion" : 2,
+  "caseId" : "eval-syn-bn-01-worker",
+  "modelId" : "claude-haiku-5-5",
+  "requestSha256" : "08a65f61026ec309c47accb3d4c078dcb829627cd9cec2b95eced0f737d1d2ba",
+  "provenance" : "synthetic",
+  "source" : "recorded from a live call",
+  "recordedAt" : "2026-11-17T13:29:32.051382Z",
+  "stopReason" : "end_turn",
+  "usage" : {
+    "inputTokens" : 361,
+    "outputTokens" : 68,
+    "cacheReadTokens" : 982
+  },
+  "response" : {
+    "label" : "SUPPORTS",
+    "confidence" : 0.93,
+    "reason" : "Section says employers must comply with declared minimum wage and every worker is entitled to wages not less than that rate, matching the claim."
+  }
+}

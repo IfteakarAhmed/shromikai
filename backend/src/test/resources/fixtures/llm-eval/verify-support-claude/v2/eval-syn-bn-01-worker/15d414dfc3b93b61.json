@@ -1,0 +1,22 @@
+{
+  "fixtureVersion" : 1,
+  "promptId" : "verify-support-claude",
+  "promptVersion" : 2,
+  "caseId" : "eval-syn-bn-01-worker",
+  "modelId" : "claude-haiku-5-5",
+  "requestSha256" : "15d414dfc3b93b61bba2897027c1a89309b9fefd007b45dbaaa8f900ad123df7",
+  "provenance" : "synthetic",
+  "source" : "recorded from a live call",
+  "recordedAt" : "2026-11-17T13:29:28.778715Z",
+  "stopReason" : "end_turn",
+  "usage" : {
+    "inputTokens" : 1177,
+    "outputTokens" : 83,
+    "cacheReadTokens" : 0
+  },
+  "response" : {
+    "label" : "PARTIAL",
+    "confidence" : 0.8,
+    "reason" : "Section 26 requires written notice or wages in lieu for termination of workers, covering permanent and temporary workers; it does not limit this to termination only, so claim matches broadly."
+  }
+}

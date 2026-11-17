@@ -1,0 +1,22 @@
+{
+  "fixtureVersion" : 1,
+  "promptId" : "verify-support-claude",
+  "promptVersion" : 2,
+  "caseId" : "eval-syn-bn-01-worker",
+  "modelId" : "claude-haiku-5-5",
+  "requestSha256" : "9d07432cdfab2d172c7ee7ef11d290d081977baaa06b664fe3d06edfc4181bc7",
+  "provenance" : "synthetic",
+  "source" : "recorded from a live call",
+  "recordedAt" : "2026-11-17T13:29:28.710721Z",
+  "stopReason" : "end_turn",
+  "usage" : {
+    "inputTokens" : 1203,
+    "outputTokens" : 71,
+    "cacheReadTokens" : 0
+  },
+  "response" : {
+    "label" : "SUPPORTS",
+    "confidence" : 0.93,
+    "reason" : "Section 20(2)(গ) requires 30 days' wages per year of service as compensation on retrenchment, matching the claim's element."
+  }
+}

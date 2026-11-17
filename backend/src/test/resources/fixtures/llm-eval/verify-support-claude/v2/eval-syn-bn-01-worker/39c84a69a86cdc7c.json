@@ -1,0 +1,22 @@
+{
+  "fixtureVersion" : 1,
+  "promptId" : "verify-support-claude",
+  "promptVersion" : 2,
+  "caseId" : "eval-syn-bn-01-worker",
+  "modelId" : "claude-haiku-5-5",
+  "requestSha256" : "39c84a69a86cdc7c5be6910ddc7c7b0e97dbc4464cb80abb0635d6860119e0b7",
+  "provenance" : "synthetic",
+  "source" : "recorded from a live call",
+  "recordedAt" : "2026-11-17T13:29:30.545497Z",
+  "stopReason" : "end_turn",
+  "usage" : {
+    "inputTokens" : 2090,
+    "outputTokens" : 75,
+    "cacheReadTokens" : 982
+  },
+  "response" : {
+    "label" : "SUPPORTS",
+    "confidence" : 0.9,
+    "reason" : "Sub-section 33(3) lets a worker dissatisfied with the employer's decision file a written complaint with the Labour Court within thirty days."
+  }
+}

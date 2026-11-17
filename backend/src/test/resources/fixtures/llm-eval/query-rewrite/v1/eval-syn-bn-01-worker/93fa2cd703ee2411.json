@@ -1,0 +1,22 @@
+{
+  "fixtureVersion" : 1,
+  "promptId" : "query-rewrite",
+  "promptVersion" : 1,
+  "caseId" : "eval-syn-bn-01-worker",
+  "modelId" : "claude-haiku-5-5",
+  "requestSha256" : "93fa2cd703ee2411497e935cfe9ba783885a63d8aa7a4eef1c684662cd23aab2",
+  "provenance" : "synthetic",
+  "source" : "recorded from a live call",
+  "recordedAt" : "2026-11-17T13:29:00.909144Z",
+  "stopReason" : "end_turn",
+  "usage" : {
+    "inputTokens" : 178,
+    "outputTokens" : 132,
+    "cacheReadTokens" : 0
+  },
+  "response" : {
+    "status" : "OK",
+    "reason" : "NONE",
+    "queries" : [ "বাংলাদেশ শ্রম আইন দৈনিক কর্মঘণ্টা ও সাপ্তাহিক ছুটি", "অতিরিক্ত সময়ের কাজের জন্য ওভারটাইম মজুরি", "Bangladesh Labour Act working hours and overtime pay" ]
+  }
+}

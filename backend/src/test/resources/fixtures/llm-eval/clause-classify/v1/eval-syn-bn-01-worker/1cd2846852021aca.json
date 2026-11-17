@@ -1,0 +1,43 @@
+{
+  "fixtureVersion" : 1,
+  "promptId" : "clause-classify",
+  "promptVersion" : 1,
+  "caseId" : "eval-syn-bn-01-worker",
+  "modelId" : "claude-haiku-5-5",
+  "requestSha256" : "1cd2846852021acae32ea80fa86349ca8f1034a4e72d654a4ab8ba1220d44c2c",
+  "provenance" : "synthetic",
+  "source" : "recorded from a live call",
+  "recordedAt" : "2026-11-17T13:28:58.762303Z",
+  "stopReason" : "end_turn",
+  "usage" : {
+    "inputTokens" : 695,
+    "outputTokens" : 202,
+    "cacheReadTokens" : 0
+  },
+  "response" : {
+    "status" : "OK",
+    "reason" : "NONE",
+    "document_type" : "EMPLOYMENT_CONTRACT",
+    "clauses" : [ {
+      "id" : "c7",
+      "type" : "LEAVE",
+      "confidence" : 0.95
+    }, {
+      "id" : "c8",
+      "type" : "NOTICE_AND_RESIGNATION",
+      "confidence" : 0.9
+    }, {
+      "id" : "c9",
+      "type" : "NON_COMPETE",
+      "confidence" : 0.9
+    }, {
+      "id" : "c10",
+      "type" : "DISPUTE_RESOLUTION",
+      "confidence" : 0.92
+    }, {
+      "id" : "c11",
+      "type" : "GENERAL_PROVISIONS",
+      "confidence" : 0.85
+    } ]
+  }
+}

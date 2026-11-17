@@ -1,0 +1,68 @@
+{
+  "fixtureVersion" : 1,
+  "promptId" : "risk-analysis",
+  "promptVersion" : 2,
+  "caseId" : "eval-syn-bn-01-worker",
+  "modelId" : "claude-sonnet-5-5",
+  "requestSha256" : "b3eac52562d339c39d80ff96dd15aee7cecec4090675f5d6ba85b51bb4eda9d9",
+  "provenance" : "synthetic",
+  "source" : "recorded from a live call",
+  "recordedAt" : "2026-11-17T13:29:24.647704Z",
+  "stopReason" : "end_turn",
+  "usage" : {
+    "inputTokens" : 22748,
+    "outputTokens" : 1205,
+    "cacheReadTokens" : 0
+  },
+  "response" : {
+    "status" : "OK",
+    "reason" : "NONE",
+    "findings" : [ {
+      "title" : "নোটিশ ছাড়া চাকরির অবসান",
+      "kind" : "CONFLICT",
+      "severity" : "CRITICAL",
+      "non_obvious" : false,
+      "clause_type" : "PROBATION",
+      "clause_ids" : [ "c3" ],
+      "explanation" : "১২ মাসের শিক্ষানবিশকালে কারণ ও নোটিশ ছাড়া ছাঁটাই করা যাবে। আইনে অবসানের জন্য লিখিত নোটিশ বা নোটিশ-মজুরি আবশ্যক।",
+      "citations" : [ {
+        "section_key" : "BLA-2006:26@original",
+        "quote" : "লিখিত নোটিশ প্রদান করিয়া কোন অস্থায়ী শ্রমিকের চাকুরীর অবসান করিতে পারিবেন",
+        "claim" : "অবসানে লিখিত নোটিশ বা তার পরিবর্তে মজুরি দিতে হয়।"
+      }, {
+        "section_key" : "BLA-2006:3@amend-2026",
+        "quote" : "কিন্তু এই প্রকার কোন বিধি কোন শ্রমিকের জন্য এই অধ্যায়ের কোন বিধান হইতে কম অনুকূল হইতে পারিবে না",
+        "claim" : "চুক্তি আইনের চেয়ে কম অনুকূল হতে পারে না।"
+      } ],
+      "confidence" : 0.85
+    }, {
+      "title" : "অবাধ বদলির ক্ষমতা",
+      "kind" : "AMBIGUITY",
+      "severity" : "MEDIUM",
+      "non_obvious" : true,
+      "clause_type" : "TRANSFER_AND_DEPLOYMENT",
+      "clause_ids" : [ "c2" ],
+      "explanation" : "মালিক যেকোনো সময় অন্য কাজে বা কারখানায় বদলি করতে পারেন; কোনো শর্ত বা সীমা নেই। এতে শ্রমিকের অধিকার ক্ষুণ্ন হতে পারে।",
+      "citations" : [ {
+        "section_key" : "BLA-2006:3@amend-2026",
+        "quote" : "কিন্তু এই প্রকার কোন বিধি কোন শ্রমিকের জন্য এই অধ্যায়ের কোন বিধান হইতে কম অনুকূল হইতে পারিবে না",
+        "claim" : "চাকুরীর শর্ত আইনের চেয়ে কম অনুকূল হতে পারে না।"
+      } ],
+      "confidence" : 0.5
+    }, {
+      "title" : "শিক্ষানবিশকালে সার্ভিস বই ও অভিযোগের পথ বন্ধ",
+      "kind" : "INTERACTION",
+      "severity" : "MEDIUM",
+      "non_obvious" : true,
+      "clause_type" : "PROBATION",
+      "clause_ids" : [ "c3", "c2" ],
+      "explanation" : "১২ মাসের শিক্ষানবিশ নোটিশ ছাড়া ছাঁটাইযোগ্য ও অবাধ বদলিযোগ্য। এতে সার্ভিস বই ও অভিযোগের অধিকার কার্যত দুর্বল হয়।",
+      "citations" : [ {
+        "section_key" : "BLA-2006:33@amend-2013",
+        "quote" : "অভিযোগটি লিখিত আকারে রেজিিস্ট্র ডাকযোগে মালিকের নিকট [প্রেরণ] করিবেন",
+        "claim" : "অবসানের বিরুদ্ধে শ্রমিক অভিযোগ করতে পারেন।"
+      } ],
+      "confidence" : 0.45
+    } ]
+  }
+}

@@ -1,0 +1,22 @@
+{
+  "fixtureVersion" : 1,
+  "promptId" : "verify-support-claude",
+  "promptVersion" : 2,
+  "caseId" : "eval-syn-bn-01-worker",
+  "modelId" : "claude-haiku-5-5",
+  "requestSha256" : "bd00a4a1c474b2f62dbe58d45d3db3f21289bbf2eb23091da30ceac73d553c8b",
+  "provenance" : "synthetic",
+  "source" : "recorded from a live call",
+  "recordedAt" : "2026-11-17T13:29:30.578821Z",
+  "stopReason" : "end_turn",
+  "usage" : {
+    "inputTokens" : 1458,
+    "outputTokens" : 74,
+    "cacheReadTokens" : 982
+  },
+  "response" : {
+    "label" : "SUPPORTS",
+    "confidence" : 0.93,
+    "reason" : "Section 3(1) proviso states an employer's service rules cannot be less favourable to any worker than any provision of this chapter, matching the claim."
+  }
+}

@@ -1,0 +1,22 @@
+{
+  "fixtureVersion" : 1,
+  "promptId" : "verify-support-claude",
+  "promptVersion" : 2,
+  "caseId" : "eval-syn-bn-01-worker",
+  "modelId" : "claude-haiku-5-5",
+  "requestSha256" : "b056e1f99e8cc12ad742eacc9b68abbe2cd46c928799223306d6a1973fcc3bc5",
+  "provenance" : "synthetic",
+  "source" : "recorded from a live call",
+  "recordedAt" : "2026-11-17T13:29:30.576797Z",
+  "stopReason" : "end_turn",
+  "usage" : {
+    "inputTokens" : 405,
+    "outputTokens" : 77,
+    "cacheReadTokens" : 982
+  },
+  "response" : {
+    "label" : "SUPPORTS",
+    "confidence" : 0.9,
+    "reason" : "Section 28 voids agreements absolutely restricting a party from enforcing contract rights through ordinary tribunals, to that extent, matching the claim."
+  }
+}

@@ -1,0 +1,22 @@
+{
+  "fixtureVersion" : 1,
+  "promptId" : "verify-support-claude",
+  "promptVersion" : 2,
+  "caseId" : "eval-syn-bn-01-worker",
+  "modelId" : "claude-haiku-5-5",
+  "requestSha256" : "4c75c6043162f622a9b024630894aef122ce2b2b96af91f91ff79fec83a2d8ce",
+  "provenance" : "synthetic",
+  "source" : "recorded from a live call",
+  "recordedAt" : "2026-11-17T13:29:28.742494Z",
+  "stopReason" : "end_turn",
+  "usage" : {
+    "inputTokens" : 591,
+    "outputTokens" : 71,
+    "cacheReadTokens" : 0
+  },
+  "response" : {
+    "label" : "SUPPORTS",
+    "confidence" : 0.9,
+    "reason" : "Section 127(1) bars deductions until proper inquiry under natural justice finds the worker guilty, matching the claim's requirement."
+  }
+}

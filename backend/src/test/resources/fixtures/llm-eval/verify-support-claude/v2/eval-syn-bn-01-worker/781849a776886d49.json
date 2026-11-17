@@ -1,0 +1,22 @@
+{
+  "fixtureVersion" : 1,
+  "promptId" : "verify-support-claude",
+  "promptVersion" : 2,
+  "caseId" : "eval-syn-bn-01-worker",
+  "modelId" : "claude-haiku-5-5",
+  "requestSha256" : "781849a776886d49e3f5f285eb35b56ccb10b2b2a77b72a0d31c37f0e7a5d8af",
+  "provenance" : "synthetic",
+  "source" : "recorded from a live call",
+  "recordedAt" : "2026-11-17T13:29:28.846165Z",
+  "stopReason" : "end_turn",
+  "usage" : {
+    "inputTokens" : 719,
+    "outputTokens" : 79,
+    "cacheReadTokens" : 0
+  },
+  "response" : {
+    "label" : "SUPPORTS",
+    "confidence" : 0.92,
+    "reason" : "Section 120(খ) includes any remuneration payable for overtime work within the meaning of 'wages', matching the claim that overtime pay forms part of wages."
+  }
+}

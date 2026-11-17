@@ -1,0 +1,22 @@
+{
+  "fixtureVersion" : 1,
+  "promptId" : "query-rewrite",
+  "promptVersion" : 1,
+  "caseId" : "eval-syn-bn-01-worker",
+  "modelId" : "claude-haiku-5-5",
+  "requestSha256" : "42abc05fb13e257918882d9f4ef6892506e836baad6f78b4ce811c9ce67dfb66",
+  "provenance" : "synthetic",
+  "source" : "recorded from a live call",
+  "recordedAt" : "2026-11-17T13:29:00.907186Z",
+  "stopReason" : "end_turn",
+  "usage" : {
+    "inputTokens" : 102,
+    "outputTokens" : 116,
+    "cacheReadTokens" : 0
+  },
+  "response" : {
+    "status" : "OK",
+    "reason" : "NONE",
+    "queries" : [ "শ্রমিকের মাসিক মজুরি ও বেতন পরিশোধ", "বার্ষিক বেতন বৃদ্ধি ও মজুরি বৃদ্ধির বিধান", "monthly wage payment and annual wage increment rights of workers" ]
+  }
+}

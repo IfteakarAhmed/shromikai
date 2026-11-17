@@ -1,0 +1,22 @@
+{
+  "fixtureVersion" : 1,
+  "promptId" : "query-rewrite",
+  "promptVersion" : 1,
+  "caseId" : "eval-syn-bn-01-worker",
+  "modelId" : "claude-haiku-5-5",
+  "requestSha256" : "d844df5fcc6d1166501b1407a06d6d82c37313911766786883fd5809452b0d3e",
+  "provenance" : "synthetic",
+  "source" : "recorded from a live call",
+  "recordedAt" : "2026-11-17T13:29:00.903036Z",
+  "stopReason" : "end_turn",
+  "usage" : {
+    "inputTokens" : 90,
+    "outputTokens" : 132,
+    "cacheReadTokens" : 0
+  },
+  "response" : {
+    "status" : "OK",
+    "reason" : "NONE",
+    "queries" : [ "শ্রমিকের বার্ষিক ছুটি বাংলাদেশ শ্রম আইন", "annual leave entitlement for workers and employer permission requirement Bangladesh", "বার্ষিক ছুটির পরিমাণ ও মালিকের অনুমতি শ্রমিক অধিকার" ]
+  }
+}

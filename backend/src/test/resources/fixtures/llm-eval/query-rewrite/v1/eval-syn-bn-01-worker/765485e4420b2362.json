@@ -1,0 +1,22 @@
+{
+  "fixtureVersion" : 1,
+  "promptId" : "query-rewrite",
+  "promptVersion" : 1,
+  "caseId" : "eval-syn-bn-01-worker",
+  "modelId" : "claude-haiku-5-5",
+  "requestSha256" : "765485e4420b2362897ea35c0c4bf2f871194e600e4c2542ee477ea48b50e7f0",
+  "provenance" : "synthetic",
+  "source" : "recorded from a live call",
+  "recordedAt" : "2026-11-17T13:29:00.938907Z",
+  "stopReason" : "end_turn",
+  "usage" : {
+    "inputTokens" : 218,
+    "outputTokens" : 135,
+    "cacheReadTokens" : 0
+  },
+  "response" : {
+    "status" : "OK",
+    "reason" : "NONE",
+    "queries" : [ "শ্রমিকের নিয়োগ, পদ ও কর্মস্থল বদলির শর্ত", "employee appointment designation and transfer to another workplace Bangladesh labour law", "শ্রম আইন অনুযায়ী বদলি ও কর্মস্থল পরিবর্তনের অধিকার" ]
+  }
+}

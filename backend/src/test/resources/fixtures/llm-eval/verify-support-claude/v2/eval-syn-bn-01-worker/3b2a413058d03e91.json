@@ -1,0 +1,22 @@
+{
+  "fixtureVersion" : 1,
+  "promptId" : "verify-support-claude",
+  "promptVersion" : 2,
+  "caseId" : "eval-syn-bn-01-worker",
+  "modelId" : "claude-haiku-5-5",
+  "requestSha256" : "3b2a413058d03e912a6aaea9593e2d5dc881875534e59c14ebaee20b36b654a4",
+  "provenance" : "synthetic",
+  "source" : "recorded from a live call",
+  "recordedAt" : "2026-11-17T13:29:30.488167Z",
+  "stopReason" : "end_turn",
+  "usage" : {
+    "inputTokens" : 338,
+    "outputTokens" : 67,
+    "cacheReadTokens" : 982
+  },
+  "response" : {
+    "label" : "SUPPORTS",
+    "confidence" : 0.9,
+    "reason" : "Section 27 states agreements restraining lawful profession, trade or business are void to that extent, matching the Bengali claim."
+  }
+}

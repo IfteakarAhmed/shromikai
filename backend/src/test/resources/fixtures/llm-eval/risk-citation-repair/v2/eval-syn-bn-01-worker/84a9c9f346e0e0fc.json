@@ -1,0 +1,29 @@
+{
+  "fixtureVersion": 1,
+  "promptId": "risk-citation-repair",
+  "promptVersion": 2,
+  "caseId": "eval-syn-bn-01-worker",
+  "modelId": "claude-sonnet-5-5",
+  "requestSha256": "84a9c9f346e0e0fca28c7eb9ae3cc295d66ed8a0942e150d10f21b4e6ab047ea",
+  "provenance": "synthetic",
+  "source": "recorded from a live call",
+  "recordedAt": "2026-11-17T13:29:40.884439Z",
+  "stopReason": "end_turn",
+  "usage": {
+    "inputTokens": 20776,
+    "outputTokens": 121,
+    "cacheReadTokens": 0
+  },
+  "schemaInvalidAsRecorded": true,
+  "response": {
+    "status": "OK",
+    "reason": "NONE",
+    "citations": [
+      {
+        "section_key": "CA-1872:28@original",
+        "quote": "is restricted absolutely from enforcing his rights under or in respect of any contract, by the usual legal proceedings in the ordinary tribunals",
+        "claim": "An agreement absolutely barring court enforcement of rights is void to that extent."
+      }
+    ]
+  }
+}

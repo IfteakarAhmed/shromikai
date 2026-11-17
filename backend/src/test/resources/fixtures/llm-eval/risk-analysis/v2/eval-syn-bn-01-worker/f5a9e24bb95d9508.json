@@ -1,0 +1,72 @@
+{
+  "fixtureVersion" : 1,
+  "promptId" : "risk-analysis",
+  "promptVersion" : 2,
+  "caseId" : "eval-syn-bn-01-worker",
+  "modelId" : "claude-sonnet-5-5",
+  "requestSha256" : "f5a9e24bb95d95082765ebad9be1df51dff7a42d64fcab65dfa2365f46ddde89",
+  "provenance" : "synthetic",
+  "source" : "recorded from a live call",
+  "recordedAt" : "2026-11-17T13:29:24.350200Z",
+  "stopReason" : "end_turn",
+  "usage" : {
+    "inputTokens" : 22330,
+    "outputTokens" : 1256,
+    "cacheReadTokens" : 0
+  },
+  "response" : {
+    "status" : "OK",
+    "reason" : "NONE",
+    "findings" : [ {
+      "title" : "ছুটি মাত্র ৫ দিন",
+      "kind" : "CONFLICT",
+      "severity" : "HIGH",
+      "non_obvious" : false,
+      "clause_type" : "LEAVE",
+      "clause_ids" : [ "c7" ],
+      "explanation" : "চুক্তিতে বছরে মাত্র ৫ দিন ছুটি এবং তা মালিকের অনুমতিসাপেক্ষ। আইনে অর্জিত, উৎসব ও পীড়া ছুটি নিশ্চিত।",
+      "citations" : [ {
+        "section_key" : "BLA-2006:118@amend-2026",
+        "quote" : "প্রত্যেক শ্রমিককে প্রতি পঞ্জিকা বৎসরে [১৩ (তের)] দিনের মজুরীসহ উৎসব ছুটি মঞ্জুর করিতে হইবে",
+        "claim" : "প্রতি বছর ১৩ দিন মজুরীসহ উৎসব ছুটি বাধ্যতামূলক।"
+      }, {
+        "section_key" : "BLA-2006:116@original",
+        "quote" : "পূর্ণ মজুরীতে চৌদ্দ দিনের পীড়া ছুটি পাইবার অধিকারী হইবেন",
+        "claim" : "বছরে ১৪ দিন পূর্ণ মজুরীতে পীড়া ছুটি প্রাপ্য।"
+      } ],
+      "confidence" : 0.9
+    }, {
+      "title" : "১ দিনের নোটিশে ছাঁটাই, ক্ষতিপূরণ নেই",
+      "kind" : "CONFLICT",
+      "severity" : "CRITICAL",
+      "non_obvious" : false,
+      "clause_type" : "NOTICE_AND_RESIGNATION",
+      "clause_ids" : [ "c8" ],
+      "explanation" : "মালিক ১ দিনের নোটিশে বা বিনা নোটিশে ছাঁটাই করতে পারেন; আইনে দীর্ঘ নোটিশ ও বছরপ্রতি ক্ষতিপূরণ বাধ্যতামূলক।",
+      "citations" : [ {
+        "section_key" : "BLA-2006:26@original",
+        "quote" : "একশত বিশ দিনের,",
+        "claim" : "মাসিক মজুরির স্থায়ী শ্রমিকের জন্য ১২০ দিনের নোটিশ প্রয়োজন।"
+      }, {
+        "section_key" : "BLA-2006:20@original",
+        "quote" : "প্রত্যেক বৎসর চাকুরীর জন্য ত্রিশ দিনের মজুরী বা গ্রাচু্যইটি",
+        "claim" : "ছাঁটাইয়ে বছরপ্রতি ৩০ দিনের মজুরি ক্ষতিপূরণ প্রদেয়।"
+      } ],
+      "confidence" : 0.88
+    }, {
+      "title" : "৫ বছরের প্রতিযোগিতা নিষেধ বাতিলযোগ্য",
+      "kind" : "CONFLICT",
+      "severity" : "HIGH",
+      "non_obvious" : false,
+      "clause_type" : "NON_COMPETE",
+      "clause_ids" : [ "c9" ],
+      "explanation" : "চাকরি শেষে ৫ বছর সারা দেশে গার্মেন্টসে কাজ নিষিদ্ধ। এটি বৈধ পেশার বাধা, ফলে বাতিলযোগ্য।",
+      "citations" : [ {
+        "section_key" : "CA-1872:27@original",
+        "quote" : "restrained from exercising a lawful profession, trade or business of any kind, is to that extent void",
+        "claim" : "বৈধ পেশায় বাধা দেওয়ার চুক্তি সেই পরিমাণে বাতিল।"
+      } ],
+      "confidence" : 0.85
+    } ]
+  }
+}

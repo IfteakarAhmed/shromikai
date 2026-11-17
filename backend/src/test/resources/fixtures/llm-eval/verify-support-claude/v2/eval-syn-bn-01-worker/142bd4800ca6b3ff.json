@@ -1,0 +1,22 @@
+{
+  "fixtureVersion" : 1,
+  "promptId" : "verify-support-claude",
+  "promptVersion" : 2,
+  "caseId" : "eval-syn-bn-01-worker",
+  "modelId" : "claude-haiku-5-5",
+  "requestSha256" : "142bd4800ca6b3ffddd9ca780b8918be961d9c08c2b97301eb31c2108d9df135",
+  "provenance" : "synthetic",
+  "source" : "recorded from a live call",
+  "recordedAt" : "2026-11-17T13:29:28.734681Z",
+  "stopReason" : "end_turn",
+  "usage" : {
+    "inputTokens" : 1452,
+    "outputTokens" : 75,
+    "cacheReadTokens" : 0
+  },
+  "response" : {
+    "label" : "PARTIAL",
+    "confidence" : 0.6,
+    "reason" : "Section says company service rules cannot be less favourable to workers than the chapter's provisions, not a general contract-law comparison; claim is broader than the section."
+  }
+}

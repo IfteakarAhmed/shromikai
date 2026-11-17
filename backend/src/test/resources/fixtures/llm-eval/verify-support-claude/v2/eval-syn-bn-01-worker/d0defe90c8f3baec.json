@@ -1,0 +1,22 @@
+{
+  "fixtureVersion" : 1,
+  "promptId" : "verify-support-claude",
+  "promptVersion" : 2,
+  "caseId" : "eval-syn-bn-01-worker",
+  "modelId" : "claude-haiku-5-5",
+  "requestSha256" : "d0defe90c8f3baec5bdb6621cbc227ecfd1d57ad1206aa8cff11f3513db62b73",
+  "provenance" : "synthetic",
+  "source" : "recorded from a live call",
+  "recordedAt" : "2026-11-17T13:29:31.983640Z",
+  "stopReason" : "end_turn",
+  "usage" : {
+    "inputTokens" : 295,
+    "outputTokens" : 61,
+    "cacheReadTokens" : 982
+  },
+  "response" : {
+    "label" : "PARTIAL",
+    "confidence" : 0.6,
+    "reason" : "Section bars hiring a worker without an appointment letter, but says nothing about whether this contract is that letter."
+  }
+}

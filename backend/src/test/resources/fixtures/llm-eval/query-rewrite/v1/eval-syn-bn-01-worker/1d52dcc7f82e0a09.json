@@ -1,0 +1,22 @@
+{
+  "fixtureVersion" : 1,
+  "promptId" : "query-rewrite",
+  "promptVersion" : 1,
+  "caseId" : "eval-syn-bn-01-worker",
+  "modelId" : "claude-haiku-5-5",
+  "requestSha256" : "1d52dcc7f82e0a09e003fc15df5a2c21331aafd274b19f9d390c5aeabb8c095c",
+  "provenance" : "synthetic",
+  "source" : "recorded from a live call",
+  "recordedAt" : "2026-11-17T13:29:14.675110Z",
+  "stopReason" : "end_turn",
+  "usage" : {
+    "inputTokens" : 135,
+    "outputTokens" : 108,
+    "cacheReadTokens" : 798
+  },
+  "response" : {
+    "status" : "OK",
+    "reason" : "NONE",
+    "queries" : [ "শ্রমিক বিরোধ নিষ্পত্তি ও সালিশ প্রক্রিয়া", "শ্রমিক আদালতে মামলা করার অধিকার", "employment dispute resolution through arbitration and labour court rights" ]
+  }
+}

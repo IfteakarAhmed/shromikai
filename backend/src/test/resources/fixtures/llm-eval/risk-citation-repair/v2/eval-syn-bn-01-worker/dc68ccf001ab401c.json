@@ -1,0 +1,26 @@
+{
+  "fixtureVersion" : 1,
+  "promptId" : "risk-citation-repair",
+  "promptVersion" : 2,
+  "caseId" : "eval-syn-bn-01-worker",
+  "modelId" : "claude-sonnet-5-5",
+  "requestSha256" : "dc68ccf001ab401ccc9333e3d25a023673a06f3e2393cd75365860bfca7bdcf9",
+  "provenance" : "synthetic",
+  "source" : "recorded from a live call",
+  "recordedAt" : "2026-11-17T13:29:41.164115Z",
+  "stopReason" : "end_turn",
+  "usage" : {
+    "inputTokens" : 17499,
+    "outputTokens" : 148,
+    "cacheReadTokens" : 0
+  },
+  "response" : {
+    "status" : "OK",
+    "reason" : "NONE",
+    "citations" : [ {
+      "section_key" : "BLA-2006:26@original",
+      "quote" : "বিনা নোটিশে কোন শ্রমিকের চাকুরীর অবসান করিতে চাহেন সে ক্ষেত্রে",
+      "claim" : "নোটিশ ছাড়া অবসানে নোটিশ মেয়াদের মজুরী দিতে হয়।"
+    } ]
+  }
+}

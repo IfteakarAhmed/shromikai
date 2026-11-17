@@ -1,0 +1,23 @@
+{
+  "fixtureVersion": 1,
+  "promptId": "verify-support-claude",
+  "promptVersion": 2,
+  "caseId": "eval-syn-bn-01-worker",
+  "modelId": "claude-haiku-5-5",
+  "requestSha256": "6459656c10a536174764b254149cb8258b631eef4e35f26e4c4ef2860ba8a517",
+  "provenance": "synthetic",
+  "source": "recorded from a live call",
+  "recordedAt": "2026-11-17T13:29:32.546076Z",
+  "stopReason": "end_turn",
+  "usage": {
+    "inputTokens": 2427,
+    "outputTokens": 89,
+    "cacheReadTokens": 982
+  },
+  "schemaInvalidAsRecorded": true,
+  "response": {
+    "label": "PARTIAL",
+    "confidence": 0.55,
+    "reason": "Section 117 sets statutory annual leave accrual rates; it does not state any contractual minimum or compare contract terms, so the claim that contract leave is below the statute is not directly confirmed."
+  }
+}

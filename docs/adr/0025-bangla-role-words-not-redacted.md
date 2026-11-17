@@ -52,9 +52,14 @@ whole name, which is not a role word.
 
 - Role words stay in the redacted text, so the cloud models read "মালিকের পক্ষে [PERSON_1]" instead
   of "[PERSON_2]-এর পক্ষে [PERSON_1]", which is better context for the risk agent.
-- A role word that is also a part of a real name still gets a name-part placeholder when the model
-  returns that name (`Redactor` splits persons into parts); the guard may then block an inflected
-  form of it. That case fails closed, as before.
+- **Observed residual (local run `p10c`, 17 Nov 2026): name parts.** On `syn-bn-03` the model returns
+  a longer person value that contains a role word, and `Redactor` splits persons into parts and
+  redacts each part on its own. "কর্মচারী" and "স্বাক্ষর" were still replaced by placeholders (5 of 9
+  role-word occurrences kept), the inflected forms "কর্মচারীর" and "কর্মচারীকে" survive, and the guard
+  would still block that contract. Whole-value matching does not reach this path, by design of the
+  decision above. Consulting the list for name parts as well would fix it; it is not done, because
+  it goes beyond "whole values only" and means a lone "মালিক" is no longer redacted when it is part
+  of a real person's name. The owner decides (see the P10 follow-up report).
 - The list is Bangla-first and short. A role word it lacks still fails closed; the fix is to add the
   word after review, never to relax the guard.
 - The inflected forms are not listed: the guard works on protected values, and the model returns
@@ -78,5 +83,6 @@ whole name, which is not a role word.
 `BanglaRoleWordsFailClosedTest` (role words kept, real names, NID, phone and e-mail redacted and
 blocked when leaked, no block on the redacted text), `RoleWordAllowlistTest` (whole-value matching,
 file validation, no invented identifier of the five synthetic contracts is on the list), the local
-evaluation step on all five contracts (`./gradlew evaluate -Pstep=local`, PII recall and role words
-kept, no cloud call), and the live run of `syn-bn-01` recorded in `eval/reports/`.
+evaluation step on all five contracts (`./gradlew evaluate -Pstep=local`: PII recall 36 of 36; role
+words kept in four of five contracts, not in `syn-bn-03`; no cloud call) and the live run of
+`syn-bn-01` recorded in `eval/reports/` (the egress guard let its 48 cloud calls through).

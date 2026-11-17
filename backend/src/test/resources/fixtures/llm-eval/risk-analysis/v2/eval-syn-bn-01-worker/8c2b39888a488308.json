@@ -1,0 +1,68 @@
+{
+  "fixtureVersion" : 1,
+  "promptId" : "risk-analysis",
+  "promptVersion" : 2,
+  "caseId" : "eval-syn-bn-01-worker",
+  "modelId" : "claude-sonnet-5-5",
+  "requestSha256" : "8c2b39888a488308f15a95f2e97551e22ecab2804bfdb2c4418b5b2bcf62c2d5",
+  "provenance" : "synthetic",
+  "source" : "recorded from a live call",
+  "recordedAt" : "2026-11-17T13:29:24.509729Z",
+  "stopReason" : "end_turn",
+  "usage" : {
+    "inputTokens" : 15427,
+    "outputTokens" : 1134,
+    "cacheReadTokens" : 0
+  },
+  "response" : {
+    "status" : "OK",
+    "reason" : "NONE",
+    "findings" : [ {
+      "title" : "শ্রম আদালতে যাওয়ার অধিকার ত্যাগ",
+      "kind" : "CONFLICT",
+      "severity" : "HIGH",
+      "non_obvious" : false,
+      "clause_type" : "DISPUTE_RESOLUTION",
+      "clause_ids" : [ "c10" ],
+      "explanation" : "চুক্তিতে মালিকের নিয়োজিত সালিশকারীই একমাত্র ফোরাম, শ্রমিক আদালতের অধিকার ত্যাগ করেছেন। আইনে শ্রম আদালতের অনন্য এখতিয়ার আছে।",
+      "citations" : [ {
+        "section_key" : "BLA-2006:214@amend-2013",
+        "quote" : "কোন শ্রম আদালত নিম্নলিখিত বিষয়ে অনন্য এখতিয়ারের অধিকারী হইবে",
+        "claim" : "শ্রম আইনের বিরোধে শ্রম আদালতের অনন্য এখতিয়ার রয়েছে।"
+      }, {
+        "section_key" : "CA-1872:28@original",
+        "quote" : "is restricted absolutely from enforcing his rights under or in respect of any contract",
+        "claim" : "আদালতে অধিকার প্রয়োগে পূর্ণ বাধা দেওয়ার চুক্তি সেই পরিমাণে বাতিল।"
+      } ],
+      "confidence" : 0.85
+    }, {
+      "title" : "একপক্ষীয় সালিশকারী নির্বাচন",
+      "kind" : "AMBIGUITY",
+      "severity" : "MEDIUM",
+      "non_obvious" : true,
+      "clause_type" : "DISPUTE_RESOLUTION",
+      "clause_ids" : [ "c10" ],
+      "explanation" : "সালিশকারী কেবল মালিক ঠিক করেন, নিরপেক্ষতার নিশ্চয়তা নেই। এতে ন্যায্য শুনানী ও আপিলের সুযোগ ক্ষুণ্ন হতে পারে।",
+      "citations" : [ {
+        "section_key" : "BLA-2006:33@amend-2013",
+        "quote" : "শ্রম আদালতে লিখিতভাবে অভিযোগ পেশ করিতে পারিবেন",
+        "claim" : "অসন্তুষ্ট শ্রমিক অভিযোগ নিয়ে শ্রম আদালতে যেতে পারেন।"
+      } ],
+      "confidence" : 0.7
+    }, {
+      "title" : "বাতিলযোগ্য অংশ টিকে থাকার ধারা",
+      "kind" : "INTERACTION",
+      "severity" : "MEDIUM",
+      "non_obvious" : true,
+      "clause_type" : "GENERAL_PROVISIONS",
+      "clause_ids" : [ "c10", "c11" ],
+      "explanation" : "c10 অবৈধ হলেও বাকি চুক্তি বলবৎ থাকবে। ফলে শ্রমিক অধিকার ত্যাগের ধারাটি কার্যত চাপ হিসেবে থেকে যেতে পারে।",
+      "citations" : [ {
+        "section_key" : "CA-1872:28@original",
+        "quote" : "or which limits the time within which he may thus enforce his rights, is void to that extent.",
+        "claim" : "আদালতে যাওয়া সীমিতকারী শর্ত বাতিল; তবু ধারাটি চুক্তিতে থাকে।"
+      } ],
+      "confidence" : 0.6
+    } ]
+  }
+}

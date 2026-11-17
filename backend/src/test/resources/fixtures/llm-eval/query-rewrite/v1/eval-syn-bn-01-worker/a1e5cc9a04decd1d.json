@@ -1,0 +1,22 @@
+{
+  "fixtureVersion" : 1,
+  "promptId" : "query-rewrite",
+  "promptVersion" : 1,
+  "caseId" : "eval-syn-bn-01-worker",
+  "modelId" : "claude-haiku-5-5",
+  "requestSha256" : "a1e5cc9a04decd1db2adcf9080f7d3f81de4129198217cd01322813b99f4ab2f",
+  "provenance" : "synthetic",
+  "source" : "recorded from a live call",
+  "recordedAt" : "2026-11-17T13:29:36.410520Z",
+  "stopReason" : "end_turn",
+  "usage" : {
+    "inputTokens" : 141,
+    "outputTokens" : 142,
+    "cacheReadTokens" : 798
+  },
+  "response" : {
+    "status" : "OK",
+    "reason" : "NONE",
+    "queries" : [ "চুক্তির অবৈধ ধারা বাতিল ও বাকি অংশের বৈধতা শ্রম আইন", "শ্রমিকের অধিকার ত্যাগ নিষিদ্ধ ধারা চুক্তির বাধ্যবাধকতা", "severability of invalid employment contract clause workers rights waiver" ]
+  }
+}
