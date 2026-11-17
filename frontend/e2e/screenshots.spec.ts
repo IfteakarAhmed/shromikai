@@ -215,7 +215,7 @@ test.describe('screenshots', () => {
     await page.getByLabel(text('bn', 'admin.keys.name')).fill('ডেমো কী')
     await page.getByRole('button', { name: text('bn', 'admin.keys.submit') }).click()
     await expect(page.getByTestId('api-key-secret')).toBeVisible()
-    await shot(page, 'admin-api-key-secret')
+    // No screenshot here: it would show the one-time secret key in full.
     await page.getByRole('button', { name: text('bn', 'admin.keys.done') }).click()
 
     await nav('usage').click()
