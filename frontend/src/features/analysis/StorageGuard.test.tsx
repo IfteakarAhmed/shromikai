@@ -1,7 +1,7 @@
 import { screen } from '@testing-library/react'
 import { http, HttpResponse } from 'msw'
 import { Route, Routes } from 'react-router-dom'
-import { describe, expect, it } from 'vitest'
+import { afterEach, describe, expect, it, vi } from 'vitest'
 import { ALLOWED_STORAGE_KEYS } from '../../lib/storage'
 import { makeResult } from '../../test/fixtures'
 import { server } from '../../test/msw/server'
@@ -9,7 +9,18 @@ import { renderApp } from '../../test/render'
 import { AnalysisPage } from './AnalysisPage'
 
 describe('StorageGuard', () => {
+  afterEach(() => {
+    Reflect.deleteProperty(window, 'indexedDB')
+  })
+
   it('R-02 after a full result, web storage holds only the device token and preferences', async () => {
+    // jsdom has no IndexedDB, so a bare "is it falsy" check would pass whatever the code did.
+    // Install a spy that stands in for it, and fail if anything opens a database.
+    const open = vi.fn()
+    Object.defineProperty(window, 'indexedDB', {
+      configurable: true,
+      value: { open, deleteDatabase: vi.fn(), databases: vi.fn() },
+    })
     const result = makeResult()
     server.use(http.get(`/api/v1/analyses/${result.analysisId}`, () => HttpResponse.json(result)))
     renderApp(
@@ -33,6 +44,6 @@ describe('StorageGuard', () => {
     expect(everything).not.toContain(result.envelope.signature)
     expect(everything).not.toContain('ticket-token')
     expect(window.sessionStorage.length).toBe(0)
-    expect('indexedDB' in window ? window.indexedDB : undefined).toBeFalsy()
+    expect(open).not.toHaveBeenCalled()
   })
 })
