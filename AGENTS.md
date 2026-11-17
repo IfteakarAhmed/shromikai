@@ -346,10 +346,10 @@ Dates follow the playbook timeline (§3 of the playbook). Submission is on 19 No
 | P6 | 16 Nov | Intelligence core: rules, risk and counter-offer agents, citation verifier | FR-35 to FR-50 | `phase-6` |
 | P7 | 17 Nov | Memo, redline, personalisation, public API, cost control | FR-51 to FR-63 | `phase-7` |
 | P8 | 17 Nov | MCP server | FR-64 to FR-67 | `phase-8` |
-| P9 | 18 Nov | Web experience and live `/docs` hub | FR-68 to FR-78 | `phase-9` |
-| P10 | 18 Nov | Evaluation, bias testing, observability | FR-79 to FR-83 | `phase-10` |
-| P11 | 19 Nov (deploy part); rest after 25 Nov if selected | Automation, deployment, hardening | FR-84 to FR-88 | `phase-11` |
-| P12 | 19 Nov | Submission and pitch package | FR-89 | `phase-12` |
+| P9 | 18 Nov | Web experience and live `/docs` hub | FR-68 to FR-72, FR-75 to FR-77; FR-73 and FR-74 in part (PRD §14) | `phase-9` |
+| P10 | 18 Nov | Evaluation, bias testing, observability | FR-79 to FR-83; contract numbers on `/docs/evaluation` | `phase-10` |
+| P11 | 19 Nov (deploy part); rest after 25 Nov if selected | Automation, deployment, hardening | FR-84 to FR-88; FR-73 user management and FR-78 (deferred after preliminary submission) | `phase-11` |
+| P12 | 19 Nov | Submission and pitch package | FR-89; `/docs/pitch`, `/docs/team`, Mermaid diagrams | `phase-12` |
 
 **Review loop for every phase:** paste the phase prompt into a fresh Claude Code session → the
 agent proposes a plan and waits → approve → test-first implementation → phase report → a human
