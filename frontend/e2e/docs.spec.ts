@@ -28,7 +28,7 @@ for (const locale of LOCALES) {
       }
     })
 
-    test('FR-74 R-07 /docs/audit is read from the live system and /docs/evaluation says what has not run', async ({
+    test('FR-74 R-07 /docs/audit is read from the live system and /docs/evaluation shows the generated contract report', async ({
       page,
     }) => {
       await page.goto('/docs/audit')
@@ -37,8 +37,11 @@ for (const locale of LOCALES) {
       await expect(page.getByText(text(locale, 'docs.audit.recordedDemo'))).toBeVisible()
 
       await page.goto('/docs/evaluation')
-      await expect(page.getByTestId('contracts-not-run')).toBeVisible()
-      // No percentage anywhere on the page: the only numbers are counts from the report file.
+      // eval/reports/report.json exists (P10): its headline, with counts, replaces "not yet run".
+      await expect(page.getByTestId('contracts-headline')).toBeVisible()
+      await expect(page.getByTestId('contracts-not-run')).toHaveCount(0)
+      await expect(page.getByTestId('contracts-sample')).toBeVisible()
+      // No percentage anywhere on the page: the only numbers are counts from the report files.
       await expect(page.locator('main, body').first()).not.toContainText(/\d\s?%|[০-৯]\s?%/)
     })
 

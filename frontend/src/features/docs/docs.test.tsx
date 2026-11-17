@@ -14,7 +14,7 @@ import DocsIndex from './DocsIndex'
 import EvaluationPage from './EvaluationPage'
 import PromptsPage from './PromptsPage'
 import SecurityPage from './SecurityPage'
-import { corpusQuality, retrievalReport } from './reports'
+import { contractReport, corpusQuality, retrievalReport } from './reports'
 
 describe('docs hub (FR-74)', () => {
   it('FR-74 /docs/audit shows the values of the live /meta response', async () => {
@@ -78,7 +78,8 @@ describe('docs hub (FR-74)', () => {
     expect(report).not.toBeNull()
     renderApp(<EvaluationPage />, '/docs/evaluation')
 
-    const table = screen.getByRole('table')
+    // the retrieval table, by its caption (the page also has the contract headline table)
+    const table = screen.getByRole('table', { name: 'খোঁজার পদ্ধতির তুলনা' })
     const row = report?.rows.find((r) => r.method === 'HYBRID_GRAPH')
     expect(row).toBeDefined()
     const cells = within(
@@ -90,6 +91,23 @@ describe('docs hub (FR-74)', () => {
     // the contract part (report present or not) is covered in evaluationContracts.test.tsx
     // a method that was not run is shown as not run, with the file's own reason, not as a number
     expect(screen.getAllByText('চালানো হয়নি').length).toBeGreaterThan(0)
+  })
+
+  it('FR-74 R-07 reads the committed contract evaluation report: headline with counts, limitations, 0 reviewed labels stated', () => {
+    const report = contractReport()
+    expect(report).not.toBeNull()
+    expect(report?.headline.map((row) => row.id)).toContain('M-01')
+    for (const row of report?.headline ?? []) {
+      // every value is a count, a stated n, or a reason; never a bare percentage
+      expect(row.shromikai).toMatch(/\(\d+ of \d+\)|\(of \d+\)|n = \d+|not /)
+      expect(row.shromikai).not.toMatch(/%/)
+    }
+    expect(report?.limitations.length).toBeGreaterThan(0)
+    expect(report?.labelFiles).toBeGreaterThan(0)
+    expect(report?.reviewedLabelFiles).toBe(0)
+    expect(report?.unmeasured.map((m) => m.id)).toEqual(
+      expect.arrayContaining(['M-21', 'M-27', 'M-28']),
+    )
   })
 
   it('FR-74 /docs/data lists the acts of the corpus quality report and its provenance', () => {
