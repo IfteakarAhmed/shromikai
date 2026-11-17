@@ -63,6 +63,10 @@ jobs:
       - run: npm run build
       - name: Initial JavaScript within 200 KB gzip (NFR-10)
         run: npm run check:bundle
+      - name: Install Chromium for the lite-landing check
+        run: npx playwright install --with-deps chromium
+      - name: Lite landing within 1.5 MB, no scene code, one throttled load (NFR-10, ADR-0023)
+        run: npm run check:lite
 
   fixtures:
     name: fixtures (scanner and prompt lint)
