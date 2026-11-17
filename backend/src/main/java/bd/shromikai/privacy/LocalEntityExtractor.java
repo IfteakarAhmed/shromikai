@@ -12,13 +12,15 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 import java.util.concurrent.Semaphore;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 /**
  * Local named-entity extraction with {@code pii-extract} on qwen2.5:7b-instruct (FR-29, FR-31,
  * architecture §10.3). Chunks of at most 1,500 characters overlap by 200; four run in parallel.
  * Each chunk gets two attempts. A second failure throws {@link LocalModelUnavailableException}, so
- * the analysis stops before any cloud call (R-03).
+ * the analysis stops before any cloud call (R-03). Strings that are only a generic role word (data
+ * file {@code role-words.yaml}, ADR-0025) are dropped from the answer, whole value only.
  */
 @Component
 public final class LocalEntityExtractor {
@@ -29,10 +31,18 @@ public final class LocalEntityExtractor {
   static final String PROMPT = "pii-extract";
 
   private final ModelGateway gateway;
+  private final RoleWordAllowlist roleWords;
   private final ExecutorService executor = Executors.newVirtualThreadPerTaskExecutor();
 
-  public LocalEntityExtractor(ModelGateway gateway) {
+  @Autowired
+  public LocalEntityExtractor(ModelGateway gateway, RoleWordAllowlist roleWords) {
     this.gateway = gateway;
+    this.roleWords = roleWords;
+  }
+
+  /** With the repository's role-word list (tests that run from {@code backend/}). */
+  public LocalEntityExtractor(ModelGateway gateway) {
+    this(gateway, RoleWordAllowlist.bundled());
   }
 
   public LocalEntities extract(String text) {
@@ -67,7 +77,7 @@ public final class LocalEntityExtractor {
         throw new LocalModelUnavailableException("pii-extract-failed");
       }
     }
-    return all;
+    return roleWords.withoutRoleWords(all);
   }
 
   private LocalEntities extractChunk(String chunk) {

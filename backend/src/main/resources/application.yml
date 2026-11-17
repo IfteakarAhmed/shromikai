@@ -151,6 +151,7 @@ shromikai:
   privacy:
     store-contracts: false                # startup fails if true (R-02)
     redact-money: false                   # ADR-0003
+    role-words-file: ${user.dir}/../data/privacy/role-words.yaml   # generic role words kept as text (ADR-0025)
   cors:
     allowed-origins: ${CORS_ORIGINS:http://localhost:5173}
   ollama:

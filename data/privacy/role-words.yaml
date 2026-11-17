@@ -1,0 +1,76 @@
+# Generic role, title and document words that the local PII model sometimes returns as names
+# (P10 run p10a: "মালিক", "কর্মচারী", "স্বাক্ষর" on syn-bn-01 and syn-bn-03). See ADR-0025.
+#
+# How it is used (ADR-0025, R-03): after the local model has answered, an entity string that equals
+# one of these words as a WHOLE VALUE (after NFC and edge-punctuation trimming, case-insensitive)
+# is dropped from the model's list. The word then stays in the redacted text and is not a protected
+# value of the egress guard, so an inflected form such as "মালিকের" no longer makes the guard block.
+# It is NOT applied to the deterministic detectors (NID, phone, e-mail, passport, TIN, bank
+# account, date of birth, ...), to a longer value that merely contains one of these words, or to the
+# egress guard itself.
+#
+# Rules for an entry: a generic word for a party, a role, a title or a signing act that can never
+# identify one person on its own. No personal name, no surname, no organisation name, no word that is
+# also commonly a given name or surname. When in doubt leave the word out: a missing word only
+# costs availability (the guard may block), an extra word could let a name through.
+#
+# Review status: DRAFT. authored_by drafted it; reviewed_by stays null until a team member who
+# reads Bangla has read every entry (same two-person rule as data/rules and data/mappings).
+authored_by: "Claude (draft, P10 follow-up)"
+reviewed_by: null
+status: draft
+words:
+  bn:
+    # parties
+    - মালিক            # owner, employer
+    - শ্রমিক           # worker
+    - কর্মচারী         # employee
+    - কর্মী            # staff member
+    - নিয়োগকর্তা      # employer
+    - নিয়োগকারী       # employer
+    - নিয়োগদাতা       # employer
+    - কর্তৃপক্ষ        # management, authority
+    - কোম্পানি         # company
+    - প্রতিষ্ঠান       # establishment
+    - কারখানা          # factory
+    - পক্ষ             # party
+    - প্রথম পক্ষ       # first party
+    - দ্বিতীয় পক্ষ    # second party
+    - প্রথমপক্ষ        # first party (joined)
+    - দ্বিতীয়পক্ষ     # second party (joined)
+    # signing
+    - স্বাক্ষর         # signature
+    - স্বাক্ষরকারী     # signatory
+    - দস্তখত           # signature
+    - সাক্ষী           # witness
+    - সাক্ষীগণ         # witnesses
+    # titles
+    - ব্যবস্থাপক       # manager
+    - ব্যবস্থাপনা পরিচালক  # managing director
+    - পরিচালক          # director
+    - কর্মকর্তা        # officer
+    - তত্ত্বাবধায়ক     # supervisor
+    - ম্যানেজার        # manager
+    - সুপারভাইজার      # supervisor
+    - শিক্ষানবিশ       # probationer
+  en:
+    - employer
+    - employee
+    - worker
+    - owner
+    - company
+    - factory
+    - establishment
+    - management
+    - party
+    - first party
+    - second party
+    - witness
+    - signature
+    - signatory
+    - manager
+    - supervisor
+    - director
+    - managing director
+    - officer
+    - probationer

@@ -46,7 +46,7 @@ class ShromikaiPropertiesTest {
     ShromikaiProperties properties =
         new ShromikaiProperties(
             new ShromikaiProperties.Models("r", "f", "", "vf", null, "l", "e"),
-            new ShromikaiProperties.Privacy(false, false),
+            new ShromikaiProperties.Privacy(false, false, "role-words.yaml"),
             new ShromikaiProperties.Cors(List.of("http://localhost:5173")),
             new ShromikaiProperties.Ollama("http://localhost:11434", Duration.ofSeconds(1)),
             providers,

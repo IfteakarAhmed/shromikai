@@ -19,6 +19,7 @@ import bd.shromikai.law.LawReadService;
 import bd.shromikai.privacy.PlaceholderMap;
 import bd.shromikai.privacy.PrivacyShield;
 import bd.shromikai.privacy.RedactedParagraph;
+import bd.shromikai.privacy.RoleWordAllowlist;
 import bd.shromikai.testsupport.Requirement;
 import bd.shromikai.testsupport.SyntheticContracts;
 import bd.shromikai.testsupport.live.LiveEnv;
@@ -103,6 +104,7 @@ class EvaluateRunnerIT {
   @Autowired LawReadService law;
   @Autowired JdbcClient jdbc;
   @Autowired SampleContract sample;
+  @Autowired RoleWordAllowlist roleWords;
 
   @DynamicPropertySource
   static void properties(DynamicPropertyRegistry registry) {
@@ -215,16 +217,54 @@ class EvaluateRunnerIT {
           }
         }
       }
+      String roleNote = redacted == null ? "n/a" : roleWordsKept(paragraphs, redacted);
       map.clear();
       cases.add(new PiiCase(id, mode, ms, byType, 0, List.of()));
       note(
           String.format(
-              Locale.ROOT, "local PII %s: %s in %.1f s, %s", id, mode, ms / 1000.0, byType));
+              Locale.ROOT,
+              "local PII %s: %s in %.1f s, %s; role words kept in the text: %s",
+              id,
+              mode,
+              ms / 1000.0,
+              byType,
+              roleNote));
     }
     EvalResults.append(runDir(), List.of(), List.of(), cases);
     Files.writeString(
         runDir().resolve("pii-mode.json"), JSON.writeValueAsString(Map.of("standIn", standIn)));
     writeAdversarialSet();
+  }
+
+  /**
+   * Generic role words (ADR-0025) that occur as whole tokens of the original and how many of those
+   * occurrences are still in the redacted text. The words come from the allowlist, never from a
+   * personal value, so the line is content-free.
+   */
+  private String roleWordsKept(List<String> original, List<RedactedParagraph> redacted) {
+    java.util.Map<String, long[]> counts = new TreeMap<>();
+    for (String paragraph : original) {
+      for (String token : paragraph.split("\\s+")) {
+        String word = token.replaceAll("^[\\p{P}\\p{S}]+|[\\p{P}\\p{S}]+$", "");
+        if (roleWords.isRoleWord(word)) {
+          counts.computeIfAbsent(word, w -> new long[2])[0]++;
+        }
+      }
+    }
+    for (RedactedParagraph paragraph : redacted) {
+      for (String token : paragraph.text().reveal().split("\\s+")) {
+        String word = token.replaceAll("^[\\p{P}\\p{S}]+|[\\p{P}\\p{S}]+$", "");
+        if (roleWords.isRoleWord(word)) {
+          counts.computeIfAbsent(word, w -> new long[2])[1]++;
+        }
+      }
+    }
+    long total = counts.values().stream().mapToLong(c -> c[0]).sum();
+    long kept = counts.values().stream().mapToLong(c -> Math.min(c[0], c[1])).sum();
+    StringBuilder words = new StringBuilder();
+    counts.forEach(
+        (w, c) -> words.append(w).append('=').append(c[1]).append('/').append(c[0]).append(' '));
+    return kept + " of " + total + " (" + words.toString().strip() + ")";
   }
 
   private void writeAdversarialSet() throws IOException {

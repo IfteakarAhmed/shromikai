@@ -62,7 +62,7 @@ class StartupGuardsTest {
   static ShromikaiProperties properties(boolean storeContracts) {
     return new ShromikaiProperties(
         new ShromikaiProperties.Models("r", "f", "", "vf", null, "l", "e"),
-        new ShromikaiProperties.Privacy(storeContracts, false),
+        new ShromikaiProperties.Privacy(storeContracts, false, "role-words.yaml"),
         new ShromikaiProperties.Cors(List.of("http://localhost:5173")),
         new ShromikaiProperties.Ollama("http://localhost:11434", Duration.ofSeconds(1)),
         new ShromikaiProperties.Providers(

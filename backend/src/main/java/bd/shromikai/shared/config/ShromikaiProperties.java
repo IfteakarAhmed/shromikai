@@ -49,8 +49,13 @@ public record ShromikaiProperties(
     }
   }
 
-  /** Privacy switches. {@code storeContracts} must stay false (R-02); startup fails otherwise. */
-  public record Privacy(boolean storeContracts, boolean redactMoney) {}
+  /**
+   * Privacy switches. {@code storeContracts} must stay false (R-02); startup fails otherwise.
+   * {@code roleWordsFile} is the data file of generic role words the local-model step does not
+   * treat as names (ADR-0025).
+   */
+  public record Privacy(
+      boolean storeContracts, boolean redactMoney, @NotBlank String roleWordsFile) {}
 
   public record Cors(@NotEmpty List<String> allowedOrigins) {}
 
