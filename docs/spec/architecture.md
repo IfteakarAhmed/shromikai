@@ -1069,7 +1069,7 @@ separately (NFR-01 CPU-only target).
 | `test` | CI | `FakeChatPort` and `FakeEmbeddingPort` only; no network egress |
 | `fake-models` | Playwright, k6, demo script, offline demos | Recorded fixtures only; labelled "recorded" in the UI |
 | `demo` | Judging deployment | Real models; seeded demo accounts; one-click demo login |
-| `prod` | Real deployment | Real models; refuses to start with `demo` |
+| `prod` | Real deployment | Real models; refuses to start with `demo`, `dev` or `fake-models` |
 | `mcp` | Enables the MCP server | as the base profile |
 
 ## 17. Frontend architecture

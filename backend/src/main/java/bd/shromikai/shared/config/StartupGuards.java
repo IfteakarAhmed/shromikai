@@ -29,5 +29,9 @@ public final class StartupGuards {
       throw new IllegalStateException(
           "The prod profile refuses to start together with dev (it exposes the debug endpoints)");
     }
+    if (active.contains("prod") && active.contains("fake-models")) {
+      throw new IllegalStateException(
+          "The prod profile refuses to start together with fake-models (it replays recordings)");
+    }
   }
 }
