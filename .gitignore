@@ -33,3 +33,8 @@ data/raw/
 
 # Live-spend ledger of the development cap (docs/adr/0015)
 .live-spend/
+
+# Statute corpus archive for the recorded-demo deployment; generated, shipped only to the Space (ADR-0026)
+deploy/hf/corpus.dump
+# Staging directory of scripts/build-hf-space.sh
+/build/

@@ -3,6 +3,24 @@
 A running list of what is not done, not measured or not proven, so nothing is claimed by accident
 (R-07, R-12). Each phase report in `docs/dev-log.md` links here. Newest first.
 
+## P11 minimal deploy (recorded-only Space, 19 Nov 2026)
+
+Scope: a public Hugging Face Space for judges, built in one container ([ADR-0026](adr/0026-recorded-only-judging-deployment.md)).
+Only the minimum of FR-85 is delivered; the rest of P11 (FR-84, FR-86 to FR-88, FR-73 and FR-78
+parts) stays open.
+
+| Gap | Where it matters | Detail |
+| --- | --- | --- |
+| The Space replays recordings; it makes no live model call | R-12, FR-85 | Profiles `demo,fake-models,local-embeddings`, no API key on the server. Only the synthetic sample (worker's side, Bangla) is recorded. A pasted text, an upload or another side or language gets a `not-recorded` problem, not an analysis. The local PII step, the obligations, the memo summary and the compare baseline are scripted stand-ins (`scripted-demo-standin`), as in the local demo. Everything on the page is labelled "recorded". |
+| `prod` is not used, so the production guards are not exercised | R-12, ADR-0026 | `StartupGuards` refuses `prod` with `demo` or `fake-models`; the Space therefore runs without `prod`. HSTS is switched on by environment; the Swagger UI and `/v3/api-docs` are public. No rule changed. |
+| Everything is lost at each restart | NFR-04, FR-85 | The free Space has no persistent disk: PostgreSQL is re-created and the corpus restored at every start, demo accounts are re-seeded, analyses disappear. No backup, no restore drill, no resource limits, no n8n, no Prometheus. |
+| Embeddings on the Space's CPU may differ from the recording machine's | R-12, ADR-0026 | The recordings were made with bge-m3 on the developer's arm64 Mac; the Space is amd64. A near-tie in retrieval could change a request's sections and make the sample fail with `not-recorded`. Smoke check 4 detects it; it passed on the arm64 container, and see the dev-log for the amd64 emulation result. It was not run on the real Space hardware before submission unless the dev-log says so. |
+| Open the direct `*.hf.space` address, not the embedded view | FR-06 | The refresh cookie is `SameSite=Strict`; inside the iframe on huggingface.co it is third-party and is not sent, so a session ends after 15 minutes. |
+| A free Space sleeps after 48 hours without a visit, and a restart takes about a minute | availability | `.github/workflows/keepalive.yml` pings `/api/v1/meta` every 10 minutes (repository variable `SPACE_URL`). GitHub disables scheduled workflows in a repository with no activity for 60 days, and cron runs can be late. |
+| No photo OCR in the image | FR-24, FR-25 | The image has no Tesseract; uploads are not analysed anyway (row 1). |
+| No MCP server on the Space | FR-64 to FR-67 | Profile `mcp` is not active. |
+| Public statute text is published through the Space | R-07 | The corpus archive (3.6 MB; public statute text and embeddings only, no user, token, audit or analysis row, enforced by `scripts/export-corpus.sh`) is part of the Space repository, and the API serves the sections. The raw scraped pages (`data/raw`) are not shipped. |
+
 ## P10 (evaluation run p10a, 17 Nov 2026)
 
 | Gap | Where it matters | Detail |

@@ -1,0 +1,80 @@
+# nginx of the recorded-demo container: the built frontend plus a proxy to the backend on one public
+# port, so the browser sees a single origin (the SameSite=Strict refresh cookie keeps working).
+# @PORT@ and @WWW@ are filled by entrypoint.sh. Nothing is written to disk: no access log, and a
+# request body (a contract upload) stays in memory below the 11 MB buffer (R-02).
+pid /tmp/nginx.pid;
+worker_processes 2;
+error_log /dev/stderr warn;
+
+events { worker_connections 512; }
+
+http {
+  include /etc/nginx/mime.types;
+  default_type application/octet-stream;
+  access_log off;
+  sendfile on;
+  server_tokens off;
+
+  client_body_temp_path /tmp/nginx/body;
+  proxy_temp_path /tmp/nginx/proxy;
+  fastcgi_temp_path /tmp/nginx/fastcgi;
+  uwsgi_temp_path /tmp/nginx/uwsgi;
+  scgi_temp_path /tmp/nginx/scgi;
+  client_max_body_size 10m;
+  client_body_buffer_size 11m;
+
+  gzip on;
+  gzip_types text/css application/javascript application/json image/svg+xml text/plain;
+
+  # The Space proxy sets X-Forwarded-Proto; without it (local test) use the scheme of this hop.
+  map $http_x_forwarded_proto $fwd_proto { default $http_x_forwarded_proto; "" $scheme; }
+
+  upstream backend { server 127.0.0.1:8080; keepalive 16; }
+
+  server {
+    listen @PORT@;
+    root @WWW@;
+    add_header X-Content-Type-Options nosniff always;
+    add_header Referrer-Policy no-referrer always;
+
+    # The backend is still starting (or restarting): a visitor gets a page that retries.
+    error_page 502 503 504 = @starting;
+    location @starting {
+      default_type text/html;
+      add_header Retry-After 5 always;
+      add_header Cache-Control no-store always;
+      return 503 '<!doctype html><meta charset="utf-8"><meta http-equiv="refresh" content="5"><title>ShromikAI</title><p style="font:16px system-ui;margin:3rem auto;max-width:32rem">ShromikAI is starting (about a minute). This page reloads by itself.<br>শ্রমিকAI চালু হচ্ছে, একটু অপেক্ষা করুন।</p>';
+    }
+
+    location = /healthz {
+      proxy_pass http://backend/actuator/health;
+      proxy_http_version 1.1;
+      proxy_set_header Connection "";
+      access_log off;
+    }
+
+    location ~ ^/(api/|v3/api-docs|swagger-ui|actuator/health) {
+      proxy_pass http://backend;
+      proxy_http_version 1.1;
+      proxy_set_header Connection "";
+      proxy_set_header Host $http_host;
+      proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+      proxy_set_header X-Forwarded-Proto $fwd_proto;
+      proxy_buffering off;           # server-sent events must not wait for a full buffer
+      proxy_read_timeout 300s;
+    }
+
+    location /assets/ {
+      add_header Cache-Control "public, max-age=31536000, immutable" always;
+      add_header X-Content-Type-Options nosniff always;
+      try_files $uri =404;
+    }
+
+    location / {
+      add_header Cache-Control "no-cache" always;
+      add_header X-Content-Type-Options nosniff always;
+      add_header Referrer-Policy no-referrer always;
+      try_files $uri /index.html;    # client-side routes (/docs, /demo-user, ...)
+    }
+  }
+}

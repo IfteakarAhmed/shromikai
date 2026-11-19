@@ -1,0 +1,25 @@
+# Keeps the free Hugging Face Space awake (ADR-0026): a free Space sleeps after 48 hours without a
+# visit, and the first visitor would then wait for a cold start. Every 10 minutes this requests the
+# public, unauthenticated /api/v1/meta. No secret is used. The Space address is the repository
+# variable SPACE_URL (Settings > Secrets and variables > Actions > Variables), for example
+# https://<owner>-<space>.hf.space
+name: keepalive
+
+on:
+  schedule:
+    - cron: '*/10 * * * *'
+  workflow_dispatch:
+
+permissions: {}
+
+jobs:
+  ping:
+    runs-on: ubuntu-latest
+    timeout-minutes: 3
+    steps:
+      - name: Request the Space
+        env:
+          SPACE_URL: ${{ vars.SPACE_URL }}
+        run: |
+          if [ -z "$SPACE_URL" ]; then echo "Set the repository variable SPACE_URL first"; exit 1; fi
+          curl -fsS --retry 3 --retry-delay 20 --max-time 90 -o /dev/null -w 'HTTP %{http_code}\n' "${SPACE_URL%/}/api/v1/meta"
