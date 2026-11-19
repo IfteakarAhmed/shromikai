@@ -5,6 +5,7 @@ import { AmbientBackdrop } from '../components/shell/AmbientBackdrop'
 import { Footer } from '../components/shell/Footer'
 import { Header } from '../components/shell/Header'
 import { RecordedBanner } from '../components/shell/RecordedBanner'
+import { StaticReplayBanner } from '../components/shell/StaticReplayBanner'
 
 /** Skip link, sticky header, the recorded-demo banner, the page and the footer. */
 export function Layout() {
@@ -29,6 +30,7 @@ export function Layout() {
       </a>
       {!landing && <AmbientBackdrop />}
       <Header />
+      <StaticReplayBanner />
       <RecordedBanner />
       <main id="main" tabIndex={-1} className="flex-1 outline-none">
         <Outlet />

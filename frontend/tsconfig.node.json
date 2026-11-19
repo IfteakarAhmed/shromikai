@@ -12,6 +12,7 @@
   },
   "include": [
     "vite.config.ts",
+    "src/lib/siteUrl.ts",
     "eslint.config.js",
     "playwright.config.ts",
     "scripts/*.mjs",

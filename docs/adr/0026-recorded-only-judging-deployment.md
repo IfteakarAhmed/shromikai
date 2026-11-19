@@ -2,7 +2,7 @@
 
 | Field | Value |
 | --- | --- |
-| Status | Accepted |
+| Status | Accepted; not deployed (the owner's Hugging Face account cannot create Docker Spaces; see ADR-0027) |
 | Date | 2026-11-19 |
 | Deciders | Project owner (chose the Space, the single container, bge-m3 in Ollama and the raised daily budget), Claude (author) |
 | Related | ADR-0001 (stack), ADR-0003, ADR-0006 (data flow), ADR-0008 (cost), ADR-0021; rules R-01, R-02, R-03, R-07, R-12; PRD FR-85 (reduced), NFR-04; architecture §16 |

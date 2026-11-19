@@ -1,0 +1,2981 @@
+{
+  "analysisId": "e85afefb-1bdc-4f51-a8f9-11793648230d",
+  "status": "SUCCEEDED",
+  "createdAt": "2026-11-19T12:03:13.584575Z",
+  "completedAt": "2026-11-19T12:03:14.299359Z",
+  "expiresAt": "2026-11-19T12:33:14.299359Z",
+  "side": "WORKER",
+  "outputLanguage": "bn",
+  "profile": null,
+  "input": {
+    "kind": "TEXT",
+    "pageCount": 1,
+    "detectedLanguage": "en",
+    "ocrMeanConfidence": null,
+    "legacyFontConverted": false,
+    "sample": true
+  },
+  "documentType": "EMPLOYMENT_CONTRACT",
+  "clauses": [
+    {
+      "id": "c1",
+      "ordinal": 1,
+      "label": null,
+      "type": "GENERAL_PROVISIONS",
+      "typeConfidence": 0.8,
+      "secondaryTypes": [],
+      "heading": null,
+      "text": "[SYNTHETIC SAMPLE: invented names and numbers, not a real contract. Written by the team for ShromikAI tests.]\nSECURITY GUARD SERVICE CONTRACT\nThis contract is made on 20 May 2026 between Demo Guard Services (address: House 9, Road 2, Mockpara), the \"Company\", and Mr. Karim Demo Hossain (NID No: 98765432109876543, phone +8801400000404, email karim.demo@example.org), the \"Guard\".",
+      "paragraphIds": [
+        "p1",
+        "p2",
+        "p3"
+      ],
+      "pages": [],
+      "language": "en",
+      "facts": [],
+      "flags": [],
+      "segmentation": "RULE_BASED"
+    },
+    {
+      "id": "c2",
+      "ordinal": 2,
+      "label": "1.",
+      "type": "TRANSFER_AND_DEPLOYMENT",
+      "typeConfidence": 0.9,
+      "secondaryTypes": [],
+      "heading": null,
+      "text": "1. Engagement The Company engages the Guard as a security guard and may post the Guard at any client site in the country at any time.",
+      "paragraphIds": [
+        "p4"
+      ],
+      "pages": [],
+      "language": "en",
+      "facts": [],
+      "flags": [],
+      "segmentation": "RULE_BASED"
+    },
+    {
+      "id": "c3",
+      "ordinal": 3,
+      "label": "2.",
+      "type": "WAGE_PAYMENT_AND_DEDUCTIONS",
+      "typeConfidence": 0.9,
+      "secondaryTypes": [],
+      "heading": null,
+      "text": "2. Salary The monthly salary is BDT 11,000, from which uniform and equipment costs are deducted every month.",
+      "paragraphIds": [
+        "p5"
+      ],
+      "pages": [],
+      "language": "en",
+      "facts": [],
+      "flags": [],
+      "segmentation": "RULE_BASED"
+    },
+    {
+      "id": "c4",
+      "ordinal": 4,
+      "label": "3.",
+      "type": "WORKING_HOURS",
+      "typeConfidence": 0.95,
+      "secondaryTypes": [],
+      "heading": null,
+      "text": "3. Hours of work The Guard works 12 hours a day for 30 days a month. No extra payment is made for night shifts or extra hours.",
+      "paragraphIds": [
+        "p6"
+      ],
+      "pages": [],
+      "language": "en",
+      "facts": [],
+      "flags": [],
+      "segmentation": "RULE_BASED"
+    },
+    {
+      "id": "c5",
+      "ordinal": 5,
+      "label": "4.",
+      "type": "REST_AND_HOLIDAYS",
+      "typeConfidence": 0.95,
+      "secondaryTypes": [],
+      "heading": null,
+      "text": "4. Weekly rest and holidays The Guard has no weekly rest day and no public holidays unless the client site is closed.",
+      "paragraphIds": [
+        "p7"
+      ],
+      "pages": [],
+      "language": "en",
+      "facts": [],
+      "flags": [],
+      "segmentation": "RULE_BASED"
+    },
+    {
+      "id": "c6",
+      "ordinal": 6,
+      "label": "5.",
+      "type": "PROBATION",
+      "typeConfidence": 0.97,
+      "secondaryTypes": [],
+      "heading": null,
+      "text": "5. Probation The first 9 months are probation, during which the salary is 70 percent of the stated salary.",
+      "paragraphIds": [
+        "p8"
+      ],
+      "pages": [],
+      "language": "en",
+      "facts": [],
+      "flags": [],
+      "segmentation": "RULE_BASED"
+    },
+    {
+      "id": "c7",
+      "ordinal": 7,
+      "label": "6.",
+      "type": "HEALTH_AND_SAFETY",
+      "typeConfidence": 0.9,
+      "secondaryTypes": [],
+      "heading": null,
+      "text": "6. Injury and sickness If the Guard is injured or ill, the Company has no duty to pay medical costs or wages for absent days.",
+      "paragraphIds": [
+        "p9"
+      ],
+      "pages": [],
+      "language": "en",
+      "facts": [],
+      "flags": [],
+      "segmentation": "RULE_BASED"
+    },
+    {
+      "id": "c8",
+      "ordinal": 8,
+      "label": "7.",
+      "type": "NOTICE_AND_RESIGNATION",
+      "typeConfidence": 0.95,
+      "secondaryTypes": [],
+      "heading": null,
+      "text": "7. Notice and termination The Company may end this contract at any time without notice. The Guard needs the Company's written permission to resign.",
+      "paragraphIds": [
+        "p10"
+      ],
+      "pages": [],
+      "language": "en",
+      "facts": [],
+      "flags": [],
+      "segmentation": "RULE_BASED"
+    },
+    {
+      "id": "c9",
+      "ordinal": 9,
+      "label": "8.",
+      "type": "NON_COMPETE",
+      "typeConfidence": 0.97,
+      "secondaryTypes": [],
+      "heading": null,
+      "text": "8. Non-competition For 3 years after leaving, the Guard may not work for any security company.",
+      "paragraphIds": [
+        "p11"
+      ],
+      "pages": [],
+      "language": "en",
+      "facts": [],
+      "flags": [],
+      "segmentation": "RULE_BASED"
+    },
+    {
+      "id": "c10",
+      "ordinal": 10,
+      "label": "9.",
+      "type": "DISPUTE_RESOLUTION",
+      "typeConfidence": 0.93,
+      "secondaryTypes": [],
+      "heading": null,
+      "text": "9. Governing law and disputes Any dispute is decided by the Company's manager, and that decision is final.\nSigned for the Company by Nasrin Demo Akter; the Guard: Karim Demo Hossain. Witness: Faruk Demo Mia.",
+      "paragraphIds": [
+        "p12",
+        "p13"
+      ],
+      "pages": [],
+      "language": "en",
+      "facts": [],
+      "flags": [],
+      "segmentation": "RULE_BASED"
+    }
+  ],
+  "findings": [
+    {
+      "id": "f1",
+      "title": "অধিকাল কাজের জন্য শ্রমিক সাধারণ হারের দ্বিগুণ হারে ভাতা পাবেন",
+      "kind": "CONFLICT",
+      "severity": "CRITICAL",
+      "nonObvious": false,
+      "source": "RULE_ENGINE",
+      "clauseType": "OVERTIME",
+      "clauseIds": [
+        "c4"
+      ],
+      "explanation": "অধিকাল কাজের জন্য শ্রমিক সাধারণ হারের দ্বিগুণ হারে ভাতা পাবেন। ঠিকা-হার (পিস রেট) ভিত্তিতে মজুরিপ্রাপ্ত শ্রমিকের ক্ষেত্রে এই নিয়ম প্রযোজ্য নয় (ধারা ১০৮(২))।",
+      "whyItMatters": "",
+      "sideNote": null,
+      "verificationStatus": "VERIFIED",
+      "citations": [
+        {
+          "verification": {
+            "citationId": "deae2483-aedb-4533-afa0-13f135c85e37",
+            "sectionKey": "BLA-2006:108@amend-2018",
+            "status": "VERIFIED",
+            "attempt": 1,
+            "checks": {
+              "existence": {
+                "outcome": "PASS"
+              },
+              "quoteMatch": {
+                "outcome": "PASS",
+                "similarity": 1,
+                "matchedLanguage": "bn"
+              },
+              "support": {
+                "outcome": "PASS",
+                "label": null,
+                "confidence": null,
+                "independence": "RULE_PROVENANCE",
+                "modelId": null,
+                "reason": "reviewed rule source"
+              }
+            },
+            "reasonCodes": [],
+            "verifiedAt": "2026-11-19T12:03:14.129070Z",
+            "corpusRelease": "2026.11.11-1"
+          },
+          "citationId": "deae2483-aedb-4533-afa0-13f135c85e37",
+          "sectionKey": "BLA-2006:108@amend-2018",
+          "actCode": "BLA-2006",
+          "actTitleBn": "বাংলাদেশ শ্রম আইন, ২০০৬",
+          "actTitleEn": "Bangladesh Labour Act, 2006",
+          "sectionNo": "108",
+          "headingBn": "অধিকাল কর্মের জন্য অতিরিক্ত ভাতা",
+          "headingEn": null,
+          "quote": "(১) যে ক্ষেত্রে কোন শ্রমিক কোন প্রতিষ্ঠানে কোন দিন বা সপ্তাহে এই আইনের অধীন নির্দিষ্ট সময়ের অতিরিক্ত সময় কাজ করেন, সে ক্ষেত্রে তিনি অধিকাল কাজের জন্য তাহার মূল মজুরী ও মহার্ঘভাতা এবং এডহক বা অন্তবর্তী মজুরী, যদি থাকে, এর সাধারণ হারের দ্বিগুণ হারে ভাতা পাইবেন।",
+          "quoteLanguage": "bn",
+          "translation": null,
+          "sourceUrl": "http://bdlaws.minlaw.gov.bd/act-952/section-29435.html",
+          "versionLabel": "amend-2018",
+          "effectiveFrom": null
+        }
+      ],
+      "iloReferences": [],
+      "ruleId": "bd-overtime-rate-min",
+      "playbookRuleId": null,
+      "redlineId": "r1",
+      "reviewItemId": null,
+      "confidence": 0.85
+    },
+    {
+      "id": "f2",
+      "title": "ইউনিফর্ম ও সরঞ্জামের খরচ কর্তন",
+      "kind": "CONFLICT",
+      "severity": "CRITICAL",
+      "nonObvious": false,
+      "source": "LLM_ANALYSIS",
+      "clauseType": "WAGE_PAYMENT_AND_DEDUCTIONS",
+      "clauseIds": [
+        "c3"
+      ],
+      "explanation": "প্রতি মাসে ইউনিফর্ম ও সরঞ্জামের খরচ কাটা হয়। আইনে অনুমোদিত তালিকার বাইরে কর্তন নিষিদ্ধ, ফলে মজুরী কমে যাওয়ার ঝুঁকি।",
+      "whyItMatters": "",
+      "sideNote": null,
+      "verificationStatus": "VERIFIED",
+      "citations": [
+        {
+          "verification": {
+            "citationId": "b5c7281a-1a93-4f08-a1d5-ec8699c37f86",
+            "sectionKey": "BLA-2006:125@amend-2013",
+            "status": "VERIFIED",
+            "attempt": 1,
+            "checks": {
+              "existence": {
+                "outcome": "PASS"
+              },
+              "quoteMatch": {
+                "outcome": "PASS",
+                "similarity": 1,
+                "matchedLanguage": "bn"
+              },
+              "support": {
+                "outcome": "PASS",
+                "label": "SUPPORTS",
+                "confidence": 0.93,
+                "independence": "SAME_FAMILY",
+                "modelId": "claude-haiku-5-5",
+                "reason": "Section 125(1) bars any deduction from a worker's wages except those the Act allows, matching the claim's element of unauthorised deductions."
+              }
+            },
+            "reasonCodes": [],
+            "verifiedAt": "2026-11-19T12:03:14.131125Z",
+            "corpusRelease": "2026.11.11-1"
+          },
+          "citationId": "b5c7281a-1a93-4f08-a1d5-ec8699c37f86",
+          "sectionKey": "BLA-2006:125@amend-2013",
+          "actCode": "BLA-2006",
+          "actTitleBn": "বাংলাদেশ শ্রম আইন, ২০০৬",
+          "actTitleEn": "Bangladesh Labour Act, 2006",
+          "sectionNo": "125",
+          "headingBn": "মজুরী হইতে কর্তনযোগ্য বিষয়াদি",
+          "headingEn": null,
+          "quote": "(১) এই আইন দ্বারা অনুমোদিত কর্তনের ক্ষেত্র ব্যতীত অন্য কোন ৰেত্রে কোন শ্রমিকের মজুরী হইতে কিছুই কর্তন করা যাইবে না।",
+          "quoteLanguage": "bn",
+          "translation": null,
+          "sourceUrl": "http://bdlaws.minlaw.gov.bd/act-952/section-29452.html",
+          "versionLabel": "amend-2013",
+          "effectiveFrom": null
+        },
+        {
+          "verification": {
+            "citationId": "6fc462f5-173b-43b9-836a-d36469a6d180",
+            "sectionKey": "BLA-2006:132@amend-2026",
+            "status": "VERIFIED",
+            "attempt": 1,
+            "checks": {
+              "existence": {
+                "outcome": "PASS"
+              },
+              "quoteMatch": {
+                "outcome": "PASS",
+                "similarity": 1,
+                "matchedLanguage": "bn"
+              },
+              "support": {
+                "outcome": "PASS",
+                "label": "SUPPORTS",
+                "confidence": 0.93,
+                "independence": "SAME_FAMILY",
+                "modelId": "claude-haiku-5-5",
+                "reason": "Section 132(1) lets a worker apply to the Labour Court to recover wages deducted in breach of the Act, matching the claim."
+              }
+            },
+            "reasonCodes": [],
+            "verifiedAt": "2026-11-19T12:03:14.131145Z",
+            "corpusRelease": "2026.11.11-1"
+          },
+          "citationId": "6fc462f5-173b-43b9-836a-d36469a6d180",
+          "sectionKey": "BLA-2006:132@amend-2026",
+          "actCode": "BLA-2006",
+          "actTitleBn": "বাংলাদেশ শ্রম আইন, ২০০৬",
+          "actTitleEn": "Bangladesh Labour Act, 2006",
+          "sectionNo": "132",
+          "headingBn": "মজুরী হইতে কর্তন বা মজুরী বিলম্বে পরিশোধের কারণে উত্থিত দাবী",
+          "headingEn": null,
+          "quote": "(১) যে ক্ষেত্রে এই আইনের বিধানের খেলাপ [ করিয়া] কোন শ্রমিকের মজুরী হইতে কোন কর্তন করা হয় অথবা কোন শ্রমিকের মজুরী পরিশোধ করা না হয় অথবা তাহার মজুরী কিংবা কোন বিধির আওতায় প্রদেয় গ্রাচুইটি বা ভবিষ্য তহবিলের প্রাপ্য পরিশোধে বিলম্বে ঘটে সে ক্ষেত্রে তিনি, অথবা তাহার মৃতু্য হইলে তাহার কোন উত্তরাধিকারী অথবা কোন আইনসঙ্গত প্রতিনিধি [বা কোনো পরিদর্শক] কর্তৃক মজুরী ফেরত পাওয়ার জন্য অথবা বকেয়া বা বিলম্বিত মজুরী ও অন্যান্য পাওনা আদায়ের জন্য শ্রম আদালতে দরখাসত্দ করিতে পারিবেন।",
+          "quoteLanguage": "bn",
+          "translation": null,
+          "sourceUrl": "http://bdlaws.minlaw.gov.bd/act-952/section-29459.html",
+          "versionLabel": "amend-2026",
+          "effectiveFrom": null
+        }
+      ],
+      "iloReferences": [],
+      "ruleId": null,
+      "playbookRuleId": null,
+      "redlineId": "r2",
+      "reviewItemId": null,
+      "confidence": 0.85
+    },
+    {
+      "id": "f3",
+      "title": "আঘাত ও অসুস্থতায় চিকিৎসা ব্যয় অস্বীকার",
+      "kind": "CONFLICT",
+      "severity": "CRITICAL",
+      "nonObvious": false,
+      "source": "LLM_ANALYSIS",
+      "clauseType": "HEALTH_AND_SAFETY",
+      "clauseIds": [
+        "c7"
+      ],
+      "explanation": "কোম্পানি চিকিৎসা ব্যয় ও মজুরি দিতে অস্বীকার করে। আইনে কর্মকালীন আঘাতে মালিকের নিজ খরচে চিকিৎসা ও ক্ষতিপূরণ বাধ্যতামূলক।",
+      "whyItMatters": "",
+      "sideNote": null,
+      "verificationStatus": "VERIFIED",
+      "citations": [
+        {
+          "verification": {
+            "citationId": "086a2963-2133-4a77-9133-dbb4c5041336",
+            "sectionKey": "BLA-2006:89@amend-2013",
+            "status": "VERIFIED",
+            "attempt": 1,
+            "checks": {
+              "existence": {
+                "outcome": "PASS"
+              },
+              "quoteMatch": {
+                "outcome": "PASS",
+                "similarity": 1,
+                "matchedLanguage": "bn"
+              },
+              "support": {
+                "outcome": "PASS",
+                "label": "SUPPORTS",
+                "confidence": 0.92,
+                "independence": "SAME_FAMILY",
+                "modelId": "claude-haiku-5-5",
+                "reason": "Section 89(7) requires employer to treat occupational disease or workplace accident injury at employer's own cost and responsibility until fully recovered."
+              }
+            },
+            "reasonCodes": [],
+            "verifiedAt": "2026-11-19T12:03:14.131961Z",
+            "corpusRelease": "2026.11.11-1"
+          },
+          "citationId": "086a2963-2133-4a77-9133-dbb4c5041336",
+          "sectionKey": "BLA-2006:89@amend-2013",
+          "actCode": "BLA-2006",
+          "actTitleBn": "বাংলাদেশ শ্রম আইন, ২০০৬",
+          "actTitleEn": "Bangladesh Labour Act, 2006",
+          "sectionNo": "89",
+          "headingBn": "প্রাথমিক চিকিৎসা সরঞ্জাম",
+          "headingEn": null,
+          "quote": "(৭) পেশাগত রোগে বা কর্মকালীন দুর্ঘটনায় আক্রান্ত শ্রমিক ও কর্মচারীকে মালিকের নিজ খরচে ও দায়িত্বে উক্ত রোগ, আঘাত বা অসুস্থতা উপযুক্ত বা বিশেষজ্ঞ চিকিৎসক দ্বারা সম্পূর্ণ সুস্থ না হওয়া পর্যন্ত চিকিৎসা করিতে হইবে।",
+          "quoteLanguage": "bn",
+          "translation": null,
+          "sourceUrl": "http://bdlaws.minlaw.gov.bd/act-952/section-29948.html",
+          "versionLabel": "amend-2013",
+          "effectiveFrom": null
+        },
+        {
+          "verification": {
+            "citationId": "70d47d22-d310-4a1a-b68a-905582d371a3",
+            "sectionKey": "BLA-2006:150@original",
+            "status": "VERIFIED",
+            "attempt": 1,
+            "checks": {
+              "existence": {
+                "outcome": "PASS"
+              },
+              "quoteMatch": {
+                "outcome": "PASS",
+                "similarity": 1,
+                "matchedLanguage": "bn"
+              },
+              "support": {
+                "outcome": "PASS",
+                "label": "SUPPORTS",
+                "confidence": 0.92,
+                "independence": "SAME_FAMILY",
+                "modelId": "claude-haiku-5-5",
+                "reason": "Section 150(1) says an employer must compensate a worker injured in an accident arising during employment, matching the claim's elements."
+              }
+            },
+            "reasonCodes": [],
+            "verifiedAt": "2026-11-19T12:03:14.130763Z",
+            "corpusRelease": "2026.11.11-1"
+          },
+          "citationId": "70d47d22-d310-4a1a-b68a-905582d371a3",
+          "sectionKey": "BLA-2006:150@original",
+          "actCode": "BLA-2006",
+          "actTitleBn": "বাংলাদেশ শ্রম আইন, ২০০৬",
+          "actTitleEn": "Bangladesh Labour Act, 2006",
+          "sectionNo": "150",
+          "headingBn": "ক্ষতিপূরণ প্রদানের জন্য মালিকের দায়িত্ব",
+          "headingEn": null,
+          "quote": "(১) চাকুরী চলাকালে উহা হইতে উদ্ভূত দুর্ঘটনার ফলে যদি কোন শ্রমিক শরীরে জখমপ্রাপ্ত হন তাহা হইলে মালিক তাহাকে এই অধ্যায়ের বিধান অনুযায়ী ৰতিপূরণ দিতে বাধ্য থাকিবেন।",
+          "quoteLanguage": "bn",
+          "translation": null,
+          "sourceUrl": "http://bdlaws.minlaw.gov.bd/act-952/section-29389.html",
+          "versionLabel": "original",
+          "effectiveFrom": "2006-10-11"
+        }
+      ],
+      "iloReferences": [],
+      "ruleId": null,
+      "playbookRuleId": null,
+      "redlineId": "r3",
+      "reviewItemId": null,
+      "confidence": 0.85
+    },
+    {
+      "id": "f4",
+      "title": "বিনা নোটিশে অবসান ও ইস্তফায় অনুমতি",
+      "kind": "CONFLICT",
+      "severity": "CRITICAL",
+      "nonObvious": false,
+      "source": "LLM_ANALYSIS",
+      "clauseType": "NOTICE_AND_RESIGNATION",
+      "clauseIds": [
+        "c8"
+      ],
+      "explanation": "মালিক বিনা নোটিশে অবসান করতে পারেন, ক্ষতিপূরণ নেই। শ্রমিকের ইস্তফায় অনুমতি লাগে; আইনে নোটিশ বা মজুরি দিয়ে ইস্তফা দেওয়া যায়।",
+      "whyItMatters": "",
+      "sideNote": null,
+      "verificationStatus": "VERIFIED",
+      "citations": [
+        {
+          "verification": {
+            "citationId": "875e6d7d-45c5-4dac-a1c3-1346a17eb23f",
+            "sectionKey": "BLA-2006:27@amend-2026",
+            "status": "VERIFIED",
+            "attempt": 1,
+            "checks": {
+              "existence": {
+                "outcome": "PASS"
+              },
+              "quoteMatch": {
+                "outcome": "PASS",
+                "similarity": 1,
+                "matchedLanguage": "bn"
+              },
+              "support": {
+                "outcome": "PASS",
+                "label": "SUPPORTS",
+                "confidence": 0.9,
+                "independence": "SAME_FAMILY",
+                "modelId": "claude-haiku-5-5",
+                "reason": "Section 27(3) lets a worker resign without notice by paying wages equal to the notice period, matching the claim."
+              }
+            },
+            "reasonCodes": [],
+            "verifiedAt": "2026-11-19T12:03:14.132249Z",
+            "corpusRelease": "2026.11.11-1"
+          },
+          "citationId": "875e6d7d-45c5-4dac-a1c3-1346a17eb23f",
+          "sectionKey": "BLA-2006:27@amend-2026",
+          "actCode": "BLA-2006",
+          "actTitleBn": "বাংলাদেশ শ্রম আইন, ২০০৬",
+          "actTitleEn": "Bangladesh Labour Act, 2006",
+          "sectionNo": "27",
+          "headingBn": "শ্রমিক কর্তৃক চাকুরীর অবসান",
+          "headingEn": null,
+          "quote": "(৩) যে ক্ষেত্রে শ্রমিক বিনা নোটিশে চাকুরী হইতে ইস্তফা দিতে চাহেন সে ক্ষেত্রে, তিনি উপ-ধারা (১) অথবা (২) এর অধীন প্রদেয় নোটিশের পরিবর্তে নোটিশ মেয়াদের জন্য মজুরীর সমপরিমাণ অর্থ মালিককে প্রদান করিয়া ইহা করিতে পারিবেন৷",
+          "quoteLanguage": "bn",
+          "translation": null,
+          "sourceUrl": "http://bdlaws.minlaw.gov.bd/act-952/section-29914.html",
+          "versionLabel": "amend-2026",
+          "effectiveFrom": null
+        }
+      ],
+      "iloReferences": [],
+      "ruleId": null,
+      "playbookRuleId": null,
+      "redlineId": "r4",
+      "reviewItemId": null,
+      "confidence": 0.85
+    },
+    {
+      "id": "f5",
+      "title": "প্রাপ্তবয়স্ক শ্রমিকের সাধারণ কর্মঘণ্টা দিনে আট ঘণ্টার বেশি হতে পারে না",
+      "kind": "CONFLICT",
+      "severity": "HIGH",
+      "nonObvious": false,
+      "source": "RULE_ENGINE",
+      "clauseType": "WORKING_HOURS",
+      "clauseIds": [
+        "c4"
+      ],
+      "explanation": "দৈনিক ১২ ঘণ্টা কাজ, অতিরিক্ত ঘণ্টা বা রাতের জন্য কোনো ভাতা নেই। আইনে অধিকালের জন্য দ্বিগুণ হারে ভাতা প্রাপ্য।",
+      "whyItMatters": "",
+      "sideNote": null,
+      "verificationStatus": "VERIFIED",
+      "citations": [
+        {
+          "verification": {
+            "citationId": "349fa9ae-319b-4fed-ae99-5fe248232a13",
+            "sectionKey": "BLA-2006:100@original",
+            "status": "VERIFIED",
+            "attempt": 1,
+            "checks": {
+              "existence": {
+                "outcome": "PASS"
+              },
+              "quoteMatch": {
+                "outcome": "PASS",
+                "similarity": 1,
+                "matchedLanguage": "bn"
+              },
+              "support": {
+                "outcome": "PASS",
+                "label": null,
+                "confidence": null,
+                "independence": "RULE_PROVENANCE",
+                "modelId": null,
+                "reason": "reviewed rule source"
+              }
+            },
+            "reasonCodes": [],
+            "verifiedAt": "2026-11-19T12:03:14.129072Z",
+            "corpusRelease": "2026.11.11-1"
+          },
+          "citationId": "349fa9ae-319b-4fed-ae99-5fe248232a13",
+          "sectionKey": "BLA-2006:100@original",
+          "actCode": "BLA-2006",
+          "actTitleBn": "বাংলাদেশ শ্রম আইন, ২০০৬",
+          "actTitleEn": "Bangladesh Labour Act, 2006",
+          "sectionNo": "100",
+          "headingBn": "দৈনিক কর্মঘণ্টা",
+          "headingEn": null,
+          "quote": "কোন প্রাপ্তবয়স্ক শ্রমিক কোন প্রতিষ্ঠানে সাধারণতঃ দৈনিক আট ঘণ্টার অধিক সময় কাজ করিবেন না বা তাহাকে দিয়ে কাজ করানো যাইবে নাঃ",
+          "quoteLanguage": "bn",
+          "translation": null,
+          "sourceUrl": "http://bdlaws.minlaw.gov.bd/act-952/section-29427.html",
+          "versionLabel": "original",
+          "effectiveFrom": "2006-10-11"
+        }
+      ],
+      "iloReferences": [],
+      "ruleId": "bd-daily-hours-max",
+      "playbookRuleId": null,
+      "redlineId": "r5",
+      "reviewItemId": "f1d392f8-380e-411d-97e2-e98dc62ed62e",
+      "confidence": 0.95
+    },
+    {
+      "id": "f6",
+      "title": "প্রতি সপ্তাহে অন্তত একদিন সাপ্তাহিক ছুটি পাওয়া শ্রমিকের অধিকার (দোকান ও প্রতিষ্ঠানে দেড় দিন)",
+      "kind": "CONFLICT",
+      "severity": "HIGH",
+      "nonObvious": false,
+      "source": "RULE_ENGINE",
+      "clauseType": "REST_AND_HOLIDAYS",
+      "clauseIds": [
+        "c5"
+      ],
+      "explanation": "সাপ্তাহিক ছুটি ও উৎসব ছুটি অস্বীকার করা হয়েছে। আইনে সপ্তাহে ছুটি এবং বছরে ১৩ দিন মজুরীসহ উৎসব ছুটি বাধ্যতামূলক।",
+      "whyItMatters": "",
+      "sideNote": null,
+      "verificationStatus": "VERIFIED",
+      "citations": [
+        {
+          "verification": {
+            "citationId": "7e95a394-1869-4d9e-895b-17b2ba09cac1",
+            "sectionKey": "BLA-2006:103@amend-2018",
+            "status": "VERIFIED",
+            "attempt": 1,
+            "checks": {
+              "existence": {
+                "outcome": "PASS"
+              },
+              "quoteMatch": {
+                "outcome": "PASS",
+                "similarity": 1,
+                "matchedLanguage": "bn"
+              },
+              "support": {
+                "outcome": "PASS",
+                "label": null,
+                "confidence": null,
+                "independence": "RULE_PROVENANCE",
+                "modelId": null,
+                "reason": "reviewed rule source"
+              }
+            },
+            "reasonCodes": [],
+            "verifiedAt": "2026-11-19T12:03:14.133913Z",
+            "corpusRelease": "2026.11.11-1"
+          },
+          "citationId": "7e95a394-1869-4d9e-895b-17b2ba09cac1",
+          "sectionKey": "BLA-2006:103@amend-2018",
+          "actCode": "BLA-2006",
+          "actTitleBn": "বাংলাদেশ শ্রম আইন, ২০০৬",
+          "actTitleEn": "Bangladesh Labour Act, 2006",
+          "sectionNo": "103",
+          "headingBn": "সাপ্তাহিক ছুটি",
+          "headingEn": null,
+          "quote": "[ (ক) প্রতি সপ্তাহে কারখানা ও শিল্পের ক্ষেত্রে একদিন এবং দোকান ও প্রতিষ্ঠানের ক্ষেত্রে দেড় দিন ছুটি পাইবেন;]",
+          "quoteLanguage": "bn",
+          "translation": null,
+          "sourceUrl": "http://bdlaws.minlaw.gov.bd/act-952/section-29430.html",
+          "versionLabel": "amend-2018",
+          "effectiveFrom": null
+        }
+      ],
+      "iloReferences": [],
+      "ruleId": "bd-weekly-rest-min",
+      "playbookRuleId": null,
+      "redlineId": "r6",
+      "reviewItemId": null,
+      "confidence": 0.95
+    },
+    {
+      "id": "f7",
+      "title": "প্রতি পঞ্জিকা বছরে প্রত্যেক শ্রমিককে মজুরিসহ ১৩ দিন উৎসব ছুটি দিতে হবে (ধারা ১১৮(১), ২০২৬ সালের সংশোধিত রূপ)",
+      "kind": "CONFLICT",
+      "severity": "HIGH",
+      "nonObvious": false,
+      "source": "RULE_ENGINE",
+      "clauseType": "REST_AND_HOLIDAYS",
+      "clauseIds": [
+        "c5"
+      ],
+      "explanation": "প্রতি পঞ্জিকা বছরে প্রত্যেক শ্রমিককে মজুরিসহ ১৩ দিন উৎসব ছুটি দিতে হবে (ধারা ১১৮(১), ২০২৬ সালের সংশোধিত রূপ)।",
+      "whyItMatters": "",
+      "sideNote": null,
+      "verificationStatus": "VERIFIED",
+      "citations": [
+        {
+          "verification": {
+            "citationId": "f2627a43-f185-486d-9a3d-b0e8294ce5a2",
+            "sectionKey": "BLA-2006:118@amend-2026",
+            "status": "VERIFIED",
+            "attempt": 1,
+            "checks": {
+              "existence": {
+                "outcome": "PASS"
+              },
+              "quoteMatch": {
+                "outcome": "PASS",
+                "similarity": 1,
+                "matchedLanguage": "bn"
+              },
+              "support": {
+                "outcome": "PASS",
+                "label": null,
+                "confidence": null,
+                "independence": "RULE_PROVENANCE",
+                "modelId": null,
+                "reason": "reviewed rule source"
+              }
+            },
+            "reasonCodes": [],
+            "verifiedAt": "2026-11-19T12:03:14.133810Z",
+            "corpusRelease": "2026.11.11-1"
+          },
+          "citationId": "f2627a43-f185-486d-9a3d-b0e8294ce5a2",
+          "sectionKey": "BLA-2006:118@amend-2026",
+          "actCode": "BLA-2006",
+          "actTitleBn": "বাংলাদেশ শ্রম আইন, ২০০৬",
+          "actTitleEn": "Bangladesh Labour Act, 2006",
+          "sectionNo": "118",
+          "headingBn": "উৎসব ছুটি",
+          "headingEn": null,
+          "quote": "(১) প্রত্যেক শ্রমিককে প্রতি পঞ্জিকা বৎসরে [১৩ (তের)] দিনের মজুরীসহ উৎসব ছুটি মঞ্জুর করিতে হইবে।",
+          "quoteLanguage": "bn",
+          "translation": null,
+          "sourceUrl": "http://bdlaws.minlaw.gov.bd/act-952/section-29445.html",
+          "versionLabel": "amend-2026",
+          "effectiveFrom": null
+        }
+      ],
+      "iloReferences": [],
+      "ruleId": "bd-festival-holidays-min",
+      "playbookRuleId": null,
+      "redlineId": "r7",
+      "reviewItemId": null,
+      "confidence": 0.85
+    },
+    {
+      "id": "f8",
+      "title": "৯ মাস শিক্ষানবিশকাল ও কম বেতন",
+      "kind": "CONFLICT",
+      "severity": "HIGH",
+      "nonObvious": true,
+      "source": "LLM_ANALYSIS",
+      "clauseType": "PROBATION",
+      "clauseIds": [
+        "c6"
+      ],
+      "explanation": "৯ মাস শিক্ষানবিশী ও ৭০% বেতন। আইনে শিক্ষানবিশকাল সাধারণত তিন মাস, সর্বোচ্চ ছয় মাস।",
+      "whyItMatters": "",
+      "sideNote": null,
+      "verificationStatus": "VERIFIED",
+      "citations": [
+        {
+          "verification": {
+            "citationId": "ff5046a2-54ce-4969-b41e-b70593aef4f0",
+            "sectionKey": "BLA-2006:4@amend-2026",
+            "status": "VERIFIED",
+            "attempt": 2,
+            "checks": {
+              "existence": {
+                "outcome": "PASS"
+              },
+              "quoteMatch": {
+                "outcome": "PASS",
+                "similarity": 1,
+                "matchedLanguage": "bn"
+              },
+              "support": {
+                "outcome": "PASS",
+                "label": "SUPPORTS",
+                "confidence": 0.95,
+                "independence": "SAME_FAMILY",
+                "modelId": "claude-haiku-5-5",
+                "reason": "Section 4(8) states probation is six months for clerical workers and three months for other workers, matching the claim."
+              }
+            },
+            "reasonCodes": [],
+            "verifiedAt": "2026-11-19T12:03:14.278943Z",
+            "corpusRelease": "2026.11.11-1"
+          },
+          "citationId": "ff5046a2-54ce-4969-b41e-b70593aef4f0",
+          "sectionKey": "BLA-2006:4@amend-2026",
+          "actCode": "BLA-2006",
+          "actTitleBn": "বাংলাদেশ শ্রম আইন, ২০০৬",
+          "actTitleEn": "Bangladesh Labour Act, 2006",
+          "sectionNo": "4",
+          "headingBn": "শ্রমিকগণের শ্রেণী বিভাগ এবং শিক্ষানবিশীকাল",
+          "headingEn": null,
+          "quote": "(৮) কেরানী-সংক্রান্ত কাজে নিযুক্ত কোন শ্রমিকের শিক্ষানবিশীকাল হইবে ছয় মাস এবং অন্যান্য শ্রমিকের জন্য এই সময় হইবে তিন মাসঃ",
+          "quoteLanguage": "bn",
+          "translation": null,
+          "sourceUrl": "http://bdlaws.minlaw.gov.bd/act-952/section-29072.html",
+          "versionLabel": "amend-2026",
+          "effectiveFrom": null
+        }
+      ],
+      "iloReferences": [],
+      "ruleId": null,
+      "playbookRuleId": null,
+      "redlineId": "r8",
+      "reviewItemId": null,
+      "confidence": 0.85
+    },
+    {
+      "id": "f9",
+      "title": "তিন বছরের প্রতিযোগিতা-নিষেধ",
+      "kind": "CONFLICT",
+      "severity": "HIGH",
+      "nonObvious": false,
+      "source": "LLM_ANALYSIS",
+      "clauseType": "NON_COMPETE",
+      "clauseIds": [
+        "c9"
+      ],
+      "explanation": "চাকরি ছাড়ার পর তিন বছর কোনো নিরাপত্তা কোম্পানিতে কাজ নিষিদ্ধ। এটি বৈধ পেশা করার অধিকার সীমিত করে, তাই অকার্যকর।",
+      "whyItMatters": "",
+      "sideNote": null,
+      "verificationStatus": "VERIFIED",
+      "citations": [
+        {
+          "verification": {
+            "citationId": "33a4054e-9a03-4aee-a60c-aed40501e566",
+            "sectionKey": "CA-1872:27@original",
+            "status": "VERIFIED",
+            "attempt": 1,
+            "checks": {
+              "existence": {
+                "outcome": "PASS"
+              },
+              "quoteMatch": {
+                "outcome": "PASS",
+                "similarity": 1,
+                "matchedLanguage": "en"
+              },
+              "support": {
+                "outcome": "PASS",
+                "label": "SUPPORTS",
+                "confidence": 0.9,
+                "independence": "SAME_FAMILY",
+                "modelId": "claude-haiku-5-5",
+                "reason": "Section 27 states any agreement restraining a lawful profession, trade or business is void to that extent, matching the claim."
+              }
+            },
+            "reasonCodes": [],
+            "verifiedAt": "2026-11-19T12:03:14.136095Z",
+            "corpusRelease": "2026.11.11-1"
+          },
+          "citationId": "33a4054e-9a03-4aee-a60c-aed40501e566",
+          "sectionKey": "CA-1872:27@original",
+          "actCode": "CA-1872",
+          "actTitleBn": null,
+          "actTitleEn": "The Contract Act, 1872",
+          "sectionNo": "27",
+          "headingBn": null,
+          "headingEn": "Agreement in restraint of trade void Saving of agreement not to carry on business of which good- will is sold",
+          "quote": "Every agreement by which any one is restrained from exercising a lawful profession, trade or business of any kind, is to that extent void.",
+          "quoteLanguage": "en",
+          "translation": null,
+          "sourceUrl": "http://bdlaws.minlaw.gov.bd/act-26/section-190.html",
+          "versionLabel": "original",
+          "effectiveFrom": "1872-04-25"
+        }
+      ],
+      "iloReferences": [],
+      "ruleId": null,
+      "playbookRuleId": null,
+      "redlineId": "r9",
+      "reviewItemId": null,
+      "confidence": 0.88
+    },
+    {
+      "id": "f10",
+      "title": "ম্যানেজারের সিদ্ধান্তই চূড়ান্ত",
+      "kind": "CONFLICT",
+      "severity": "HIGH",
+      "nonObvious": false,
+      "source": "LLM_ANALYSIS",
+      "clauseType": "DISPUTE_RESOLUTION",
+      "clauseIds": [
+        "c10"
+      ],
+      "explanation": "যেকোনো বিরোধ কোম্পানির ম্যানেজার নিষ্পত্তি করবেন ও তা চূড়ান্ত। এতে শ্রম আদালতে যাওয়ার অধিকার বাধাগ্রস্ত হয়।",
+      "whyItMatters": "",
+      "sideNote": null,
+      "verificationStatus": "VERIFIED",
+      "citations": [
+        {
+          "verification": {
+            "citationId": "ce82326c-4954-463d-ad28-364fca25f4ec",
+            "sectionKey": "CA-1872:28@original",
+            "status": "VERIFIED",
+            "attempt": 1,
+            "checks": {
+              "existence": {
+                "outcome": "PASS"
+              },
+              "quoteMatch": {
+                "outcome": "PASS",
+                "similarity": 1,
+                "matchedLanguage": "en"
+              },
+              "support": {
+                "outcome": "PASS",
+                "label": "SUPPORTS",
+                "confidence": 0.92,
+                "independence": "SAME_FAMILY",
+                "modelId": "claude-haiku-5-5",
+                "reason": "Section voids agreements restricting a party absolutely from enforcing contract rights in ordinary tribunals, matching the claim, as quoted."
+              }
+            },
+            "reasonCodes": [],
+            "verifiedAt": "2026-11-19T12:03:14.136219Z",
+            "corpusRelease": "2026.11.11-1"
+          },
+          "citationId": "ce82326c-4954-463d-ad28-364fca25f4ec",
+          "sectionKey": "CA-1872:28@original",
+          "actCode": "CA-1872",
+          "actTitleBn": null,
+          "actTitleEn": "The Contract Act, 1872",
+          "sectionNo": "28",
+          "headingBn": null,
+          "headingEn": "Agreements in restraint of legal proceedings void Saving of contract to refer to arbitration dispute that may arise Suits barred by such contracts Saving of contract to refer questions that have already arisen",
+          "quote": "Every agreement, by which any party thereto is restricted absolutely from enforcing his rights under or in respect of any contract, by the usual legal proceedings in the ordinary tribunals, or which limits the time within which he may thus enforce his rights, is void to that extent.",
+          "quoteLanguage": "en",
+          "translation": null,
+          "sourceUrl": "http://bdlaws.minlaw.gov.bd/act-26/section-191.html",
+          "versionLabel": "original",
+          "effectiveFrom": "1872-04-25"
+        },
+        {
+          "verification": {
+            "citationId": "2cb796e5-7e9d-45a9-87c3-614a1e654bd2",
+            "sectionKey": "BLA-2006:214@amend-2013",
+            "status": "VERIFIED",
+            "attempt": 1,
+            "checks": {
+              "existence": {
+                "outcome": "PASS"
+              },
+              "quoteMatch": {
+                "outcome": "PASS",
+                "similarity": 1,
+                "matchedLanguage": "bn"
+              },
+              "support": {
+                "outcome": "PASS",
+                "label": "SUPPORTS",
+                "confidence": 0.92,
+                "independence": "SAME_FAMILY",
+                "modelId": "claude-haiku-5-5",
+                "reason": "Section 214(10)(ka) gives labour courts exclusive jurisdiction over trial and settlement of industrial or other disputes under the Act."
+              }
+            },
+            "reasonCodes": [],
+            "verifiedAt": "2026-11-19T12:03:14.137015Z",
+            "corpusRelease": "2026.11.11-1"
+          },
+          "citationId": "2cb796e5-7e9d-45a9-87c3-614a1e654bd2",
+          "sectionKey": "BLA-2006:214@amend-2013",
+          "actCode": "BLA-2006",
+          "actTitleBn": "বাংলাদেশ শ্রম আইন, ২০০৬",
+          "actTitleEn": "Bangladesh Labour Act, 2006",
+          "sectionNo": "214",
+          "headingBn": "শ্রম আদালত",
+          "headingEn": null,
+          "quote": "(১০) কোন শ্রম আদালত নিম্নলিখিত বিষয়ে অনন্য এখতিয়ারের অধিকারী হইবে, যথাঃ-",
+          "quoteLanguage": "bn",
+          "translation": null,
+          "sourceUrl": "http://bdlaws.minlaw.gov.bd/act-952/section-26274.html",
+          "versionLabel": "amend-2013",
+          "effectiveFrom": null
+        }
+      ],
+      "iloReferences": [],
+      "ruleId": null,
+      "playbookRuleId": null,
+      "redlineId": "r10",
+      "reviewItemId": null,
+      "confidence": 0.85
+    },
+    {
+      "id": "f11",
+      "title": "দেশের যেকোনো স্থানে যখন-তখন বদলি",
+      "kind": "AMBIGUITY",
+      "severity": "MEDIUM",
+      "nonObvious": true,
+      "source": "LLM_ANALYSIS",
+      "clauseType": "TRANSFER_AND_DEPLOYMENT",
+      "clauseIds": [
+        "c2"
+      ],
+      "explanation": "কোম্পানি সারাদেশে যেকোনো সময় পোস্টিং দিতে পারে; কোনো নোটিশ, ভাতা বা সীমা নেই। এতে শ্রমিকের অধিকার ক্ষুণ্ন হওয়ার ঝুঁকি।",
+      "whyItMatters": "",
+      "sideNote": null,
+      "verificationStatus": "VERIFIED",
+      "citations": [
+        {
+          "verification": {
+            "citationId": "72259eca-c7c5-4459-a00f-bd6b120d676f",
+            "sectionKey": "BLA-2006:3@amend-2026",
+            "status": "VERIFIED",
+            "attempt": 1,
+            "checks": {
+              "existence": {
+                "outcome": "PASS"
+              },
+              "quoteMatch": {
+                "outcome": "PASS",
+                "similarity": 1,
+                "matchedLanguage": "bn"
+              },
+              "support": {
+                "outcome": "PASS",
+                "label": "SUPPORTS",
+                "confidence": 0.95,
+                "independence": "SAME_FAMILY",
+                "modelId": "claude-haiku-5-5",
+                "reason": "Section 3(1) proviso states company service rules cannot be less favourable to any worker than any provision of this chapter."
+              }
+            },
+            "reasonCodes": [],
+            "verifiedAt": "2026-11-19T12:03:14.136609Z",
+            "corpusRelease": "2026.11.11-1"
+          },
+          "citationId": "72259eca-c7c5-4459-a00f-bd6b120d676f",
+          "sectionKey": "BLA-2006:3@amend-2026",
+          "actCode": "BLA-2006",
+          "actTitleBn": "বাংলাদেশ শ্রম আইন, ২০০৬",
+          "actTitleEn": "Bangladesh Labour Act, 2006",
+          "sectionNo": "3",
+          "headingBn": "চাকুরীর শর্তাবলী",
+          "headingEn": null,
+          "quote": "তবে শর্ত থাকে যে, কোন প্রতিষ্ঠানের শ্রমিক নিয়োগ সংক্রান্ত নিজস্ব চাকুরী বিধি থাকিতে পারিবে, কিন্তু এই প্রকার কোন বিধি কোন শ্রমিকের জন্য এই অধ্যায়ের কোন বিধান হইতে কম অনুকূল হইতে পারিবে না[:",
+          "quoteLanguage": "bn",
+          "translation": null,
+          "sourceUrl": "http://bdlaws.minlaw.gov.bd/act-952/section-29071.html",
+          "versionLabel": "amend-2026",
+          "effectiveFrom": null
+        }
+      ],
+      "iloReferences": [],
+      "ruleId": null,
+      "playbookRuleId": null,
+      "redlineId": "r11",
+      "reviewItemId": null,
+      "confidence": 0.5
+    },
+    {
+      "id": "f12",
+      "title": "শর্তাবলীতে মজুরী পরিশোধের সময় অনুল্লিখিত",
+      "kind": "OMISSION",
+      "severity": "MEDIUM",
+      "nonObvious": true,
+      "source": "LLM_ANALYSIS",
+      "clauseType": "WAGE_PAYMENT_AND_DEDUCTIONS",
+      "clauseIds": [
+        "c3"
+      ],
+      "explanation": "চুক্তিতে মজুরী পরিশোধের সময়সীমা নেই। বিলম্ব হলে আইনি সময়সীমা (সাত কর্মদিবস) মানা না হওয়ার ঝুঁকি।",
+      "whyItMatters": "",
+      "sideNote": null,
+      "verificationStatus": "VERIFIED",
+      "citations": [
+        {
+          "verification": {
+            "citationId": "c0768f02-fe30-46a2-aa6e-ddb973673926",
+            "sectionKey": "BLA-2006:123@amend-2013",
+            "status": "VERIFIED",
+            "attempt": 1,
+            "checks": {
+              "existence": {
+                "outcome": "PASS"
+              },
+              "quoteMatch": {
+                "outcome": "PASS",
+                "similarity": 1,
+                "matchedLanguage": "bn"
+              },
+              "support": {
+                "outcome": "PASS",
+                "label": "SUPPORTS",
+                "confidence": 0.95,
+                "independence": "SAME_FAMILY",
+                "modelId": "claude-haiku-5-5",
+                "reason": "Section 123(1) requires wages to be paid within seven working days after the wage period ends, matching the claim."
+              }
+            },
+            "reasonCodes": [],
+            "verifiedAt": "2026-11-19T12:03:14.136223Z",
+            "corpusRelease": "2026.11.11-1"
+          },
+          "citationId": "c0768f02-fe30-46a2-aa6e-ddb973673926",
+          "sectionKey": "BLA-2006:123@amend-2013",
+          "actCode": "BLA-2006",
+          "actTitleBn": "বাংলাদেশ শ্রম আইন, ২০০৬",
+          "actTitleEn": "Bangladesh Labour Act, 2006",
+          "sectionNo": "123",
+          "headingBn": "মজুরী পরিশোধের সময়",
+          "headingEn": null,
+          "quote": "(১) কোন শ্রমিকের যে মজুরীকাল সমপর্কে তাহার মজুরী প্রদেয় হয় সেই কাল শেষ হওয়ার পরবর্তী সাত কর্মদিবসের মধ্যে তাহার মজুরী পরিশোধ করিতে হইবে।",
+          "quoteLanguage": "bn",
+          "translation": null,
+          "sourceUrl": "http://bdlaws.minlaw.gov.bd/act-952/section-29450.html",
+          "versionLabel": "amend-2013",
+          "effectiveFrom": null
+        }
+      ],
+      "iloReferences": [],
+      "ruleId": null,
+      "playbookRuleId": null,
+      "redlineId": "r12",
+      "reviewItemId": null,
+      "confidence": 0.55
+    },
+    {
+      "id": "f13",
+      "title": "আপিল ও অভিযোগ প্রক্রিয়া বাদ",
+      "kind": "INTERACTION",
+      "severity": "MEDIUM",
+      "nonObvious": true,
+      "source": "LLM_ANALYSIS",
+      "clauseType": "DISPUTE_RESOLUTION",
+      "clauseIds": [
+        "c10"
+      ],
+      "explanation": "চূড়ান্ত ম্যানেজার-সিদ্ধান্ত ও বিনা নোটিশে ছাঁটাইয়ের ধারা মিলে ধারা ৩৩-এর আদালত-প্রতিকার অকার্যকর হতে পারে।",
+      "whyItMatters": "",
+      "sideNote": null,
+      "verificationStatus": "VERIFIED",
+      "citations": [
+        {
+          "verification": {
+            "citationId": "c732a415-aa34-405b-97c1-550257a6a3f0",
+            "sectionKey": "BLA-2006:33@amend-2013",
+            "status": "VERIFIED",
+            "attempt": 1,
+            "checks": {
+              "existence": {
+                "outcome": "PASS"
+              },
+              "quoteMatch": {
+                "outcome": "PASS",
+                "similarity": 1,
+                "matchedLanguage": "bn"
+              },
+              "support": {
+                "outcome": "PASS",
+                "label": "SUPPORTS",
+                "confidence": 0.93,
+                "independence": "SAME_FAMILY",
+                "modelId": "claude-haiku-5-5",
+                "reason": "Section 33(3) lets a worker dissatisfied with the owner's decision file a written complaint with the Labour Court within thirty days."
+              }
+            },
+            "reasonCodes": [],
+            "verifiedAt": "2026-11-19T12:03:14.137054Z",
+            "corpusRelease": "2026.11.11-1"
+          },
+          "citationId": "c732a415-aa34-405b-97c1-550257a6a3f0",
+          "sectionKey": "BLA-2006:33@amend-2013",
+          "actCode": "BLA-2006",
+          "actTitleBn": "বাংলাদেশ শ্রম আইন, ২০০৬",
+          "actTitleEn": "Bangladesh Labour Act, 2006",
+          "sectionNo": "33",
+          "headingBn": "অভিযোগ পদ্ধতি",
+          "headingEn": null,
+          "quote": "(৩) যদি মালিক উপ-ধারা (২) এর অধীন কোন সিদ্ধান্ত দিতে ব্যর্থ হন, অথবা সংশ্লিষ্ট শ্রমিক যদি উক্তরূপ সিদ্ধান্তে অসন্তষ্ট হন, তাহা হইলে তিনি উপ-ধারা (২) এ উল্লিখিত সময় অতিক্রান্ত হওয়ার তারিখ হইতে ত্রিশ দিনের মধ্যে অথবা, ক্ষেত্রমত, মালিকের সিদ্ধান্তের তারিখ হইতে ত্রিশ দিনের মধ্যে শ্রম আদালতে লিখিতভাবে অভিযোগ পেশ করিতে পারিবেন৷",
+          "quoteLanguage": "bn",
+          "translation": null,
+          "sourceUrl": "http://bdlaws.minlaw.gov.bd/act-952/section-29920.html",
+          "versionLabel": "amend-2013",
+          "effectiveFrom": null
+        }
+      ],
+      "iloReferences": [],
+      "ruleId": null,
+      "playbookRuleId": null,
+      "redlineId": null,
+      "reviewItemId": null,
+      "confidence": 0.6
+    }
+  ],
+  "redlines": [
+    {
+      "id": "r1",
+      "findingIds": [
+        "f1"
+      ],
+      "clauseId": "c4",
+      "action": "REPLACE",
+      "originalText": "3. Hours of work The Guard works 12 hours a day for 30 days a month. No extra payment is made for night shifts or extra hours.",
+      "proposedText": "৩. কাজের সময়: গার্ড আইনে নির্ধারিত সময়ের মধ্যে কাজ করবেন। নির্ধারিত সময়ের অতিরিক্ত কাজ অধিকাল কাজ গণ্য হবে এবং এর জন্য মূল মজুরী, মহার্ঘভাতা ও এডহক বা অন্তবর্তী মজুরী (যদি থাকে) এর সাধারণ হারের দ্বিগুণ হারে ভাতা দেওয়া হবে।",
+      "diff": [
+        {
+          "op": "DELETE",
+          "text": "3"
+        },
+        {
+          "op": "INSERT",
+          "text": "৩"
+        },
+        {
+          "op": "EQUAL",
+          "text": "."
+        },
+        {
+          "op": "DELETE",
+          "text": " Hours of work The Guard works 12 hours a day for 30 days a month. No extra payment is made for night shifts or extra hours."
+        },
+        {
+          "op": "INSERT",
+          "text": " কাজের সময়: গার্ড আইনে নির্ধারিত সময়ের মধ্যে কাজ করবেন। নির্ধারিত সময়ের অতিরিক্ত কাজ অধিকাল কাজ গণ্য হবে এবং এর জন্য মূল মজুরী, মহার্ঘভাতা ও এডহক বা অন্তবর্তী মজুরী (যদি থাকে) এর সাধারণ হারের দ্বিগুণ হারে ভাতা দেওয়া হবে।"
+        }
+      ],
+      "rationale": "১২ ঘণ্টার বিনা-ভাতার শর্ত বাদ দিয়ে অধিকাল কাজে সাধারণ হারের দ্বিগুণ ভাতা নিশ্চিত করা হয়েছে।",
+      "citations": [
+        {
+          "verification": {
+            "citationId": "deae2483-aedb-4533-afa0-13f135c85e37",
+            "sectionKey": "BLA-2006:108@amend-2018",
+            "status": "VERIFIED",
+            "attempt": 1,
+            "checks": {
+              "existence": {
+                "outcome": "PASS"
+              },
+              "quoteMatch": {
+                "outcome": "PASS",
+                "similarity": 1,
+                "matchedLanguage": "bn"
+              },
+              "support": {
+                "outcome": "PASS",
+                "label": null,
+                "confidence": null,
+                "independence": "RULE_PROVENANCE",
+                "modelId": null,
+                "reason": "reviewed rule source"
+              }
+            },
+            "reasonCodes": [],
+            "verifiedAt": "2026-11-19T12:03:14.129070Z",
+            "corpusRelease": "2026.11.11-1"
+          },
+          "citationId": "deae2483-aedb-4533-afa0-13f135c85e37",
+          "sectionKey": "BLA-2006:108@amend-2018",
+          "actCode": "BLA-2006",
+          "actTitleBn": "বাংলাদেশ শ্রম আইন, ২০০৬",
+          "actTitleEn": "Bangladesh Labour Act, 2006",
+          "sectionNo": "108",
+          "headingBn": "অধিকাল কর্মের জন্য অতিরিক্ত ভাতা",
+          "headingEn": null,
+          "quote": "(১) যে ক্ষেত্রে কোন শ্রমিক কোন প্রতিষ্ঠানে কোন দিন বা সপ্তাহে এই আইনের অধীন নির্দিষ্ট সময়ের অতিরিক্ত সময় কাজ করেন, সে ক্ষেত্রে তিনি অধিকাল কাজের জন্য তাহার মূল মজুরী ও মহার্ঘভাতা এবং এডহক বা অন্তবর্তী মজুরী, যদি থাকে, এর সাধারণ হারের দ্বিগুণ হারে ভাতা পাইবেন।",
+          "quoteLanguage": "bn",
+          "translation": null,
+          "sourceUrl": "http://bdlaws.minlaw.gov.bd/act-952/section-29435.html",
+          "versionLabel": "amend-2018",
+          "effectiveFrom": null
+        }
+      ],
+      "ruleCheck": {
+        "passed": true,
+        "ruleIds": [
+          "bd-daily-hours-max",
+          "bd-weekly-hours-max",
+          "bd-overtime-rate-min",
+          "bd-weekly-rest-min",
+          "bd-casual-leave-min",
+          "bd-sick-leave-min",
+          "bd-festival-holidays-min",
+          "bd-maternity-leave-min"
+        ],
+        "attempts": 1
+      },
+      "language": "bn"
+    },
+    {
+      "id": "r2",
+      "findingIds": [
+        "f2"
+      ],
+      "clauseId": "c3",
+      "action": "REPLACE",
+      "originalText": "2. Salary The monthly salary is BDT 11,000, from which uniform and equipment costs are deducted every month.",
+      "proposedText": "2. Salary: The monthly salary is BDT 11,000, paid in full. The employer shall provide uniforms and equipment at its own cost, and no deduction for them shall be made from wages, except deductions that the law expressly permits.",
+      "diff": [
+        {
+          "op": "EQUAL",
+          "text": "2. Salary"
+        },
+        {
+          "op": "INSERT",
+          "text": ":"
+        },
+        {
+          "op": "EQUAL",
+          "text": " The monthly salary is BDT 11,000,"
+        },
+        {
+          "op": "DELETE",
+          "text": " from which uniform"
+        },
+        {
+          "op": "INSERT",
+          "text": " paid in full. The employer shall provide uniforms"
+        },
+        {
+          "op": "EQUAL",
+          "text": " and equipment"
+        },
+        {
+          "op": "DELETE",
+          "text": " costs are deducted every month"
+        },
+        {
+          "op": "INSERT",
+          "text": " at its own cost, and no deduction for them shall be made from wages, except deductions that the law expressly permits"
+        },
+        {
+          "op": "EQUAL",
+          "text": "."
+        }
+      ],
+      "rationale": "ইউনিফর্ম ও সরঞ্জামের খরচ নিয়োগকর্তা বহন করবে, ফলে আইনবহির্ভূত মজুরী কর্তন বাদ যায় ও পূর্ণ মজুরী নিশ্চিত হয়।",
+      "citations": [
+        {
+          "verification": {
+            "citationId": "b5c7281a-1a93-4f08-a1d5-ec8699c37f86",
+            "sectionKey": "BLA-2006:125@amend-2013",
+            "status": "VERIFIED",
+            "attempt": 1,
+            "checks": {
+              "existence": {
+                "outcome": "PASS"
+              },
+              "quoteMatch": {
+                "outcome": "PASS",
+                "similarity": 1,
+                "matchedLanguage": "bn"
+              },
+              "support": {
+                "outcome": "PASS",
+                "label": "SUPPORTS",
+                "confidence": 0.93,
+                "independence": "SAME_FAMILY",
+                "modelId": "claude-haiku-5-5",
+                "reason": "Section 125(1) bars any deduction from a worker's wages except those the Act allows, matching the claim's element of unauthorised deductions."
+              }
+            },
+            "reasonCodes": [],
+            "verifiedAt": "2026-11-19T12:03:14.131125Z",
+            "corpusRelease": "2026.11.11-1"
+          },
+          "citationId": "b5c7281a-1a93-4f08-a1d5-ec8699c37f86",
+          "sectionKey": "BLA-2006:125@amend-2013",
+          "actCode": "BLA-2006",
+          "actTitleBn": "বাংলাদেশ শ্রম আইন, ২০০৬",
+          "actTitleEn": "Bangladesh Labour Act, 2006",
+          "sectionNo": "125",
+          "headingBn": "মজুরী হইতে কর্তনযোগ্য বিষয়াদি",
+          "headingEn": null,
+          "quote": "(১) এই আইন দ্বারা অনুমোদিত কর্তনের ক্ষেত্র ব্যতীত অন্য কোন ৰেত্রে কোন শ্রমিকের মজুরী হইতে কিছুই কর্তন করা যাইবে না।",
+          "quoteLanguage": "bn",
+          "translation": null,
+          "sourceUrl": "http://bdlaws.minlaw.gov.bd/act-952/section-29452.html",
+          "versionLabel": "amend-2013",
+          "effectiveFrom": null
+        },
+        {
+          "verification": {
+            "citationId": "6fc462f5-173b-43b9-836a-d36469a6d180",
+            "sectionKey": "BLA-2006:132@amend-2026",
+            "status": "VERIFIED",
+            "attempt": 1,
+            "checks": {
+              "existence": {
+                "outcome": "PASS"
+              },
+              "quoteMatch": {
+                "outcome": "PASS",
+                "similarity": 1,
+                "matchedLanguage": "bn"
+              },
+              "support": {
+                "outcome": "PASS",
+                "label": "SUPPORTS",
+                "confidence": 0.93,
+                "independence": "SAME_FAMILY",
+                "modelId": "claude-haiku-5-5",
+                "reason": "Section 132(1) lets a worker apply to the Labour Court to recover wages deducted in breach of the Act, matching the claim."
+              }
+            },
+            "reasonCodes": [],
+            "verifiedAt": "2026-11-19T12:03:14.131145Z",
+            "corpusRelease": "2026.11.11-1"
+          },
+          "citationId": "6fc462f5-173b-43b9-836a-d36469a6d180",
+          "sectionKey": "BLA-2006:132@amend-2026",
+          "actCode": "BLA-2006",
+          "actTitleBn": "বাংলাদেশ শ্রম আইন, ২০০৬",
+          "actTitleEn": "Bangladesh Labour Act, 2006",
+          "sectionNo": "132",
+          "headingBn": "মজুরী হইতে কর্তন বা মজুরী বিলম্বে পরিশোধের কারণে উত্থিত দাবী",
+          "headingEn": null,
+          "quote": "(১) যে ক্ষেত্রে এই আইনের বিধানের খেলাপ [ করিয়া] কোন শ্রমিকের মজুরী হইতে কোন কর্তন করা হয় অথবা কোন শ্রমিকের মজুরী পরিশোধ করা না হয় অথবা তাহার মজুরী কিংবা কোন বিধির আওতায় প্রদেয় গ্রাচুইটি বা ভবিষ্য তহবিলের প্রাপ্য পরিশোধে বিলম্বে ঘটে সে ক্ষেত্রে তিনি, অথবা তাহার মৃতু্য হইলে তাহার কোন উত্তরাধিকারী অথবা কোন আইনসঙ্গত প্রতিনিধি [বা কোনো পরিদর্শক] কর্তৃক মজুরী ফেরত পাওয়ার জন্য অথবা বকেয়া বা বিলম্বিত মজুরী ও অন্যান্য পাওনা আদায়ের জন্য শ্রম আদালতে দরখাসত্দ করিতে পারিবেন।",
+          "quoteLanguage": "bn",
+          "translation": null,
+          "sourceUrl": "http://bdlaws.minlaw.gov.bd/act-952/section-29459.html",
+          "versionLabel": "amend-2026",
+          "effectiveFrom": null
+        }
+      ],
+      "ruleCheck": {
+        "passed": true,
+        "ruleIds": [
+          "bd-daily-hours-max",
+          "bd-weekly-hours-max",
+          "bd-overtime-rate-min",
+          "bd-weekly-rest-min",
+          "bd-casual-leave-min",
+          "bd-sick-leave-min",
+          "bd-festival-holidays-min",
+          "bd-maternity-leave-min"
+        ],
+        "attempts": 1
+      },
+      "language": "bn"
+    },
+    {
+      "id": "r3",
+      "findingIds": [
+        "f3"
+      ],
+      "clauseId": "c7",
+      "action": "REPLACE",
+      "originalText": "6. Injury and sickness If the Guard is injured or ill, the Company has no duty to pay medical costs or wages for absent days.",
+      "proposedText": "৬. আঘাত ও অসুস্থতা: কর্মকালীন দুর্ঘটনা বা পেশাগত রোগে আক্রান্ত হলে কোম্পানি নিজ খরচে ও দায়িত্বে গার্ডের সম্পূর্ণ সুস্থ হওয়া পর্যন্ত চিকিৎসা করাবে এবং আইন অনুযায়ী ক্ষতিপূরণ দেবে। কর্মসংশ্লিষ্ট নয় এমন অসুস্থতায় ছুটি ও মজুরি আইন ও কোম্পানির নীতি অনুযায়ী হবে।",
+      "diff": [
+        {
+          "op": "DELETE",
+          "text": "6"
+        },
+        {
+          "op": "INSERT",
+          "text": "৬"
+        },
+        {
+          "op": "EQUAL",
+          "text": "."
+        },
+        {
+          "op": "DELETE",
+          "text": " Injury and sickness If the Guard is injured or ill, the Company has no duty to pay medical costs or wages for absent days."
+        },
+        {
+          "op": "INSERT",
+          "text": " আঘাত ও অসুস্থতা: কর্মকালীন দুর্ঘটনা বা পেশাগত রোগে আক্রান্ত হলে কোম্পানি নিজ খরচে ও দায়িত্বে গার্ডের সম্পূর্ণ সুস্থ হওয়া পর্যন্ত চিকিৎসা করাবে এবং আইন অনুযায়ী ক্ষতিপূরণ দেবে। কর্মসংশ্লিষ্ট নয় এমন অসুস্থতায় ছুটি ও মজুরি আইন ও কোম্পানির নীতি অনুযায়ী হবে।"
+        }
+      ],
+      "rationale": "ধারাটি এখন কর্মকালীন আঘাতে মালিকের খরচে চিকিৎসা ও ক্ষতিপূরণ নিশ্চিত করে এবং অন্য অসুস্থতায় আইনানুগ ছুটি রাখে।",
+      "citations": [
+        {
+          "verification": {
+            "citationId": "086a2963-2133-4a77-9133-dbb4c5041336",
+            "sectionKey": "BLA-2006:89@amend-2013",
+            "status": "VERIFIED",
+            "attempt": 1,
+            "checks": {
+              "existence": {
+                "outcome": "PASS"
+              },
+              "quoteMatch": {
+                "outcome": "PASS",
+                "similarity": 1,
+                "matchedLanguage": "bn"
+              },
+              "support": {
+                "outcome": "PASS",
+                "label": "SUPPORTS",
+                "confidence": 0.92,
+                "independence": "SAME_FAMILY",
+                "modelId": "claude-haiku-5-5",
+                "reason": "Section 89(7) requires employer to treat occupational disease or workplace accident injury at employer's own cost and responsibility until fully recovered."
+              }
+            },
+            "reasonCodes": [],
+            "verifiedAt": "2026-11-19T12:03:14.131961Z",
+            "corpusRelease": "2026.11.11-1"
+          },
+          "citationId": "086a2963-2133-4a77-9133-dbb4c5041336",
+          "sectionKey": "BLA-2006:89@amend-2013",
+          "actCode": "BLA-2006",
+          "actTitleBn": "বাংলাদেশ শ্রম আইন, ২০০৬",
+          "actTitleEn": "Bangladesh Labour Act, 2006",
+          "sectionNo": "89",
+          "headingBn": "প্রাথমিক চিকিৎসা সরঞ্জাম",
+          "headingEn": null,
+          "quote": "(৭) পেশাগত রোগে বা কর্মকালীন দুর্ঘটনায় আক্রান্ত শ্রমিক ও কর্মচারীকে মালিকের নিজ খরচে ও দায়িত্বে উক্ত রোগ, আঘাত বা অসুস্থতা উপযুক্ত বা বিশেষজ্ঞ চিকিৎসক দ্বারা সম্পূর্ণ সুস্থ না হওয়া পর্যন্ত চিকিৎসা করিতে হইবে।",
+          "quoteLanguage": "bn",
+          "translation": null,
+          "sourceUrl": "http://bdlaws.minlaw.gov.bd/act-952/section-29948.html",
+          "versionLabel": "amend-2013",
+          "effectiveFrom": null
+        },
+        {
+          "verification": {
+            "citationId": "70d47d22-d310-4a1a-b68a-905582d371a3",
+            "sectionKey": "BLA-2006:150@original",
+            "status": "VERIFIED",
+            "attempt": 1,
+            "checks": {
+              "existence": {
+                "outcome": "PASS"
+              },
+              "quoteMatch": {
+                "outcome": "PASS",
+                "similarity": 1,
+                "matchedLanguage": "bn"
+              },
+              "support": {
+                "outcome": "PASS",
+                "label": "SUPPORTS",
+                "confidence": 0.92,
+                "independence": "SAME_FAMILY",
+                "modelId": "claude-haiku-5-5",
+                "reason": "Section 150(1) says an employer must compensate a worker injured in an accident arising during employment, matching the claim's elements."
+              }
+            },
+            "reasonCodes": [],
+            "verifiedAt": "2026-11-19T12:03:14.130763Z",
+            "corpusRelease": "2026.11.11-1"
+          },
+          "citationId": "70d47d22-d310-4a1a-b68a-905582d371a3",
+          "sectionKey": "BLA-2006:150@original",
+          "actCode": "BLA-2006",
+          "actTitleBn": "বাংলাদেশ শ্রম আইন, ২০০৬",
+          "actTitleEn": "Bangladesh Labour Act, 2006",
+          "sectionNo": "150",
+          "headingBn": "ক্ষতিপূরণ প্রদানের জন্য মালিকের দায়িত্ব",
+          "headingEn": null,
+          "quote": "(১) চাকুরী চলাকালে উহা হইতে উদ্ভূত দুর্ঘটনার ফলে যদি কোন শ্রমিক শরীরে জখমপ্রাপ্ত হন তাহা হইলে মালিক তাহাকে এই অধ্যায়ের বিধান অনুযায়ী ৰতিপূরণ দিতে বাধ্য থাকিবেন।",
+          "quoteLanguage": "bn",
+          "translation": null,
+          "sourceUrl": "http://bdlaws.minlaw.gov.bd/act-952/section-29389.html",
+          "versionLabel": "original",
+          "effectiveFrom": "2006-10-11"
+        }
+      ],
+      "ruleCheck": {
+        "passed": true,
+        "ruleIds": [
+          "bd-daily-hours-max",
+          "bd-weekly-hours-max",
+          "bd-overtime-rate-min",
+          "bd-weekly-rest-min",
+          "bd-casual-leave-min",
+          "bd-sick-leave-min",
+          "bd-festival-holidays-min",
+          "bd-maternity-leave-min"
+        ],
+        "attempts": 1
+      },
+      "language": "bn"
+    },
+    {
+      "id": "r4",
+      "findingIds": [
+        "f4"
+      ],
+      "clauseId": "c8",
+      "action": "REPLACE",
+      "originalText": "7. Notice and termination The Company may end this contract at any time without notice. The Guard needs the Company's written permission to resign.",
+      "proposedText": "৭. নোটিশ ও অবসান: কোম্পানি আইন অনুযায়ী লিখিত নোটিশ দিয়ে, অথবা আইনে অনুমোদিত ক্ষেত্রে নোটিশের পরিবর্তে নোটিশ মেয়াদের মজুরি প্রদান করে, চুক্তি অবসান করতে পারিবে। গার্ড কোম্পানির অনুমতি ছাড়াই লিখিত নোটিশ দিয়ে, অথবা নোটিশ মেয়াদের মজুরির সমপরিমাণ অর্থ প্রদান করিয়া, ইস্তফা দিতে পারিবেন।",
+      "diff": [
+        {
+          "op": "DELETE",
+          "text": "7"
+        },
+        {
+          "op": "INSERT",
+          "text": "৭"
+        },
+        {
+          "op": "EQUAL",
+          "text": "."
+        },
+        {
+          "op": "DELETE",
+          "text": " Notice and termination The Company may end this contract at any time without notice. The Guard needs the Company's written permission to resign."
+        },
+        {
+          "op": "INSERT",
+          "text": " নোটিশ ও অবসান: কোম্পানি আইন অনুযায়ী লিখিত নোটিশ দিয়ে, অথবা আইনে অনুমোদিত ক্ষেত্রে নোটিশের পরিবর্তে নোটিশ মেয়াদের মজুরি প্রদান করে, চুক্তি অবসান করতে পারিবে। গার্ড কোম্পানির অনুমতি ছাড়াই লিখিত নোটিশ দিয়ে, অথবা নোটিশ মেয়াদের মজুরির সমপরিমাণ অর্থ প্রদান করিয়া, ইস্তফা দিতে পারিবেন।"
+        }
+      ],
+      "rationale": "বিনা নোটিশে অবসান ও ইস্তফায় অনুমতির শর্ত বাদ দিয়ে ধারা ২৭ অনুযায়ী নোটিশ বা মজুরির বিকল্প রাখা হয়েছে।",
+      "citations": [
+        {
+          "verification": {
+            "citationId": "875e6d7d-45c5-4dac-a1c3-1346a17eb23f",
+            "sectionKey": "BLA-2006:27@amend-2026",
+            "status": "VERIFIED",
+            "attempt": 1,
+            "checks": {
+              "existence": {
+                "outcome": "PASS"
+              },
+              "quoteMatch": {
+                "outcome": "PASS",
+                "similarity": 1,
+                "matchedLanguage": "bn"
+              },
+              "support": {
+                "outcome": "PASS",
+                "label": "SUPPORTS",
+                "confidence": 0.9,
+                "independence": "SAME_FAMILY",
+                "modelId": "claude-haiku-5-5",
+                "reason": "Section 27(3) lets a worker resign without notice by paying wages equal to the notice period, matching the claim."
+              }
+            },
+            "reasonCodes": [],
+            "verifiedAt": "2026-11-19T12:03:14.132249Z",
+            "corpusRelease": "2026.11.11-1"
+          },
+          "citationId": "875e6d7d-45c5-4dac-a1c3-1346a17eb23f",
+          "sectionKey": "BLA-2006:27@amend-2026",
+          "actCode": "BLA-2006",
+          "actTitleBn": "বাংলাদেশ শ্রম আইন, ২০০৬",
+          "actTitleEn": "Bangladesh Labour Act, 2006",
+          "sectionNo": "27",
+          "headingBn": "শ্রমিক কর্তৃক চাকুরীর অবসান",
+          "headingEn": null,
+          "quote": "(৩) যে ক্ষেত্রে শ্রমিক বিনা নোটিশে চাকুরী হইতে ইস্তফা দিতে চাহেন সে ক্ষেত্রে, তিনি উপ-ধারা (১) অথবা (২) এর অধীন প্রদেয় নোটিশের পরিবর্তে নোটিশ মেয়াদের জন্য মজুরীর সমপরিমাণ অর্থ মালিককে প্রদান করিয়া ইহা করিতে পারিবেন৷",
+          "quoteLanguage": "bn",
+          "translation": null,
+          "sourceUrl": "http://bdlaws.minlaw.gov.bd/act-952/section-29914.html",
+          "versionLabel": "amend-2026",
+          "effectiveFrom": null
+        }
+      ],
+      "ruleCheck": {
+        "passed": true,
+        "ruleIds": [
+          "bd-daily-hours-max",
+          "bd-weekly-hours-max",
+          "bd-overtime-rate-min",
+          "bd-weekly-rest-min",
+          "bd-casual-leave-min",
+          "bd-sick-leave-min",
+          "bd-festival-holidays-min",
+          "bd-maternity-leave-min"
+        ],
+        "attempts": 1
+      },
+      "language": "bn"
+    },
+    {
+      "id": "r5",
+      "findingIds": [
+        "f5"
+      ],
+      "clauseId": "c4",
+      "action": "REPLACE",
+      "originalText": "3. Hours of work The Guard works 12 hours a day for 30 days a month. No extra payment is made for night shifts or extra hours.",
+      "proposedText": "3. Hours of work: The Guard works 8 hours a day and no more than 48 hours a week, with weekly rest as the law requires. Any work beyond these hours is overtime and is paid at double the ordinary rate. Night shifts are allotted fairly.",
+      "diff": [
+        {
+          "op": "EQUAL",
+          "text": "3. Hours of work"
+        },
+        {
+          "op": "INSERT",
+          "text": ":"
+        },
+        {
+          "op": "EQUAL",
+          "text": " The Guard works"
+        },
+        {
+          "op": "DELETE",
+          "text": " 12"
+        },
+        {
+          "op": "INSERT",
+          "text": " 8"
+        },
+        {
+          "op": "EQUAL",
+          "text": " hours a day"
+        },
+        {
+          "op": "DELETE",
+          "text": " for 30 days"
+        },
+        {
+          "op": "INSERT",
+          "text": " and no more than 48 hours"
+        },
+        {
+          "op": "EQUAL",
+          "text": " a"
+        },
+        {
+          "op": "DELETE",
+          "text": " month"
+        },
+        {
+          "op": "INSERT",
+          "text": " week, with weekly rest as the law requires"
+        },
+        {
+          "op": "EQUAL",
+          "text": "."
+        },
+        {
+          "op": "DELETE",
+          "text": " No extra payment"
+        },
+        {
+          "op": "INSERT",
+          "text": " Any work beyond these hours"
+        },
+        {
+          "op": "EQUAL",
+          "text": " is"
+        },
+        {
+          "op": "DELETE",
+          "text": " made for night"
+        },
+        {
+          "op": "INSERT",
+          "text": " overtime and is paid at double the ordinary rate. Night"
+        },
+        {
+          "op": "EQUAL",
+          "text": " shifts"
+        },
+        {
+          "op": "DELETE",
+          "text": " or extra hours"
+        },
+        {
+          "op": "INSERT",
+          "text": " are allotted fairly"
+        },
+        {
+          "op": "EQUAL",
+          "text": "."
+        }
+      ],
+      "rationale": "দৈনিক ৮ ঘণ্টা ও সাপ্তাহিক ৪৮ ঘণ্টার সীমা এবং অধিকালের দ্বিগুণ ভাতা যুক্ত হওয়ায় ধারাটি আইনসম্মত হয়েছে।",
+      "citations": [
+        {
+          "verification": {
+            "citationId": "349fa9ae-319b-4fed-ae99-5fe248232a13",
+            "sectionKey": "BLA-2006:100@original",
+            "status": "VERIFIED",
+            "attempt": 1,
+            "checks": {
+              "existence": {
+                "outcome": "PASS"
+              },
+              "quoteMatch": {
+                "outcome": "PASS",
+                "similarity": 1,
+                "matchedLanguage": "bn"
+              },
+              "support": {
+                "outcome": "PASS",
+                "label": null,
+                "confidence": null,
+                "independence": "RULE_PROVENANCE",
+                "modelId": null,
+                "reason": "reviewed rule source"
+              }
+            },
+            "reasonCodes": [],
+            "verifiedAt": "2026-11-19T12:03:14.129072Z",
+            "corpusRelease": "2026.11.11-1"
+          },
+          "citationId": "349fa9ae-319b-4fed-ae99-5fe248232a13",
+          "sectionKey": "BLA-2006:100@original",
+          "actCode": "BLA-2006",
+          "actTitleBn": "বাংলাদেশ শ্রম আইন, ২০০৬",
+          "actTitleEn": "Bangladesh Labour Act, 2006",
+          "sectionNo": "100",
+          "headingBn": "দৈনিক কর্মঘণ্টা",
+          "headingEn": null,
+          "quote": "কোন প্রাপ্তবয়স্ক শ্রমিক কোন প্রতিষ্ঠানে সাধারণতঃ দৈনিক আট ঘণ্টার অধিক সময় কাজ করিবেন না বা তাহাকে দিয়ে কাজ করানো যাইবে নাঃ",
+          "quoteLanguage": "bn",
+          "translation": null,
+          "sourceUrl": "http://bdlaws.minlaw.gov.bd/act-952/section-29427.html",
+          "versionLabel": "original",
+          "effectiveFrom": "2006-10-11"
+        }
+      ],
+      "ruleCheck": {
+        "passed": true,
+        "ruleIds": [
+          "bd-daily-hours-max",
+          "bd-weekly-hours-max",
+          "bd-overtime-rate-min",
+          "bd-weekly-rest-min",
+          "bd-casual-leave-min",
+          "bd-sick-leave-min",
+          "bd-festival-holidays-min",
+          "bd-maternity-leave-min"
+        ],
+        "attempts": 1
+      },
+      "language": "bn"
+    },
+    {
+      "id": "r6",
+      "findingIds": [
+        "f6"
+      ],
+      "clauseId": "c5",
+      "action": "REPLACE",
+      "originalText": "4. Weekly rest and holidays The Guard has no weekly rest day and no public holidays unless the client site is closed.",
+      "proposedText": "৪. সাপ্তাহিক ছুটি ও উৎসব ছুটি: গার্ড প্রতি সপ্তাহে অন্তত ১ দিন সাপ্তাহিক ছুটি এবং বছরে ১৩ দিন মজুরীসহ উৎসব ছুটি পাবেন। ছুটির দিনে কাজ করতে হলে আইন অনুযায়ী ক্ষতিপূরক ছুটি বা প্রাপ্য মজুরী দেওয়া হবে।",
+      "diff": [
+        {
+          "op": "DELETE",
+          "text": "4"
+        },
+        {
+          "op": "INSERT",
+          "text": "৪"
+        },
+        {
+          "op": "EQUAL",
+          "text": "."
+        },
+        {
+          "op": "DELETE",
+          "text": " Weekly rest and holidays The Guard has no weekly rest day and no public holidays unless the client site is closed."
+        },
+        {
+          "op": "INSERT",
+          "text": " সাপ্তাহিক ছুটি ও উৎসব ছুটি: গার্ড প্রতি সপ্তাহে অন্তত ১ দিন সাপ্তাহিক ছুটি এবং বছরে ১৩ দিন মজুরীসহ উৎসব ছুটি পাবেন। ছুটির দিনে কাজ করতে হলে আইন অনুযায়ী ক্ষতিপূরক ছুটি বা প্রাপ্য মজুরী দেওয়া হবে।"
+        }
+      ],
+      "rationale": "ধারাটি এখন ন্যূনতম ১ দিন সাপ্তাহিক ছুটি ও ১৩ দিন উৎসব ছুটি নিশ্চিত করে এবং প্রয়োজনে ছুটির দিনে কাজের সুযোগ রাখে।",
+      "citations": [
+        {
+          "verification": {
+            "citationId": "7e95a394-1869-4d9e-895b-17b2ba09cac1",
+            "sectionKey": "BLA-2006:103@amend-2018",
+            "status": "VERIFIED",
+            "attempt": 1,
+            "checks": {
+              "existence": {
+                "outcome": "PASS"
+              },
+              "quoteMatch": {
+                "outcome": "PASS",
+                "similarity": 1,
+                "matchedLanguage": "bn"
+              },
+              "support": {
+                "outcome": "PASS",
+                "label": null,
+                "confidence": null,
+                "independence": "RULE_PROVENANCE",
+                "modelId": null,
+                "reason": "reviewed rule source"
+              }
+            },
+            "reasonCodes": [],
+            "verifiedAt": "2026-11-19T12:03:14.133913Z",
+            "corpusRelease": "2026.11.11-1"
+          },
+          "citationId": "7e95a394-1869-4d9e-895b-17b2ba09cac1",
+          "sectionKey": "BLA-2006:103@amend-2018",
+          "actCode": "BLA-2006",
+          "actTitleBn": "বাংলাদেশ শ্রম আইন, ২০০৬",
+          "actTitleEn": "Bangladesh Labour Act, 2006",
+          "sectionNo": "103",
+          "headingBn": "সাপ্তাহিক ছুটি",
+          "headingEn": null,
+          "quote": "[ (ক) প্রতি সপ্তাহে কারখানা ও শিল্পের ক্ষেত্রে একদিন এবং দোকান ও প্রতিষ্ঠানের ক্ষেত্রে দেড় দিন ছুটি পাইবেন;]",
+          "quoteLanguage": "bn",
+          "translation": null,
+          "sourceUrl": "http://bdlaws.minlaw.gov.bd/act-952/section-29430.html",
+          "versionLabel": "amend-2018",
+          "effectiveFrom": null
+        }
+      ],
+      "ruleCheck": {
+        "passed": true,
+        "ruleIds": [
+          "bd-daily-hours-max",
+          "bd-weekly-hours-max",
+          "bd-overtime-rate-min",
+          "bd-weekly-rest-min",
+          "bd-casual-leave-min",
+          "bd-sick-leave-min",
+          "bd-festival-holidays-min",
+          "bd-maternity-leave-min"
+        ],
+        "attempts": 1
+      },
+      "language": "bn"
+    },
+    {
+      "id": "r7",
+      "findingIds": [
+        "f7"
+      ],
+      "clauseId": "c5",
+      "action": "REPLACE",
+      "originalText": "4. Weekly rest and holidays The Guard has no weekly rest day and no public holidays unless the client site is closed.",
+      "proposedText": "৪. সাপ্তাহিক বিশ্রাম ও ছুটি: নিরাপত্তারক্ষী প্রতি সপ্তাহে কমপক্ষে ১ দিন মজুরিসহ সাপ্তাহিক বিশ্রাম পাবেন এবং প্রতি পঞ্জিকা বছরে মজুরিসহ ১৩ দিন উৎসব ছুটি পাবেন। ক্লায়েন্ট সাইট বন্ধ থাকলে সেই দিন এই ছুটির অংশ হিসেবে গণ্য হতে পারে।",
+      "diff": [
+        {
+          "op": "DELETE",
+          "text": "4"
+        },
+        {
+          "op": "INSERT",
+          "text": "৪"
+        },
+        {
+          "op": "EQUAL",
+          "text": "."
+        },
+        {
+          "op": "DELETE",
+          "text": " Weekly rest and holidays The Guard has no weekly rest day and no public holidays unless the client site is closed."
+        },
+        {
+          "op": "INSERT",
+          "text": " সাপ্তাহিক বিশ্রাম ও ছুটি: নিরাপত্তারক্ষী প্রতি সপ্তাহে কমপক্ষে ১ দিন মজুরিসহ সাপ্তাহিক বিশ্রাম পাবেন এবং প্রতি পঞ্জিকা বছরে মজুরিসহ ১৩ দিন উৎসব ছুটি পাবেন। ক্লায়েন্ট সাইট বন্ধ থাকলে সেই দিন এই ছুটির অংশ হিসেবে গণ্য হতে পারে।"
+        }
+      ],
+      "rationale": "ধারাটিতে এখন আইনসম্মত ১ দিন সাপ্তাহিক বিশ্রাম ও ১৩ দিন মজুরিসহ উৎসব ছুটি নিশ্চিত করা হয়েছে।",
+      "citations": [
+        {
+          "verification": {
+            "citationId": "f2627a43-f185-486d-9a3d-b0e8294ce5a2",
+            "sectionKey": "BLA-2006:118@amend-2026",
+            "status": "VERIFIED",
+            "attempt": 1,
+            "checks": {
+              "existence": {
+                "outcome": "PASS"
+              },
+              "quoteMatch": {
+                "outcome": "PASS",
+                "similarity": 1,
+                "matchedLanguage": "bn"
+              },
+              "support": {
+                "outcome": "PASS",
+                "label": null,
+                "confidence": null,
+                "independence": "RULE_PROVENANCE",
+                "modelId": null,
+                "reason": "reviewed rule source"
+              }
+            },
+            "reasonCodes": [],
+            "verifiedAt": "2026-11-19T12:03:14.133810Z",
+            "corpusRelease": "2026.11.11-1"
+          },
+          "citationId": "f2627a43-f185-486d-9a3d-b0e8294ce5a2",
+          "sectionKey": "BLA-2006:118@amend-2026",
+          "actCode": "BLA-2006",
+          "actTitleBn": "বাংলাদেশ শ্রম আইন, ২০০৬",
+          "actTitleEn": "Bangladesh Labour Act, 2006",
+          "sectionNo": "118",
+          "headingBn": "উৎসব ছুটি",
+          "headingEn": null,
+          "quote": "(১) প্রত্যেক শ্রমিককে প্রতি পঞ্জিকা বৎসরে [১৩ (তের)] দিনের মজুরীসহ উৎসব ছুটি মঞ্জুর করিতে হইবে।",
+          "quoteLanguage": "bn",
+          "translation": null,
+          "sourceUrl": "http://bdlaws.minlaw.gov.bd/act-952/section-29445.html",
+          "versionLabel": "amend-2026",
+          "effectiveFrom": null
+        }
+      ],
+      "ruleCheck": {
+        "passed": true,
+        "ruleIds": [
+          "bd-daily-hours-max",
+          "bd-weekly-hours-max",
+          "bd-overtime-rate-min",
+          "bd-weekly-rest-min",
+          "bd-casual-leave-min",
+          "bd-sick-leave-min",
+          "bd-festival-holidays-min",
+          "bd-maternity-leave-min"
+        ],
+        "attempts": 1
+      },
+      "language": "bn"
+    },
+    {
+      "id": "r8",
+      "findingIds": [
+        "f8"
+      ],
+      "clauseId": "c6",
+      "action": "REPLACE",
+      "originalText": "5. Probation The first 9 months are probation, during which the salary is 70 percent of the stated salary.",
+      "proposedText": "৫. শিক্ষানবিশকাল: নিয়োগের প্রথম ৩ মাস (কেরানী-সংক্রান্ত কাজে ৬ মাস) শিক্ষানবিশকাল হইবে। এই সময়ে শ্রমিক চুক্তিতে উল্লিখিত পূর্ণ বেতন পাইবেন।",
+      "diff": [
+        {
+          "op": "DELETE",
+          "text": "5"
+        },
+        {
+          "op": "INSERT",
+          "text": "৫"
+        },
+        {
+          "op": "EQUAL",
+          "text": "."
+        },
+        {
+          "op": "DELETE",
+          "text": " Probation The first 9 months are probation, during which the salary is 70 percent of the stated salary."
+        },
+        {
+          "op": "INSERT",
+          "text": " শিক্ষানবিশকাল: নিয়োগের প্রথম ৩ মাস (কেরানী-সংক্রান্ত কাজে ৬ মাস) শিক্ষানবিশকাল হইবে। এই সময়ে শ্রমিক চুক্তিতে উল্লিখিত পূর্ণ বেতন পাইবেন।"
+        }
+      ],
+      "rationale": "শিক্ষানবিশকাল আইনসম্মত ৩ বা ৬ মাসে সীমিত করা হয়েছে এবং কম বেতনের শর্ত বাদ দিয়ে পূর্ণ বেতন রাখা হয়েছে।",
+      "citations": [
+        {
+          "verification": {
+            "citationId": "ff5046a2-54ce-4969-b41e-b70593aef4f0",
+            "sectionKey": "BLA-2006:4@amend-2026",
+            "status": "VERIFIED",
+            "attempt": 2,
+            "checks": {
+              "existence": {
+                "outcome": "PASS"
+              },
+              "quoteMatch": {
+                "outcome": "PASS",
+                "similarity": 1,
+                "matchedLanguage": "bn"
+              },
+              "support": {
+                "outcome": "PASS",
+                "label": "SUPPORTS",
+                "confidence": 0.95,
+                "independence": "SAME_FAMILY",
+                "modelId": "claude-haiku-5-5",
+                "reason": "Section 4(8) states probation is six months for clerical workers and three months for other workers, matching the claim."
+              }
+            },
+            "reasonCodes": [],
+            "verifiedAt": "2026-11-19T12:03:14.278943Z",
+            "corpusRelease": "2026.11.11-1"
+          },
+          "citationId": "ff5046a2-54ce-4969-b41e-b70593aef4f0",
+          "sectionKey": "BLA-2006:4@amend-2026",
+          "actCode": "BLA-2006",
+          "actTitleBn": "বাংলাদেশ শ্রম আইন, ২০০৬",
+          "actTitleEn": "Bangladesh Labour Act, 2006",
+          "sectionNo": "4",
+          "headingBn": "শ্রমিকগণের শ্রেণী বিভাগ এবং শিক্ষানবিশীকাল",
+          "headingEn": null,
+          "quote": "(৮) কেরানী-সংক্রান্ত কাজে নিযুক্ত কোন শ্রমিকের শিক্ষানবিশীকাল হইবে ছয় মাস এবং অন্যান্য শ্রমিকের জন্য এই সময় হইবে তিন মাসঃ",
+          "quoteLanguage": "bn",
+          "translation": null,
+          "sourceUrl": "http://bdlaws.minlaw.gov.bd/act-952/section-29072.html",
+          "versionLabel": "amend-2026",
+          "effectiveFrom": null
+        }
+      ],
+      "ruleCheck": {
+        "passed": true,
+        "ruleIds": [
+          "bd-daily-hours-max",
+          "bd-weekly-hours-max",
+          "bd-overtime-rate-min",
+          "bd-weekly-rest-min",
+          "bd-casual-leave-min",
+          "bd-sick-leave-min",
+          "bd-festival-holidays-min",
+          "bd-maternity-leave-min"
+        ],
+        "attempts": 1
+      },
+      "language": "bn"
+    },
+    {
+      "id": "r9",
+      "findingIds": [
+        "f9"
+      ],
+      "clauseId": "c9",
+      "action": "REPLACE",
+      "originalText": "8. Non-competition For 3 years after leaving, the Guard may not work for any security company.",
+      "proposedText": "৮. গোপনীয়তা: চাকরি ছাড়ার পর গার্ড নিয়োগকর্তার গোপনীয় তথ্য, ক্লায়েন্টের তালিকা ও নিরাপত্তা-ব্যবস্থার বিবরণ প্রকাশ বা অপব্যবহার করবেন না। এই ধারা গার্ডকে কোনো বৈধ পেশা বা কোনো নিরাপত্তা কোম্পানিতে কাজ করা থেকে বিরত রাখে না।",
+      "diff": [
+        {
+          "op": "DELETE",
+          "text": "8"
+        },
+        {
+          "op": "INSERT",
+          "text": "৮"
+        },
+        {
+          "op": "EQUAL",
+          "text": "."
+        },
+        {
+          "op": "DELETE",
+          "text": " Non-competition For 3 years after leaving"
+        },
+        {
+          "op": "INSERT",
+          "text": " গোপনীয়তা: চাকরি ছাড়ার পর গার্ড নিয়োগকর্তার গোপনীয় তথ্য"
+        },
+        {
+          "op": "EQUAL",
+          "text": ","
+        },
+        {
+          "op": "DELETE",
+          "text": " the Guard may not work for any security company."
+        },
+        {
+          "op": "INSERT",
+          "text": " ক্লায়েন্টের তালিকা ও নিরাপত্তা-ব্যবস্থার বিবরণ প্রকাশ বা অপব্যবহার করবেন না। এই ধারা গার্ডকে কোনো বৈধ পেশা বা কোনো নিরাপত্তা কোম্পানিতে কাজ করা থেকে বিরত রাখে না।"
+        }
+      ],
+      "rationale": "পেশা-নিষেধ বাদ দিয়ে শুধু গোপনীয়তা রাখায় ধারাটি বৈধ থাকে এবং নিয়োগকর্তার স্বার্থও সুরক্ষিত হয়।",
+      "citations": [
+        {
+          "verification": {
+            "citationId": "33a4054e-9a03-4aee-a60c-aed40501e566",
+            "sectionKey": "CA-1872:27@original",
+            "status": "VERIFIED",
+            "attempt": 1,
+            "checks": {
+              "existence": {
+                "outcome": "PASS"
+              },
+              "quoteMatch": {
+                "outcome": "PASS",
+                "similarity": 1,
+                "matchedLanguage": "en"
+              },
+              "support": {
+                "outcome": "PASS",
+                "label": "SUPPORTS",
+                "confidence": 0.9,
+                "independence": "SAME_FAMILY",
+                "modelId": "claude-haiku-5-5",
+                "reason": "Section 27 states any agreement restraining a lawful profession, trade or business is void to that extent, matching the claim."
+              }
+            },
+            "reasonCodes": [],
+            "verifiedAt": "2026-11-19T12:03:14.136095Z",
+            "corpusRelease": "2026.11.11-1"
+          },
+          "citationId": "33a4054e-9a03-4aee-a60c-aed40501e566",
+          "sectionKey": "CA-1872:27@original",
+          "actCode": "CA-1872",
+          "actTitleBn": null,
+          "actTitleEn": "The Contract Act, 1872",
+          "sectionNo": "27",
+          "headingBn": null,
+          "headingEn": "Agreement in restraint of trade void Saving of agreement not to carry on business of which good- will is sold",
+          "quote": "Every agreement by which any one is restrained from exercising a lawful profession, trade or business of any kind, is to that extent void.",
+          "quoteLanguage": "en",
+          "translation": null,
+          "sourceUrl": "http://bdlaws.minlaw.gov.bd/act-26/section-190.html",
+          "versionLabel": "original",
+          "effectiveFrom": "1872-04-25"
+        }
+      ],
+      "ruleCheck": {
+        "passed": true,
+        "ruleIds": [
+          "bd-daily-hours-max",
+          "bd-weekly-hours-max",
+          "bd-overtime-rate-min",
+          "bd-weekly-rest-min",
+          "bd-casual-leave-min",
+          "bd-sick-leave-min",
+          "bd-festival-holidays-min",
+          "bd-maternity-leave-min"
+        ],
+        "attempts": 1
+      },
+      "language": "bn"
+    },
+    {
+      "id": "r10",
+      "findingIds": [
+        "f10"
+      ],
+      "clauseId": "c10",
+      "action": "REPLACE",
+      "originalText": "9. Governing law and disputes Any dispute is decided by the Company's manager, and that decision is final.\nSigned for the Company by Nasrin Demo Akter; the Guard: Karim Demo Hossain. Witness: Faruk Demo Mia.",
+      "proposedText": "৯. প্রযোজ্য আইন ও বিরোধ: কোনো বিরোধ দেখা দিলে পক্ষগণ প্রথমে কোম্পানির ম্যানেজারের সঙ্গে আলোচনার মাধ্যমে তা নিষ্পত্তির চেষ্টা করবেন। এতে নিষ্পত্তি না হলে যেকোনো পক্ষ বাংলাদেশের প্রচলিত আইন অনুযায়ী উপযুক্ত শ্রম আদালতে প্রতিকার চাইতে পারবেন।",
+      "diff": [
+        {
+          "op": "DELETE",
+          "text": "9"
+        },
+        {
+          "op": "INSERT",
+          "text": "৯"
+        },
+        {
+          "op": "EQUAL",
+          "text": "."
+        },
+        {
+          "op": "DELETE",
+          "text": " Governing law and disputes Any dispute is decided by the Company's manager, and that decision is final.\nSigned for the Company by Nasrin Demo Akter; the Guard"
+        },
+        {
+          "op": "INSERT",
+          "text": " প্রযোজ্য আইন ও বিরোধ"
+        },
+        {
+          "op": "EQUAL",
+          "text": ":"
+        },
+        {
+          "op": "DELETE",
+          "text": " Karim Demo Hossain. Witness: Faruk Demo Mia."
+        },
+        {
+          "op": "INSERT",
+          "text": " কোনো বিরোধ দেখা দিলে পক্ষগণ প্রথমে কোম্পানির ম্যানেজারের সঙ্গে আলোচনার মাধ্যমে তা নিষ্পত্তির চেষ্টা করবেন। এতে নিষ্পত্তি না হলে যেকোনো পক্ষ বাংলাদেশের প্রচলিত আইন অনুযায়ী উপযুক্ত শ্রম আদালতে প্রতিকার চাইতে পারবেন।"
+        }
+      ],
+      "rationale": "ম্যানেজারের সিদ্ধান্ত আর চূড়ান্ত নয়; প্রাথমিক আলোচনা থাকলেও শ্রম আদালতে যাওয়ার অধিকার অক্ষুণ্ণ থাকে।",
+      "citations": [
+        {
+          "verification": {
+            "citationId": "ce82326c-4954-463d-ad28-364fca25f4ec",
+            "sectionKey": "CA-1872:28@original",
+            "status": "VERIFIED",
+            "attempt": 1,
+            "checks": {
+              "existence": {
+                "outcome": "PASS"
+              },
+              "quoteMatch": {
+                "outcome": "PASS",
+                "similarity": 1,
+                "matchedLanguage": "en"
+              },
+              "support": {
+                "outcome": "PASS",
+                "label": "SUPPORTS",
+                "confidence": 0.92,
+                "independence": "SAME_FAMILY",
+                "modelId": "claude-haiku-5-5",
+                "reason": "Section voids agreements restricting a party absolutely from enforcing contract rights in ordinary tribunals, matching the claim, as quoted."
+              }
+            },
+            "reasonCodes": [],
+            "verifiedAt": "2026-11-19T12:03:14.136219Z",
+            "corpusRelease": "2026.11.11-1"
+          },
+          "citationId": "ce82326c-4954-463d-ad28-364fca25f4ec",
+          "sectionKey": "CA-1872:28@original",
+          "actCode": "CA-1872",
+          "actTitleBn": null,
+          "actTitleEn": "The Contract Act, 1872",
+          "sectionNo": "28",
+          "headingBn": null,
+          "headingEn": "Agreements in restraint of legal proceedings void Saving of contract to refer to arbitration dispute that may arise Suits barred by such contracts Saving of contract to refer questions that have already arisen",
+          "quote": "Every agreement, by which any party thereto is restricted absolutely from enforcing his rights under or in respect of any contract, by the usual legal proceedings in the ordinary tribunals, or which limits the time within which he may thus enforce his rights, is void to that extent.",
+          "quoteLanguage": "en",
+          "translation": null,
+          "sourceUrl": "http://bdlaws.minlaw.gov.bd/act-26/section-191.html",
+          "versionLabel": "original",
+          "effectiveFrom": "1872-04-25"
+        },
+        {
+          "verification": {
+            "citationId": "2cb796e5-7e9d-45a9-87c3-614a1e654bd2",
+            "sectionKey": "BLA-2006:214@amend-2013",
+            "status": "VERIFIED",
+            "attempt": 1,
+            "checks": {
+              "existence": {
+                "outcome": "PASS"
+              },
+              "quoteMatch": {
+                "outcome": "PASS",
+                "similarity": 1,
+                "matchedLanguage": "bn"
+              },
+              "support": {
+                "outcome": "PASS",
+                "label": "SUPPORTS",
+                "confidence": 0.92,
+                "independence": "SAME_FAMILY",
+                "modelId": "claude-haiku-5-5",
+                "reason": "Section 214(10)(ka) gives labour courts exclusive jurisdiction over trial and settlement of industrial or other disputes under the Act."
+              }
+            },
+            "reasonCodes": [],
+            "verifiedAt": "2026-11-19T12:03:14.137015Z",
+            "corpusRelease": "2026.11.11-1"
+          },
+          "citationId": "2cb796e5-7e9d-45a9-87c3-614a1e654bd2",
+          "sectionKey": "BLA-2006:214@amend-2013",
+          "actCode": "BLA-2006",
+          "actTitleBn": "বাংলাদেশ শ্রম আইন, ২০০৬",
+          "actTitleEn": "Bangladesh Labour Act, 2006",
+          "sectionNo": "214",
+          "headingBn": "শ্রম আদালত",
+          "headingEn": null,
+          "quote": "(১০) কোন শ্রম আদালত নিম্নলিখিত বিষয়ে অনন্য এখতিয়ারের অধিকারী হইবে, যথাঃ-",
+          "quoteLanguage": "bn",
+          "translation": null,
+          "sourceUrl": "http://bdlaws.minlaw.gov.bd/act-952/section-26274.html",
+          "versionLabel": "amend-2013",
+          "effectiveFrom": null
+        }
+      ],
+      "ruleCheck": {
+        "passed": true,
+        "ruleIds": [
+          "bd-daily-hours-max",
+          "bd-weekly-hours-max",
+          "bd-overtime-rate-min",
+          "bd-weekly-rest-min",
+          "bd-casual-leave-min",
+          "bd-sick-leave-min",
+          "bd-festival-holidays-min",
+          "bd-maternity-leave-min"
+        ],
+        "attempts": 1
+      },
+      "language": "bn"
+    },
+    {
+      "id": "r11",
+      "findingIds": [
+        "f11"
+      ],
+      "clauseId": "c2",
+      "action": "REPLACE",
+      "originalText": "1. Engagement The Company engages the Guard as a security guard and may post the Guard at any client site in the country at any time.",
+      "proposedText": "১. নিয়োগ: কোম্পানি গার্ডকে নিরাপত্তা প্রহরী হিসেবে নিয়োগ দেয় এবং ন্যায্য প্রয়োজনে দেশের যেকোনো ক্লায়েন্ট সাইটে পোস্টিং দিতে পারে। বদলির অন্তত ৭ দিন আগে লিখিত নোটিশ দিতে হবে এবং বদলির কারণে বাড়তি খরচের জন্য যুক্তিসংগত ভাতা দিতে হবে। বদলিতে বেতন ও সুবিধা কমানো যাবে না।",
+      "diff": [
+        {
+          "op": "DELETE",
+          "text": "1"
+        },
+        {
+          "op": "INSERT",
+          "text": "১"
+        },
+        {
+          "op": "EQUAL",
+          "text": "."
+        },
+        {
+          "op": "DELETE",
+          "text": " Engagement The Company engages the Guard as a security guard and may post the Guard at any client site in the country at any time."
+        },
+        {
+          "op": "INSERT",
+          "text": " নিয়োগ: কোম্পানি গার্ডকে নিরাপত্তা প্রহরী হিসেবে নিয়োগ দেয় এবং ন্যায্য প্রয়োজনে দেশের যেকোনো ক্লায়েন্ট সাইটে পোস্টিং দিতে পারে। বদলির অন্তত ৭ দিন আগে লিখিত নোটিশ দিতে হবে এবং বদলির কারণে বাড়তি খরচের জন্য যুক্তিসংগত ভাতা দিতে হবে। বদলিতে বেতন ও সুবিধা কমানো যাবে না।"
+        }
+      ],
+      "rationale": "বদলিতে নোটিশ, ভাতা ও বেতন-সুবিধার সুরক্ষা যোগ হওয়ায় শ্রমিকের অধিকার ক্ষুণ্ন হয় না, কোম্পানির পোস্টিংয়ের ক্ষমতাও থাকে।",
+      "citations": [
+        {
+          "verification": {
+            "citationId": "72259eca-c7c5-4459-a00f-bd6b120d676f",
+            "sectionKey": "BLA-2006:3@amend-2026",
+            "status": "VERIFIED",
+            "attempt": 1,
+            "checks": {
+              "existence": {
+                "outcome": "PASS"
+              },
+              "quoteMatch": {
+                "outcome": "PASS",
+                "similarity": 1,
+                "matchedLanguage": "bn"
+              },
+              "support": {
+                "outcome": "PASS",
+                "label": "SUPPORTS",
+                "confidence": 0.95,
+                "independence": "SAME_FAMILY",
+                "modelId": "claude-haiku-5-5",
+                "reason": "Section 3(1) proviso states company service rules cannot be less favourable to any worker than any provision of this chapter."
+              }
+            },
+            "reasonCodes": [],
+            "verifiedAt": "2026-11-19T12:03:14.136609Z",
+            "corpusRelease": "2026.11.11-1"
+          },
+          "citationId": "72259eca-c7c5-4459-a00f-bd6b120d676f",
+          "sectionKey": "BLA-2006:3@amend-2026",
+          "actCode": "BLA-2006",
+          "actTitleBn": "বাংলাদেশ শ্রম আইন, ২০০৬",
+          "actTitleEn": "Bangladesh Labour Act, 2006",
+          "sectionNo": "3",
+          "headingBn": "চাকুরীর শর্তাবলী",
+          "headingEn": null,
+          "quote": "তবে শর্ত থাকে যে, কোন প্রতিষ্ঠানের শ্রমিক নিয়োগ সংক্রান্ত নিজস্ব চাকুরী বিধি থাকিতে পারিবে, কিন্তু এই প্রকার কোন বিধি কোন শ্রমিকের জন্য এই অধ্যায়ের কোন বিধান হইতে কম অনুকূল হইতে পারিবে না[:",
+          "quoteLanguage": "bn",
+          "translation": null,
+          "sourceUrl": "http://bdlaws.minlaw.gov.bd/act-952/section-29071.html",
+          "versionLabel": "amend-2026",
+          "effectiveFrom": null
+        }
+      ],
+      "ruleCheck": {
+        "passed": true,
+        "ruleIds": [
+          "bd-daily-hours-max",
+          "bd-weekly-hours-max",
+          "bd-overtime-rate-min",
+          "bd-weekly-rest-min",
+          "bd-casual-leave-min",
+          "bd-sick-leave-min",
+          "bd-festival-holidays-min",
+          "bd-maternity-leave-min"
+        ],
+        "attempts": 1
+      },
+      "language": "bn"
+    },
+    {
+      "id": "r12",
+      "findingIds": [
+        "f12"
+      ],
+      "clauseId": "c3",
+      "action": "REPLACE",
+      "originalText": "2. Salary The monthly salary is BDT 11,000, from which uniform and equipment costs are deducted every month.",
+      "proposedText": "২. মজুরী: মাসিক মজুরী ১১,০০০ টাকা। প্রতিটি মজুরীকাল শেষ হওয়ার পরবর্তী ৭ কর্মদিবসের মধ্যে সম্পূর্ণ মজুরী পরিশোধ করা হবে। ইউনিফর্ম ও সরঞ্জামের খরচ কেবল আইনে অনুমোদিত হলে এবং লিখিতভাবে জানিয়ে কর্তন করা যাবে।",
+      "diff": [
+        {
+          "op": "DELETE",
+          "text": "2"
+        },
+        {
+          "op": "INSERT",
+          "text": "২"
+        },
+        {
+          "op": "EQUAL",
+          "text": "."
+        },
+        {
+          "op": "DELETE",
+          "text": " Salary The monthly salary is BDT 11"
+        },
+        {
+          "op": "INSERT",
+          "text": " মজুরী: মাসিক মজুরী ১১"
+        },
+        {
+          "op": "EQUAL",
+          "text": ","
+        },
+        {
+          "op": "DELETE",
+          "text": "000, from which uniform and equipment costs are deducted every month."
+        },
+        {
+          "op": "INSERT",
+          "text": "০০০ টাকা। প্রতিটি মজুরীকাল শেষ হওয়ার পরবর্তী ৭ কর্মদিবসের মধ্যে সম্পূর্ণ মজুরী পরিশোধ করা হবে। ইউনিফর্ম ও সরঞ্জামের খরচ কেবল আইনে অনুমোদিত হলে এবং লিখিতভাবে জানিয়ে কর্তন করা যাবে।"
+        }
+      ],
+      "rationale": "মজুরী পরিশোধের সময়সীমা ৭ কর্মদিবস স্পষ্ট করা হয়েছে এবং কর্তন আইনসম্মত শর্তে সীমিত রাখা হয়েছে।",
+      "citations": [
+        {
+          "verification": {
+            "citationId": "c0768f02-fe30-46a2-aa6e-ddb973673926",
+            "sectionKey": "BLA-2006:123@amend-2013",
+            "status": "VERIFIED",
+            "attempt": 1,
+            "checks": {
+              "existence": {
+                "outcome": "PASS"
+              },
+              "quoteMatch": {
+                "outcome": "PASS",
+                "similarity": 1,
+                "matchedLanguage": "bn"
+              },
+              "support": {
+                "outcome": "PASS",
+                "label": "SUPPORTS",
+                "confidence": 0.95,
+                "independence": "SAME_FAMILY",
+                "modelId": "claude-haiku-5-5",
+                "reason": "Section 123(1) requires wages to be paid within seven working days after the wage period ends, matching the claim."
+              }
+            },
+            "reasonCodes": [],
+            "verifiedAt": "2026-11-19T12:03:14.136223Z",
+            "corpusRelease": "2026.11.11-1"
+          },
+          "citationId": "c0768f02-fe30-46a2-aa6e-ddb973673926",
+          "sectionKey": "BLA-2006:123@amend-2013",
+          "actCode": "BLA-2006",
+          "actTitleBn": "বাংলাদেশ শ্রম আইন, ২০০৬",
+          "actTitleEn": "Bangladesh Labour Act, 2006",
+          "sectionNo": "123",
+          "headingBn": "মজুরী পরিশোধের সময়",
+          "headingEn": null,
+          "quote": "(১) কোন শ্রমিকের যে মজুরীকাল সমপর্কে তাহার মজুরী প্রদেয় হয় সেই কাল শেষ হওয়ার পরবর্তী সাত কর্মদিবসের মধ্যে তাহার মজুরী পরিশোধ করিতে হইবে।",
+          "quoteLanguage": "bn",
+          "translation": null,
+          "sourceUrl": "http://bdlaws.minlaw.gov.bd/act-952/section-29450.html",
+          "versionLabel": "amend-2013",
+          "effectiveFrom": null
+        }
+      ],
+      "ruleCheck": {
+        "passed": true,
+        "ruleIds": [
+          "bd-daily-hours-max",
+          "bd-weekly-hours-max",
+          "bd-overtime-rate-min",
+          "bd-weekly-rest-min",
+          "bd-casual-leave-min",
+          "bd-sick-leave-min",
+          "bd-festival-holidays-min",
+          "bd-maternity-leave-min"
+        ],
+        "attempts": 1
+      },
+      "language": "bn"
+    }
+  ],
+  "obligations": [
+    {
+      "id": "o1",
+      "party": "EMPLOYER",
+      "obligation": "চুক্তিতে লেখা মাসিক বেতন পরিশোধ করা",
+      "trigger": "প্রতি মাসে",
+      "deadline": null,
+      "source": "CONTRACT",
+      "status": "STATED_IN_CONTRACT",
+      "clauseIds": [],
+      "citations": []
+    },
+    {
+      "id": "o2",
+      "party": "WORKER",
+      "obligation": "চুক্তিতে নির্ধারিত সময়ে ও স্থানে কাজ করা",
+      "trigger": "কাজের মেয়াদে",
+      "deadline": null,
+      "source": "CONTRACT",
+      "status": "STATED_IN_CONTRACT",
+      "clauseIds": [],
+      "citations": []
+    }
+  ],
+  "summary": {
+    "overallSeverity": "CRITICAL",
+    "findingsBySeverity": {
+      "CRITICAL": 4,
+      "HIGH": 6,
+      "MEDIUM": 3,
+      "LOW": 0
+    },
+    "nonObviousFindings": 4,
+    "verifiedFindings": 13,
+    "uncertainFindings": 0,
+    "policyFindings": 0,
+    "verifiedCitations": 16,
+    "coverageNote": null
+  },
+  "reviewTicket": null,
+  "warnings": [
+    {
+      "code": "verifier-same-family",
+      "message": "Citations were checked by a model of the same family."
+    }
+  ],
+  "provenance": {
+    "pipelineVersion": "p6-1",
+    "corpusRelease": "2026.11.11-1",
+    "promptVersions": {
+      "memo-bn": 1,
+      "counter-offer": 2,
+      "risk-analysis": 2,
+      "clause-facts": 1,
+      "risk-citation-repair": 2,
+      "obligations": 1
+    },
+    "models": {
+      "memo-bn": "scripted-demo-standin",
+      "counter-offer": "claude-sonnet-5-5",
+      "risk-analysis": "claude-sonnet-5-5",
+      "clause-facts": "claude-haiku-5-5",
+      "risk-citation-repair": "claude-sonnet-5-5",
+      "obligations": "scripted-demo-standin"
+    },
+    "verifierIndependence": "SAME_FAMILY",
+    "recorded": true
+  },
+  "costUsd": 0.354827,
+  "memo": {
+    "id": "418d96fd-9232-462d-aa3d-abbf5579ba8d",
+    "analysisId": "e85afefb-1bdc-4f51-a8f9-11793648230d",
+    "language": "bn",
+    "readingLevel": "STANDARD",
+    "title": "চুক্তি বিশ্লেষণ স্মারক",
+    "generatedAt": "2026-11-19T12:03:14.299359Z",
+    "sections": [
+      {
+        "kind": "SUMMARY",
+        "heading": "সারসংক্ষেপ",
+        "blocks": [
+          {
+            "type": "paragraph",
+            "text": "এটি একটি নমুনা চুক্তির রেকর্ড করা বিশ্লেষণ। চুক্তিতে একাধিক ঝুঁকি পাওয়া গেছে। যেখানে আইনের ধারা যাচাই করা গেছে সেখানে উদ্ধৃতি দেখানো হয়েছে; বাকিগুলো মানুষের পর্যালোচনার জন্য পাঠানো হয়েছে।"
+          }
+        ]
+      },
+      {
+        "kind": "RISK_TABLE",
+        "heading": "ঝুঁকির তালিকা",
+        "blocks": [
+          {
+            "type": "riskTable",
+            "findingIds": [
+              "f1",
+              "f2",
+              "f3",
+              "f4",
+              "f5",
+              "f6",
+              "f7",
+              "f8",
+              "f9",
+              "f10",
+              "f11",
+              "f12",
+              "f13"
+            ]
+          }
+        ]
+      },
+      {
+        "kind": "RISK_DETAILS",
+        "heading": "প্রতিটি ঝুঁকির ব্যাখ্যা",
+        "blocks": [
+          {
+            "type": "findingRef",
+            "findingId": "f1"
+          },
+          {
+            "type": "paragraph",
+            "text": "অধিকাল কাজের জন্য শ্রমিক সাধারণ হারের দ্বিগুণ হারে ভাতা পাবেন। ঠিকা-হার (পিস রেট) ভিত্তিতে মজুরিপ্রাপ্ত শ্রমিকের ক্ষেত্রে এই নিয়ম প্রযোজ্য নয় (ধারা ১০৮(২))।"
+          },
+          {
+            "type": "citationChip",
+            "citationId": "deae2483-aedb-4533-afa0-13f135c85e37"
+          },
+          {
+            "type": "findingRef",
+            "findingId": "f2"
+          },
+          {
+            "type": "paragraph",
+            "text": "প্রতি মাসে ইউনিফর্ম ও সরঞ্জামের খরচ কাটা হয়। আইনে অনুমোদিত তালিকার বাইরে কর্তন নিষিদ্ধ, ফলে মজুরী কমে যাওয়ার ঝুঁকি।"
+          },
+          {
+            "type": "citationChip",
+            "citationId": "b5c7281a-1a93-4f08-a1d5-ec8699c37f86"
+          },
+          {
+            "type": "citationChip",
+            "citationId": "6fc462f5-173b-43b9-836a-d36469a6d180"
+          },
+          {
+            "type": "findingRef",
+            "findingId": "f3"
+          },
+          {
+            "type": "paragraph",
+            "text": "কোম্পানি চিকিৎসা ব্যয় ও মজুরি দিতে অস্বীকার করে। আইনে কর্মকালীন আঘাতে মালিকের নিজ খরচে চিকিৎসা ও ক্ষতিপূরণ বাধ্যতামূলক।"
+          },
+          {
+            "type": "citationChip",
+            "citationId": "086a2963-2133-4a77-9133-dbb4c5041336"
+          },
+          {
+            "type": "citationChip",
+            "citationId": "70d47d22-d310-4a1a-b68a-905582d371a3"
+          },
+          {
+            "type": "findingRef",
+            "findingId": "f4"
+          },
+          {
+            "type": "paragraph",
+            "text": "মালিক বিনা নোটিশে অবসান করতে পারেন, ক্ষতিপূরণ নেই। শ্রমিকের ইস্তফায় অনুমতি লাগে; আইনে নোটিশ বা মজুরি দিয়ে ইস্তফা দেওয়া যায়।"
+          },
+          {
+            "type": "citationChip",
+            "citationId": "875e6d7d-45c5-4dac-a1c3-1346a17eb23f"
+          },
+          {
+            "type": "findingRef",
+            "findingId": "f5"
+          },
+          {
+            "type": "paragraph",
+            "text": "দৈনিক ১২ ঘণ্টা কাজ, অতিরিক্ত ঘণ্টা বা রাতের জন্য কোনো ভাতা নেই। আইনে অধিকালের জন্য দ্বিগুণ হারে ভাতা প্রাপ্য।"
+          },
+          {
+            "type": "citationChip",
+            "citationId": "349fa9ae-319b-4fed-ae99-5fe248232a13"
+          },
+          {
+            "type": "findingRef",
+            "findingId": "f6"
+          },
+          {
+            "type": "paragraph",
+            "text": "সাপ্তাহিক ছুটি ও উৎসব ছুটি অস্বীকার করা হয়েছে। আইনে সপ্তাহে ছুটি এবং বছরে ১৩ দিন মজুরীসহ উৎসব ছুটি বাধ্যতামূলক।"
+          },
+          {
+            "type": "citationChip",
+            "citationId": "7e95a394-1869-4d9e-895b-17b2ba09cac1"
+          },
+          {
+            "type": "findingRef",
+            "findingId": "f7"
+          },
+          {
+            "type": "paragraph",
+            "text": "প্রতি পঞ্জিকা বছরে প্রত্যেক শ্রমিককে মজুরিসহ ১৩ দিন উৎসব ছুটি দিতে হবে (ধারা ১১৮(১), ২০২৬ সালের সংশোধিত রূপ)।"
+          },
+          {
+            "type": "citationChip",
+            "citationId": "f2627a43-f185-486d-9a3d-b0e8294ce5a2"
+          },
+          {
+            "type": "findingRef",
+            "findingId": "f8"
+          },
+          {
+            "type": "paragraph",
+            "text": "৯ মাস শিক্ষানবিশী ও ৭০% বেতন। আইনে শিক্ষানবিশকাল সাধারণত তিন মাস, সর্বোচ্চ ছয় মাস।"
+          },
+          {
+            "type": "citationChip",
+            "citationId": "ff5046a2-54ce-4969-b41e-b70593aef4f0"
+          },
+          {
+            "type": "findingRef",
+            "findingId": "f9"
+          },
+          {
+            "type": "paragraph",
+            "text": "চাকরি ছাড়ার পর তিন বছর কোনো নিরাপত্তা কোম্পানিতে কাজ নিষিদ্ধ। এটি বৈধ পেশা করার অধিকার সীমিত করে, তাই অকার্যকর।"
+          },
+          {
+            "type": "citationChip",
+            "citationId": "33a4054e-9a03-4aee-a60c-aed40501e566"
+          },
+          {
+            "type": "findingRef",
+            "findingId": "f10"
+          },
+          {
+            "type": "paragraph",
+            "text": "যেকোনো বিরোধ কোম্পানির ম্যানেজার নিষ্পত্তি করবেন ও তা চূড়ান্ত। এতে শ্রম আদালতে যাওয়ার অধিকার বাধাগ্রস্ত হয়।"
+          },
+          {
+            "type": "citationChip",
+            "citationId": "ce82326c-4954-463d-ad28-364fca25f4ec"
+          },
+          {
+            "type": "citationChip",
+            "citationId": "2cb796e5-7e9d-45a9-87c3-614a1e654bd2"
+          },
+          {
+            "type": "findingRef",
+            "findingId": "f11"
+          },
+          {
+            "type": "paragraph",
+            "text": "কোম্পানি সারাদেশে যেকোনো সময় পোস্টিং দিতে পারে; কোনো নোটিশ, ভাতা বা সীমা নেই। এতে শ্রমিকের অধিকার ক্ষুণ্ন হওয়ার ঝুঁকি।"
+          },
+          {
+            "type": "citationChip",
+            "citationId": "72259eca-c7c5-4459-a00f-bd6b120d676f"
+          },
+          {
+            "type": "findingRef",
+            "findingId": "f12"
+          },
+          {
+            "type": "paragraph",
+            "text": "চুক্তিতে মজুরী পরিশোধের সময়সীমা নেই। বিলম্ব হলে আইনি সময়সীমা (সাত কর্মদিবস) মানা না হওয়ার ঝুঁকি।"
+          },
+          {
+            "type": "citationChip",
+            "citationId": "c0768f02-fe30-46a2-aa6e-ddb973673926"
+          },
+          {
+            "type": "findingRef",
+            "findingId": "f13"
+          },
+          {
+            "type": "paragraph",
+            "text": "চূড়ান্ত ম্যানেজার-সিদ্ধান্ত ও বিনা নোটিশে ছাঁটাইয়ের ধারা মিলে ধারা ৩৩-এর আদালত-প্রতিকার অকার্যকর হতে পারে।"
+          },
+          {
+            "type": "citationChip",
+            "citationId": "c732a415-aa34-405b-97c1-550257a6a3f0"
+          }
+        ]
+      },
+      {
+        "kind": "REVISED_CLAUSES",
+        "heading": "প্রস্তাবিত সংশোধিত ধারা",
+        "blocks": [
+          {
+            "type": "redlineRef",
+            "redlineId": "r1"
+          },
+          {
+            "type": "redlineRef",
+            "redlineId": "r2"
+          },
+          {
+            "type": "redlineRef",
+            "redlineId": "r3"
+          },
+          {
+            "type": "redlineRef",
+            "redlineId": "r4"
+          },
+          {
+            "type": "redlineRef",
+            "redlineId": "r5"
+          },
+          {
+            "type": "redlineRef",
+            "redlineId": "r6"
+          },
+          {
+            "type": "redlineRef",
+            "redlineId": "r7"
+          },
+          {
+            "type": "redlineRef",
+            "redlineId": "r8"
+          },
+          {
+            "type": "redlineRef",
+            "redlineId": "r9"
+          },
+          {
+            "type": "redlineRef",
+            "redlineId": "r10"
+          },
+          {
+            "type": "redlineRef",
+            "redlineId": "r11"
+          },
+          {
+            "type": "redlineRef",
+            "redlineId": "r12"
+          }
+        ]
+      },
+      {
+        "kind": "OBLIGATIONS",
+        "heading": "কর্তব্যের তালিকা",
+        "blocks": [
+          {
+            "type": "obligationTable",
+            "obligationIds": [
+              "o1",
+              "o2"
+            ]
+          }
+        ]
+      },
+      {
+        "kind": "NEXT_STEPS",
+        "heading": "পরবর্তী পদক্ষেপ",
+        "blocks": [
+          {
+            "type": "list",
+            "items": [
+              "প্রতিটি উদ্ধৃতি সরকারি উৎসে মিলিয়ে দেখুন।",
+              "প্রস্তাবিত নতুন ধারাগুলো নিয়োগকর্তার সাথে আলোচনা করুন।",
+              "সই করার আগে একজন আইনজীবীর সাথে কথা বলুন।"
+            ]
+          }
+        ]
+      },
+      {
+        "kind": "VERIFICATION_AND_METHOD",
+        "heading": "যাচাই ও পদ্ধতি",
+        "blocks": [
+          {
+            "type": "paragraph",
+            "text": "যাচাইকৃত উদ্ধৃতি: 16। অনিশ্চিত ঝুঁকি: 0। কোম্পানির নীতির ঝুঁকি: 0। যাচাইকারীর স্বাধীনতা: একই মডেল পরিবারের যাচাইকারী। আইনের সংকলন: 2026.11.11-1। শুধু যাচাইকৃত ধারা দেখানো হয়েছে।"
+          },
+          {
+            "type": "paragraph",
+            "text": "ডেমো মোড (নমুনা তথ্য, রেকর্ড করা): ঝুঁকি খোঁজা, উদ্ধৃতি যাচাই ও প্রস্তাবিত ধারা আগে রেকর্ড করা মডেল-উত্তর থেকে। ব্যক্তিগত তথ্য শনাক্ত, দায়িত্ব-তালিকা এবং এই স্মারকের সারাংশ ও পরবর্তী পদক্ষেপ স্ক্রিপ্ট করা নমুনা, কোনো মডেলের আসল উত্তর নয়।"
+          }
+        ]
+      },
+      {
+        "kind": "DISCLAIMER",
+        "heading": "দায়মুক্তি",
+        "blocks": [
+          {
+            "type": "paragraph",
+            "text": "এটা আইনি পরামর্শ নয়। এই স্মারক শুধু তথ্যের জন্য; সিদ্ধান্তের আগে একজন আইনজীবী বা শ্রম কার্যালয়ের সঙ্গে কথা বলুন।"
+          }
+        ]
+      }
+    ],
+    "verificationSummary": {
+      "verifiedCitations": 16,
+      "uncertainFindings": 0,
+      "policyFindings": 0,
+      "independence": "SAME_FAMILY"
+    },
+    "disclaimer": "এটা আইনি পরামর্শ নয়। এই স্মারক শুধু তথ্যের জন্য; সিদ্ধান্তের আগে একজন আইনজীবী বা শ্রম কার্যালয়ের সঙ্গে কথা বলুন।",
+    "footer": {
+      "analysisId": "e85afefb-1bdc-4f51-a8f9-11793648230d",
+      "corpusRelease": "2026.11.11-1",
+      "pipelineVersion": "p6-1",
+      "keyId": "k1"
+    }
+  },
+  "disclaimer": "এটা আইনি পরামর্শ নয়। এই স্মারক শুধু তথ্যের জন্য; সিদ্ধান্তের আগে একজন আইনজীবী বা শ্রম কার্যালয়ের সঙ্গে কথা বলুন।",
+  "envelope": {
+    "keyId": "k1",
+    "algorithm": "HMAC-SHA256",
+    "expiresAt": "2026-11-20T12:03:14Z",
+    "signature": "MYuDLxjFaFOLZovArnqquzmOa6uvSlk9UMCb4rMUmiY"
+  }
+}

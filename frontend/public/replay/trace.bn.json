@@ -1,0 +1,377 @@
+{
+  "analysisId": "e85afefb-1bdc-4f51-a8f9-11793648230d",
+  "createdAt": "2026-11-19T12:03:13.584575Z",
+  "events": [
+    {
+      "stage": "INTAKE",
+      "at": "2026-11-19T12:03:13.585622Z",
+      "durationMs": 1,
+      "promptId": null,
+      "promptVersion": null,
+      "modelId": null,
+      "tokensIn": null,
+      "tokensOut": null,
+      "cacheReadTokens": null,
+      "cacheWriteTokens": null,
+      "costUsdMicros": null,
+      "outcome": "OK",
+      "detail": {
+        "pages": 1,
+        "language": "en",
+        "inputKind": "TEXT",
+        "paragraphs": 13
+      }
+    },
+    {
+      "stage": "REDACT",
+      "at": "2026-11-19T12:03:13.592814Z",
+      "durationMs": 7,
+      "promptId": null,
+      "promptVersion": null,
+      "modelId": null,
+      "tokensIn": null,
+      "tokensOut": null,
+      "cacheReadTokens": null,
+      "cacheWriteTokens": null,
+      "costUsdMicros": null,
+      "outcome": "OK",
+      "detail": {
+        "paragraphs": 13,
+        "placeholders": 8
+      }
+    },
+    {
+      "stage": "CLASSIFY",
+      "at": "2026-11-19T12:03:13.596543Z",
+      "durationMs": 4,
+      "promptId": "clause-classify",
+      "promptVersion": 1,
+      "modelId": "claude-haiku-5-5",
+      "tokensIn": null,
+      "tokensOut": null,
+      "cacheReadTokens": null,
+      "cacheWriteTokens": null,
+      "costUsdMicros": null,
+      "outcome": "OK",
+      "detail": {
+        "clauses": 10,
+        "flaggedClauses": 0
+      }
+    },
+    {
+      "stage": "RETRIEVE",
+      "at": "2026-11-19T12:03:14.113116Z",
+      "durationMs": 505,
+      "promptId": null,
+      "promptVersion": null,
+      "modelId": null,
+      "tokensIn": null,
+      "tokensOut": null,
+      "cacheReadTokens": null,
+      "cacheWriteTokens": null,
+      "costUsdMicros": null,
+      "outcome": "OK",
+      "detail": {
+        "keywordOnly": false,
+        "clausesSearched": 9,
+        "candidateSections": 40
+      }
+    },
+    {
+      "stage": "RULES",
+      "at": "2026-11-19T12:03:14.114545Z",
+      "durationMs": 506,
+      "promptId": "clause-facts",
+      "promptVersion": 1,
+      "modelId": "claude-haiku-5-5",
+      "tokensIn": 3339,
+      "tokensOut": 632,
+      "cacheReadTokens": 2595,
+      "cacheWriteTokens": 0,
+      "costUsdMicros": 417,
+      "outcome": "OK",
+      "detail": {
+        "calls": 3,
+        "facts": 9,
+        "notes": [],
+        "draftRules": 0,
+        "violations": 4,
+        "activeRules": 8,
+        "cacheReadTokens": 2595,
+        "cacheWriteTokens": 0
+      }
+    },
+    {
+      "stage": "RISK",
+      "at": "2026-11-19T12:03:14.125386Z",
+      "durationMs": 10,
+      "promptId": "risk-analysis",
+      "promptVersion": 2,
+      "modelId": "claude-sonnet-5-5",
+      "tokensIn": 107395,
+      "tokensOut": 7110,
+      "cacheReadTokens": 6164,
+      "cacheWriteTokens": 0,
+      "costUsdMicros": 274179,
+      "outcome": "OK",
+      "detail": {
+        "calls": 5,
+        "splits": 0,
+        "batches": 4,
+        "findings": 13,
+        "llmFindings": 11,
+        "ruleFindings": 4,
+        "cacheReadTokens": 6164,
+        "cacheWriteTokens": 0,
+        "severityConflicts": 1,
+        "claimedSectionKeys": [
+          "BLA-2006:108@amend-2018",
+          "BLA-2006:125@amend-2013",
+          "BLA-2006:132@amend-2026",
+          "BLA-2006:89@amend-2013",
+          "BLA-2006:150@original",
+          "BLA-2006:26@original",
+          "BLA-2006:27@amend-2026",
+          "BLA-2006:100@original",
+          "BLA-2006:103@amend-2018",
+          "BLA-2006:118@amend-2026",
+          "BLA-2006:4@amend-2026",
+          "CA-1872:27@original",
+          "CA-1872:28@original",
+          "BLA-2006:214@amend-2013",
+          "BLA-2006:3@amend-2026",
+          "BLA-2006:123@amend-2013",
+          "BLA-2006:33@amend-2013"
+        ]
+      }
+    },
+    {
+      "stage": "VERIFY",
+      "at": "2026-11-19T12:03:14.138394Z",
+      "durationMs": 12,
+      "promptId": null,
+      "promptVersion": null,
+      "modelId": null,
+      "tokensIn": null,
+      "tokensOut": null,
+      "cacheReadTokens": null,
+      "cacheWriteTokens": null,
+      "costUsdMicros": null,
+      "outcome": "OK",
+      "detail": {
+        "verdicts": [
+          {
+            "status": "VERIFIED",
+            "attempt": 1,
+            "finding": "f1",
+            "reasons": [],
+            "sectionKey": "BLA-2006:108@amend-2018"
+          },
+          {
+            "status": "VERIFIED",
+            "attempt": 1,
+            "finding": "f2",
+            "reasons": [],
+            "sectionKey": "BLA-2006:125@amend-2013"
+          },
+          {
+            "status": "VERIFIED",
+            "attempt": 1,
+            "finding": "f2",
+            "reasons": [],
+            "sectionKey": "BLA-2006:132@amend-2026"
+          },
+          {
+            "status": "VERIFIED",
+            "attempt": 1,
+            "finding": "f3",
+            "reasons": [],
+            "sectionKey": "BLA-2006:89@amend-2013"
+          },
+          {
+            "status": "VERIFIED",
+            "attempt": 1,
+            "finding": "f3",
+            "reasons": [],
+            "sectionKey": "BLA-2006:150@original"
+          },
+          {
+            "status": "UNCERTAIN",
+            "attempt": 1,
+            "finding": "f4",
+            "reasons": [
+              "SUPPORT_PARTIAL"
+            ],
+            "sectionKey": "BLA-2006:26@original"
+          },
+          {
+            "status": "VERIFIED",
+            "attempt": 1,
+            "finding": "f4",
+            "reasons": [],
+            "sectionKey": "BLA-2006:27@amend-2026"
+          },
+          {
+            "status": "VERIFIED",
+            "attempt": 1,
+            "finding": "f5",
+            "reasons": [],
+            "sectionKey": "BLA-2006:100@original"
+          },
+          {
+            "status": "VERIFIED",
+            "attempt": 1,
+            "finding": "f6",
+            "reasons": [],
+            "sectionKey": "BLA-2006:103@amend-2018"
+          },
+          {
+            "status": "VERIFIED",
+            "attempt": 1,
+            "finding": "f7",
+            "reasons": [],
+            "sectionKey": "BLA-2006:118@amend-2026"
+          },
+          {
+            "status": "UNCERTAIN",
+            "attempt": 1,
+            "finding": "f8",
+            "reasons": [
+              "SUPPORT_PARTIAL"
+            ],
+            "sectionKey": "BLA-2006:4@amend-2026"
+          },
+          {
+            "status": "VERIFIED",
+            "attempt": 1,
+            "finding": "f9",
+            "reasons": [],
+            "sectionKey": "CA-1872:27@original"
+          },
+          {
+            "status": "VERIFIED",
+            "attempt": 1,
+            "finding": "f10",
+            "reasons": [],
+            "sectionKey": "CA-1872:28@original"
+          },
+          {
+            "status": "VERIFIED",
+            "attempt": 1,
+            "finding": "f10",
+            "reasons": [],
+            "sectionKey": "BLA-2006:214@amend-2013"
+          },
+          {
+            "status": "VERIFIED",
+            "attempt": 1,
+            "finding": "f11",
+            "reasons": [],
+            "sectionKey": "BLA-2006:3@amend-2026"
+          },
+          {
+            "status": "VERIFIED",
+            "attempt": 1,
+            "finding": "f12",
+            "reasons": [],
+            "sectionKey": "BLA-2006:123@amend-2013"
+          },
+          {
+            "status": "VERIFIED",
+            "attempt": 1,
+            "finding": "f13",
+            "reasons": [],
+            "sectionKey": "BLA-2006:33@amend-2013"
+          }
+        ],
+        "obligations": 2,
+        "verifiedFindings": 12,
+        "uncertainFindings": 1,
+        "obligationsDropped": 0
+      }
+    },
+    {
+      "stage": "CORRECT",
+      "at": "2026-11-19T12:03:14.284707Z",
+      "durationMs": 145,
+      "promptId": "risk-citation-repair",
+      "promptVersion": 2,
+      "modelId": "claude-sonnet-5-5",
+      "tokensIn": 12780,
+      "tokensOut": 175,
+      "cacheReadTokens": 0,
+      "cacheWriteTokens": 0,
+      "costUsdMicros": 27310,
+      "outcome": "OK",
+      "detail": {
+        "calls": 1,
+        "corrections": [
+          {
+            "finding": "f8",
+            "repaired": true,
+            "abstained": false,
+            "newSections": 0
+          }
+        ],
+        "cacheReadTokens": 0,
+        "cacheWriteTokens": 0,
+        "verifiedFindings": 13,
+        "uncertainFindings": 0
+      }
+    },
+    {
+      "stage": "COMPOSE",
+      "at": "2026-11-19T12:03:14.298699Z",
+      "durationMs": 10,
+      "promptId": "memo-bn",
+      "promptVersion": 1,
+      "modelId": "scripted-demo-standin",
+      "tokensIn": 25068,
+      "tokensOut": 5134,
+      "cacheReadTokens": 15570,
+      "cacheWriteTokens": 0,
+      "costUsdMicros": 52921,
+      "outcome": "OK",
+      "detail": {
+        "calls": 25,
+        "dropped": 0,
+        "redlines": 12,
+        "reviewItems": 1,
+        "cacheReadTokens": 15570,
+        "cacheWriteTokens": 0,
+        "skippedUncertain": 0
+      }
+    },
+    {
+      "stage": "COMPLETE",
+      "at": "2026-11-19T12:03:14.299366Z",
+      "durationMs": 0,
+      "promptId": null,
+      "promptVersion": null,
+      "modelId": null,
+      "tokensIn": null,
+      "tokensOut": null,
+      "cacheReadTokens": 24329,
+      "cacheWriteTokens": 0,
+      "costUsdMicros": null,
+      "outcome": "OK",
+      "detail": {
+        "findings": 13,
+        "durationMs": 703,
+        "costUsdMicros": 354827,
+        "cacheReadTokens": 24329,
+        "cacheWriteTokens": 0,
+        "verifiedFindings": 13,
+        "uncertainFindings": 0,
+        "verifiedCitations": 16
+      }
+    }
+  ],
+  "totals": {
+    "tokensIn": 148582,
+    "tokensOut": 13051,
+    "cacheReadTokens": 24329,
+    "cacheWriteTokens": 0,
+    "costUsdMicros": 354827
+  }
+}

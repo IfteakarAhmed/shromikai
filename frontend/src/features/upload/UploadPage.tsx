@@ -5,6 +5,7 @@ import { useTranslation } from 'react-i18next'
 import { useLocation, useNavigate } from 'react-router-dom'
 import { startAnalysis, type AnalysisInput } from '../../api/analyses'
 import { useAuthedCall } from '../../api/useAuthedCall'
+import { isStaticReplay } from '../../api/replay'
 import { useMeta } from '../../api/useMeta'
 import { Button } from '../../components/ui/Button'
 import { ErrorState } from '../../components/ui/ErrorState'
@@ -207,6 +208,14 @@ export function UploadPage() {
           className="mt-4 rounded-lg border border-uncertain/40 bg-uncertain/10 px-4 py-3"
         >
           {t('upload.recordedOnly')}
+        </p>
+      )}
+      {isStaticReplay() && (
+        <p
+          role="note"
+          className="mt-2 rounded-lg border border-rejected/40 bg-rejected/10 px-4 py-3"
+        >
+          {t('replay.uploadNote')}
         </p>
       )}
 

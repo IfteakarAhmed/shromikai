@@ -1,0 +1,27 @@
+{
+  "sectionKey": "BLA-2006:103@amend-2018",
+  "actCode": "BLA-2006",
+  "actTitleBn": "বাংলাদেশ শ্রম আইন, ২০০৬",
+  "actTitleEn": "Bangladesh Labour Act, 2006",
+  "sectionNo": "103",
+  "sectionNoOriginal": "১০৩",
+  "headingBn": "সাপ্তাহিক ছুটি",
+  "headingEn": null,
+  "authoritativeLang": "bn",
+  "authoritativeText": "১০৩। কোন প্রতিষ্ঠানে কর্মরত কোন শ্রমিক-\n[ (ক) প্রতি সপ্তাহে কারখানা ও শিল্পের ক্ষেত্রে একদিন এবং দোকান ও প্রতিষ্ঠানের ক্ষেত্রে দেড় দিন ছুটি পাইবেন;]\n(খ) সড়ক পরিবহণ প্রতিষ্ঠানের ক্ষেত্রে, প্রতি সপ্তাহে অবিচ্ছিন্ন চবি্বশ ঘণ্টার একদিন ছুটি পাইবেন; [ ***] [ ;\n(গ) উপরোক্ত দফা (ক) ও (খ) এর আওতায় কোন ছুটির জন্য শ্রমিকের মজুরী হইতে কোন কর্তন করা যাইবে না।]",
+  "translation": null,
+  "versionLabel": "amend-2018",
+  "effectiveFrom": null,
+  "isCurrent": true,
+  "sourceUrl": "http://bdlaws.minlaw.gov.bd/act-952/section-29430.html",
+  "fetchedAt": "2026-11-11T04:35:27.358665Z",
+  "contentHash": "40de5c784a60c269128fb25dc0dfc39cba3b7cbe9210a07fb1531c76e21f9615",
+  "related": [
+    {
+      "sectionKey": "BLA-2006:2@amend-2026",
+      "kind": "USES_DEFINITION",
+      "reviewed": false
+    }
+  ],
+  "corpusRelease": "2026.11.11-1"
+}

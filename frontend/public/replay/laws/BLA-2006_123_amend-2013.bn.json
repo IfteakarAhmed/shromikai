@@ -1,0 +1,27 @@
+{
+  "sectionKey": "BLA-2006:123@amend-2013",
+  "actCode": "BLA-2006",
+  "actTitleBn": "বাংলাদেশ শ্রম আইন, ২০০৬",
+  "actTitleEn": "Bangladesh Labour Act, 2006",
+  "sectionNo": "123",
+  "sectionNoOriginal": "১২৩",
+  "headingBn": "মজুরী পরিশোধের সময়",
+  "headingEn": null,
+  "authoritativeLang": "bn",
+  "authoritativeText": "১২৩। (১) কোন শ্রমিকের যে মজুরীকাল সমপর্কে তাহার মজুরী প্রদেয় হয় সেই কাল শেষ হওয়ার পরবর্তী সাত কর্মদিবসের মধ্যে তাহার মজুরী পরিশোধ করিতে হইবে।\n(২) যে ক্ষেত্রে কোন শ্রমিকের চাকুরী তাহার অবসর গ্রহণের কারণে অবসান হয়, অথবা মালিক কর্তৃক তাহার ছাটাই, ডিসচার্জ, অপসারণ, [শ্রমিক কর্তৃক চাকুরীর অবসান অথবা] অন্য কোন কারণে উহার অবসান করা হয় সে ক্ষেত্রে উক্ত শ্রমিককে প্রদেয় সকল মজুরী তাহার চাকুরী অবসানের তারিখ হইতে পরবর্তী [ত্রিশ] কর্মদিবসের মধ্যে পরিশোধ করিতে হইবে।\n(৩) সকল মজুরী কর্মদিবসে পরিশোধ করিতে হইবে।",
+  "translation": null,
+  "versionLabel": "amend-2013",
+  "effectiveFrom": null,
+  "isCurrent": true,
+  "sourceUrl": "http://bdlaws.minlaw.gov.bd/act-952/section-29450.html",
+  "fetchedAt": "2026-11-11T04:35:27.358665Z",
+  "contentHash": "7645ecfd1f2b3badf8ad5d2c5cdf8f9b0d3d1024e1191ad56f4cad74930568bb",
+  "related": [
+    {
+      "sectionKey": "BLA-2006:2@amend-2026",
+      "kind": "USES_DEFINITION",
+      "reviewed": false
+    }
+  ],
+  "corpusRelease": "2026.11.11-1"
+}

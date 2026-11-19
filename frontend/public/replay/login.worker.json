@@ -1,0 +1,15 @@
+{
+  "accessToken": "static-replay",
+  "expiresIn": 900,
+  "tokenType": "Bearer",
+  "guest": false,
+  "user": {
+    "userId": "0addf572-c607-40e2-88f6-ea36264ef605",
+    "email": "worker@demo.shromikai.app",
+    "role": "WORKER",
+    "org": null,
+    "locale": "bn",
+    "profile": null,
+    "demo": true
+  }
+}

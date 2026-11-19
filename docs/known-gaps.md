@@ -3,6 +3,23 @@
 A running list of what is not done, not measured or not proven, so nothing is claimed by accident
 (R-07, R-12). Each phase report in `docs/dev-log.md` links here. Newest first.
 
+## P11 static recorded replay (no server, 19 Nov 2026)
+
+Docker Spaces are not available to the owner's Hugging Face account, so the submission link is a
+static build of the frontend ([ADR-0027](adr/0027-static-recorded-replay.md)); the single-container
+Space of ADR-0026 was built and tested locally but is not deployed. The replay serves files saved from
+the real responses of a demo backend.
+
+| Gap | Where it matters | Detail |
+| --- | --- | --- |
+| The replay is a snapshot of one request: the sample contract, worker's side, Bangla output | R-12, FR-69 | No upload, no other text, no English output (never recorded), no compare, profile, playbooks, tickets, admin, HR demo, HTML memo or MCP. Each says plainly that it needs a live server (`static-replay-unavailable`, and a page for routes that need one). Every screen carries "Static recorded replay, not a live server" in both languages. Results appear at once; the progress screen is not shown because no event stream was kept. |
+| The files do not follow later changes | R-07 | They were exported on 19 Nov 2026 (commit and dirty flag in `public/replay/manifest.json`). A change to the backend, rules, corpus or recordings needs `npm run export:replay` again; the integrity test only checks the files against their own manifest. |
+| Five removals from the real responses | R-02, R-12 | `meta.audit` and `reviewTicket` become `null`, the login token becomes `static-replay`; each is listed in the manifest. The audit page says its figures were saved at export. The demo worker's account row (email, ID of the seeded demo account) is in the login file. |
+| One recorded session is shared | FR-06, FR-09 | A guest session and the demo-worker session are the same recorded login; sign-out ends it for that page load only. |
+| The memo PDF and sample text are those of the recorded run | R-12 | The memo narrative, obligations and the local PII step are the scripted stand-ins of the `fake-models` profile (`scripted-demo-standin`), as in the local demo; the PDF is the backend's own render (Gotenberg) of that run. |
+| The e2e suite was not run against the static build | NFR-17 | Playwright targets a live backend; the replay was checked in a browser by hand and by unit tests (no `/api` request). |
+| `/docs/audit` is not a live report in the replay | R-07 | Its page says so; the audit counters are absent. |
+
 ## P11 minimal deploy (recorded-only Space, 19 Nov 2026)
 
 Scope: a public Hugging Face Space for judges, built in one container ([ADR-0026](adr/0026-recorded-only-judging-deployment.md)).

@@ -6,3 +6,6 @@ src/api/openapi.json
 package-lock.json
 playwright-report
 test-results
+
+# Exported backend responses of the static recorded replay: byte-exact, checked by SHA-256 (ADR-0027)
+public/replay/

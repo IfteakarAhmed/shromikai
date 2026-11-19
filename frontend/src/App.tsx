@@ -1,5 +1,6 @@
-import { Suspense, lazy } from 'react'
+import { Suspense, lazy, type ReactElement } from 'react'
 import { Outlet, Route, Routes } from 'react-router-dom'
+import { isStaticReplay } from './api/replay'
 import { AppAccess } from './auth/AppAccess'
 import { ProtectedRoute } from './auth/ProtectedRoute'
 import { Skeleton } from './components/ui/Skeleton'
@@ -13,6 +14,7 @@ import { DemoLoginPage } from './pages/DemoLoginPage'
 import { Layout } from './pages/Layout'
 import { LoginPage } from './pages/LoginPage'
 import { NotFoundPage } from './pages/NotFoundPage'
+import { ReplayUnavailablePage } from './pages/ReplayUnavailablePage'
 
 // Areas most visitors never open are separate chunks (architecture §17: route-level splitting).
 const AdminLayout = lazy(() => import('./features/admin/AdminLayout'))
@@ -43,14 +45,18 @@ function RouteFallback() {
 }
 
 export default function App() {
+  // The static recorded replay has no server: what needs one says so (FR-85, ADR-0027).
+  const replay = isStaticReplay()
+  const live = (element: ReactElement): ReactElement =>
+    replay ? <ReplayUnavailablePage /> : element
   return (
     <Routes>
       <Route element={<Layout />}>
         <Route index element={<LandingPage />} />
-        <Route path="login" element={<LoginPage />} />
+        <Route path="login" element={live(<LoginPage />)} />
         <Route path="demo-user" element={<DemoLoginPage role="worker" />} />
-        <Route path="demo-hr" element={<DemoLoginPage role="hr" />} />
-        <Route path="demo-admin" element={<DemoLoginPage role="admin" />} />
+        <Route path="demo-hr" element={live(<DemoLoginPage role="hr" />)} />
+        <Route path="demo-admin" element={live(<DemoLoginPage role="admin" />)} />
         <Route
           path="app"
           element={
@@ -61,20 +67,20 @@ export default function App() {
         >
           <Route index element={<UploadPage />} />
           <Route path="analyses/:id" element={<AnalysisPage />} />
-          <Route path="profile" element={<ProfilePage />} />
-          <Route path="tickets/:ticketId" element={<TicketPage />} />
-          <Route path="compare" element={<CompareStartPage />} />
-          <Route path="compare/:id" element={<CompareResultPage />} />
+          <Route path="profile" element={live(<ProfilePage />)} />
+          <Route path="tickets/:ticketId" element={live(<TicketPage />)} />
+          <Route path="compare" element={live(<CompareStartPage />)} />
+          <Route path="compare/:id" element={live(<CompareResultPage />)} />
         </Route>
         <Route
           path="admin"
-          element={
+          element={live(
             <ProtectedRoute roles={['ADMIN']}>
               <Suspense fallback={<RouteFallback />}>
                 <AdminLayout />
               </Suspense>
-            </ProtectedRoute>
-          }
+            </ProtectedRoute>,
+          )}
         >
           <Route index element={<AdminHome />} />
           <Route path="review/:id?" element={<ReviewPage />} />
@@ -103,15 +109,15 @@ export default function App() {
         </Route>
         <Route
           path="app/playbooks"
-          element={
+          element={live(
             <ProtectedRoute roles={['HR', 'ADMIN']}>
               <div className="mx-auto max-w-6xl px-(--gutter) py-8">
                 <Suspense fallback={<RouteFallback />}>
                   <PlaybooksPage />
                 </Suspense>
               </div>
-            </ProtectedRoute>
-          }
+            </ProtectedRoute>,
+          )}
         />
         <Route path="*" element={<NotFoundPage />} />
       </Route>

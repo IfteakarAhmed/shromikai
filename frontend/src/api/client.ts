@@ -1,30 +1,10 @@
 import type { components } from './types'
+import { ApiError, NetworkError, type Problem } from './errors'
+import { isStaticReplay, replayBlob, replayRequest } from './replay'
 
 export type Meta = components['schemas']['Meta']
 
-/** RFC 9457 problem document (api.md §5.14), generated from the OpenAPI document. */
-export type Problem = components['schemas']['Problem']
-
-/** The backend answered with a problem document or an unexpected status. */
-export class ApiError extends Error {
-  readonly status: number
-  readonly problem: Problem | null
-
-  constructor(status: number, problem: Problem | null) {
-    super(problem?.code ?? `http-${status}`)
-    this.name = 'ApiError'
-    this.status = status
-    this.problem = problem
-  }
-}
-
-/** The backend could not be reached at all. */
-export class NetworkError extends Error {
-  constructor() {
-    super('network-error')
-    this.name = 'NetworkError'
-  }
-}
+export { ApiError, NetworkError, type Problem } from './errors'
 
 const BASE: string = import.meta.env.VITE_API_BASE ?? ''
 
@@ -44,6 +24,10 @@ interface RequestOptions {
 }
 
 async function request<T>(path: string, init: RequestOptions, language: string): Promise<T> {
+  if (isStaticReplay()) {
+    // A static recorded replay has no server: the recorded files answer (ADR-0027).
+    return replayRequest<T>(init.method ?? 'GET', path, language, init.body)
+  }
   let response: Response
   try {
     response = await fetch(`${BASE}${path}`, {
@@ -136,6 +120,9 @@ export async function apiFetchBlob(
   body: unknown,
   accessToken?: string,
 ): Promise<{ blob: Blob; contentType: string }> {
+  if (isStaticReplay()) {
+    return replayBlob(path, language, body)
+  }
   let response: Response
   try {
     response = await fetch(`${BASE}${path}`, {

@@ -2,7 +2,7 @@ import { screen, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { http, HttpResponse } from 'msw'
 import { Route, Routes } from 'react-router-dom'
-import { describe, expect, it } from 'vitest'
+import { afterEach, describe, expect, it, vi } from 'vitest'
 import { sampleMeta } from '../../test/msw/handlers'
 import { server } from '../../test/msw/server'
 import { renderApp } from '../../test/render'
@@ -16,7 +16,24 @@ import PromptsPage from './PromptsPage'
 import SecurityPage from './SecurityPage'
 import { contractReport, corpusQuality, retrievalReport } from './reports'
 
+afterEach(() => {
+  vi.unstubAllEnvs()
+})
+
 describe('docs hub (FR-74)', () => {
+  it('FR-85 /docs/audit says that a static replay did not read its figures just now', async () => {
+    vi.stubEnv('VITE_STATIC_REPLAY', '1')
+    server.use(
+      http.get('/replay/meta.bn.json', () =>
+        HttpResponse.json({ ...sampleMeta, audit: null, recordedDemo: null }),
+      ),
+    )
+    renderApp(<AuditPage />, '/docs/audit')
+
+    expect(await screen.findByTestId('audit-version')).toBeInTheDocument()
+    expect(screen.getByText(/স্ট্যাটিক রিপ্লেতে এই সংখ্যাগুলো এখন পড়া হয়নি/)).toBeInTheDocument()
+  })
+
   it('FR-74 /docs/audit shows the values of the live /meta response', async () => {
     server.use(
       http.get('/api/v1/meta', () =>

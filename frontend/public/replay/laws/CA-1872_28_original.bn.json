@@ -1,0 +1,21 @@
+{
+  "sectionKey": "CA-1872:28@original",
+  "actCode": "CA-1872",
+  "actTitleBn": null,
+  "actTitleEn": "The Contract Act, 1872",
+  "sectionNo": "28",
+  "sectionNoOriginal": "28",
+  "headingBn": null,
+  "headingEn": "Agreements in restraint of legal proceedings void Saving of contract to refer to arbitration dispute that may arise Suits barred by such contracts Saving of contract to refer questions that have already arisen",
+  "authoritativeLang": "en",
+  "authoritativeText": "28. Every agreement, by which any party thereto is restricted absolutely from enforcing his rights under or in respect of any contract, by the usual legal proceedings in the ordinary tribunals, or which limits the time within which he may thus enforce his rights, is void to that extent.\nException 1.–This section shall not render illegal a contract by which two or more persons agree that any dispute which may arise between them in respect of any subject or class of subjects shall be referred to arbitration, and that only the amount awarded in such arbitration shall be recoverable in respect of the dispute so referred.\nException 2.-Nor shall this section render illegal any contract in writing, by which two or more persons agree to refer to arbitration any question between them which has already arisen, or affect any provision of any law in force for the time being as to references to arbitration.",
+  "translation": null,
+  "versionLabel": "original",
+  "effectiveFrom": "1872-04-25",
+  "isCurrent": true,
+  "sourceUrl": "http://bdlaws.minlaw.gov.bd/act-26/section-191.html",
+  "fetchedAt": "2026-11-11T04:35:27.358665Z",
+  "contentHash": "622f1c3c295c478f3aa7a5a475b7351e8bf551962b7ed2a6ba7feea79dd583aa",
+  "related": [],
+  "corpusRelease": "2026.11.11-1"
+}

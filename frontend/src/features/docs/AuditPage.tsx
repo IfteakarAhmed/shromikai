@@ -1,4 +1,5 @@
 import { useTranslation } from 'react-i18next'
+import { isStaticReplay } from '../../api/replay'
 import { useMeta } from '../../api/useMeta'
 import { Button } from '../../components/ui/Button'
 import { ErrorState } from '../../components/ui/ErrorState'
@@ -56,6 +57,14 @@ export default function AuditPage() {
         </Button>
       </div>
       <p className="mt-2 text-muted-foreground">{t('docs.audit.intro')}</p>
+      {isStaticReplay() && (
+        <p
+          role="note"
+          className="mt-2 rounded-lg border border-rejected/40 bg-rejected/10 px-4 py-3"
+        >
+          {t('replay.auditNote')}
+        </p>
+      )}
 
       {meta.isPending && (
         <div role="status" aria-label={t('docs.audit.loading')} className="mt-6 space-y-3">

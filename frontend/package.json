@@ -16,7 +16,9 @@
     "check:bundle": "node scripts/check-bundle-size.mjs",
     "e2e": "playwright test",
     "check:lite": "node scripts/check-lite-transfer.mjs",
-    "render:scene": "node scripts/render-scene.mjs"
+    "render:scene": "node scripts/render-scene.mjs",
+    "export:replay": "node scripts/export-replay.mjs",
+    "build:replay": "VITE_STATIC_REPLAY=1 npm run build"
   },
   "dependencies": {
     "@fontsource/hind-siliguri": "^5.3.0",

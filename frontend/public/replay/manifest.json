@@ -1,0 +1,349 @@
+{
+  "purpose": "Real responses of a demo backend (profiles demo and fake-models) for the recorded sample contract; the static recorded replay serves them (ADR-0027). Not written by hand.",
+  "generatedAt": "2026-11-19T12:03:15.829Z",
+  "gitCommit": "d3fdb562f719b25c58627c274f6dcd8427ad3062",
+  "gitDirty": true,
+  "backend": {
+    "name": "ShromikAI",
+    "version": "0.1.0",
+    "corpusRelease": "2026.11.11-1",
+    "models": {
+      "reasoning": "claude-sonnet-5-5",
+      "fast": "claude-haiku-5-5",
+      "verifier": null,
+      "verifierFallback": "claude-haiku-5-5",
+      "judge": null,
+      "localPii": "qwen2.5:7b-instruct",
+      "embedding": "bge-m3"
+    },
+    "recordedDemo": {
+      "side": "WORKER",
+      "outputLanguage": "bn"
+    }
+  },
+  "analysisId": "e85afefb-1bdc-4f51-a8f9-11793648230d",
+  "citedSections": 16,
+  "redactions": [
+    {
+      "file": "meta.bn.json",
+      "path": "audit",
+      "reason": "counters read from the audit and review tables of the development database"
+    },
+    {
+      "file": "meta.en.json",
+      "path": "audit",
+      "reason": "counters read from the audit and review tables of the development database"
+    },
+    {
+      "file": "login.worker.json",
+      "path": "accessToken",
+      "reason": "a session token is never published"
+    },
+    {
+      "file": "analysis.bn.json",
+      "path": "reviewTicket",
+      "reason": "the one-time ticket code comes from the development database"
+    },
+    {
+      "file": "analysis.en.json",
+      "path": "reviewTicket",
+      "reason": "the one-time ticket code comes from the development database"
+    }
+  ],
+  "files": [
+    {
+      "path": "analysis-accepted.json",
+      "request": "POST /api/v1/analyses (sample)",
+      "language": null,
+      "bytes": 279,
+      "sha256": "1def77ef0cbf7cea428323b04f09123258e6bc417e53703869c84158184f9b04"
+    },
+    {
+      "path": "analysis.bn.json",
+      "request": "GET /api/v1/analyses/e85afefb-1bdc-4f51-a8f9-11793648230d",
+      "language": "bn",
+      "bytes": 135594,
+      "sha256": "a6b76e9c6f5efd2a1b63594f9b46a05fe6a55a1f959cf3e44db9a558796ba0a5"
+    },
+    {
+      "path": "analysis.en.json",
+      "request": "GET /api/v1/analyses/e85afefb-1bdc-4f51-a8f9-11793648230d",
+      "language": "en",
+      "bytes": 135594,
+      "sha256": "7d0e925938b9fc0c1f33963bcc2f2811e342a0611c8e7f1285fa3cc139c8b113"
+    },
+    {
+      "path": "laws/BLA-2006_100_original.bn.json",
+      "request": "GET /api/v1/laws/BLA-2006/100?version=original",
+      "language": "bn",
+      "bytes": 1651,
+      "sha256": "ccba922820a68db02ac1bfff86e5e30f67bd3d68d1b7611c9600b6307a708aec"
+    },
+    {
+      "path": "laws/BLA-2006_100_original.en.json",
+      "request": "GET /api/v1/laws/BLA-2006/100?version=original",
+      "language": "en",
+      "bytes": 1651,
+      "sha256": "ccba922820a68db02ac1bfff86e5e30f67bd3d68d1b7611c9600b6307a708aec"
+    },
+    {
+      "path": "laws/BLA-2006_103_amend-2018.bn.json",
+      "request": "GET /api/v1/laws/BLA-2006/103?version=amend-2018",
+      "language": "bn",
+      "bytes": 1754,
+      "sha256": "ff7fbd27a50ab4fbfb9d7bc102d8626281601d739cedc9506f9df50560e1002d"
+    },
+    {
+      "path": "laws/BLA-2006_103_amend-2018.en.json",
+      "request": "GET /api/v1/laws/BLA-2006/103?version=amend-2018",
+      "language": "en",
+      "bytes": 1754,
+      "sha256": "ff7fbd27a50ab4fbfb9d7bc102d8626281601d739cedc9506f9df50560e1002d"
+    },
+    {
+      "path": "laws/BLA-2006_108_amend-2018.bn.json",
+      "request": "GET /api/v1/laws/BLA-2006/108?version=amend-2018",
+      "language": "bn",
+      "bytes": 2207,
+      "sha256": "55155e9b9a5c980c897ff6ed2202a5bb9a0ffe451e277c2078a56c9a010a18a0"
+    },
+    {
+      "path": "laws/BLA-2006_108_amend-2018.en.json",
+      "request": "GET /api/v1/laws/BLA-2006/108?version=amend-2018",
+      "language": "en",
+      "bytes": 2207,
+      "sha256": "55155e9b9a5c980c897ff6ed2202a5bb9a0ffe451e277c2078a56c9a010a18a0"
+    },
+    {
+      "path": "laws/BLA-2006_118_amend-2026.bn.json",
+      "request": "GET /api/v1/laws/BLA-2006/118?version=amend-2026",
+      "language": "bn",
+      "bytes": 1730,
+      "sha256": "987044ee648984d8f879c6a6d6a08c20f06e687398bfafa59290b955ffa4e6f6"
+    },
+    {
+      "path": "laws/BLA-2006_118_amend-2026.en.json",
+      "request": "GET /api/v1/laws/BLA-2006/118?version=amend-2026",
+      "language": "en",
+      "bytes": 1730,
+      "sha256": "987044ee648984d8f879c6a6d6a08c20f06e687398bfafa59290b955ffa4e6f6"
+    },
+    {
+      "path": "laws/BLA-2006_123_amend-2013.bn.json",
+      "request": "GET /api/v1/laws/BLA-2006/123?version=amend-2013",
+      "language": "bn",
+      "bytes": 2188,
+      "sha256": "08acbbaeb2b4549454729af32e323215f4d6b48b6562d504ed19eb2cffa3a0ed"
+    },
+    {
+      "path": "laws/BLA-2006_123_amend-2013.en.json",
+      "request": "GET /api/v1/laws/BLA-2006/123?version=amend-2013",
+      "language": "en",
+      "bytes": 2188,
+      "sha256": "08acbbaeb2b4549454729af32e323215f4d6b48b6562d504ed19eb2cffa3a0ed"
+    },
+    {
+      "path": "laws/BLA-2006_125_amend-2013.bn.json",
+      "request": "GET /api/v1/laws/BLA-2006/125?version=amend-2013",
+      "language": "bn",
+      "bytes": 5470,
+      "sha256": "903c2b6abb539e560e087bc225e57054ff658500377dd8cbca76cb478fe9f35d"
+    },
+    {
+      "path": "laws/BLA-2006_125_amend-2013.en.json",
+      "request": "GET /api/v1/laws/BLA-2006/125?version=amend-2013",
+      "language": "en",
+      "bytes": 5470,
+      "sha256": "903c2b6abb539e560e087bc225e57054ff658500377dd8cbca76cb478fe9f35d"
+    },
+    {
+      "path": "laws/BLA-2006_132_amend-2026.bn.json",
+      "request": "GET /api/v1/laws/BLA-2006/132?version=amend-2026",
+      "language": "bn",
+      "bytes": 7532,
+      "sha256": "2cd63e46a6330a353ed3fbb36b5d8551b6a4882a90b49c5c506c3f6399cde550"
+    },
+    {
+      "path": "laws/BLA-2006_132_amend-2026.en.json",
+      "request": "GET /api/v1/laws/BLA-2006/132?version=amend-2026",
+      "language": "en",
+      "bytes": 7532,
+      "sha256": "2cd63e46a6330a353ed3fbb36b5d8551b6a4882a90b49c5c506c3f6399cde550"
+    },
+    {
+      "path": "laws/BLA-2006_150_original.bn.json",
+      "request": "GET /api/v1/laws/BLA-2006/150?version=original",
+      "language": "bn",
+      "bytes": 10269,
+      "sha256": "b886c6ddaebc3218ee7b9a8abbd96a44f3660abb508325c917babfad649d9e73"
+    },
+    {
+      "path": "laws/BLA-2006_150_original.en.json",
+      "request": "GET /api/v1/laws/BLA-2006/150?version=original",
+      "language": "en",
+      "bytes": 10269,
+      "sha256": "b886c6ddaebc3218ee7b9a8abbd96a44f3660abb508325c917babfad649d9e73"
+    },
+    {
+      "path": "laws/BLA-2006_214_amend-2013.bn.json",
+      "request": "GET /api/v1/laws/BLA-2006/214?version=amend-2013",
+      "language": "bn",
+      "bytes": 10120,
+      "sha256": "6d3445af54e1bdb95aa09e7c03e13ec34be2e82dce4c82a4087f2325074bd71d"
+    },
+    {
+      "path": "laws/BLA-2006_214_amend-2013.en.json",
+      "request": "GET /api/v1/laws/BLA-2006/214?version=amend-2013",
+      "language": "en",
+      "bytes": 10120,
+      "sha256": "6d3445af54e1bdb95aa09e7c03e13ec34be2e82dce4c82a4087f2325074bd71d"
+    },
+    {
+      "path": "laws/BLA-2006_27_amend-2026.bn.json",
+      "request": "GET /api/v1/laws/BLA-2006/27?version=amend-2026",
+      "language": "bn",
+      "bytes": 5663,
+      "sha256": "73834bccc19090171ded7333f72674a7c741d8e3b530e0bc76a16e64502edce2"
+    },
+    {
+      "path": "laws/BLA-2006_27_amend-2026.en.json",
+      "request": "GET /api/v1/laws/BLA-2006/27?version=amend-2026",
+      "language": "en",
+      "bytes": 5663,
+      "sha256": "73834bccc19090171ded7333f72674a7c741d8e3b530e0bc76a16e64502edce2"
+    },
+    {
+      "path": "laws/BLA-2006_33_amend-2013.bn.json",
+      "request": "GET /api/v1/laws/BLA-2006/33?version=amend-2013",
+      "language": "bn",
+      "bytes": 6817,
+      "sha256": "d4589af82dc29167071d88c5a5f2d409de20698c60c19b338e5bfe241eed32c3"
+    },
+    {
+      "path": "laws/BLA-2006_33_amend-2013.en.json",
+      "request": "GET /api/v1/laws/BLA-2006/33?version=amend-2013",
+      "language": "en",
+      "bytes": 6817,
+      "sha256": "d4589af82dc29167071d88c5a5f2d409de20698c60c19b338e5bfe241eed32c3"
+    },
+    {
+      "path": "laws/BLA-2006_3_amend-2026.bn.json",
+      "request": "GET /api/v1/laws/BLA-2006/3?version=amend-2026",
+      "language": "bn",
+      "bytes": 4656,
+      "sha256": "32c96f8dbbdf615a05d7a3698a04d512e2a766e3dd49a52ab18aa3bdfe6f412a"
+    },
+    {
+      "path": "laws/BLA-2006_3_amend-2026.en.json",
+      "request": "GET /api/v1/laws/BLA-2006/3?version=amend-2026",
+      "language": "en",
+      "bytes": 4656,
+      "sha256": "32c96f8dbbdf615a05d7a3698a04d512e2a766e3dd49a52ab18aa3bdfe6f412a"
+    },
+    {
+      "path": "laws/BLA-2006_4_amend-2026.bn.json",
+      "request": "GET /api/v1/laws/BLA-2006/4?version=amend-2026",
+      "language": "bn",
+      "bytes": 7370,
+      "sha256": "86d4a8554bc6e6951c1190a91161223426238d2303d55fee47c91c6304b46298"
+    },
+    {
+      "path": "laws/BLA-2006_4_amend-2026.en.json",
+      "request": "GET /api/v1/laws/BLA-2006/4?version=amend-2026",
+      "language": "en",
+      "bytes": 7370,
+      "sha256": "86d4a8554bc6e6951c1190a91161223426238d2303d55fee47c91c6304b46298"
+    },
+    {
+      "path": "laws/BLA-2006_89_amend-2013.bn.json",
+      "request": "GET /api/v1/laws/BLA-2006/89?version=amend-2013",
+      "language": "bn",
+      "bytes": 4972,
+      "sha256": "e5141d2ecc7f9e473d9465f18abbafc62f26db0a5e5c8115e7d66070584f3820"
+    },
+    {
+      "path": "laws/BLA-2006_89_amend-2013.en.json",
+      "request": "GET /api/v1/laws/BLA-2006/89?version=amend-2013",
+      "language": "en",
+      "bytes": 4972,
+      "sha256": "e5141d2ecc7f9e473d9465f18abbafc62f26db0a5e5c8115e7d66070584f3820"
+    },
+    {
+      "path": "laws/CA-1872_27_original.bn.json",
+      "request": "GET /api/v1/laws/CA-1872/27?version=original",
+      "language": "bn",
+      "bytes": 1493,
+      "sha256": "4857806ea7a504419a25399431f175107a19c852249920e53c4a20f0597d9c15"
+    },
+    {
+      "path": "laws/CA-1872_27_original.en.json",
+      "request": "GET /api/v1/laws/CA-1872/27?version=original",
+      "language": "en",
+      "bytes": 1493,
+      "sha256": "4857806ea7a504419a25399431f175107a19c852249920e53c4a20f0597d9c15"
+    },
+    {
+      "path": "laws/CA-1872_28_original.bn.json",
+      "request": "GET /api/v1/laws/CA-1872/28?version=original",
+      "language": "bn",
+      "bytes": 1756,
+      "sha256": "70e0447c0ccddf9027e923084cfdeb8b961d23337b99283000c5439ea2806d0b"
+    },
+    {
+      "path": "laws/CA-1872_28_original.en.json",
+      "request": "GET /api/v1/laws/CA-1872/28?version=original",
+      "language": "en",
+      "bytes": 1756,
+      "sha256": "70e0447c0ccddf9027e923084cfdeb8b961d23337b99283000c5439ea2806d0b"
+    },
+    {
+      "path": "login.worker.json",
+      "request": "POST /api/v1/auth/demo/worker",
+      "language": null,
+      "bytes": 310,
+      "sha256": "aa5fe50660edb38d77c6f9afc8ca94f6a5dae663656b76f48b99cc30025e3d09"
+    },
+    {
+      "path": "memo.bn.pdf",
+      "request": "POST /api/v1/memos/render (PDF)",
+      "language": "bn",
+      "bytes": 204371,
+      "sha256": "353157da049d747bd5dae8c05345d690af7876c140b076068a4aa388949eab93"
+    },
+    {
+      "path": "memo.en.pdf",
+      "request": "POST /api/v1/memos/render (PDF)",
+      "language": "en",
+      "bytes": 204371,
+      "sha256": "353157da049d747bd5dae8c05345d690af7876c140b076068a4aa388949eab93"
+    },
+    {
+      "path": "meta.bn.json",
+      "request": "GET /api/v1/meta",
+      "language": "bn",
+      "bytes": 572,
+      "sha256": "8d05ba2ac2f1ad5ed79bb6902f61cfce1066a1a1ca789f895705218e682c8c76"
+    },
+    {
+      "path": "meta.en.json",
+      "request": "GET /api/v1/meta",
+      "language": "en",
+      "bytes": 572,
+      "sha256": "8d05ba2ac2f1ad5ed79bb6902f61cfce1066a1a1ca789f895705218e682c8c76"
+    },
+    {
+      "path": "trace.bn.json",
+      "request": "GET /api/v1/analyses/e85afefb-1bdc-4f51-a8f9-11793648230d/trace",
+      "language": "bn",
+      "bytes": 9744,
+      "sha256": "6b496b8e377390fc363d65a8d94569bcac3e63fd1d6747b12b66eaabd3a96400"
+    },
+    {
+      "path": "trace.en.json",
+      "request": "GET /api/v1/analyses/e85afefb-1bdc-4f51-a8f9-11793648230d/trace",
+      "language": "en",
+      "bytes": 9744,
+      "sha256": "6b496b8e377390fc363d65a8d94569bcac3e63fd1d6747b12b66eaabd3a96400"
+    }
+  ]
+}

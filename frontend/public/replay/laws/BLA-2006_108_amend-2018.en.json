@@ -1,0 +1,27 @@
+{
+  "sectionKey": "BLA-2006:108@amend-2018",
+  "actCode": "BLA-2006",
+  "actTitleBn": "বাংলাদেশ শ্রম আইন, ২০০৬",
+  "actTitleEn": "Bangladesh Labour Act, 2006",
+  "sectionNo": "108",
+  "sectionNoOriginal": "১০৮",
+  "headingBn": "অধিকাল কর্মের জন্য অতিরিক্ত ভাতা",
+  "headingEn": null,
+  "authoritativeLang": "bn",
+  "authoritativeText": "১০৮। (১) যে ক্ষেত্রে কোন শ্রমিক কোন প্রতিষ্ঠানে কোন দিন বা সপ্তাহে এই আইনের অধীন নির্দিষ্ট সময়ের অতিরিক্ত সময় কাজ করেন, সে ক্ষেত্রে তিনি অধিকাল কাজের জন্য তাহার মূল মজুরী ও মহার্ঘভাতা এবং এডহক বা অন্তবর্তী মজুরী, যদি থাকে, এর সাধারণ হারের দ্বিগুণ হারে ভাতা পাইবেন।\n[ (২) ঠিকা-হার (পিস রেট) ভিত্তিতে মজুরিপ্রাপ্ত শ্রমিকগণের ক্ষেত্রে উপ-ধারা (১) এর বিধান প্রযোজ্য হইবে না।]\n(৩) এই ধারার বিধান পালন নিশ্চিত করার লক্ষে সরকার কোন প্রতিষ্ঠান কর্তৃক রক্ষণীয় রেজিস্টার বিধিদ্বারা নির্ধারণ করিতে পারিবে।",
+  "translation": null,
+  "versionLabel": "amend-2018",
+  "effectiveFrom": null,
+  "isCurrent": true,
+  "sourceUrl": "http://bdlaws.minlaw.gov.bd/act-952/section-29435.html",
+  "fetchedAt": "2026-11-11T04:35:27.358665Z",
+  "contentHash": "c5534c78dbd49a6503f21b0eaad20a56bd3ef3e11a239f189bcddc7bbe0f93f5",
+  "related": [
+    {
+      "sectionKey": "BLA-2006:2@amend-2026",
+      "kind": "USES_DEFINITION",
+      "reviewed": false
+    }
+  ],
+  "corpusRelease": "2026.11.11-1"
+}

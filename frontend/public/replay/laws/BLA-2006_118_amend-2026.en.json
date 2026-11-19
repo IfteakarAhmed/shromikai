@@ -1,0 +1,27 @@
+{
+  "sectionKey": "BLA-2006:118@amend-2026",
+  "actCode": "BLA-2006",
+  "actTitleBn": "বাংলাদেশ শ্রম আইন, ২০০৬",
+  "actTitleEn": "Bangladesh Labour Act, 2006",
+  "sectionNo": "118",
+  "sectionNoOriginal": "১১৮",
+  "headingBn": "উৎসব ছুটি",
+  "headingEn": null,
+  "authoritativeLang": "bn",
+  "authoritativeText": "১১৮। (১) প্রত্যেক শ্রমিককে প্রতি পঞ্জিকা বৎসরে [১৩ (তের)] দিনের মজুরীসহ উৎসব ছুটি মঞ্জুর করিতে হইবে।\n(২) বিধি দ্বারা নির্ধারিতভাবে মালিক উক্ত ছুটির দিন ও তারিখ স্থির করিবেন।\n[ (৩) কোনো শ্রমিককে কোনো উৎসব-ছুটির দিনে কাজ করিতে বলা যাইতে পারিবে, তবে ইহার জন্য তাহাকে এক দিনের বিকল্প ছুটি এবং দুই দিনের ক্ষতিপূরণমূলক মজুরি প্রদান করিতে হইবে।]",
+  "translation": null,
+  "versionLabel": "amend-2026",
+  "effectiveFrom": null,
+  "isCurrent": true,
+  "sourceUrl": "http://bdlaws.minlaw.gov.bd/act-952/section-29445.html",
+  "fetchedAt": "2026-11-11T04:35:27.358665Z",
+  "contentHash": "13b46ba90aa9d38b07f7bc81df5545aab1c146b5271a054272716714bfc71121",
+  "related": [
+    {
+      "sectionKey": "BLA-2006:2@amend-2026",
+      "kind": "USES_DEFINITION",
+      "reviewed": false
+    }
+  ],
+  "corpusRelease": "2026.11.11-1"
+}

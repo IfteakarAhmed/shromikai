@@ -1,25 +1,47 @@
 /// <reference types="vitest/config" />
 import { defineConfig, type Plugin } from 'vite'
 import react from '@vitejs/plugin-react'
+import { rmSync } from 'node:fs'
 import tailwindcss from '@tailwindcss/vite'
+import { resolveSiteUrl } from './src/lib/siteUrl'
 
 /**
- * Fills %SITE_URL% in index.html with the public origin of the deployment (env SITE_URL, no
- * trailing slash). Without it the value is empty and the social-image URL stays relative.
+ * Fills %SITE_URL% in index.html with the public origin of the deployment (VITE_SITE_URL,
+ * SITE_URL or Vercel's production host; see resolveSiteUrl). Without any the value is empty and the
+ * social-image URL stays relative.
  */
 function siteUrl(): Plugin {
   return {
     name: 'shromikai-site-url',
     transformIndexHtml: {
       order: 'pre',
-      handler: (html) =>
-        html.replaceAll('%SITE_URL%', (process.env.SITE_URL ?? '').replace(/\/$/, '')),
+      handler: (html) => html.replaceAll('%SITE_URL%', resolveSiteUrl(process.env)),
+    },
+  }
+}
+
+/**
+ * The exported replay files in public/replay belong to the static recorded replay only
+ * (VITE_STATIC_REPLAY=1, ADR-0027): every other build leaves them out of dist.
+ */
+function replayFilesOnlyForReplay(): Plugin {
+  let outDir = 'dist'
+  return {
+    name: 'shromikai-replay-files',
+    apply: 'build',
+    configResolved: (config) => {
+      outDir = config.build.outDir
+    },
+    closeBundle: () => {
+      if (process.env.VITE_STATIC_REPLAY !== '1') {
+        rmSync(`${outDir}/replay`, { recursive: true, force: true })
+      }
     },
   }
 }
 
 export default defineConfig({
-  plugins: [siteUrl(), react(), tailwindcss()],
+  plugins: [siteUrl(), replayFilesOnlyForReplay(), react(), tailwindcss()],
   // The manifest lets check:bundle follow each lazy chunk to the shared chunks it imports.
   build: { manifest: true },
   server: {

@@ -1,0 +1,26 @@
+{
+  "name": "ShromikAI",
+  "version": "0.1.0",
+  "models": {
+    "reasoning": "claude-sonnet-5-5",
+    "fast": "claude-haiku-5-5",
+    "verifier": null,
+    "verifierFallback": "claude-haiku-5-5",
+    "judge": null,
+    "localPii": "qwen2.5:7b-instruct",
+    "embedding": "bge-m3"
+  },
+  "corpus": {
+    "release": "2026.11.11-1",
+    "acts": 2,
+    "sections": 566,
+    "currentSections": 563,
+    "embeddedSections": 566,
+    "lastRefreshAt": "2026-11-11T04:35:28.957557Z"
+  },
+  "audit": null,
+  "recordedDemo": {
+    "side": "WORKER",
+    "outputLanguage": "bn"
+  }
+}

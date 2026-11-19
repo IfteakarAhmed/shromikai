@@ -1,0 +1,27 @@
+{
+  "sectionKey": "CA-1872:27@original",
+  "actCode": "CA-1872",
+  "actTitleBn": null,
+  "actTitleEn": "The Contract Act, 1872",
+  "sectionNo": "27",
+  "sectionNoOriginal": "27",
+  "headingBn": null,
+  "headingEn": "Agreement in restraint of trade void Saving of agreement not to carry on business of which good- will is sold",
+  "authoritativeLang": "en",
+  "authoritativeText": "27. Every agreement by which any one is restrained from exercising a lawful profession, trade or business of any kind, is to that extent void.\nException 1.–One who sells the good-will of a business may agree with the buyer to refrain from carrying on a similar business, within specified local limits, so long as the buyer, or any person deriving title to the good-will from him, carries on a like business therein: Provided that such limits appear to the Court reasonable, regard being had to the nature of the business.\nException 2 and 3. [Repealed by section 73 and 2nd Schedule of the Partnership Act, 1932 (Act No. IX of 1932).]",
+  "translation": null,
+  "versionLabel": "original",
+  "effectiveFrom": "1872-04-25",
+  "isCurrent": true,
+  "sourceUrl": "http://bdlaws.minlaw.gov.bd/act-26/section-190.html",
+  "fetchedAt": "2026-11-11T04:35:27.358665Z",
+  "contentHash": "a0b3634c1cda40d015d53b855efea599bf5a12829e2473893b80f9017d2ddd6e",
+  "related": [
+    {
+      "sectionKey": "CA-1872:73@amend-1973",
+      "kind": "REFERS_TO",
+      "reviewed": false
+    }
+  ],
+  "corpusRelease": "2026.11.11-1"
+}
