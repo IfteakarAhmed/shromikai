@@ -35,6 +35,35 @@ cp docs/*.md "$OUT/docs/"
 cp docs/prompts/*.md "$OUT/docs/prompts/"
 cp docs/spec/architecture.md "$OUT/docs/spec/"
 
+# The Hub refuses plain binary files in a push, so every binary type goes through Git LFS (the
+# corpus archive is 3 MB, below the 10 MB limit, but is binary too).
+cat > "$OUT/.gitattributes" <<'ATTR'
+*.dump filter=lfs diff=lfs merge=lfs -text
+*.jar filter=lfs diff=lfs merge=lfs -text
+*.jpg filter=lfs diff=lfs merge=lfs -text
+*.jpeg filter=lfs diff=lfs merge=lfs -text
+*.png filter=lfs diff=lfs merge=lfs -text
+*.webp filter=lfs diff=lfs merge=lfs -text
+*.gif filter=lfs diff=lfs merge=lfs -text
+*.ico filter=lfs diff=lfs merge=lfs -text
+*.woff filter=lfs diff=lfs merge=lfs -text
+*.woff2 filter=lfs diff=lfs merge=lfs -text
+*.pdf filter=lfs diff=lfs merge=lfs -text
+ATTR
+uncovered=""
+while IFS= read -r f; do
+  if ! grep -Iq . "$OUT/$f" 2>/dev/null; then
+    case "$f" in
+      *.dump | *.jar | *.jpg | *.jpeg | *.png | *.webp | *.gif | *.ico | *.woff | *.woff2 | *.pdf) ;;
+      *) uncovered="$uncovered $f" ;;
+    esac
+  fi
+done < <(cd "$OUT" && find . -type f ! -name .gitattributes)
+if [ -n "$uncovered" ]; then
+  echo "refusing: binary files not covered by .gitattributes:$uncovered" >&2
+  exit 1
+fi
+
 # Guards: no secret or contract file may enter the Space.
 if find "$OUT" \( -name '.env' -o -name '.env.*' -o -name '*.contract.pdf' \) | grep -q .; then
   echo "refusing: a secret or contract file is in the staging directory" >&2

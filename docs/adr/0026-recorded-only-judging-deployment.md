@@ -44,8 +44,9 @@ which come from Ollama. A fake embedder would return other sections and every sa
    `flyway_schema_history`). Every other table is exported empty, by an allowlist so that a table
    added later is empty by default, and the script refuses an archive with data elsewhere. The
    archive holds public statute text and no user, token, audit, analysis, usage or key row. It is
-   3.6 MB, so no Git LFS is needed (the Hub's limit for plain files is 10 MB); it is git-ignored and
-   shipped only to the Space. The entrypoint restores it when `law_act` is empty, which is every
+   3.6 MB, below the Hub's 10 MB limit for plain files, but binary, so it goes through Git LFS like
+   the other binary files of the Space (`scripts/build-hf-space.sh` writes `.gitattributes` and
+   refuses an uncovered binary); it is git-ignored in this repository and shipped only to the Space. The entrypoint restores it when `law_act` is empty, which is every
    start because the Space has no persistent disk. This ships the exact corpus release the
    recordings were made with; a scrape on the server could differ.
 5. **Secrets from Space secrets**, never printed: `DEMO_PASSWORD` (required, 12+ characters),
@@ -81,8 +82,8 @@ which come from Ollama. A fake embedder would return other sections and every sa
 - Not in this deployment: upload analysis of other documents, photo OCR (no Tesseract in the
   image), the MCP server, n8n, Prometheus, backups, resource limits, Dependabot and the OWASP check
   (the rest of FR-85 to FR-88 stays open; `known-gaps.md`).
-- The image is amd64 on the Hub. It was built and tested natively (arm64) on the developer's
-  machine; embeddings of the Space's CPU may differ in the last digits from those of the recording
+- The image is amd64 on the Hub (built there from the Dockerfile, which sets no platform). It was
+  built and tested natively (arm64) on the developer's machine only; no x86 image was built locally; embeddings of the Space's CPU may differ in the last digits from those of the recording
   machine. A near-tie in retrieval could then change the sections of a request and make the sample
   fail with `not-recorded`. Smoke check 4 of `scripts/smoke-deploy.sh` is the test, and it must be
   run against the live Space.
@@ -105,7 +106,8 @@ which come from Ollama. A fake embedder would return other sections and every sa
 
 - `scripts/smoke-deploy.sh <url>` (checks 1 to 7 of the plan: meta, health, demo login and cookie
   flags, sample analysis with the `not-recorded` check, memo PDF, pages and absolute `og:image`,
-  HTTPS redirect and HSTS) was run against the container on the developer's machine; its output is
-  in the dev-log. It must be run again against the live Space.
+  HTTPS redirect and HSTS) was run against the arm64 container on the developer's machine (all
+  checks passed; check 7 needs an https address and was skipped); its output is summarised in the
+  dev-log. It must be run again against the live Space, where check 4 is the first x86 test.
 - `FR-85`: frontend test `siteUrl.test.ts` pins the placeholders in `index.html`.
 - `export-corpus.sh` fails if the archive carries a row of a non-allowlisted table.
