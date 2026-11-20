@@ -33,7 +33,6 @@ describe('FR-85 landing page in the static recorded replay', () => {
     ['আমার চুক্তি দেব'],
     ['এইচআর হিসেবে ডেমো'],
     ['অ্যাডমিন হিসেবে ডেমো'],
-    ['তুলনা দেখুন'],
   ])('FR-85 %s is aria-disabled with a visible note, not a link to nowhere', (name) => {
     renderApp(<LandingPage />)
     const controls = screen.queryAllByRole('link', { name: new RegExp(name) })
@@ -53,6 +52,19 @@ describe('FR-85 landing page in the static recorded replay', () => {
     for (const route of liveOnly) {
       expect(hrefs).not.toContain(route)
     }
+  })
+
+  it('FR-85 the compare button is hidden entirely, with no note of its own', () => {
+    renderApp(<LandingPage />)
+    expect(screen.queryByText('তুলনা দেখুন')).toBeNull()
+    expect(document.querySelector('a[href="/app/compare"]')).toBeNull()
+  })
+
+  it('FR-85 the own-contract buttons stay visibly disabled with their note', () => {
+    renderApp(<LandingPage />)
+    const [own] = screen.getAllByRole('link', { name: 'নিজের চুক্তি দিন' })
+    expect(own).toHaveAttribute('aria-disabled', 'true')
+    expect(own).toHaveClass('opacity-55')
   })
 
   it('FR-85 a click on a disabled control moves focus to its note', async () => {

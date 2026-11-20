@@ -1,14 +1,10 @@
 import { screen } from '@testing-library/react'
-import userEvent from '@testing-library/user-event'
 import { Route, Routes } from 'react-router-dom'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import i18n from '../../i18n'
 import { makeResult } from '../../test/fixtures'
 import { renderApp } from '../../test/render'
 import { ResultsView } from './ResultsView'
-
-const NOTE_BN =
-  "লাইভ সার্ভার লাগে; এই সাইটটি রেকর্ড করা রিপ্লে। 'নমুনা চুক্তি দিয়ে দেখুন' ব্যবহার করুন।"
 
 function view() {
   return renderApp(
@@ -28,23 +24,12 @@ afterEach(() => {
 })
 
 describe('FR-85 results page in the static recorded replay', () => {
-  it('FR-85 the compare buttons are aria-disabled with a note and no destination', () => {
+  it('FR-85 hides both compare buttons entirely and keeps the new-analysis one', () => {
     view()
-    const controls = screen.getAllByRole('link', { name: /সাধারণ এআইয়ের সাথে তুলনা|^তুলনা$/ })
-    expect(controls).toHaveLength(2)
-    for (const control of controls) {
-      expect(control).toHaveAttribute('aria-disabled', 'true')
-      expect(control).not.toHaveAttribute('href')
-      const note = document.getElementById(control.getAttribute('aria-describedby') ?? '')
-      expect(note).toHaveTextContent(NOTE_BN)
-    }
-  })
-
-  it('FR-85 a click on a disabled compare button moves focus to its note', async () => {
-    const user = userEvent.setup()
-    view()
-    const [compare] = screen.getAllByRole('link', { name: /সাধারণ এআইয়ের সাথে তুলনা/ })
-    await user.click(compare as HTMLElement)
-    expect(document.getElementById(compare?.getAttribute('aria-describedby') ?? '')).toHaveFocus()
+    expect(screen.queryByText(/সাধারণ এআইয়ের সাথে তুলনা/)).toBeNull()
+    expect(screen.queryByRole('link', { name: 'তুলনা' })).toBeNull()
+    expect(document.querySelector('a[href="/app/compare"]')).toBeNull()
+    expect(screen.queryByText(/লাইভ সার্ভার লাগে/)).toBeNull()
+    expect(screen.getAllByRole('link', { name: 'নতুন চুক্তি দিন' })).toHaveLength(2)
   })
 })

@@ -230,7 +230,7 @@ export function UploadPage() {
         </div>
       </GlassCard>
 
-      {recorded !== null && (
+      {recorded !== null && !replay && (
         <p
           role="note"
           className="mt-4 rounded-lg border border-uncertain/40 bg-uncertain/10 px-4 py-3"

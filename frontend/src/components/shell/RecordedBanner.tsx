@@ -1,4 +1,5 @@
 import { useTranslation } from 'react-i18next'
+import { isStaticReplay } from '../../api/replay'
 import { useMeta } from '../../api/useMeta'
 import { Icon } from '../ui/Icon'
 
@@ -9,7 +10,8 @@ import { Icon } from '../ui/Icon'
 export function RecordedBanner() {
   const { t } = useTranslation()
   const meta = useMeta()
-  if (!meta.isSuccess || meta.data.recordedDemo === null) {
+  // The static replay has its own banner that says this and more (FR-85).
+  if (isStaticReplay() || !meta.isSuccess || meta.data.recordedDemo === null) {
     return null
   }
   return (

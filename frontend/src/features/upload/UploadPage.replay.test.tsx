@@ -64,6 +64,14 @@ describe('FR-85 upload page in the static recorded replay', () => {
     ).toBeInTheDocument()
   })
 
+  it('FR-85 shows one note about uploads, not the recorded-demo one as well', async () => {
+    page()
+    await screen.findByText(/স্ট্যাটিক রিপ্লেতে কোনো নথি আপলোড/)
+    // Let the meta query settle: the recorded-demo note would appear once it resolves.
+    await new Promise((resolve) => setTimeout(resolve, 100))
+    expect(screen.queryByText(/এই ডেমোতে শুধু নমুনা চুক্তিটি বিশ্লেষণ/)).toBeNull()
+  })
+
   it('FR-85 makes the sample the one primary action, before every disabled control', async () => {
     page()
     const sample = await screen.findByRole('button', { name: 'নমুনা চুক্তি দিয়ে দেখুন' })

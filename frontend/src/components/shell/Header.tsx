@@ -1,4 +1,4 @@
-import { useEffect, useId, useState, type ReactNode } from 'react'
+import { useEffect, useId, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { Link, NavLink, useLocation, useNavigate, type NavLinkProps } from 'react-router-dom'
 import { isPlainClick, withViewTransition } from '../../lib/viewTransition'
@@ -8,8 +8,6 @@ import { useAuth } from '../../auth/authContext'
 import { cx } from '../../lib/cx'
 import { Button } from '../ui/Button'
 import { Icon } from '../ui/Icon'
-import { LiveOnlyLink } from '../ui/LiveOnly'
-import { REPLAY_BANNER_NOTE_ID } from '../ui/liveOnlyProps'
 import { isStaticReplay } from '../../api/replay'
 import { LanguageToggle } from './LanguageToggle'
 import { LowBandwidthToggle } from './LowBandwidthToggle'
@@ -29,13 +27,9 @@ function NavItem({
 }: NavLinkProps & { to: string; needsServer?: boolean }) {
   const navigate = useNavigate()
   const { lowBandwidth } = usePreferences()
+  // The static replay has no server for this page: the link is not shown at all.
   if (needsServer && isStaticReplay()) {
-    // The static replay has no server for this page: a disabled link whose click shows why.
-    return (
-      <LiveOnlyLink noteId={REPLAY_BANNER_NOTE_ID} className={linkClass({ isActive: false })}>
-        {props.children as ReactNode}
-      </LiveOnlyLink>
-    )
+    return null
   }
   return (
     <NavLink
@@ -54,22 +48,6 @@ function NavItem({
   )
 }
 
-/** The sign-in link; on the static replay there is nothing to sign in to, so it is disabled. */
-function SignInLink({ className, children }: { className: string; children: ReactNode }) {
-  if (isStaticReplay()) {
-    return (
-      <LiveOnlyLink noteId={REPLAY_BANNER_NOTE_ID} className={className}>
-        {children}
-      </LiveOnlyLink>
-    )
-  }
-  return (
-    <Link to="/login" className={className}>
-      {children}
-    </Link>
-  )
-}
-
 /** The sticky header: brand, role-aware menu and the preference toggles (FR-68, FR-75, FR-76). */
 export function Header() {
   const { t } = useTranslation()
@@ -80,6 +58,8 @@ export function Header() {
   const [openAt, setOpenAt] = useState<string | null>(null)
   const open = openAt === location.pathname
   const menuId = useId()
+  // The static replay has no accounts: no sign-in, sign-out or signed-in line (FR-85).
+  const replay = isStaticReplay()
   const user = session.status === 'authenticated' ? session.user : null
   const role = user !== null && isRole(user.role) ? user.role : null
 
@@ -149,10 +129,13 @@ export function Header() {
             <ThemeToggle />
           </div>
           <LanguageToggle />
-          {user === null ? (
-            <SignInLink className="hidden min-h-11 shrink-0 items-center whitespace-nowrap rounded-xl border border-border px-4 font-semibold hover:bg-accent xl:inline-flex">
+          {replay ? null : user === null ? (
+            <Link
+              to="/login"
+              className="hidden min-h-11 shrink-0 items-center whitespace-nowrap rounded-xl border border-border px-4 font-semibold hover:bg-accent xl:inline-flex"
+            >
               {t('nav.signIn')}
-            </SignInLink>
+            </Link>
           ) : (
             <div className="hidden xl:block">
               <Button
@@ -182,7 +165,7 @@ export function Header() {
         </div>
       </div>
 
-      {session.status !== 'loading' && session.status !== 'anonymous' && (
+      {!replay && session.status !== 'loading' && session.status !== 'anonymous' && (
         <p className="mx-auto max-w-6xl px-(--gutter) pb-2 text-sm text-muted-foreground">
           {user === null
             ? t('nav.guestAs')
@@ -223,10 +206,13 @@ export function Header() {
           <div className="mt-2 flex flex-wrap gap-2">
             <LowBandwidthToggle compact={false} />
             <ThemeToggle />
-            {user === null ? (
-              <SignInLink className="inline-flex min-h-14 items-center whitespace-nowrap rounded-xl border border-border px-4 font-semibold hover:bg-accent">
+            {replay ? null : user === null ? (
+              <Link
+                to="/login"
+                className="inline-flex min-h-14 items-center whitespace-nowrap rounded-xl border border-border px-4 font-semibold hover:bg-accent"
+              >
                 {t('nav.signIn')}
-              </SignInLink>
+              </Link>
             ) : (
               <Button
                 variant="outline"

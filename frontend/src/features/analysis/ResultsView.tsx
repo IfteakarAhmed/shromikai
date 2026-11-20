@@ -1,4 +1,4 @@
-import { useId, useState } from 'react'
+import { useState } from 'react'
 import { Link, useSearchParams } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
 import { warningText } from '../../lib/warnings'
@@ -8,7 +8,6 @@ import { Badge } from '../../components/ui/Badge'
 import { GlassCard } from '../../components/ui/GlassCard'
 import { Icon } from '../../components/ui/Icon'
 import { LinkButton } from '../../components/ui/Button'
-import { LiveLinkButton, LiveOnlyNote } from '../../components/ui/LiveOnly'
 import { isStaticReplay } from '../../api/replay'
 import { Disclaimer } from '../../components/ui/Disclaimer'
 import { RiskCard } from '../../components/result/RiskCard'
@@ -84,13 +83,11 @@ export function ResultsView({ result }: ResultsViewProps) {
   const n = (value: number) => formatNumber(value, language)
   const big = bigProblemCount(summary)
   const steps = nextSteps(result)
-  const compareNote = useId()
-  const compareNoteMobile = useId()
+  // Compare needs a live server: the static replay leaves its buttons out (FR-85).
+  const replay = isStaticReplay()
 
   return (
-    <div
-      className={`mx-auto max-w-6xl px-(--gutter) pt-8 lg:pb-12 ${isStaticReplay() ? 'pb-44' : 'pb-28'}`}
-    >
+    <div className="mx-auto max-w-6xl px-(--gutter) pb-28 pt-8 lg:pb-12">
       <header className="parallax flex flex-wrap items-start justify-between gap-4">
         <div>
           <h1 className="text-3xl font-bold">{t('results.title')}</h1>
@@ -101,16 +98,17 @@ export function ResultsView({ result }: ResultsViewProps) {
         </div>
         <div className="hidden lg:block">
           <div className="flex gap-2">
-            <LiveLinkButton to="/app/compare" noteId={compareNote} variant="outline">
-              <Icon name="columns" />
-              {t('results.compare')}
-            </LiveLinkButton>
+            {!replay && (
+              <LinkButton to="/app/compare" variant="outline">
+                <Icon name="columns" />
+                {t('results.compare')}
+              </LinkButton>
+            )}
             <LinkButton to="/app">
               <Icon name="upload" />
               {t('results.newAnalysis')}
             </LinkButton>
           </div>
-          <LiveOnlyNote id={compareNote} className="max-w-sm" />
         </div>
       </header>
 
@@ -372,21 +370,17 @@ export function ResultsView({ result }: ResultsViewProps) {
       <div className="fixed inset-x-0 bottom-0 z-20 border-t border-border bg-background/95 p-3 backdrop-blur lg:hidden">
         <div className="mx-auto max-w-6xl">
           <div className="flex gap-2">
-            <LiveLinkButton
-              to="/app/compare"
-              noteId={compareNoteMobile}
-              variant="outline"
-              className="flex-1"
-            >
-              <Icon name="columns" />
-              {t('results.compareShort')}
-            </LiveLinkButton>
+            {!replay && (
+              <LinkButton to="/app/compare" variant="outline" className="flex-1">
+                <Icon name="columns" />
+                {t('results.compareShort')}
+              </LinkButton>
+            )}
             <LinkButton to="/app" className="flex-1">
               <Icon name="upload" />
               {t('results.newAnalysis')}
             </LinkButton>
           </div>
-          <LiveOnlyNote id={compareNoteMobile} className="mt-1 py-1 text-xs" />
         </div>
       </div>
 

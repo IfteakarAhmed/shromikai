@@ -1178,8 +1178,8 @@
     "still": "Still picture"
   },
   "replay": {
-    "label": "Static recorded replay, not a live server",
-    "explain": "No server or AI model runs behind this site. The real recorded answers for one sample contract are shown from files.",
+    "label": "Recorded replay",
+    "banner": "Recorded replay of one sample contract, not a live server. Upload and accounts need the full version.",
     "unavailableTitle": "This is not in the static recorded replay",
     "unavailableBody": "This feature needs a live server. This site only shows the earlier recorded analysis of one sample contract: risks, \"Why?\", suggested changes, the duties list and the memo.",
     "toSample": "See the sample contract replay",

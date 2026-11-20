@@ -5,6 +5,7 @@ import { GlassCard } from '../../components/ui/GlassCard'
 import { DisplayText } from '../../components/ui/DisplayText'
 import { Icon, type IconName } from '../../components/ui/Icon'
 import { LiveLinkButton, LiveOnlyNote } from '../../components/ui/LiveOnly'
+import { isStaticReplay } from '../../api/replay'
 import { cx } from '../../lib/cx'
 import { useTitle } from '../../lib/useTitle'
 import { HeroFrame } from './HeroFrame'
@@ -99,7 +100,6 @@ function AudienceCta({ to, children }: { to: string; children: ReactNode }) {
  */
 export function LandingPage() {
   const heroNote = useId()
-  const compareNote = useId()
   const finaleNote = useId()
   const { t } = useTranslation()
   useTitle(t('hero.eyebrow'))
@@ -223,13 +223,15 @@ export function LandingPage() {
                     <p className="mt-4 inline-flex rounded-lg border border-border px-3 py-1 text-sm font-semibold">
                       {t('story.illustration')}
                     </p>
-                    <div className="mt-5">
-                      <LiveLinkButton to="/app/compare" noteId={compareNote} variant="secondary">
-                        <Icon name="columns" />
-                        {t('comparison.cta')}
-                      </LiveLinkButton>
-                      <LiveOnlyNote id={compareNote} />
-                    </div>
+                    {/* Compare needs a live server: the static replay leaves the button out. */}
+                    {!isStaticReplay() && (
+                      <div className="mt-5">
+                        <LinkButton to="/app/compare" variant="secondary">
+                          <Icon name="columns" />
+                          {t('comparison.cta')}
+                        </LinkButton>
+                      </div>
+                    )}
                   </>
                 )}
               </ChapterText>

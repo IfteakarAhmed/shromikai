@@ -6,9 +6,6 @@ import { cx } from '../../lib/cx'
 /** The class every control that needs a live server wears in the static replay: dimmed. */
 export const LIVE_ONLY_DIMMED = 'opacity-55 cursor-not-allowed'
 
-/** The banner's sentence is where a disabled header link sends focus (FR-85). */
-export const REPLAY_BANNER_NOTE_ID = 'replay-banner-note'
-
 /** Moves focus to the visible note of a disabled control, so a click is never silent. */
 export function focusLiveOnlyNote(noteId: string): void {
   document.getElementById(noteId)?.focus()

@@ -1,5 +1,4 @@
-import { screen } from '@testing-library/react'
-import userEvent from '@testing-library/user-event'
+import { screen, within } from '@testing-library/react'
 import { http, HttpResponse } from 'msw'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import App from '../../App'
@@ -7,9 +6,6 @@ import i18n from '../../i18n'
 import { sampleMeta } from '../../test/msw/handlers'
 import { server } from '../../test/msw/server'
 import { renderApp } from '../../test/render'
-
-const NOTE_BN =
-  "লাইভ সার্ভার লাগে; এই সাইটটি রেকর্ড করা রিপ্লে। 'নমুনা চুক্তি দিয়ে দেখুন' ব্যবহার করুন।"
 
 beforeEach(async () => {
   await i18n.changeLanguage('bn')
@@ -31,39 +27,44 @@ afterEach(() => {
   vi.unstubAllEnvs()
 })
 
+/** The header's own links and buttons (desktop row and mobile menu), by name. */
+const header = () => document.querySelector('header') as HTMLElement
+
 describe('FR-85 header in the static recorded replay', () => {
-  it('FR-85 compare and profile are aria-disabled, dimmed and carry no destination', async () => {
+  it('FR-85 hides Compare, Profile, Sign in and Sign out entirely, not dimmed', async () => {
     renderApp(<App />, '/app')
-    const profile = await screen.findByRole('link', { name: 'প্রোফাইল' })
-    for (const control of [profile, ...screen.getAllByRole('link', { name: 'তুলনা' })]) {
-      expect(control).toHaveAttribute('aria-disabled', 'true')
-      expect(control).not.toHaveAttribute('href')
-      expect(control).toHaveClass('opacity-55')
-      expect(control).toHaveAttribute('title', NOTE_BN)
+    // The recorded session is open, so Profile and Sign out would exist on a live build.
+    await screen.findByRole('heading', { name: /চুক্তি/, level: 1 })
+    const text = header().textContent
+    for (const word of ['তুলনা', 'প্রোফাইল', 'সাইন ইন', 'সাইন আউট']) {
+      expect(text).not.toContain(word)
     }
+    expect(header().querySelector('[aria-disabled]')).toBeNull()
+    expect(header().querySelector('a[href="/login"], a[href="/app/compare"]')).toBeNull()
   })
 
-  it('FR-85 the live links keep working: analyse and docs still have a destination', async () => {
-    renderApp(<App />, '/app')
-    await screen.findByRole('link', { name: 'প্রোফাইল' })
-    expect(screen.getAllByRole('link', { name: 'ডকুমেন্টেশন' })[0]).toHaveAttribute('href', '/docs')
-    expect(screen.getAllByRole('link', { name: 'বিশ্লেষণ' })[0]).toHaveAttribute('href', '/app')
-  })
-
-  it('FR-85 a click on a disabled link moves focus to the visible note, never silent', async () => {
-    const user = userEvent.setup()
-    renderApp(<App />, '/app')
-    const [compare] = await screen.findAllByRole('link', { name: 'তুলনা' })
-    await user.click(compare as HTMLElement)
-    const note = document.getElementById(compare?.getAttribute('aria-describedby') ?? '')
-    expect(note).toHaveFocus()
-    expect(note).toHaveTextContent(NOTE_BN)
-  })
-
-  it('FR-85 sign-in is disabled for a visitor with no recorded session', async () => {
+  it('FR-85 hides sign-in for a visitor with no recorded session too', async () => {
     renderApp(<App />, '/docs')
-    const signIn = (await screen.findAllByRole('link', { name: 'সাইন ইন' }))[0]
-    expect(signIn).toHaveAttribute('aria-disabled', 'true')
-    expect(signIn).not.toHaveAttribute('href')
+    await screen.findAllByRole('link', { name: 'ডকুমেন্টেশন' })
+    expect(header().textContent).not.toContain('সাইন ইন')
+    expect(header().querySelector('[aria-disabled]')).toBeNull()
+  })
+
+  it('FR-85 does not announce a signed-in account that nobody can sign out of', async () => {
+    renderApp(<App />, '/app')
+    await screen.findAllByRole('link', { name: 'ডকুমেন্টেশন' })
+    expect(header().textContent).not.toContain('হিসেবে ঢুকেছেন')
+    expect(header().textContent).not.toContain('w@example.test')
+  })
+
+  it('FR-85 keeps Analyse, Documentation, language, theme and low-bandwidth', async () => {
+    renderApp(<App />, '/docs')
+    expect((await screen.findAllByRole('link', { name: 'ডকুমেন্টেশন' }))[0]).toHaveAttribute(
+      'href',
+      '/docs',
+    )
+    expect(screen.getAllByRole('link', { name: 'বিশ্লেষণ' })[0]).toHaveAttribute('href', '/app')
+    expect(within(header()).getAllByRole('switch').length).toBeGreaterThan(0)
+    expect(within(header()).getAllByRole('button').length).toBeGreaterThan(2)
   })
 })
