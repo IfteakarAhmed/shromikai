@@ -1,5 +1,6 @@
 import { useTranslation } from 'react-i18next'
 import { Button } from '../../components/ui/Button'
+import { isStaticReplay } from '../../api/replay'
 import { Icon } from '../../components/ui/Icon'
 import type { Tier } from './cinematic/tier'
 
@@ -20,7 +21,8 @@ export function SceneToggle({
   floating: boolean
 }) {
   const { t } = useTranslation()
-  if (tier === 'lite' && !canEnable) {
+  // The static replay opens on its default picture and offers no way to turn the scene on.
+  if (tier === 'lite' && (!canEnable || isStaticReplay())) {
     return null
   }
   const still = tier !== 'lite'

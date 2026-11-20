@@ -11,11 +11,27 @@ vi.mock('./ContractScene', () => ({ default: () => <div data-testid="scene" /> }
 const NOTE_BN =
   "লাইভ সার্ভার লাগে; এই সাইটটি রেকর্ড করা রিপ্লে। 'নমুনা চুক্তি দিয়ে দেখুন' ব্যবহার করুন।"
 
+function webgl(width: number) {
+  vi.spyOn(HTMLCanvasElement.prototype, 'getContext').mockImplementation(((kind: string) =>
+    kind === 'webgl2' || kind === 'webgl'
+      ? { getExtension: () => null }
+      : null) as typeof HTMLCanvasElement.prototype.getContext)
+  for (const [key, value] of Object.entries({
+    hardwareConcurrency: 8,
+    deviceMemory: 8,
+    connection: { effectiveType: '4g', saveData: false },
+  })) {
+    Object.defineProperty(navigator, key, { value, configurable: true })
+  }
+  window.innerWidth = width
+}
+
 beforeEach(async () => {
   await i18n.changeLanguage('bn')
   vi.stubEnv('VITE_STATIC_REPLAY', '1')
 })
 afterEach(() => {
+  vi.restoreAllMocks()
   vi.unstubAllEnvs()
 })
 
@@ -73,5 +89,22 @@ describe('FR-85 landing page in the static recorded replay', () => {
     const [own] = screen.getAllByRole('link', { name: 'নিজের চুক্তি দিন' })
     await user.click(own as HTMLElement)
     expect(document.getElementById(own?.getAttribute('aria-describedby') ?? '')).toHaveFocus()
+  })
+
+  it('FR-85 a capable phone gets the poster with no "turn on the scene" button', () => {
+    webgl(390)
+    renderApp(<LandingPage />)
+    expect(document.querySelector('[data-tier="lite"]')).not.toBeNull()
+    expect(screen.queryByRole('button', { name: 'দৃশ্য চালু করুন' })).toBeNull()
+    expect(screen.getByRole('img', { name: i18n.t('hero.sceneAlt') })).toBeInTheDocument()
+  })
+
+  it('FR-85 a capable desktop still renders its default scene, and the still-picture switch stays', async () => {
+    webgl(1280)
+    renderApp(<LandingPage />)
+    expect(document.querySelector('[data-tier="cinematic"]')).not.toBeNull()
+    expect(await screen.findByTestId('cinematic')).toBeInTheDocument()
+    expect(screen.queryByRole('button', { name: 'দৃশ্য চালু করুন' })).toBeNull()
+    expect(screen.getByRole('button', { name: 'স্থির ছবি' })).toBeVisible()
   })
 })
