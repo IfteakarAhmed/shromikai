@@ -1,9 +1,10 @@
-import { Suspense, lazy, type ReactNode } from 'react'
+import { Suspense, lazy, useId, type ReactNode } from 'react'
 import { useTranslation } from 'react-i18next'
 import { LinkButton } from '../../components/ui/Button'
 import { GlassCard } from '../../components/ui/GlassCard'
 import { DisplayText } from '../../components/ui/DisplayText'
 import { Icon, type IconName } from '../../components/ui/Icon'
+import { LiveLinkButton, LiveOnlyNote } from '../../components/ui/LiveOnly'
 import { cx } from '../../lib/cx'
 import { useTitle } from '../../lib/useTitle'
 import { HeroFrame } from './HeroFrame'
@@ -69,12 +70,37 @@ function ChapterText({
 }
 
 /**
+ * The call to action of one audience card. The HR and admin demos sign in to a live server, so on
+ * the static replay they are disabled with a note (FR-85); the worker demo works.
+ */
+function AudienceCta({ to, children }: { to: string; children: ReactNode }) {
+  const note = useId()
+  return (
+    <>
+      <LiveLinkButton
+        to={to}
+        noteId={note}
+        variant="outline"
+        className="mt-4"
+        needsServer={to !== '/demo-user'}
+      >
+        {children}
+      </LiveLinkButton>
+      {to !== '/demo-user' && <LiveOnlyNote id={note} />}
+    </>
+  )
+}
+
+/**
  * `/`: the story of one contract in six chapters (FR-68). The chapters are real HTML in every tier,
  * Bangla first; on the cinematic tier a fixed WebGL scene behind them follows the native scroll, on
  * the standard tier the hero frame has the smaller scene, and on the lite tier a poster rendered
  * from the scene (scripts/render-scene.mjs). A switch keeps the still picture one click away.
  */
 export function LandingPage() {
+  const heroNote = useId()
+  const compareNote = useId()
+  const finaleNote = useId()
   const { t } = useTranslation()
   useTitle(t('hero.eyebrow'))
   const { tier, optIn, choose, fail } = useSceneTier()
@@ -141,22 +167,23 @@ export function LandingPage() {
                   <Icon name="play" />
                   {t('hero.sample')}
                 </LinkButton>
-                <LinkButton to="/app" size="lg" variant="secondary">
+                <LiveLinkButton to="/app" noteId={heroNote} size="lg" variant="secondary">
                   <Icon name="upload" />
                   {t('hero.own')}
-                </LinkButton>
+                </LiveLinkButton>
               </div>
               <div className="mt-4 flex flex-wrap gap-2">
                 <LinkButton to="/demo-user" variant="outline">
                   {t('hero.workerDemo')}
                 </LinkButton>
-                <LinkButton to="/demo-hr" variant="outline">
+                <LiveLinkButton to="/demo-hr" noteId={heroNote} variant="outline">
                   {t('hero.hrDemo')}
-                </LinkButton>
-                <LinkButton to="/demo-admin" variant="outline">
+                </LiveLinkButton>
+                <LiveLinkButton to="/demo-admin" noteId={heroNote} variant="outline">
                   {t('hero.adminDemo')}
-                </LinkButton>
+                </LiveLinkButton>
               </div>
+              <LiveOnlyNote id={heroNote} className="max-w-xl" />
               {!cinematic && (
                 <SceneToggle
                   tier={tier}
@@ -197,10 +224,11 @@ export function LandingPage() {
                       {t('story.illustration')}
                     </p>
                     <div className="mt-5">
-                      <LinkButton to="/app/compare" variant="secondary">
+                      <LiveLinkButton to="/app/compare" noteId={compareNote} variant="secondary">
                         <Icon name="columns" />
                         {t('comparison.cta')}
-                      </LinkButton>
+                      </LiveLinkButton>
+                      <LiveOnlyNote id={compareNote} />
                     </div>
                   </>
                 )}
@@ -234,11 +262,12 @@ export function LandingPage() {
                   <Icon name="play" />
                   {t('story.finaleSample')}
                 </LinkButton>
-                <LinkButton to="/app" size="lg" variant="secondary">
+                <LiveLinkButton to="/app" noteId={finaleNote} size="lg" variant="secondary">
                   <Icon name="upload" />
                   {t('story.finaleOwn')}
-                </LinkButton>
+                </LiveLinkButton>
               </div>
+              <LiveOnlyNote id={finaleNote} className="mx-auto max-w-xl text-left" />
             </div>
           </div>
         </section>
@@ -262,9 +291,7 @@ export function LandingPage() {
                 <GlassCard className="flex h-full flex-col p-5">
                   <h3 className="text-xl font-bold">{t(`audience.${key}`)}</h3>
                   <p className="mt-1 flex-1 text-muted-foreground">{t(`audience.${key}Body`)}</p>
-                  <LinkButton to={to} variant="outline" className="mt-4">
-                    {t(`audience.${key}Cta`)}
-                  </LinkButton>
+                  <AudienceCta to={to}>{t(`audience.${key}Cta`)}</AudienceCta>
                 </GlassCard>
               </li>
             ))}

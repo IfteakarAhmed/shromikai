@@ -1,6 +1,6 @@
 import { textareaClass } from '../../components/ui/field'
 import { useMutation } from '@tanstack/react-query'
-import { useEffect, useMemo, useRef, useState, type ChangeEvent } from 'react'
+import { useEffect, useId, useMemo, useRef, useState, type ChangeEvent } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useLocation, useNavigate } from 'react-router-dom'
 import { startAnalysis, type AnalysisInput } from '../../api/analyses'
@@ -11,6 +11,8 @@ import { Button } from '../../components/ui/Button'
 import { ErrorState } from '../../components/ui/ErrorState'
 import { GlassCard } from '../../components/ui/GlassCard'
 import { Icon } from '../../components/ui/Icon'
+import { LiveOnlyNote } from '../../components/ui/LiveOnly'
+import { focusLiveOnlyNote, liveOnlyProps } from '../../components/ui/liveOnlyProps'
 import { Tabs } from '../../components/ui/Tabs'
 import { cx } from '../../lib/cx'
 import { formatNumber } from '../../lib/format'
@@ -43,6 +45,15 @@ export function UploadPage() {
   const meta = useMeta()
   const { side, setSide, locale } = usePreferences()
   const recorded = meta.data?.recordedDemo ?? null
+  // On the static replay nothing but the sample can run: the other controls stay on screen,
+  // `aria-disabled` and dimmed, each with a note, instead of being natively disabled and silent.
+  const replay = isStaticReplay()
+  const lockedByDemo = recorded !== null && !replay
+  const noteFile = useId()
+  const notePhotos = useId()
+  const noteText = useId()
+  const noteSide = useId()
+  const noteStart = useId()
 
   const [method, setMethod] = useState<Method>('file')
   const [pdf, setPdf] = useState<File | null>(null)
@@ -189,6 +200,23 @@ export function UploadPage() {
   const busy = start.isPending
   const textLength = text.trim().length
 
+  /** "Try a sample contract": the one thing the recorded replay can do, so it leads there. */
+  const sampleButton = (variant: 'primary' | 'secondary') => (
+    <Button
+      size="lg"
+      variant={variant}
+      busy={busy && start.variables.kind === 'sample'}
+      disabled={busy}
+      onClick={() => {
+        setInvalid(null)
+        start.mutate({ kind: 'sample' })
+      }}
+    >
+      {replay && <Icon name="play" />}
+      {t('upload.sample')}
+    </Button>
+  )
+
   return (
     <div className="mx-auto max-w-3xl px-(--gutter) py-10">
       <h1 className="text-3xl font-bold">{t('upload.title')}</h1>
@@ -219,6 +247,13 @@ export function UploadPage() {
         </p>
       )}
 
+      {replay && (
+        <div className="mt-6">
+          {sampleButton('primary')}
+          <p className="mt-2 text-sm text-muted-foreground">{t('upload.sampleHint')}</p>
+        </div>
+      )}
+
       <div role="group" aria-label={t('upload.steps.label')} className="upload-steps mt-8">
         <section aria-labelledby="step-contract" className="upload-step">
           <StepHeading
@@ -228,7 +263,7 @@ export function UploadPage() {
             hint={t('upload.steps.contractHint')}
           />
           <GlassCard depth="still" className="p-5">
-            <fieldset disabled={recorded !== null || busy} className="min-w-0 border-0 p-0">
+            <fieldset disabled={lockedByDemo || busy} className="min-w-0 border-0 p-0">
               <legend className="sr-only">{t('upload.method')}</legend>
               <Tabs
                 idPrefix="upload"
@@ -243,10 +278,29 @@ export function UploadPage() {
                     id: 'file',
                     label: t('upload.methodFile'),
                     panel: (
-                      <div className="rounded-xl border-2 border-dashed border-border p-6 text-center">
+                      <div
+                        className="rounded-xl border-2 border-dashed border-border p-6 text-center"
+                        onDragOver={
+                          replay
+                            ? (event) => {
+                                event.preventDefault()
+                              }
+                            : undefined
+                        }
+                        onDrop={
+                          replay
+                            ? (event) => {
+                                event.preventDefault()
+                                focusLiveOnlyNote(noteFile)
+                              }
+                            : undefined
+                        }
+                      >
                         <Icon name="file" size={32} className="mx-auto text-muted-foreground" />
-                        <p className="mt-2 font-semibold">{pdf?.name ?? t('upload.dropTitle')}</p>
-                        <p className="text-muted-foreground">
+                        <p className={cx('mt-2 font-semibold', replay && 'opacity-55')}>
+                          {pdf?.name ?? t('upload.dropTitle')}
+                        </p>
+                        <p className={cx('text-muted-foreground', replay && 'opacity-55')}>
                           {t('upload.dropHint', {
                             mb: formatNumber(MAX_BYTES / (1024 * 1024), language),
                           })}
@@ -262,12 +316,13 @@ export function UploadPage() {
                         />
                         <Button
                           variant="secondary"
-                          className="mt-4"
                           onClick={() => fileInput.current?.click()}
+                          {...liveOnlyProps(noteFile, 'mt-4')}
                         >
                           <Icon name="upload" />
                           {t('upload.chooseFile')}
                         </Button>
+                        <LiveOnlyNote id={noteFile} className="text-left" />
                       </div>
                     ),
                   },
@@ -300,15 +355,24 @@ export function UploadPage() {
                           onChange={takePhotos}
                         />
                         <div className="mt-3 flex flex-wrap gap-2">
-                          <Button variant="secondary" onClick={() => cameraInput.current?.click()}>
+                          <Button
+                            variant="secondary"
+                            onClick={() => cameraInput.current?.click()}
+                            {...liveOnlyProps(notePhotos)}
+                          >
                             <Icon name="camera" />
                             {t('upload.takePhoto')}
                           </Button>
-                          <Button variant="outline" onClick={() => photoInput.current?.click()}>
+                          <Button
+                            variant="outline"
+                            onClick={() => photoInput.current?.click()}
+                            {...liveOnlyProps(notePhotos)}
+                          >
                             <Icon name="upload" />
                             {t('upload.choosePhotos')}
                           </Button>
                         </div>
+                        <LiveOnlyNote id={notePhotos} />
                         {thumbnails.length > 0 && (
                           <ol className="mt-4 space-y-2">
                             {thumbnails.map(({ file, url }, index) => {
@@ -382,8 +446,10 @@ export function UploadPage() {
                           }}
                           rows={10}
                           placeholder={t('upload.textPlaceholder')}
-                          className={cx(textareaClass, 'mt-2')}
+                          readOnly={replay}
+                          {...liveOnlyProps(noteText, cx(textareaClass, 'mt-2'))}
                         />
+                        <LiveOnlyNote id={noteText} />
                         <p className="mt-1 text-sm text-muted-foreground">
                           {t('upload.textHint', {
                             min: formatNumber(MIN_TEXT, language),
@@ -401,14 +467,15 @@ export function UploadPage() {
 
         <section aria-labelledby="step-side" className="upload-step">
           <StepHeading id="step-side" n={2} title={t('upload.steps.side')} />
-          <fieldset className="min-w-0 border-0 p-0" disabled={recorded !== null || busy}>
+          <fieldset className="min-w-0 border-0 p-0" disabled={lockedByDemo || busy}>
             <legend className="sr-only">{t('upload.sideLabel')}</legend>
             <div className="grid gap-3 sm:grid-cols-2">
               {(['WORKER', 'EMPLOYER'] as const).map((value) => (
                 <label
                   key={value}
                   className={cx(
-                    'flex min-h-11 cursor-pointer items-start gap-3 rounded-xl border p-4',
+                    'flex min-h-11 items-start gap-3 rounded-xl border p-4',
+                    replay && value === 'EMPLOYER' ? 'cursor-not-allowed' : 'cursor-pointer',
                     effectiveSide === value ? 'border-primary bg-primary/10' : 'border-border',
                   )}
                 >
@@ -420,7 +487,11 @@ export function UploadPage() {
                     onChange={() => {
                       setSide(value)
                     }}
-                    className="mt-1.5 size-5 accent-[var(--primary)]"
+                    {...liveOnlyProps(
+                      noteSide,
+                      'mt-1.5 size-5 accent-[var(--primary)]',
+                      replay && value === 'EMPLOYER',
+                    )}
                   />
                   <span>
                     <span className="block font-semibold">
@@ -433,6 +504,7 @@ export function UploadPage() {
                 </label>
               ))}
             </div>
+            <LiveOnlyNote id={noteSide} />
           </fieldset>
         </section>
 
@@ -460,28 +532,22 @@ export function UploadPage() {
           <div className="flex flex-col gap-3 sm:flex-row">
             <Button
               size="lg"
+              variant={replay ? 'secondary' : 'primary'}
               busy={busy && start.variables.kind !== 'sample'}
-              disabled={recorded !== null || busy}
+              disabled={lockedByDemo || busy}
               onClick={submit}
+              {...liveOnlyProps(noteStart)}
             >
               {busy && start.variables.kind !== 'sample'
                 ? t('upload.submitting')
                 : t('upload.submit')}
             </Button>
-            <Button
-              size="lg"
-              variant="secondary"
-              busy={busy && start.variables.kind === 'sample'}
-              disabled={busy}
-              onClick={() => {
-                setInvalid(null)
-                start.mutate({ kind: 'sample' })
-              }}
-            >
-              {t('upload.sample')}
-            </Button>
+            {!replay && sampleButton('secondary')}
           </div>
-          <p className="mt-2 text-sm text-muted-foreground">{t('upload.sampleHint')}</p>
+          <LiveOnlyNote id={noteStart} />
+          {!replay && (
+            <p className="mt-2 text-sm text-muted-foreground">{t('upload.sampleHint')}</p>
+          )}
         </section>
       </div>
     </div>

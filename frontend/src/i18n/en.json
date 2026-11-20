@@ -1179,10 +1179,11 @@
   },
   "replay": {
     "label": "Static recorded replay, not a live server",
-    "explain": "No server or AI model runs behind this site. The real recorded answers for one sample contract are shown from files. Analysing your own contract, compare, profile and admin need a live server.",
+    "explain": "No server or AI model runs behind this site. The real recorded answers for one sample contract are shown from files.",
     "unavailableTitle": "This is not in the static recorded replay",
     "unavailableBody": "This feature needs a live server. This site only shows the earlier recorded analysis of one sample contract: risks, \"Why?\", suggested changes, the duties list and the memo.",
     "toSample": "See the sample contract replay",
+    "liveOnly": "Needs a live server; this site is a recorded replay. Use '{{sample}}'.",
     "uploadNote": "In the static replay no document can be uploaded or analysed; only the recorded sample can be viewed.",
     "auditNote": "In the static replay these figures were not read just now: they were saved from the recorded backend when the files were exported. The audit counters come from private tables and are not included."
   }

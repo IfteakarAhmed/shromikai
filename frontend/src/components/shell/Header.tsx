@@ -1,4 +1,4 @@
-import { useEffect, useId, useState } from 'react'
+import { useEffect, useId, useState, type ReactNode } from 'react'
 import { useTranslation } from 'react-i18next'
 import { Link, NavLink, useLocation, useNavigate, type NavLinkProps } from 'react-router-dom'
 import { isPlainClick, withViewTransition } from '../../lib/viewTransition'
@@ -8,6 +8,9 @@ import { useAuth } from '../../auth/authContext'
 import { cx } from '../../lib/cx'
 import { Button } from '../ui/Button'
 import { Icon } from '../ui/Icon'
+import { LiveOnlyLink } from '../ui/LiveOnly'
+import { REPLAY_BANNER_NOTE_ID } from '../ui/liveOnlyProps'
+import { isStaticReplay } from '../../api/replay'
 import { LanguageToggle } from './LanguageToggle'
 import { LowBandwidthToggle } from './LowBandwidthToggle'
 import { ThemeToggle } from './ThemeToggle'
@@ -19,9 +22,21 @@ const linkClass = ({ isActive }: { isActive: boolean }) =>
   )
 
 /** A navigation link whose same-tab clicks run inside a View Transition (C1). */
-function NavItem({ to, ...props }: NavLinkProps & { to: string }) {
+function NavItem({
+  to,
+  needsServer = false,
+  ...props
+}: NavLinkProps & { to: string; needsServer?: boolean }) {
   const navigate = useNavigate()
   const { lowBandwidth } = usePreferences()
+  if (needsServer && isStaticReplay()) {
+    // The static replay has no server for this page: a disabled link whose click shows why.
+    return (
+      <LiveOnlyLink noteId={REPLAY_BANNER_NOTE_ID} className={linkClass({ isActive: false })}>
+        {props.children as ReactNode}
+      </LiveOnlyLink>
+    )
+  }
   return (
     <NavLink
       to={to}
@@ -36,6 +51,22 @@ function NavItem({ to, ...props }: NavLinkProps & { to: string }) {
         }, lowBandwidth)
       }}
     />
+  )
+}
+
+/** The sign-in link; on the static replay there is nothing to sign in to, so it is disabled. */
+function SignInLink({ className, children }: { className: string; children: ReactNode }) {
+  if (isStaticReplay()) {
+    return (
+      <LiveOnlyLink noteId={REPLAY_BANNER_NOTE_ID} className={className}>
+        {children}
+      </LiveOnlyLink>
+    )
+  }
+  return (
+    <Link to="/login" className={className}>
+      {children}
+    </Link>
   )
 }
 
@@ -89,24 +120,24 @@ export function Header() {
           <NavItem to="/app" end className={linkClass}>
             {t('nav.analyse')}
           </NavItem>
-          <NavItem to="/app/compare" className={linkClass}>
+          <NavItem to="/app/compare" className={linkClass} needsServer>
             {t('nav.compare')}
           </NavItem>
           <NavItem to="/docs" className={linkClass}>
             {t('nav.docs')}
           </NavItem>
           {user !== null && (
-            <NavItem to="/app/profile" className={linkClass}>
+            <NavItem to="/app/profile" className={linkClass} needsServer>
               {t('nav.profile')}
             </NavItem>
           )}
           {role === 'HR' && (
-            <NavItem to="/app/playbooks" className={linkClass}>
+            <NavItem to="/app/playbooks" className={linkClass} needsServer>
               {t('nav.playbooks')}
             </NavItem>
           )}
           {role === 'ADMIN' && (
-            <NavItem to="/admin" className={linkClass}>
+            <NavItem to="/admin" className={linkClass} needsServer>
               {t('nav.admin')}
             </NavItem>
           )}
@@ -119,12 +150,9 @@ export function Header() {
           </div>
           <LanguageToggle />
           {user === null ? (
-            <Link
-              to="/login"
-              className="hidden min-h-11 shrink-0 items-center whitespace-nowrap rounded-xl border border-border px-4 font-semibold hover:bg-accent xl:inline-flex"
-            >
+            <SignInLink className="hidden min-h-11 shrink-0 items-center whitespace-nowrap rounded-xl border border-border px-4 font-semibold hover:bg-accent xl:inline-flex">
               {t('nav.signIn')}
-            </Link>
+            </SignInLink>
           ) : (
             <div className="hidden xl:block">
               <Button
@@ -171,24 +199,24 @@ export function Header() {
           <NavItem to="/app" end className={linkClass}>
             {t('nav.analyse')}
           </NavItem>
-          <NavItem to="/app/compare" className={linkClass}>
+          <NavItem to="/app/compare" className={linkClass} needsServer>
             {t('nav.compare')}
           </NavItem>
           <NavItem to="/docs" className={linkClass}>
             {t('nav.docs')}
           </NavItem>
           {user !== null && (
-            <NavItem to="/app/profile" className={linkClass}>
+            <NavItem to="/app/profile" className={linkClass} needsServer>
               {t('nav.profile')}
             </NavItem>
           )}
           {role === 'HR' && (
-            <NavItem to="/app/playbooks" className={linkClass}>
+            <NavItem to="/app/playbooks" className={linkClass} needsServer>
               {t('nav.playbooks')}
             </NavItem>
           )}
           {role === 'ADMIN' && (
-            <NavItem to="/admin" className={linkClass}>
+            <NavItem to="/admin" className={linkClass} needsServer>
               {t('nav.admin')}
             </NavItem>
           )}
@@ -196,12 +224,9 @@ export function Header() {
             <LowBandwidthToggle compact={false} />
             <ThemeToggle />
             {user === null ? (
-              <Link
-                to="/login"
-                className="inline-flex min-h-14 items-center whitespace-nowrap rounded-xl border border-border px-4 font-semibold hover:bg-accent"
-              >
+              <SignInLink className="inline-flex min-h-14 items-center whitespace-nowrap rounded-xl border border-border px-4 font-semibold hover:bg-accent">
                 {t('nav.signIn')}
-              </Link>
+              </SignInLink>
             ) : (
               <Button
                 variant="outline"
