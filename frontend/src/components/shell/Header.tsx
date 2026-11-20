@@ -8,6 +8,8 @@ import { useAuth } from '../../auth/authContext'
 import { cx } from '../../lib/cx'
 import { Button } from '../ui/Button'
 import { Icon } from '../ui/Icon'
+import { BrandMark } from '../brand/BrandMark'
+import { Wordmark } from '../brand/Wordmark'
 import { isStaticReplay } from '../../api/replay'
 import { LanguageToggle } from './LanguageToggle'
 import { LowBandwidthToggle } from './LowBandwidthToggle'
@@ -88,12 +90,10 @@ export function Header() {
       <div className="mx-auto flex max-w-6xl items-center justify-between gap-3 px-(--gutter) py-2">
         <Link
           to="/"
-          className="inline-flex min-h-14 shrink-0 items-center gap-2 whitespace-nowrap rounded-lg text-xl font-bold xl:min-h-11"
+          className="inline-flex min-h-14 shrink-0 items-center gap-2.5 whitespace-nowrap rounded-lg xl:min-h-11"
         >
-          <span className="flex size-9 items-center justify-center rounded-lg bg-primary text-primary-foreground">
-            <Icon name="shield" size={20} />
-          </span>
-          <span>{t('app.name')}</span>
+          <BrandMark className="size-10" />
+          <Wordmark className="text-2xl" />
         </Link>
 
         <nav aria-label={t('nav.label')} className="hidden min-w-0 items-center gap-1 xl:flex">

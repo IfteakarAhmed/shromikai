@@ -71,7 +71,8 @@ budget, and phones and slow connections must not pay for it (FR-76, NFR-10).
   again in the same visit.
 - **Posters from the scene.** `scripts/render-scene.mjs` renders the scene with headless Chromium
   and SwiftShader into the lite poster (`src/assets/contract-poster.webp`, replacing the
-  prototype picture) and the social image (`public/og-image.jpg`).
+  prototype picture) and the social image (`public/og-image.jpg`; replaced by the logo card
+  `public/og-image.png` in ADR-0028).
 - **Budgets.** Initial JavaScript stays under 200 KB gzip (it grew by about 1.6 KB for the tier
   code and the chapter strings; the scene code is not in it). The cinematic scene, three.js
   included, is a lazy chunk of at most **300 KB gzip**, fetched only on the cinematic tier. The

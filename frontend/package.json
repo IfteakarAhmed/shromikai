@@ -17,6 +17,7 @@
     "e2e": "playwright test",
     "check:lite": "node scripts/check-lite-transfer.mjs",
     "render:scene": "node scripts/render-scene.mjs",
+    "render:brand": "node scripts/render-brand.mjs",
     "export:replay": "node scripts/export-replay.mjs",
     "build:replay": "VITE_STATIC_REPLAY=1 npm run build"
   },

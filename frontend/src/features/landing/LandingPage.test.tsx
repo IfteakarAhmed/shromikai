@@ -65,6 +65,20 @@ afterEach(() => {
   vi.restoreAllMocks()
 })
 
+describe('LandingPage brand', () => {
+  it.each([
+    ['cinematic', {}],
+    ['lite', { width: 390, webgl: false }],
+  ] as const)('FR-68 the %s hero opens with the named brand mark', (_tier, options) => {
+    browser(options)
+    landing()
+    const hero = screen.getByRole('region', { name: t('hero.title') })
+    expect(
+      within(hero).getByRole('img', { name: i18n.t('brand.markAlt', { name: t('app.name') }) }),
+    ).toBeInTheDocument()
+  })
+})
+
 describe('LandingPage tiers', () => {
   it('FR-68 gives a capable desktop the cinematic scene and a visible switch to the still picture', async () => {
     browser({})

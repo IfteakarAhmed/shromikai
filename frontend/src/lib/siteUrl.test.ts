@@ -12,7 +12,7 @@ describe('FR-85 index.html social preview', () => {
   }
 
   it('FR-85 og:image is built from the SITE_URL placeholder, not a bare relative path', () => {
-    expect(content('og:image')).toBe('%SITE_URL%/og-image.jpg')
+    expect(content('og:image')).toBe('%SITE_URL%/og-image.png')
   })
 
   it('FR-85 og:url is built from the SITE_URL placeholder', () => {

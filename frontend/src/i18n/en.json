@@ -4,6 +4,9 @@
     "tagline": "Finds the risks in an employment contract and verifies every statute citation.",
     "disclaimer": "This is not legal advice. Talk to a lawyer before an important decision."
   },
+  "brand": {
+    "markAlt": "{{name}} logo: the Bangla letter “শ্র” on a shield with a verified check"
+  },
   "language": {
     "switch": "বাংলা",
     "switchHint": "Change language",

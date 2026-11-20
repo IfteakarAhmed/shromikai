@@ -1,7 +1,7 @@
 // Renders stills of the cinematic landing scene with headless Chromium and SwiftShader (software
-// WebGL), so the lite poster and the social preview image come from the scene itself (ADR-0023).
+// WebGL), so the lite posters come from the scene itself (ADR-0023).
 //
-//   node scripts/render-scene.mjs                 # night and dawn posters + og image into the repo
+//   node scripts/render-scene.mjs                 # night and dawn posters into the repo
 //   node scripts/render-scene.mjs --frames DIR    # timeline frames 0, 25, 50, 75, 100 % into DIR
 //   node scripts/render-scene.mjs --frames DIR --at 41.7,58.3   # other timeline values
 //
@@ -85,8 +85,7 @@ try {
       resolve(root, 'src/assets/contract-poster-light.webp'),
       await render(0, 960, 768, 'image/webp', true, 'light'),
     )
-    // The social preview (1200 × 630): the closing pull-back.
-    save(resolve(root, 'public/og-image.jpg'), await render(1, 1200, 630, 'image/jpeg'))
+    // The social preview is the logo card from scripts/render-brand.mjs since ADR-0028.
   }
 } finally {
   await browser.close()

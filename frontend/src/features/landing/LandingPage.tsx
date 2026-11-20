@@ -1,5 +1,6 @@
 import { Suspense, lazy, useId, type ReactNode } from 'react'
 import { useTranslation } from 'react-i18next'
+import { BrandMark } from '../../components/brand/BrandMark'
 import { LinkButton } from '../../components/ui/Button'
 import { GlassCard } from '../../components/ui/GlassCard'
 import { DisplayText } from '../../components/ui/DisplayText'
@@ -150,7 +151,10 @@ export function LandingPage() {
             )}
           >
             <div className={cinematic ? 'max-w-2xl' : undefined}>
-              <p className="font-semibold text-primary">{t('hero.eyebrow')}</p>
+              <div className="flex items-center gap-3">
+                <BrandMark labelled className="size-14 sm:size-16" />
+                <p className="font-semibold text-primary">{t('hero.eyebrow')}</p>
+              </div>
               <h1
                 id="hero-title"
                 className={cx(

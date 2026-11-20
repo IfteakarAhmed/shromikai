@@ -1,5 +1,7 @@
 import { useTranslation } from 'react-i18next'
 import { Link } from 'react-router-dom'
+import { BrandMark } from '../brand/BrandMark'
+import { Wordmark } from '../brand/Wordmark'
 import { Disclaimer } from '../ui/Disclaimer'
 
 export function Footer() {
@@ -7,6 +9,10 @@ export function Footer() {
   return (
     <footer className="relative z-10 mt-12 border-t border-border bg-background">
       <div className="mx-auto flex max-w-6xl flex-col gap-4 px-(--gutter) py-8">
+        <p className="flex items-center gap-3">
+          <BrandMark labelled className="size-11" />
+          <Wordmark className="text-2xl" />
+        </p>
         <Disclaimer />
         <nav
           aria-label={t('footer.label')}
